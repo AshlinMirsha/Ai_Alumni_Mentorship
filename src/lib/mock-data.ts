@@ -1859,6 +1859,21 @@ export const initialMentorshipActivity: MentorshipActivityData = {
       requestMessage:
         "Looking for deep guidance on scaling relational databases, query planning with PostgreSQL, and transitioning into backend engineering roles.",
       direction: "incoming",
+      milestones: [
+        { id: "m-001-1", title: "Review database schemas and optimize PostgreSQL indexes", completed: true, dueDate: "2026-10-01" },
+        { id: "m-001-2", title: "Implement connection pooling and telemetry instrumentation", completed: true, dueDate: "2026-10-15" },
+        { id: "m-001-3", title: "Distributed systems mock technical interview", completed: false, dueDate: "2026-10-25" },
+        { id: "m-001-4", title: "Resume and system portfolio polish for summer internships", completed: false, dueDate: "2026-11-10" },
+      ],
+      resources: [
+        { id: "res-001-1", title: "Designing Data-Intensive Applications Study Guide", url: "https://dataintensive.net", addedDate: "2026-09-22" },
+        { id: "res-001-2", title: "PostgreSQL Indexing Deep-Dive & EXPLAIN ANALYZE", url: "https://use-the-index-luke.com", addedDate: "2026-10-02" },
+      ],
+      privateNotes: [
+        { id: "pn-001-1", content: "Strong grasp of ORM concepts. Needs a bit more practice on SQL lock contention under heavy concurrency.", createdAt: "2026-10-05T14:00:00Z" },
+        { id: "pn-001-2", content: "Great progress on database indexing. Prepared 3 system design questions for next session.", createdAt: "2026-10-16T11:20:00Z" },
+      ],
+      progressPercent: 50,
     },
     {
       id: "ment-102",
@@ -1888,6 +1903,19 @@ export const initialMentorshipActivity: MentorshipActivityData = {
       sessionCount: 5,
       focus: "Distributed caching and database replication",
       direction: "incoming",
+      milestones: [
+        { id: "m-102-1", title: "Redis cache invalidation strategies & eviction policies", completed: true, dueDate: "2026-09-10" },
+        { id: "m-102-2", title: "Raft consensus algorithm walkthrough in Go", completed: true, dueDate: "2026-09-28" },
+        { id: "m-102-3", title: "Build distributed key-value store benchmark", completed: true, dueDate: "2026-10-12" },
+        { id: "m-102-4", title: "Final mock round for Distributed Systems Engineer positions", completed: false, dueDate: "2026-10-30" },
+      ],
+      resources: [
+        { id: "res-102-1", title: "Raft Paper & Interactive Visualization", url: "https://raft.github.io", addedDate: "2026-08-20" },
+      ],
+      privateNotes: [
+        { id: "pn-102-1", content: "High initiative. Excellent candidate for systems infrastructure roles.", createdAt: "2026-09-12T16:30:00Z" },
+      ],
+      progressPercent: 75,
     },
     {
       id: "ment-103",
@@ -1917,6 +1945,18 @@ export const initialMentorshipActivity: MentorshipActivityData = {
       sessionCount: 2,
       focus: "AWS microservices architecture and Terraform",
       direction: "incoming",
+      milestones: [
+        { id: "m-103-1", title: "AWS VPC architecture and multi-AZ subnet design", completed: true, dueDate: "2026-09-25" },
+        { id: "m-103-2", title: "Terraform state management & reusable modules", completed: false, dueDate: "2026-10-28" },
+        { id: "m-103-3", title: "CI/CD automated deployment with GitHub Actions", completed: false, dueDate: "2026-11-15" },
+      ],
+      resources: [
+        { id: "res-103-1", title: "Terraform Best Practices & Modules", url: "https://www.terraform-best-practices.com", addedDate: "2026-09-15" },
+      ],
+      privateNotes: [
+        { id: "pn-103-1", content: "Working through AWS infrastructure fundamentals. Recommended AWS Certified Solutions Architect syllabus.", createdAt: "2026-09-26T10:15:00Z" },
+      ],
+      progressPercent: 33,
     },
     {
       id: "ment-104",
@@ -1945,6 +1985,61 @@ export const initialMentorshipActivity: MentorshipActivityData = {
       sessionCount: 4,
       focus: "High-volume data pipelines and Kafka stream processing",
       direction: "incoming",
+      milestones: [
+        { id: "m-104-1", title: "Kafka partition sizing & consumer group rebalancing", completed: true, dueDate: "2026-08-20" },
+        { id: "m-104-2", title: "Exactly-once semantics in distributed stream processing", completed: true, dueDate: "2026-09-15" },
+        { id: "m-104-3", title: "Kafka Connect & Debezium CDC pipeline demonstration", completed: false, dueDate: "2026-11-05" },
+      ],
+      resources: [
+        { id: "res-104-1", title: "Kafka: The Definitive Guide (O'Reilly)", url: "https://www.confluent.io/resources/kafka-the-definitive-guide/", addedDate: "2026-08-05" },
+      ],
+      privateNotes: [
+        { id: "pn-104-1", content: "Master's thesis connects directly to stream processing. Deep understanding of message log internals.", createdAt: "2026-08-22T09:40:00Z" },
+      ],
+      progressPercent: 67,
+    },
+  ],
+  completedMentorships: [
+    {
+      id: "ment-comp-001",
+      studentId: "s-005",
+      alumniId: "rec-001",
+      alumni: {
+        id: "rec-001",
+        name: "Marcus Vance",
+        avatar: undefined,
+        role: "Senior Backend Engineer",
+        company: "Datadog",
+      },
+      student: {
+        id: "s-005",
+        name: "Maya Lin",
+        avatar: undefined,
+        careerGoal: "Cloud Infrastructure Engineer",
+        department: "Electrical & Computer Engineering",
+        academicYear: "Senior (4th Year)",
+        interests: ["Kubernetes", "Linux", "SRE", "Observability"],
+        skills: ["Kubernetes", "Linux", "AWS", "Go"],
+      },
+      status: "completed",
+      startDate: "2026-05-10",
+      requestDate: "2026-05-02",
+      sessionCount: 6,
+      focus: "Kubernetes orchestration and production site reliability engineering",
+      direction: "incoming",
+      milestones: [
+        { id: "m-comp-1", title: "Linux kernel cgroups & container isolation", completed: true, dueDate: "2026-05-25" },
+        { id: "m-comp-2", title: "Kubernetes Custom Resource Definitions (CRDs)", completed: true, dueDate: "2026-06-20" },
+        { id: "m-comp-3", title: "Prometheus & Grafana alerting thresholds", completed: true, dueDate: "2026-07-15" },
+        { id: "m-comp-4", title: "SRE interview loops and post-mortem analysis", completed: true, dueDate: "2026-08-05" },
+      ],
+      resources: [
+        { id: "res-comp-1", title: "Google SRE Book Online", url: "https://sre.google/sre-book/table-of-contents/", addedDate: "2026-05-15" },
+      ],
+      privateNotes: [
+        { id: "pn-comp-1", content: "Successfully concluded 6-session mentorship. Maya secured a return offer for Cloud Platform Engineer. Stellar performer.", createdAt: "2026-08-10T16:00:00Z" },
+      ],
+      progressPercent: 100,
     },
   ],
   declinedRequests: [

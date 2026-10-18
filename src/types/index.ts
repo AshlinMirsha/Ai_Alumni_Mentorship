@@ -121,6 +121,26 @@ export type MentorshipStatus =
   | "completed"
   | "declined";
 
+export interface MentorshipMilestone {
+  id: string;
+  title: string;
+  completed: boolean;
+  dueDate?: string;
+}
+
+export interface MentorshipResource {
+  id: string;
+  title: string;
+  url: string;
+  addedDate: string;
+}
+
+export interface MentorshipNote {
+  id: string;
+  content: string;
+  createdAt: string;
+}
+
 export interface Mentorship {
   id: string;
   studentId: string;
@@ -146,7 +166,12 @@ export interface Mentorship {
   focus: string; // e.g. "Product Management career transition"
   declinedReason?: string;
   direction?: "outgoing" | "incoming";
+  milestones?: MentorshipMilestone[];
+  resources?: MentorshipResource[];
+  privateNotes?: MentorshipNote[];
+  progressPercent?: number;
 }
+
 
 // ─── Messages ────────────────────────────────────────────────────────────────
 
@@ -382,6 +407,7 @@ export interface MentorshipActivityData {
   pendingRequests: Mentorship[];
   acceptedMentorships: Mentorship[];
   declinedRequests?: Mentorship[];
+  completedMentorships?: Mentorship[];
   recentConversations: Conversation[];
 }
 

@@ -201,6 +201,7 @@ export function loadMentorshipActivity(): MentorshipActivityData {
       pendingRequests: parsed.pendingRequests ?? initialMentorshipActivity.pendingRequests,
       acceptedMentorships: parsed.acceptedMentorships ?? initialMentorshipActivity.acceptedMentorships,
       declinedRequests: parsed.declinedRequests ?? initialMentorshipActivity.declinedRequests ?? [],
+      completedMentorships: parsed.completedMentorships ?? initialMentorshipActivity.completedMentorships ?? [],
       recentConversations: parsed.recentConversations ?? initialMentorshipActivity.recentConversations,
     };
     return cachedMentorshipObj;
@@ -353,6 +354,275 @@ export function cancelMentorshipRequest(requestId: string): boolean {
   saveMentorshipActivity(updatedActivity);
   return true;
 }
+
+export function endMentorship(mentorshipId: string, completionNotes?: string): boolean {
+  const current = loadMentorshipActivity();
+  const mentee = current.acceptedMentorships.find((m) => m.id === mentorshipId);
+  if (!mentee) return false;
+
+  const updatedAccepted = current.acceptedMentorships.filter((m) => m.id !== mentorshipId);
+
+  const existingNotes = mentee.privateNotes || [];
+  const updatedNotes = completionNotes?.trim()
+    ? [
+        ...existingNotes,
+        {
+          id: `pn-end-${Date.now()}`,
+          content: `Mentorship concluded. Completion summary: ${completionNotes.trim()}`,
+          createdAt: new Date().toISOString(),
+        },
+      ]
+    : existingNotes;
+
+  const completedItem: Mentorship = {
+    ...mentee,
+    status: "completed",
+    privateNotes: updatedNotes,
+    progressPercent: 100,
+  };
+
+  const existingCompleted = current.completedMentorships || [];
+  const updatedActivity: MentorshipActivityData = {
+    ...current,
+    acceptedMentorships: updatedAccepted,
+    completedMentorships: [completedItem, ...existingCompleted],
+  };
+
+  saveMentorshipActivity(updatedActivity);
+
+  // Update student status in students list if present
+  const studentId = mentee.studentId || mentee.student?.id;
+  if (studentId) {
+    const students = loadStudentsList();
+    const updatedStudents = students.map((s) =>
+      s.id === studentId ? { ...s, isMentee: false, hasPendingRequest: false } : s
+    );
+    saveStudentsList(updatedStudents);
+  }
+
+  const studentName = mentee.student?.name || "Student";
+  addNotification({
+    id: `notif-${Date.now()}`,
+    type: "mentorship_request",
+    title: `Mentorship concluded with ${studentName}`,
+    description: `Track successfully completed and archived. You can review notes in Completed Mentees history.`,
+    timestamp: new Date().toISOString(),
+    read: false,
+    actionUrl: "/alumni-dashboard/mentees",
+    actorName: studentName,
+  });
+
+  return true;
+}
+
+export function toggleMentorshipMilestone(mentorshipId: string, milestoneId: string): boolean {
+  const current = loadMentorshipActivity();
+  let found = false;
+
+  const updateList = (list: Mentorship[]): Mentorship[] => {
+    return list.map((m) => {
+      if (m.id !== mentorshipId) return m;
+      found = true;
+      const currentMilestones = m.milestones || [];
+      const updatedMilestones = currentMilestones.map((ms) =>
+        ms.id === milestoneId ? { ...ms, completed: !ms.completed } : ms
+      );
+      const completedCount = updatedMilestones.filter((ms) => ms.completed).length;
+      const totalCount = updatedMilestones.length;
+      const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+      return {
+        ...m,
+        milestones: updatedMilestones,
+        progressPercent,
+      };
+    });
+  };
+
+  const updatedAccepted = updateList(current.acceptedMentorships);
+  const updatedCompleted = updateList(current.completedMentorships || []);
+
+  if (!found) return false;
+
+  saveMentorshipActivity({
+    ...current,
+    acceptedMentorships: updatedAccepted,
+    completedMentorships: updatedCompleted,
+  });
+  return true;
+}
+
+export function addMentorshipMilestone(mentorshipId: string, title: string, dueDate?: string): boolean {
+  if (!title.trim()) return false;
+  const current = loadMentorshipActivity();
+  let found = false;
+
+  const updateList = (list: Mentorship[]): Mentorship[] => {
+    return list.map((m) => {
+      if (m.id !== mentorshipId) return m;
+      found = true;
+      const newMilestone = {
+        id: `ms-${Date.now()}`,
+        title: title.trim(),
+        completed: false,
+        dueDate: dueDate || undefined,
+      };
+      const updatedMilestones = [...(m.milestones || []), newMilestone];
+      const completedCount = updatedMilestones.filter((ms) => ms.completed).length;
+      const totalCount = updatedMilestones.length;
+      const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+      return {
+        ...m,
+        milestones: updatedMilestones,
+        progressPercent,
+      };
+    });
+  };
+
+  const updatedAccepted = updateList(current.acceptedMentorships);
+  const updatedCompleted = updateList(current.completedMentorships || []);
+
+  if (!found) return false;
+
+  saveMentorshipActivity({
+    ...current,
+    acceptedMentorships: updatedAccepted,
+    completedMentorships: updatedCompleted,
+  });
+  return true;
+}
+
+export function addMentorshipPrivateNote(mentorshipId: string, content: string): boolean {
+  if (!content.trim()) return false;
+  const current = loadMentorshipActivity();
+  let found = false;
+
+  const updateList = (list: Mentorship[]): Mentorship[] => {
+    return list.map((m) => {
+      if (m.id !== mentorshipId) return m;
+      found = true;
+      const newNote = {
+        id: `pn-${Date.now()}`,
+        content: content.trim(),
+        createdAt: new Date().toISOString(),
+      };
+      return {
+        ...m,
+        privateNotes: [newNote, ...(m.privateNotes || [])],
+      };
+    });
+  };
+
+  const updatedAccepted = updateList(current.acceptedMentorships);
+  const updatedCompleted = updateList(current.completedMentorships || []);
+
+  if (!found) return false;
+
+  saveMentorshipActivity({
+    ...current,
+    acceptedMentorships: updatedAccepted,
+    completedMentorships: updatedCompleted,
+  });
+  return true;
+}
+
+export function addMentorshipResource(mentorshipId: string, title: string, url: string): boolean {
+  if (!title.trim() || !url.trim()) return false;
+  const current = loadMentorshipActivity();
+  let found = false;
+
+  const updateList = (list: Mentorship[]): Mentorship[] => {
+    return list.map((m) => {
+      if (m.id !== mentorshipId) return m;
+      found = true;
+      const newResource = {
+        id: `res-${Date.now()}`,
+        title: title.trim(),
+        url: url.trim().startsWith("http") ? url.trim() : `https://${url.trim()}`,
+        addedDate: new Date().toISOString().split("T")[0],
+      };
+      return {
+        ...m,
+        resources: [newResource, ...(m.resources || [])],
+      };
+    });
+  };
+
+  const updatedAccepted = updateList(current.acceptedMentorships);
+  const updatedCompleted = updateList(current.completedMentorships || []);
+
+  if (!found) return false;
+
+  saveMentorshipActivity({
+    ...current,
+    acceptedMentorships: updatedAccepted,
+    completedMentorships: updatedCompleted,
+  });
+  return true;
+}
+
+export function scheduleMentorshipSession(data: {
+  studentId: string;
+  studentName: string;
+  studentDepartment?: string;
+  studentAcademicYear?: string;
+  topic: string;
+  date: string;
+  time: string;
+  meetUrl?: string;
+  agenda?: string;
+}): { success: boolean; session?: MentorshipSession } {
+  if (!data.topic.trim() || !data.date || !data.time) {
+    return { success: false };
+  }
+
+  const newSession: MentorshipSession = {
+    id: `sess-${Date.now()}`,
+    studentId: data.studentId,
+    studentName: data.studentName,
+    studentDepartment: data.studentDepartment || "Computer Science",
+    studentAcademicYear: data.studentAcademicYear || "Undergraduate",
+    topic: data.topic.trim(),
+    date: data.date,
+    time: data.time,
+    status: "scheduled",
+    meetUrl: data.meetUrl?.trim() || undefined,
+    agenda: data.agenda?.trim() || undefined,
+  };
+
+  const currentSessions = loadUpcomingSessions();
+  saveUpcomingSessions([newSession, ...currentSessions]);
+
+  // Update mentorship nextSession in acceptedMentorships
+  const currentActivity = loadMentorshipActivity();
+  const updatedAccepted = currentActivity.acceptedMentorships.map((m) => {
+    if (m.studentId === data.studentId || m.student?.id === data.studentId) {
+      return {
+        ...m,
+        nextSession: `${data.date}T${data.time}:00Z`,
+      };
+    }
+    return m;
+  });
+
+  saveMentorshipActivity({
+    ...currentActivity,
+    acceptedMentorships: updatedAccepted,
+  });
+
+  addNotification({
+    id: `notif-${Date.now()}`,
+    type: "session_reminder",
+    title: `Mentorship session scheduled with ${data.studentName}`,
+    description: `${data.topic} · ${data.date} at ${data.time}`,
+    timestamp: new Date().toISOString(),
+    read: false,
+    actionUrl: "/alumni-dashboard/mentees",
+    actorName: data.studentName,
+  });
+
+  return { success: true, session: newSession };
+}
+
 
 // ─── Messaging Actions ────────────────────────────────────────────────────────
 
