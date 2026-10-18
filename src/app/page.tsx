@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 import {
   Users,
-  BookOpen,
   Compass,
   Brain,
   FileText,
@@ -18,6 +17,8 @@ import {
   Building2,
   GraduationCap,
   MessageCircle,
+  Briefcase,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -29,10 +30,10 @@ function Wordmark({ dark = false }: { dark?: boolean }) {
   return (
     <span
       className={`text-lg font-bold tracking-tight ${
-        dark ? "text-white" : "text-gray-900"
+        dark ? "text-white" : "text-[#191919]"
       }`}
     >
-      Alumni<span className="text-blue-600">Path</span>
+      Alumni<span className="text-[#0A66C2]">Path</span>
     </span>
   );
 }
@@ -42,83 +43,87 @@ function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <header className="sticky top-0 z-50 bg-white border-b border-[#E5E7EB]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-14">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Wordmark */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-md bg-blue-600 flex items-center justify-center shrink-0">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="h-7 w-7 rounded-md bg-[#0A66C2] flex items-center justify-center shrink-0">
               <span className="text-white text-xs font-bold">A</span>
             </div>
             <Wordmark />
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-7">
             <a
               href="#how-it-works"
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              className="text-sm font-medium text-[#626262] hover:text-[#191919] transition-colors"
             >
               How It Works
             </a>
             <a
               href="#features"
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              className="text-sm font-medium text-[#626262] hover:text-[#191919] transition-colors"
             >
               Features
             </a>
-            <a
-              href="#alumni"
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            <Link
+              href="/alumni"
+              className="text-sm font-medium text-[#626262] hover:text-[#191919] transition-colors"
             >
               Discover Alumni
-            </a>
+            </Link>
           </nav>
 
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-3">
             <Button variant="ghost" size="sm" asChild>
-              <Link href="/login">Log In</Link>
+              <Link href="/login" className="text-sm font-medium text-[#191919]">
+                Log In
+              </Link>
             </Button>
             <Button variant="primary" size="sm" asChild>
-              <Link href="/signup">Get Started</Link>
+              <Link href="/signup" className="text-sm font-medium">
+                Get Started
+              </Link>
             </Button>
           </div>
 
           {/* Mobile toggle */}
           <button
-            className="md:hidden p-2 text-gray-600 hover:text-gray-900"
+            className="md:hidden p-2 text-[#626262] hover:text-[#191919]"
             onClick={() => setMobileOpen((p) => !p)}
             aria-label="Toggle navigation"
           >
-            {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
 
       {/* Mobile nav */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-gray-100 bg-white px-4 py-3 flex flex-col gap-2">
+        <div className="md:hidden border-t border-[#E5E7EB] bg-white px-4 py-3 flex flex-col gap-2">
           <a
             href="#how-it-works"
-            className="text-sm py-2 text-gray-700 border-b border-gray-100"
+            className="text-sm py-2 font-medium text-[#191919] border-b border-gray-100"
             onClick={() => setMobileOpen(false)}
           >
             How It Works
           </a>
           <a
             href="#features"
-            className="text-sm py-2 text-gray-700 border-b border-gray-100"
+            className="text-sm py-2 font-medium text-[#191919] border-b border-gray-100"
             onClick={() => setMobileOpen(false)}
           >
             Features
           </a>
-          <a
-            href="#alumni"
-            className="text-sm py-2 text-gray-700 border-b border-gray-100"
+          <Link
+            href="/alumni"
+            className="text-sm py-2 font-medium text-[#191919] border-b border-gray-100"
             onClick={() => setMobileOpen(false)}
           >
             Discover Alumni
-          </a>
+          </Link>
           <div className="flex gap-2 pt-2">
             <Button variant="secondary" size="sm" fullWidth asChild>
               <Link href="/login">Log In</Link>
@@ -133,168 +138,168 @@ function Header() {
   );
 }
 
-// ─── Product Preview component (right side of hero) ──────────────────────────
-function ProductPreview() {
+// ─── Hero Visual (Open, Borderless Editorial Composition) ──────────────────────
+function HeroVisual() {
   return (
-    <div className="relative">
-      {/* Browser chrome */}
-      <div className="rounded-xl border border-gray-200 shadow-lg overflow-hidden bg-white">
-        {/* Title bar */}
-        <div className="bg-gray-50 border-b border-gray-200 px-4 py-2.5 flex items-center gap-2">
-          <div className="flex gap-1.5">
-            <div className="h-2.5 w-2.5 rounded-full bg-red-400" />
-            <div className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-            <div className="h-2.5 w-2.5 rounded-full bg-green-400" />
+    <div className="relative w-full max-w-lg mx-auto lg:max-w-none">
+      {/* Clean, open editorial networking composition — without any enclosing browser mockup */}
+      <div className="space-y-3.5">
+        {/* Spotlight Alumni Card (Marcus Vance) */}
+        <div className="bg-white border border-[#E5E7EB] rounded-xl p-4 sm:p-5 shadow-sm hover:border-[#0A66C2]/40 transition-colors">
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <Avatar name="Marcus Vance" size="lg" />
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-sm font-semibold text-[#191919]">
+                    Marcus Vance
+                  </span>
+                  <span className="inline-flex items-center text-[10px] font-semibold text-[#0A66C2] bg-[#F0F7FE] border border-[#DCEAF8] px-1.5 py-0.5 rounded">
+                    Alum &apos;20
+                  </span>
+                </div>
+                <p className="text-xs text-[#626262] mt-0.5 truncate">
+                  Senior Backend Engineer · Datadog
+                </p>
+                <p className="text-[11px] text-gray-400 truncate">
+                  Ex-Google · B.S. in Computer Science
+                </p>
+              </div>
+            </div>
+            <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#057642] bg-[#EEF8F1] border border-[#BFE3C9] px-2 py-0.5 rounded-full shrink-0">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#057642]" />
+              Active Mentor
+            </span>
           </div>
-          <div className="flex-1 mx-4 bg-white border border-gray-200 rounded text-xs text-gray-400 px-2 py-0.5 text-center">
-            alumnipath.app/alumni
+
+          <p className="text-xs text-[#626262] leading-relaxed mb-3 bg-[#F7F9FC] border border-[#E5E7EB] rounded-lg p-3">
+            &ldquo;Went through the campus recruitment cycle myself. I help students
+            bridge the gap between coursework and production engineering standards.&rdquo;
+          </p>
+
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-gray-100 text-xs">
+            <div className="flex flex-wrap gap-1.5">
+              <span className="text-[11px] font-medium text-[#0A66C2] bg-[#F0F7FE] px-2 py-0.5 rounded">
+                Distributed Systems
+              </span>
+              <span className="text-[11px] font-medium text-[#4A4A4A] bg-[#F3F5F7] px-2 py-0.5 rounded">
+                PostgreSQL
+              </span>
+              <span className="text-[11px] font-medium text-[#4A4A4A] bg-[#F3F5F7] px-2 py-0.5 rounded">
+                System Design
+              </span>
+            </div>
+            <span className="text-[11px] font-medium text-[#626262]">
+              96% response rate
+            </span>
           </div>
         </div>
 
-        {/* App chrome */}
-        <div className="bg-gray-50 flex" style={{ minHeight: 340 }}>
-          {/* Mini sidebar */}
-          <div className="w-10 bg-white border-r border-gray-100 flex flex-col items-center py-3 gap-3">
-            <div className="w-5 h-5 rounded bg-blue-600" />
-            <div className="w-4 h-0.5 rounded bg-blue-100 mt-2" />
-            <div className="w-4 h-0.5 rounded bg-gray-200" />
-            <div className="w-4 h-0.5 rounded bg-gray-200" />
-            <div className="w-4 h-0.5 rounded bg-gray-200" />
+        {/* Connection Indicator Bar */}
+        <div className="flex items-center justify-between px-3 py-1 text-xs text-[#626262]">
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-[#0A66C2]" />
+            <span className="font-medium text-[#191919]">
+              Direct 1:1 Mentorship Path
+            </span>
           </div>
+          <span className="text-[11px] text-[#0A66C2] font-medium flex items-center gap-1">
+            <Sparkles size={12} className="text-[#0A66C2]" />
+            Verified campus match
+          </span>
+        </div>
 
-          {/* Main content */}
-          <div className="flex-1 p-3 overflow-hidden">
-            {/* Student context bar */}
-            <div className="bg-white rounded-md border border-gray-200 p-3 mb-3 flex items-center gap-2.5">
-              <Avatar name="Priya Sharma" size="sm" />
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-gray-900 truncate">Priya Sharma</p>
-                <p className="text-xs text-gray-500 truncate">CS, 2025 · Targeting: Product Manager</p>
-              </div>
-              <Badge variant="blue" size="sm">72% match</Badge>
-            </div>
-
-            {/* Section label */}
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-              Recommended Alumni
-            </p>
-
-            {/* Alumni card 1 */}
-            <div className="bg-white rounded-md border border-gray-200 p-3 mb-2 hover:border-blue-200 transition-colors">
-              <div className="flex items-start gap-2.5">
-                <Avatar name="Arjun Mehta" size="sm" />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-1">
-                    <div>
-                      <p className="text-xs font-semibold text-gray-900">Arjun Mehta</p>
-                      <p className="text-xs text-gray-500">Senior PM · Stripe</p>
-                    </div>
-                    <div className="flex items-center gap-0.5 shrink-0">
-                      <Star size={10} className="text-amber-400 fill-amber-400" />
-                      <span className="text-xs font-semibold text-gray-700">94</span>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-1 mt-1.5">
-                    <Badge size="sm" variant="blue">Product Strategy</Badge>
-                    <Badge size="sm" variant="default">A/B Testing</Badge>
-                    <Badge size="sm" variant="default">SQL</Badge>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">
-                    Went from SWE → PM. Mentors on product interviews and FinTech.
-                  </p>
+        {/* Student Mentee Connection Card (Ashlin) */}
+        <div className="bg-white border border-[#E5E7EB] rounded-xl p-4 sm:p-5 shadow-sm hover:border-[#0A66C2]/40 transition-colors">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <Avatar name="Ashlin" size="md" />
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-sm font-semibold text-[#191919]">Ashlin</span>
+                  <span className="text-[10px] font-medium text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">
+                    Student &apos;27
+                  </span>
                 </div>
-              </div>
-              <div className="mt-2 pt-2 border-t border-gray-50 flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                  <span className="text-xs text-emerald-700">Open to mentoring</span>
-                </div>
-                <span className="text-xs text-blue-600 font-medium cursor-pointer hover:underline">
-                  View profile →
-                </span>
+                <p className="text-xs text-[#626262] mt-0.5 truncate">
+                  Computer Science · Second Year
+                </p>
+                <p className="text-[11px] text-[#0A66C2] font-medium mt-0.5 truncate">
+                  Targeting: Full-Stack Software Engineer
+                </p>
               </div>
             </div>
+            <Link
+              href="/alumni"
+              className="text-xs font-semibold text-[#0A66C2] hover:text-[#004182] hover:underline shrink-0 flex items-center gap-1"
+            >
+              Connect <ArrowRight size={12} />
+            </Link>
+          </div>
+        </div>
 
-            {/* Alumni card 2 */}
-            <div className="bg-white rounded-md border border-gray-200 p-3 hover:border-blue-200 transition-colors">
-              <div className="flex items-start gap-2.5">
-                <Avatar name="Rohan Verma" size="sm" />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-1">
-                    <div>
-                      <p className="text-xs font-semibold text-gray-900">Rohan Verma</p>
-                      <p className="text-xs text-gray-500">Data Scientist · Netflix</p>
-                    </div>
-                    <div className="flex items-center gap-0.5 shrink-0">
-                      <Star size={10} className="text-amber-400 fill-amber-400" />
-                      <span className="text-xs font-semibold text-gray-700">76</span>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-1 mt-1.5">
-                    <Badge size="sm" variant="green">Python</Badge>
-                    <Badge size="sm" variant="default">ML</Badge>
-                    <Badge size="sm" variant="default">A/B Testing</Badge>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">
-                    Builds recommendation systems. Helps students break into data science.
-                  </p>
+        {/* Companion Alum Preview (Elena Rostova) */}
+        <div className="bg-white border border-[#E5E7EB] rounded-xl p-3.5 sm:p-4 shadow-sm hover:border-[#0A66C2]/40 transition-colors">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <Avatar name="Elena Rostova" size="md" />
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-semibold text-[#191919] truncate">
+                    Elena Rostova
+                  </span>
+                  <span className="text-[10px] text-[#0A66C2] font-semibold shrink-0">
+                    Alum &apos;19
+                  </span>
                 </div>
+                <p className="text-[11px] text-[#626262] truncate">
+                  Staff Software Engineer · Airbnb
+                </p>
               </div>
-              <div className="mt-2 pt-2 border-t border-gray-50 flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                  <span className="text-xs text-emerald-700">Open to mentoring</span>
-                </div>
-                <span className="text-xs text-blue-600 font-medium cursor-pointer hover:underline">
-                  View profile →
-                </span>
-              </div>
+            </div>
+            <div className="flex items-center gap-1 text-[11px] text-[#626262] shrink-0">
+              <Building2 size={12} className="text-gray-400" />
+              <span>San Francisco, CA</span>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Floating label */}
-      <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-white border border-gray-200 rounded-full px-3 py-1 shadow-sm flex items-center gap-1.5 text-xs text-gray-600 whitespace-nowrap">
-        <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-        Alumni recommendations update based on your profile
       </div>
     </div>
   );
 }
 
-// ─── How It Works ─────────────────────────────────────────────────────────────
+// ─── How It Works Data ────────────────────────────────────────────────────────
 const HOW_IT_WORKS = [
   {
     step: "01",
-    title: "Build Your Profile",
+    title: "Discover Alumni",
     description:
-      "Add your skills, interests, projects, and career goals. The more context you provide, the better your matches.",
-    icon: GraduationCap,
-  },
-  {
-    step: "02",
-    title: "Discover Relevant Alumni",
-    description:
-      "Explore alumni whose professional experience, company, and career path align with your goals.",
+      "Search and filter alumni by company, role, skills, and industry to find mentors whose journeys align with your career goals.",
     icon: Compass,
   },
   {
-    step: "03",
-    title: "Learn and Grow",
+    step: "02",
+    title: "Connect with Mentors",
     description:
-      "Request mentorship, ask questions, and build a personalized career roadmap based on real experience.",
-    icon: BookOpen,
+      "Reach out with personalized messages, ask targeted career questions, and learn from real professional experiences.",
+    icon: MessageCircle,
+  },
+  {
+    step: "03",
+    title: "Build Your Career",
+    description:
+      "Gain actionable industry insights, prepare for interviews, and map out a structured roadmap for your long-term success.",
+    icon: GraduationCap,
   },
 ];
 
-// ─── Features ────────────────────────────────────────────────────────────────
+// ─── Features Data ────────────────────────────────────────────────────────────
 const FEATURES = [
   {
     icon: Users,
     title: "Smart Alumni Matching",
     description:
-      "Find alumni whose career paths, industries, and skills are most relevant to where you want to go.",
+      "Find alumni whose career paths, industries, and technical skills are most relevant to where you want to go.",
   },
   {
     icon: Brain,
@@ -304,9 +309,9 @@ const FEATURES = [
   },
   {
     icon: MessageCircle,
-    title: "Direct Mentorship",
+    title: "Direct Networking",
     description:
-      "Connect directly with alumni who are open to mentoring. Schedule sessions and build a real relationship.",
+      "Connect directly with alumni who walked the same campus. Ask questions and learn about real industry realities.",
   },
   {
     icon: Map,
@@ -316,7 +321,7 @@ const FEATURES = [
   },
   {
     icon: FileText,
-    title: "Resume Feedback",
+    title: "Resume Review",
     description:
       "Get structured feedback on your resume: impact, clarity, ATS keywords, and specific improvement areas.",
   },
@@ -331,46 +336,44 @@ const FEATURES = [
 // ─── Platform Preview Section ─────────────────────────────────────────────────
 function PlatformPreview() {
   return (
-    <section id="alumni" className="py-20 border-t border-gray-100">
+    <section id="alumni" className="py-16 md:py-24 border-t border-[#E5E7EB] bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left: text */}
           <div>
-            <p className="text-xs font-semibold text-blue-600 uppercase tracking-widest mb-3">
+            <p className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wider mb-2.5">
               How the platform helps
             </p>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4 leading-tight">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#191919] mb-4 leading-tight tracking-tight">
               Choose your direction.
               <br />
               Find who can help you get there.
             </h2>
-            <p className="text-gray-600 mb-6 leading-relaxed">
+            <p className="text-sm sm:text-base text-[#626262] mb-6 leading-relaxed">
               Set a target role, and see alumni whose career journey is most
               relevant to yours — filtered by company, industry, skills, and
-              mentorship availability.
+              graduation year.
             </p>
 
-            <ul className="space-y-3">
+            <ul className="space-y-3 mb-8">
               {[
                 "Filter by industry, company, or graduation year",
-                "See which alumni are open to mentorship",
+                "Learn directly from engineers, PMs, and designers",
                 "Read their career story before reaching out",
-                "Connect with a personalised intro message",
+                "Connect with a personalized intro message",
               ].map((point) => (
-                <li key={point} className="flex items-start gap-2.5 text-sm text-gray-700">
-                  <CheckCircle size={16} className="text-blue-500 mt-0.5 shrink-0" />
-                  {point}
+                <li key={point} className="flex items-start gap-2.5 text-sm text-[#4A4A4A]">
+                  <CheckCircle size={16} className="text-[#057642] mt-0.5 shrink-0" />
+                  <span>{point}</span>
                 </li>
               ))}
             </ul>
 
-            <div className="mt-8">
-              <Button variant="primary" asChild>
-                <Link href="/signup">
-                  Start exploring <ArrowRight size={15} className="ml-1" />
-                </Link>
-              </Button>
-            </div>
+            <Button variant="primary" asChild>
+              <Link href="/alumni" className="inline-flex items-center">
+                Explore Alumni Directory <ArrowRight size={15} className="ml-1.5" />
+              </Link>
+            </Button>
           </div>
 
           {/* Right: mini alumni list preview */}
@@ -383,7 +386,6 @@ function PlatformPreview() {
                 location: "San Francisco, CA",
                 year: 2018,
                 tags: ["Product Strategy", "FinTech", "PM Interviews"],
-                availability: "available" as const,
               },
               {
                 name: "Neha Kapoor",
@@ -392,7 +394,6 @@ function PlatformPreview() {
                 location: "San Francisco, CA",
                 year: 2016,
                 tags: ["Engineering Leadership", "System Design", "Career Growth"],
-                availability: "limited" as const,
               },
               {
                 name: "Sanya Gupta",
@@ -401,17 +402,20 @@ function PlatformPreview() {
                 location: "Seattle, WA",
                 year: 2017,
                 tags: ["UX Research", "Design Systems", "Portfolio Reviews"],
-                availability: "available" as const,
               },
             ].map((a) => (
-              <Card key={a.name} padding="md" className="hover:border-blue-200 transition-colors">
+              <Card
+                key={a.name}
+                padding="md"
+                className="bg-white border border-[#E5E7EB] hover:border-[#0A66C2]/40 transition-colors"
+              >
                 <div className="flex items-start gap-3">
                   <Avatar name={a.name} size="lg" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">{a.name}</p>
-                        <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                        <p className="text-sm font-semibold text-[#191919]">{a.name}</p>
+                        <p className="text-xs text-[#626262] flex items-center gap-1 mt-0.5">
                           <Building2 size={11} />
                           {a.role} · {a.company}
                         </p>
@@ -420,12 +424,9 @@ function PlatformPreview() {
                           {a.location} · Class of {a.year}
                         </p>
                       </div>
-                      <Badge
-                        variant={a.availability === "available" ? "green" : "amber"}
-                        size="sm"
-                      >
-                        {a.availability === "available" ? "Open to mentoring" : "Limited"}
-                      </Badge>
+                      <span className="text-[11px] font-medium text-[#057642] bg-[#EEF8F1] border border-[#BFE3C9] px-2 py-0.5 rounded-full shrink-0">
+                        Verified Alum
+                      </span>
                     </div>
                     <div className="flex flex-wrap gap-1 mt-2.5">
                       {a.tags.map((t) => (
@@ -448,25 +449,25 @@ function PlatformPreview() {
 // ─── Footer ───────────────────────────────────────────────────────────────────
 function Footer() {
   return (
-    <footer className="border-t border-gray-200 bg-white">
+    <footer className="border-t border-[#E5E7EB] bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
           {/* Brand */}
           <div>
-            <Link href="/" className="flex items-center gap-2 mb-3">
-              <div className="h-7 w-7 rounded-md bg-blue-600 flex items-center justify-center shrink-0">
+            <Link href="/" className="flex items-center gap-2.5 mb-3">
+              <div className="h-7 w-7 rounded-md bg-[#0A66C2] flex items-center justify-center shrink-0">
                 <span className="text-white text-xs font-bold">A</span>
               </div>
               <Wordmark />
             </Link>
-            <p className="text-sm text-gray-500 leading-relaxed">
+            <p className="text-sm text-[#626262] leading-relaxed">
               Alumni networking and career mentorship for college students.
             </p>
           </div>
 
           {/* Product */}
           <div>
-            <p className="text-sm font-semibold text-gray-900 mb-3">Product</p>
+            <p className="text-sm font-semibold text-[#191919] mb-3">Product</p>
             <ul className="space-y-2">
               {[
                 ["Discover Alumni", "/alumni"],
@@ -476,7 +477,10 @@ function Footer() {
                 ["Resume Review", "/resume-review"],
               ].map(([label, href]) => (
                 <li key={label}>
-                  <Link href={href} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                  <Link
+                    href={href}
+                    className="text-sm text-[#626262] hover:text-[#191919] transition-colors"
+                  >
                     {label}
                   </Link>
                 </li>
@@ -486,7 +490,7 @@ function Footer() {
 
           {/* Support */}
           <div>
-            <p className="text-sm font-semibold text-gray-900 mb-3">Support</p>
+            <p className="text-sm font-semibold text-[#191919] mb-3">Support</p>
             <ul className="space-y-2">
               {[
                 ["Help Center", "#"],
@@ -494,7 +498,10 @@ function Footer() {
                 ["For Universities", "#"],
               ].map(([label, href]) => (
                 <li key={label}>
-                  <Link href={href} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                  <Link
+                    href={href}
+                    className="text-sm text-[#626262] hover:text-[#191919] transition-colors"
+                  >
                     {label}
                   </Link>
                 </li>
@@ -504,7 +511,7 @@ function Footer() {
 
           {/* Legal */}
           <div>
-            <p className="text-sm font-semibold text-gray-900 mb-3">Legal</p>
+            <p className="text-sm font-semibold text-[#191919] mb-3">Legal</p>
             <ul className="space-y-2">
               {[
                 ["Privacy Policy", "#"],
@@ -512,7 +519,10 @@ function Footer() {
                 ["Cookie Policy", "#"],
               ].map(([label, href]) => (
                 <li key={label}>
-                  <Link href={href} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                  <Link
+                    href={href}
+                    className="text-sm text-[#626262] hover:text-[#191919] transition-colors"
+                  >
                     {label}
                   </Link>
                 </li>
@@ -521,11 +531,11 @@ function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-100 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-gray-400">
+        <div className="border-t border-[#E5E7EB] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-[#626262]">
             © 2026 AlumniPath. All rights reserved.
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-[#626262]">
             Built for students, by people who were once students.
           </p>
         </div>
@@ -541,23 +551,23 @@ export default function LandingPage() {
       <Header />
 
       <main className="flex-1">
-        {/* Hero */}
-        <section className="py-16 md:py-24 border-b border-gray-100">
+        {/* Hero Section */}
+        <section className="py-16 md:py-24 border-b border-[#E5E7EB]">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-              {/* Left */}
+              {/* Left Column */}
               <div>
-                <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-100 rounded-full px-3 py-1 mb-5">
+                <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0A66C2] bg-[#F0F7FE] border border-[#DCEAF8] rounded-full px-3.5 py-1 mb-5">
                   Your college network, working for your future
                 </p>
 
-                <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight tracking-tight mb-5">
-                  Find the right people.
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.15] mb-5">
+                  <span className="text-[#191919]">Find the right people.</span>
                   <br />
-                  <span className="text-blue-600">Build the right career.</span>
+                  <span className="text-[#0A66C2]">Build the right career.</span>
                 </h1>
 
-                <p className="text-lg text-gray-600 leading-relaxed mb-8 max-w-lg">
+                <p className="text-base sm:text-lg text-[#626262] leading-relaxed mb-8 max-w-lg">
                   Connect with alumni who understand your ambitions, learn from
                   real career experiences, and build a clearer path toward your
                   professional goals.
@@ -565,64 +575,79 @@ export default function LandingPage() {
 
                 <div className="flex flex-col sm:flex-row gap-3 mb-8">
                   <Button variant="primary" size="lg" asChild>
-                    <Link href="/signup">
-                      Find Your Mentor <ArrowRight size={15} className="ml-1" />
+                    <Link href="/alumni" className="inline-flex items-center justify-center">
+                      Find Your Mentor <ArrowRight size={15} className="ml-1.5" />
                     </Link>
                   </Button>
                   <Button variant="secondary" size="lg" asChild>
-                    <a href="#how-it-works">Explore How It Works</a>
+                    <a href="#how-it-works" className="inline-flex items-center justify-center">
+                      Explore How It Works
+                    </a>
                   </Button>
                 </div>
 
-                <p className="text-xs text-gray-400 flex items-center gap-1.5">
-                  <CheckCircle size={13} className="text-emerald-500" />
-                  Personalized alumni discovery based on your goals, skills, and interests
-                </p>
+                <div className="pt-4 border-t border-[#E5E7EB] flex flex-wrap items-center gap-6 text-xs text-[#626262]">
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle size={14} className="text-[#057642]" />
+                    <span>Verified Alumni</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Briefcase size={14} className="text-[#0A66C2]" />
+                    <span>Top Tech &amp; Design Roles</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle size={14} className="text-[#057642]" />
+                    <span>Direct Inquiries</span>
+                  </div>
+                </div>
               </div>
 
-              {/* Right: Product Preview */}
-              <div className="lg:pl-4">
-                <ProductPreview />
+              {/* Right Column: Open, Borderless Visual */}
+              <div className="lg:pl-2">
+                <HeroVisual />
               </div>
             </div>
           </div>
         </section>
 
-        {/* How It Works */}
-        <section id="how-it-works" className="py-20">
+        {/* How It Works Section */}
+        <section id="how-it-works" className="py-16 md:py-24 bg-white border-b border-[#E5E7EB]">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-12">
-              <p className="text-xs font-semibold text-blue-600 uppercase tracking-widest mb-2">
+            <div className="text-center max-w-2xl mx-auto mb-14">
+              <p className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wider mb-2.5">
                 How it works
               </p>
-              <h2 className="text-3xl font-bold text-gray-900">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#191919] tracking-tight">
                 Three steps to a better career path
               </h2>
+              <p className="text-sm sm:text-base text-[#626262] mt-3 leading-relaxed">
+                A structured, reliable way for students to connect with experienced
+                graduates who have walked the same path.
+              </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
               {HOW_IT_WORKS.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <div key={item.step} className="relative">
-                    <div className="flex items-start gap-4">
-                      <div className="shrink-0">
-                        <div className="h-10 w-10 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center">
-                          <Icon size={18} className="text-blue-600" />
-                        </div>
+                  <div
+                    key={item.step}
+                    className="bg-white border border-[#E5E7EB] rounded-lg p-6 hover:border-[#0A66C2]/40 transition-colors"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="h-10 w-10 rounded-md bg-[#F0F7FE] border border-[#DCEAF8] flex items-center justify-center text-[#0A66C2]">
+                        <Icon size={18} />
                       </div>
-                      <div>
-                        <p className="text-xs font-semibold text-gray-400 mb-1">
-                          Step {item.step}
-                        </p>
-                        <h3 className="text-base font-semibold text-gray-900 mb-2">
-                          {item.title}
-                        </h3>
-                        <p className="text-sm text-gray-600 leading-relaxed">
-                          {item.description}
-                        </p>
-                      </div>
+                      <span className="text-xs font-bold text-[#0A66C2] bg-[#F0F7FE] px-2.5 py-0.5 rounded-full">
+                        Step {item.step}
+                      </span>
                     </div>
+                    <h3 className="text-base font-semibold text-[#191919] mb-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-[#626262] leading-relaxed">
+                      {item.description}
+                    </p>
                   </div>
                 );
               })}
@@ -630,33 +655,41 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Features */}
+        {/* Features Section */}
         <section
           id="features"
-          className="py-20 bg-gray-50 border-t border-b border-gray-100"
+          className="py-16 md:py-24 bg-[#F7F9FC] border-b border-[#E5E7EB]"
         >
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-12">
-              <p className="text-xs font-semibold text-blue-600 uppercase tracking-widest mb-2">
+            <div className="text-center max-w-2xl mx-auto mb-14">
+              <p className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wider mb-2.5">
                 Platform features
               </p>
-              <h2 className="text-3xl font-bold text-gray-900">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#191919] tracking-tight">
                 Everything you need to navigate your career
               </h2>
+              <p className="text-sm sm:text-base text-[#626262] mt-3 leading-relaxed">
+                Comprehensive tools to help students bridge the gap between college
+                and professional life.
+              </p>
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {FEATURES.map((feature) => {
                 const Icon = feature.icon;
                 return (
-                  <Card key={feature.title} padding="md" className="bg-white">
-                    <div className="h-9 w-9 rounded-md bg-blue-50 border border-blue-100 flex items-center justify-center mb-3">
-                      <Icon size={17} className="text-blue-600" />
+                  <Card
+                    key={feature.title}
+                    padding="md"
+                    className="bg-white border border-[#E5E7EB] rounded-lg hover:border-[#0A66C2]/40 transition-colors"
+                  >
+                    <div className="h-9 w-9 rounded-md bg-[#F0F7FE] border border-[#DCEAF8] flex items-center justify-center mb-3">
+                      <Icon size={17} className="text-[#0A66C2]" />
                     </div>
-                    <h3 className="text-sm font-semibold text-gray-900 mb-1.5">
+                    <h3 className="text-sm font-semibold text-[#191919] mb-1.5">
                       {feature.title}
                     </h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
+                    <p className="text-sm text-[#626262] leading-relaxed">
                       {feature.description}
                     </p>
                   </Card>
@@ -666,29 +699,34 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Platform preview */}
+        {/* Platform Preview Section */}
         <PlatformPreview />
 
-        {/* Final CTA */}
-        <section className="py-20 border-t border-gray-100">
+        {/* Final CTA Section */}
+        <section className="py-16 md:py-24 bg-white">
           <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4 leading-tight">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#191919] mb-4 leading-tight tracking-tight">
               Your next career step starts with
               <br />
               the right conversation.
             </h2>
-            <p className="text-gray-600 mb-8">
+            <p className="text-sm sm:text-base text-[#626262] mb-8 leading-relaxed">
               Join other students who are connecting with alumni, getting real
               guidance, and building careers with intention.
             </p>
-            <Button variant="primary" size="lg" asChild>
-              <Link href="/signup">
-                Create Your Account <ArrowRight size={15} className="ml-1" />
-              </Link>
-            </Button>
-            <p className="text-xs text-gray-400 mt-4">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-3">
+              <Button variant="primary" size="lg" asChild>
+                <Link href="/signup" className="inline-flex items-center">
+                  Create Your Account <ArrowRight size={15} className="ml-1.5" />
+                </Link>
+              </Button>
+              <Button variant="secondary" size="lg" asChild>
+                <Link href="/alumni">Browse Directory</Link>
+              </Button>
+            </div>
+            <p className="text-xs text-[#626262] mt-4">
               Already have an account?{" "}
-              <Link href="/login" className="text-blue-600 hover:underline">
+              <Link href="/login" className="text-[#0A66C2] font-medium hover:underline">
                 Log In
               </Link>
             </p>
