@@ -133,6 +133,8 @@ export interface Mentorship {
     careerGoal?: string;
     department?: string;
     academicYear?: string;
+    interests?: string[];
+    skills?: string[];
   };
   status: MentorshipStatus;
   startDate?: string;
@@ -513,6 +515,44 @@ export interface DiscoverStudent {
   isMentee?: boolean;
   hasPendingRequest?: boolean;
 }
+
+// ─── Mentorship Sessions & University Events ──────────────────────────────────
+
+export interface MentorshipSession {
+  id: string;
+  studentId: string;
+  studentName: string;
+  studentAvatar?: string;
+  studentDepartment: string;
+  studentAcademicYear: string;
+  topic: string;
+  date: string;
+  time: string;
+  status: "confirmed" | "scheduled" | "completed" | "rescheduled";
+  meetUrl?: string;
+  agenda?: string;
+  notes?: string;
+}
+
+export interface UniversityEvent {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  category: "Career Fair" | "Tech Talk" | "Hackathon" | "Networking" | "Alumni Panel";
+  rsvpCount: number;
+  description: string;
+  isRegistered?: boolean;
+}
+
+export interface MentorshipTip {
+  id: string;
+  title: string;
+  tip: string;
+  category: string;
+}
+
 
 
 

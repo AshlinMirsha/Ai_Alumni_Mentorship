@@ -16,6 +16,8 @@ import type {
   CommunityComment,
   DiscoverStudent,
   UserRole,
+  MentorshipSession,
+  UniversityEvent,
 } from "@/types";
 import {
   currentStudent,
@@ -27,6 +29,8 @@ import {
   studentsData,
   initialOpportunities,
   initialCommunityPosts,
+  initialUpcomingSessions,
+  universityEventsData,
 } from "@/lib/mock-data";
 
 const STUDENT_STORAGE_KEY = "alumnipath_demo_student_profile_v1";
@@ -39,6 +43,8 @@ const SETTINGS_STORAGE_KEY = "alumnipath_demo_settings_v1";
 const OPPORTUNITIES_STORAGE_KEY = "alumnipath_demo_opportunities_v1";
 const COMMUNITY_POSTS_KEY = "alumnipath_demo_community_posts_v1";
 const STUDENTS_STORAGE_KEY = "alumnipath_demo_students_list_v1";
+const UPCOMING_SESSIONS_STORAGE_KEY = "alumnipath_demo_upcoming_sessions_v1";
+const UNIVERSITY_EVENTS_STORAGE_KEY = "alumnipath_demo_university_events_v1";
 
 const listeners = new Set<() => void>();
 
@@ -917,4 +923,74 @@ export function offerMentorshipToStudent(studentId: string, focus: string): { su
   return { success: true, requestId: newRequestId };
 }
 
+// ─── Upcoming Sessions Storage ────────────────────────────────────────────────
 
+let cachedSessionsRaw: string | null = null;
+let cachedSessionsObj: MentorshipSession[] = initialUpcomingSessions;
+
+export function loadUpcomingSessions(): MentorshipSession[] {
+  if (typeof window === "undefined") return initialUpcomingSessions;
+  try {
+    const raw = localStorage.getItem(UPCOMING_SESSIONS_STORAGE_KEY);
+    if (!raw) return initialUpcomingSessions;
+    if (raw === cachedSessionsRaw) return cachedSessionsObj;
+    cachedSessionsRaw = raw;
+    cachedSessionsObj = JSON.parse(raw);
+    return cachedSessionsObj;
+  } catch {
+    return initialUpcomingSessions;
+  }
+}
+
+export function saveUpcomingSessions(sessions: MentorshipSession[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    cachedSessionsRaw = JSON.stringify(sessions);
+    cachedSessionsObj = sessions;
+    localStorage.setItem(UPCOMING_SESSIONS_STORAGE_KEY, cachedSessionsRaw);
+    notifyDashboardChange();
+  } catch {
+    // ignore
+  }
+}
+
+// ─── University Events Storage ────────────────────────────────────────────────
+
+let cachedEventsRaw: string | null = null;
+let cachedEventsObj: UniversityEvent[] = universityEventsData;
+
+export function loadUniversityEvents(): UniversityEvent[] {
+  if (typeof window === "undefined") return universityEventsData;
+  try {
+    const raw = localStorage.getItem(UNIVERSITY_EVENTS_STORAGE_KEY);
+    if (!raw) return universityEventsData;
+    if (raw === cachedEventsRaw) return cachedEventsObj;
+    cachedEventsRaw = raw;
+    cachedEventsObj = JSON.parse(raw);
+    return cachedEventsObj;
+  } catch {
+    return universityEventsData;
+  }
+}
+
+export function toggleEventRsvp(eventId: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    const events = loadUniversityEvents();
+    const updated = events.map((ev) => {
+      if (ev.id !== eventId) return ev;
+      const willRegister = !ev.isRegistered;
+      return {
+        ...ev,
+        isRegistered: willRegister,
+        rsvpCount: willRegister ? ev.rsvpCount + 1 : Math.max(0, ev.rsvpCount - 1),
+      };
+    });
+    cachedEventsRaw = JSON.stringify(updated);
+    cachedEventsObj = updated;
+    localStorage.setItem(UNIVERSITY_EVENTS_STORAGE_KEY, cachedEventsRaw);
+    notifyDashboardChange();
+  } catch {
+    // ignore
+  }
+}
