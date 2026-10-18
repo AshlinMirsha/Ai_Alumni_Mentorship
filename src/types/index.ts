@@ -423,5 +423,96 @@ export interface UserSettings {
   };
 }
 
+// ─── Auth Session ─────────────────────────────────────────────────────────────
+
+export interface AuthSession {
+  isAuthenticated: boolean;
+  role: UserRole;
+  email: string;
+  name: string;
+  avatar?: string;
+  headline?: string;
+  company?: string;
+  alumniId?: string;
+  department?: string;
+}
+
+// ─── Opportunities & Referrals ────────────────────────────────────────────────
+
+export type OpportunityType = "internship" | "full_time" | "referral" | "shadowing" | "research";
+
+export interface Opportunity {
+  id: string;
+  title: string;
+  company: string;
+  companyLogo?: string;
+  location: string;
+  type: OpportunityType;
+  postedByAlumniId: string;
+  postedByAlumniName: string;
+  postedByAlumniRole: string;
+  postedDate: string;
+  deadline?: string;
+  description: string;
+  requirements: string[];
+  skills: string[];
+  applyUrl?: string;
+  contactEmail?: string;
+  applicantsCount: number;
+}
+
+// ─── Community Posts & Discussions ───────────────────────────────────────────
+
+export interface CommunityComment {
+  id: string;
+  authorId: string;
+  authorName: string;
+  authorRole: string;
+  authorType: UserRole;
+  authorAvatar?: string;
+  content: string;
+  timestamp: string;
+  likes: number;
+}
+
+export interface CommunityPost {
+  id: string;
+  title: string;
+  content: string;
+  authorId: string;
+  authorName: string;
+  authorRole: string;
+  authorType: UserRole;
+  authorAvatar?: string;
+  category: "career_advice" | "technical" | "interview_prep" | "networking" | "general";
+  timestamp: string;
+  likes: number;
+  tags: string[];
+  comments: CommunityComment[];
+}
+
+// ─── Discover Student Model (Alumni View) ─────────────────────────────────────
+
+export interface DiscoverStudent {
+  id: string;
+  name: string;
+  avatar?: string;
+  headline: string;
+  university: string;
+  department: string;
+  academicYear: string;
+  graduationYear: number;
+  careerGoal: string;
+  skills: Skill[];
+  interests: Interest[];
+  bio: string;
+  gpa?: string;
+  seekingMentorshipIn: string[];
+  projects: string[];
+  matchScore?: number;
+  isMentee?: boolean;
+  hasPendingRequest?: boolean;
+}
+
 
 

@@ -2,6 +2,7 @@
 
 import type {
   Student,
+  Alumni,
   RoadmapStage,
   MentorshipActivityData,
   Mentorship,
@@ -9,20 +10,35 @@ import type {
   Message,
   Notification,
   UserSettings,
+  AuthSession,
+  Opportunity,
+  CommunityPost,
+  CommunityComment,
+  DiscoverStudent,
+  UserRole,
 } from "@/types";
 import {
   currentStudent,
+  defaultAlumniUser,
   initialRoadmapStages,
   initialMentorshipActivity,
   notificationsData,
   initialUserSettings,
+  studentsData,
+  initialOpportunities,
+  initialCommunityPosts,
 } from "@/lib/mock-data";
 
 const STUDENT_STORAGE_KEY = "alumnipath_demo_student_profile_v1";
+const ALUMNI_PROFILE_KEY = "alumnipath_demo_alumni_profile_v1";
+const AUTH_SESSION_KEY = "alumnipath_demo_auth_session_v1";
 const ROADMAP_STORAGE_KEY = "alumnipath_demo_roadmap_stages_v1";
 const MENTORSHIP_STORAGE_KEY = "alumnipath_demo_mentorship_activity_v1";
 const NOTIFICATIONS_STORAGE_KEY = "alumnipath_demo_notifications_v1";
 const SETTINGS_STORAGE_KEY = "alumnipath_demo_settings_v1";
+const OPPORTUNITIES_STORAGE_KEY = "alumnipath_demo_opportunities_v1";
+const COMMUNITY_POSTS_KEY = "alumnipath_demo_community_posts_v1";
+const STUDENTS_STORAGE_KEY = "alumnipath_demo_students_list_v1";
 
 const listeners = new Set<() => void>();
 
@@ -578,4 +594,327 @@ export function resetUserSettings(): UserSettings {
   }
   return initialUserSettings;
 }
+
+// ─── Auth Session Storage & Role Management ───────────────────────────────────
+
+export const defaultStudentSession: AuthSession = {
+  isAuthenticated: true,
+  role: "student",
+  email: "ashlin.student@university.edu",
+  name: "Ashlin",
+  avatar: undefined,
+  headline: "Second-year CS Student · Aspiring Full-Stack Software Engineer",
+  department: "Computer Science",
+};
+
+export const defaultAlumniSession: AuthSession = {
+  isAuthenticated: true,
+  role: "alumni",
+  email: "marcus.vance@datadog.com",
+  name: "Marcus Vance",
+  avatar: undefined,
+  headline: "Senior Backend Engineer at Datadog · Ex-Google",
+  company: "Datadog",
+  alumniId: "rec-001",
+  department: "Computer Science",
+};
+
+let cachedAuthSessionRaw: string | null = null;
+let cachedAuthSessionObj: AuthSession = defaultStudentSession;
+
+export function loadAuthSession(): AuthSession {
+  if (typeof window === "undefined") return defaultStudentSession;
+  try {
+    const raw = localStorage.getItem(AUTH_SESSION_KEY);
+    if (!raw) return defaultStudentSession;
+    if (raw === cachedAuthSessionRaw) return cachedAuthSessionObj;
+    cachedAuthSessionRaw = raw;
+    cachedAuthSessionObj = JSON.parse(raw);
+    return cachedAuthSessionObj;
+  } catch {
+    return defaultStudentSession;
+  }
+}
+
+export function saveAuthSession(session: AuthSession): void {
+  if (typeof window === "undefined") return;
+  try {
+    const serialized = JSON.stringify(session);
+    localStorage.setItem(AUTH_SESSION_KEY, serialized);
+    cachedAuthSessionRaw = serialized;
+    cachedAuthSessionObj = session;
+    notifyDashboardChange();
+  } catch (err) {
+    console.error("Failed to persist auth session", err);
+  }
+}
+
+export function setSessionRole(role: UserRole): AuthSession {
+  const updated: AuthSession =
+    role === "alumni"
+      ? { ...defaultAlumniSession, isAuthenticated: true }
+      : { ...defaultStudentSession, isAuthenticated: true };
+  saveAuthSession(updated);
+  return updated;
+}
+
+export function logoutAuthSession(): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(AUTH_SESSION_KEY);
+    cachedAuthSessionRaw = null;
+    cachedAuthSessionObj = { ...defaultStudentSession, isAuthenticated: false };
+    notifyDashboardChange();
+  } catch {
+    // ignore
+  }
+}
+
+// ─── Alumni Profile Storage (Logged In Alumnus) ──────────────────────────────
+
+let cachedAlumniProfileRaw: string | null = null;
+let cachedAlumniProfileObj: Alumni = defaultAlumniUser;
+
+export function loadAlumniProfile(): Alumni {
+  if (typeof window === "undefined") return defaultAlumniUser;
+  try {
+    const raw = localStorage.getItem(ALUMNI_PROFILE_KEY);
+    if (!raw) return defaultAlumniUser;
+    if (raw === cachedAlumniProfileRaw) return cachedAlumniProfileObj;
+    cachedAlumniProfileRaw = raw;
+    cachedAlumniProfileObj = { ...defaultAlumniUser, ...JSON.parse(raw) };
+    return cachedAlumniProfileObj;
+  } catch {
+    return defaultAlumniUser;
+  }
+}
+
+export function saveAlumniProfile(profile: Alumni): void {
+  if (typeof window === "undefined") return;
+  try {
+    const serialized = JSON.stringify(profile);
+    localStorage.setItem(ALUMNI_PROFILE_KEY, serialized);
+    cachedAlumniProfileRaw = serialized;
+    cachedAlumniProfileObj = profile;
+    notifyDashboardChange();
+  } catch (err) {
+    console.error("Failed to persist alumni profile", err);
+  }
+}
+
+// ─── Opportunities & Referrals Storage ────────────────────────────────────────
+
+let cachedOpportunitiesRaw: string | null = null;
+let cachedOpportunitiesObj: Opportunity[] = initialOpportunities;
+
+export function loadOpportunities(): Opportunity[] {
+  if (typeof window === "undefined") return initialOpportunities;
+  try {
+    const raw = localStorage.getItem(OPPORTUNITIES_STORAGE_KEY);
+    if (!raw) return initialOpportunities;
+    if (raw === cachedOpportunitiesRaw) return cachedOpportunitiesObj;
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      cachedOpportunitiesRaw = raw;
+      cachedOpportunitiesObj = parsed;
+      return cachedOpportunitiesObj;
+    }
+    return initialOpportunities;
+  } catch {
+    return initialOpportunities;
+  }
+}
+
+export function saveOpportunities(opportunities: Opportunity[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    const serialized = JSON.stringify(opportunities);
+    localStorage.setItem(OPPORTUNITIES_STORAGE_KEY, serialized);
+    cachedOpportunitiesRaw = serialized;
+    cachedOpportunitiesObj = opportunities;
+    notifyDashboardChange();
+  } catch (err) {
+    console.error("Failed to persist opportunities", err);
+  }
+}
+
+export function addOpportunity(newOpp: Opportunity): void {
+  const current = loadOpportunities();
+  saveOpportunities([newOpp, ...current]);
+  addNotification({
+    id: `notif-${Date.now()}`,
+    type: "match_suggestion",
+    title: `New opportunity posted: ${newOpp.title}`,
+    description: `${newOpp.company} — ${newOpp.location}. Active for student applications.`,
+    timestamp: new Date().toISOString(),
+    read: false,
+    actionUrl: "/alumni-dashboard/opportunities",
+    actorName: newOpp.postedByAlumniName,
+  });
+}
+
+// ─── Community Posts Storage ──────────────────────────────────────────────────
+
+let cachedCommunityRaw: string | null = null;
+let cachedCommunityObj: CommunityPost[] = initialCommunityPosts;
+
+export function loadCommunityPosts(): CommunityPost[] {
+  if (typeof window === "undefined") return initialCommunityPosts;
+  try {
+    const raw = localStorage.getItem(COMMUNITY_POSTS_KEY);
+    if (!raw) return initialCommunityPosts;
+    if (raw === cachedCommunityRaw) return cachedCommunityObj;
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      cachedCommunityRaw = raw;
+      cachedCommunityObj = parsed;
+      return cachedCommunityObj;
+    }
+    return initialCommunityPosts;
+  } catch {
+    return initialCommunityPosts;
+  }
+}
+
+export function saveCommunityPosts(posts: CommunityPost[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    const serialized = JSON.stringify(posts);
+    localStorage.setItem(COMMUNITY_POSTS_KEY, serialized);
+    cachedCommunityRaw = serialized;
+    cachedCommunityObj = posts;
+    notifyDashboardChange();
+  } catch (err) {
+    console.error("Failed to persist community posts", err);
+  }
+}
+
+export function addCommunityPost(post: CommunityPost): void {
+  const current = loadCommunityPosts();
+  saveCommunityPosts([post, ...current]);
+}
+
+export function addCommunityComment(postId: string, comment: CommunityComment): void {
+  const current = loadCommunityPosts();
+  const updated = current.map((p) => {
+    if (p.id === postId) {
+      return {
+        ...p,
+        comments: [...p.comments, comment],
+      };
+    }
+    return p;
+  });
+  saveCommunityPosts(updated);
+}
+
+export function likeCommunityPost(postId: string): void {
+  const current = loadCommunityPosts();
+  const updated = current.map((p) => {
+    if (p.id === postId) {
+      return {
+        ...p,
+        likes: p.likes + 1,
+      };
+    }
+    return p;
+  });
+  saveCommunityPosts(updated);
+}
+
+// ─── Students List (Alumni Discovery View) ────────────────────────────────────
+
+let cachedStudentsRaw: string | null = null;
+let cachedStudentsObj: DiscoverStudent[] = studentsData;
+
+export function loadStudentsList(): DiscoverStudent[] {
+  if (typeof window === "undefined") return studentsData;
+  try {
+    const raw = localStorage.getItem(STUDENTS_STORAGE_KEY);
+    if (!raw) return studentsData;
+    if (raw === cachedStudentsRaw) return cachedStudentsObj;
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      cachedStudentsRaw = raw;
+      cachedStudentsObj = parsed;
+      return cachedStudentsObj;
+    }
+    return studentsData;
+  } catch {
+    return studentsData;
+  }
+}
+
+export function saveStudentsList(students: DiscoverStudent[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    const serialized = JSON.stringify(students);
+    localStorage.setItem(STUDENTS_STORAGE_KEY, serialized);
+    cachedStudentsRaw = serialized;
+    cachedStudentsObj = students;
+    notifyDashboardChange();
+  } catch (err) {
+    console.error("Failed to persist students list", err);
+  }
+}
+
+export function offerMentorshipToStudent(studentId: string, focus: string): { success: boolean; requestId?: string } {
+  const students = loadStudentsList();
+  const student = students.find((s) => s.id === studentId);
+  if (!student) return { success: false };
+
+  const alumni = loadAlumniProfile();
+  const mentorshipActivity = loadMentorshipActivity();
+
+  const newRequestId = `req-alumni-${Date.now()}`;
+  const newRequest: Mentorship = {
+    id: newRequestId,
+    studentId: student.id,
+    alumniId: alumni.id,
+    alumni: {
+      id: alumni.id,
+      name: alumni.name,
+      avatar: alumni.avatar,
+      role: alumni.role,
+      company: alumni.company,
+    },
+    student: {
+      id: student.id,
+      name: student.name,
+      avatar: student.avatar,
+      careerGoal: student.careerGoal,
+      department: student.department,
+      academicYear: student.academicYear,
+    },
+    status: "pending",
+    sessionCount: 0,
+    focus: focus || `Mentorship on ${student.careerGoal}`,
+    requestDate: new Date().toISOString().split("T")[0],
+    startDate: new Date().toISOString().split("T")[0],
+    requestMessage: `Hi ${student.name}! I reviewed your profile and projects at ${student.university} and would be glad to mentor you on ${focus || student.careerGoal}.`,
+    direction: "outgoing",
+  };
+
+  saveMentorshipActivity({
+    ...mentorshipActivity,
+    pendingRequests: [newRequest, ...mentorshipActivity.pendingRequests],
+  });
+
+  const updatedStudents = students.map((s) => (s.id === studentId ? { ...s, hasPendingRequest: true } : s));
+  saveStudentsList(updatedStudents);
+
+  addNotification({
+    id: `notif-${Date.now()}`,
+    type: "mentorship_request",
+    title: `Mentorship invitation sent to ${student.name}`,
+    description: `Focus: ${focus || student.careerGoal}. Waiting for student response.`,
+    timestamp: new Date().toISOString(),
+    read: false,
+    actionUrl: "/alumni-dashboard/requests",
+    actorName: student.name,
+  });
+
+  return { success: true, requestId: newRequestId };
+}
+
 

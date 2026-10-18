@@ -230,10 +230,10 @@ export default function SignupPage() {
     setErrors({});
     setLoading(true);
 
-    // Synchronize newly created student details into centralized demo storage
+    // Synchronize newly created details into centralized demo storage
     if (form.accountType === "student") {
       try {
-        const { loadStudentProfile, saveStudentProfile } = await import("@/lib/dashboard-storage");
+        const { loadStudentProfile, saveStudentProfile, saveAuthSession } = await import("@/lib/dashboard-storage");
         const current = loadStudentProfile();
         saveStudentProfile({
           ...current,
@@ -242,8 +242,37 @@ export default function SignupPage() {
           academicYear: form.academicYear || current.academicYear,
           university: form.institution.trim() || current.university,
         });
+        saveAuthSession({
+          isAuthenticated: true,
+          role: "student",
+          email: form.email,
+          name: form.fullName.trim() || current.name,
+          department: form.department.trim() || current.department,
+        });
       } catch (err) {
         console.error("Failed to sync signup data", err);
+      }
+    } else if (form.accountType === "alumni") {
+      try {
+        const { loadAlumniProfile, saveAlumniProfile, saveAuthSession } = await import("@/lib/dashboard-storage");
+        const currentAlumni = loadAlumniProfile();
+        saveAlumniProfile({
+          ...currentAlumni,
+          name: form.fullName.trim() || currentAlumni.name,
+          company: form.currentCompany.trim() || currentAlumni.company,
+          role: form.currentRole.trim() || currentAlumni.role,
+          graduationYear: Number(form.graduationYear) || currentAlumni.graduationYear,
+        });
+        saveAuthSession({
+          isAuthenticated: true,
+          role: "alumni",
+          email: form.email,
+          name: form.fullName.trim() || currentAlumni.name,
+          company: form.currentCompany.trim() || currentAlumni.company,
+          headline: `${form.currentRole.trim()} at ${form.currentCompany.trim()}`,
+        });
+      } catch (err) {
+        console.error("Failed to sync alumni signup data", err);
       }
     }
 
@@ -287,7 +316,9 @@ export default function SignupPage() {
               </div>
             )}
             <Button variant="primary" fullWidth asChild className="rounded-full font-semibold bg-[#0a66c2] hover:bg-[#004182] mt-2">
-              <Link href="/dashboard">Go to Dashboard</Link>
+              <Link href={form.accountType === "alumni" ? "/alumni-dashboard" : "/dashboard"}>
+                {form.accountType === "alumni" ? "Go to Alumni Portal" : "Go to Dashboard"}
+              </Link>
             </Button>
           </div>
 

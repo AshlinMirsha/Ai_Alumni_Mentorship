@@ -6,6 +6,12 @@ import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";
+import type { UserRole } from "@/types";
+import {
+  saveAuthSession,
+  defaultStudentSession,
+  defaultAlumniSession,
+} from "@/lib/dashboard-storage";
 
 function Wordmark() {
   return (
@@ -14,7 +20,6 @@ function Wordmark() {
     </span>
   );
 }
-
 
 interface FormErrors {
   email?: string;
@@ -27,6 +32,7 @@ function validateEmail(email: string) {
 }
 
 export default function LoginPage() {
+  const [role, setRole] = useState<UserRole>("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -54,8 +60,32 @@ export default function LoginPage() {
     setErrors({});
     setLoading(true);
 
+    const isAlumni =
+      role === "alumni" ||
+      email.toLowerCase().includes("datadog") ||
+      email.toLowerCase().includes("stripe") ||
+      email.toLowerCase().includes("alumni");
+    const activeRole: UserRole = isAlumni ? "alumni" : "student";
+    setRole(activeRole);
+
+    saveAuthSession(
+      activeRole === "alumni"
+        ? {
+            ...defaultAlumniSession,
+            email: email || defaultAlumniSession.email,
+            name: email.toLowerCase().includes("arjun") ? "Arjun Mehta" : defaultAlumniSession.name,
+            isAuthenticated: true,
+          }
+        : {
+            ...defaultStudentSession,
+            email: email || defaultStudentSession.email,
+            name: email.toLowerCase().includes("priya") ? "Priya Sharma" : defaultStudentSession.name,
+            isAuthenticated: true,
+          }
+    );
+
     // Simulate network request (demo mode)
-    await new Promise((r) => setTimeout(r, 1200));
+    await new Promise((r) => setTimeout(r, 1000));
     setLoading(false);
     setSubmitted(true);
   }
@@ -78,12 +108,18 @@ export default function LoginPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="text-base font-bold text-gray-900 mb-1">Sign in successful</h2>
+            <h2 className="text-base font-bold text-gray-900 mb-1">
+              {role === "alumni" ? "Signed in as Alumni Mentor" : "Signed in as Student"}
+            </h2>
             <p className="text-xs text-gray-600 mb-6">
-              Welcome back! Redirecting you to your dashboard&hellip;
+              {role === "alumni"
+                ? "Welcome back to the Alumni Mentor Portal! Directing to your workspace…"
+                : "Welcome back! Redirecting to your student dashboard…"}
             </p>
             <Button variant="primary" fullWidth asChild className="rounded-full font-semibold bg-[#0a66c2] hover:bg-[#004182]">
-              <Link href="/dashboard">Go to Dashboard</Link>
+              <Link href={role === "alumni" ? "/alumni-dashboard" : "/dashboard"}>
+                {role === "alumni" ? "Go to Alumni Dashboard" : "Go to Student Dashboard"}
+              </Link>
             </Button>
           </div>
         </div>
@@ -106,17 +142,16 @@ export default function LoginPage() {
 
         <div>
           <blockquote className="text-gray-200 text-base leading-relaxed mb-6 font-normal">
-            &ldquo;I had no idea how to break into product management. One
-            structured conversation with an alumnus who had made that exact transition
-            completely changed my trajectory.&rdquo;
+            &ldquo;Connecting with our university&apos;s alumni transformed my career journey.
+            Now as an alumnus, guiding current students through their technical interviews is the most rewarding way to give back.&rdquo;
           </blockquote>
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white text-xs font-bold">
-              PS
+              MV
             </div>
             <div>
-              <p className="text-sm font-semibold text-white">Priya Sharma</p>
-              <p className="text-xs text-gray-300">CS, University of Michigan · Class of 2025</p>
+              <p className="text-sm font-semibold text-white">Marcus Vance</p>
+              <p className="text-xs text-gray-300">Senior Backend Engineer at Datadog · Class of 2020</p>
             </div>
           </div>
         </div>
@@ -139,33 +174,94 @@ export default function LoginPage() {
         </div>
 
         <div className="w-full max-w-md bg-white border border-gray-200 rounded-lg p-8 shadow-xs">
-          <div className="mb-6">
+          <div className="mb-5">
             <h1 className="text-2xl font-bold text-gray-900 tracking-tight mb-1">Sign in</h1>
             <p className="text-xs text-gray-600">
-              Stay updated on your professional and mentorship community.
+              Access your college mentorship and career network.
             </p>
+          </div>
+
+          {/* Role Switcher Tab */}
+          <div className="mb-4 flex p-1 bg-gray-100 rounded-lg border border-gray-200">
+            <button
+              type="button"
+              onClick={() => {
+                setRole("student");
+                if (email.includes("datadog") || email.includes("stripe")) {
+                  setEmail("priya@umich.edu");
+                }
+              }}
+              className={cn(
+                "flex-1 py-1.5 text-xs font-semibold rounded-md transition-all text-center",
+                role === "student"
+                  ? "bg-white text-[#0a66c2] shadow-xs"
+                  : "text-gray-600 hover:text-gray-900"
+              )}
+            >
+              Student Portal
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setRole("alumni");
+                if (email.includes("umich") || email === "") {
+                  setEmail("marcus.vance@datadog.com");
+                }
+              }}
+              className={cn(
+                "flex-1 py-1.5 text-xs font-semibold rounded-md transition-all text-center",
+                role === "alumni"
+                  ? "bg-white text-[#0a66c2] shadow-xs"
+                  : "text-gray-600 hover:text-gray-900"
+              )}
+            >
+              Alumni Mentor Portal
+            </button>
           </div>
 
           <div className="mb-5 flex items-start gap-2.5 rounded-lg border border-[#b2d5f8] bg-[#ebf3fb] p-3 text-xs text-[#004182]">
             <AlertCircle size={15} className="mt-0.5 shrink-0 text-[#0a66c2]" />
             <div className="space-y-1.5 flex-1">
               <p>
-                <strong>Demo mode:</strong> Use any email and password or click a quick-fill preset below to test:
+                <strong>Demo mode:</strong> Choose your role above or click a quick-fill demo persona:
               </p>
               <div className="flex flex-wrap gap-1.5 pt-1">
                 <button
                   type="button"
                   onClick={() => {
+                    setRole("student");
                     setEmail("priya@umich.edu");
                     setPassword("password123");
                   }}
-                  className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-white border border-[#b2d5f8] text-[#0a66c2] hover:bg-[#d0e2f5] transition-colors"
+                  className={cn(
+                    "px-2 py-0.5 rounded-full text-[11px] font-semibold border transition-colors",
+                    role === "student"
+                      ? "bg-[#0a66c2] text-white border-[#0a66c2]"
+                      : "bg-white border-[#b2d5f8] text-[#0a66c2] hover:bg-[#d0e2f5]"
+                  )}
                 >
                   Student (Priya)
                 </button>
                 <button
                   type="button"
                   onClick={() => {
+                    setRole("alumni");
+                    setEmail("marcus.vance@datadog.com");
+                    setPassword("password123");
+                  }}
+                  className={cn(
+                    "px-2 py-0.5 rounded-full text-[11px] font-semibold border transition-colors",
+                    role === "alumni"
+                      ? "bg-[#0a66c2] text-white border-[#0a66c2]"
+                      : "bg-white border-[#b2d5f8] text-[#0a66c2] hover:bg-[#d0e2f5]"
+                  )}
+                >
+                  Alumni (Marcus Vance)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRole("alumni");
                     setEmail("arjun@stripe.com");
                     setPassword("password123");
                   }}

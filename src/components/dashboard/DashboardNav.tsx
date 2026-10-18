@@ -18,6 +18,11 @@ import {
   MessageSquare,
   Settings,
   CheckCheck,
+  ArrowRightLeft,
+  Inbox,
+  UserCheck,
+  Briefcase,
+  MessagesSquare,
 } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import {
@@ -25,6 +30,9 @@ import {
   loadNotifications,
   markNotificationAsRead,
   markAllNotificationsAsRead,
+  setSessionRole,
+  loadAuthSession,
+  defaultStudentSession,
 } from "@/lib/dashboard-storage";
 import { notificationsData } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
@@ -43,21 +51,41 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
   const notifRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
+  const session = useSyncExternalStore(
+    subscribeToDashboardStorage,
+    loadAuthSession,
+    () => defaultStudentSession
+  );
+
   const notifications = useSyncExternalStore(
     subscribeToDashboardStorage,
     loadNotifications,
     () => notificationsData
   );
 
-  const navItems = [
-    { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { label: "Discover Alumni", href: "/alumni", icon: Users },
-    { label: "Mentorships", href: "/mentorship", icon: Compass },
-    { label: "Messages", href: "/messages", icon: MessageSquare },
-    { label: "Career Roadmap", href: "/career-roadmap", icon: Map },
-    { label: "AI Assistant", href: "/career-assistant", icon: Sparkles },
-    { label: "Resume Review", href: "/resume-review", icon: FileText },
-  ];
+  const isAlumni = session.role === "alumni";
+  const effectiveName = isAlumni ? (session.name || "Marcus Vance") : studentName;
+  const effectiveRole = isAlumni ? "Alumni Mentor" : "CS Student";
+
+  const navItems = isAlumni
+    ? [
+        { label: "Dashboard", href: "/alumni-dashboard", icon: LayoutDashboard },
+        { label: "Discover Students", href: "/alumni-dashboard/students", icon: Users },
+        { label: "Requests", href: "/alumni-dashboard/requests", icon: Inbox },
+        { label: "My Mentees", href: "/alumni-dashboard/mentees", icon: UserCheck },
+        { label: "Opportunities", href: "/alumni-dashboard/opportunities", icon: Briefcase },
+        { label: "Community", href: "/alumni-dashboard/community", icon: MessagesSquare },
+        { label: "Messages", href: "/messages", icon: MessageSquare },
+      ]
+    : [
+        { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+        { label: "Discover Alumni", href: "/alumni", icon: Users },
+        { label: "Mentorships", href: "/mentorship", icon: Compass },
+        { label: "Messages", href: "/messages", icon: MessageSquare },
+        { label: "Career Roadmap", href: "/career-roadmap", icon: Map },
+        { label: "AI Assistant", href: "/career-assistant", icon: Sparkles },
+        { label: "Resume Review", href: "/resume-review", icon: FileText },
+      ];
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -79,8 +107,8 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-[54px]">
           {/* Logo & Brand */}
-          <div className="flex items-center gap-6 xl:gap-8">
-            <Link href="/dashboard" className="flex items-center gap-2.5 group shrink-0">
+          <div className="flex items-center gap-4 xl:gap-6">
+            <Link href={isAlumni ? "/alumni-dashboard" : "/dashboard"} className="flex items-center gap-2.5 group shrink-0">
               <div className="h-7 w-7 rounded bg-[#0a66c2] flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#004182]">
                 <span className="text-white text-xs font-bold tracking-tight">A</span>
               </div>
@@ -88,6 +116,12 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
                 Alumni<span className="text-[#0a66c2]">Path</span>
               </span>
             </Link>
+
+            {isAlumni && (
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#ebf3fb] text-[#0a66c2] border border-[#b2d5f8]">
+                Alumni Portal
+              </span>
+            )}
 
             {/* Desktop Navigation Links */}
             <nav className="hidden lg:flex items-center gap-1">
@@ -115,11 +149,19 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
 
           {/* Right utility items */}
           <div className="flex items-center gap-2">
-            {/* Demo Mode Badge */}
-            <span className="hidden xl:inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-              Demo Mode
-            </span>
+            {/* Quick Switch to Alumni Portal */}
+            <button
+              type="button"
+              onClick={() => {
+                setSessionRole("alumni");
+                router.push("/alumni-dashboard");
+              }}
+              title="Click to preview the platform as an Alumni Mentor"
+              className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 border border-gray-200 rounded-full transition-colors"
+            >
+              <ArrowRightLeft size={12} className="text-gray-500" />
+              <span>Switch to Alumni View</span>
+            </button>
 
             {/* Notifications Popover */}
             <div className="relative" ref={notifRef}>
@@ -257,20 +299,20 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
                   showUserMenu && "bg-gray-100"
                 )}
               >
-                <Avatar name={studentName} size="sm" />
+                <Avatar name={effectiveName} size="sm" />
                 <div className="hidden md:block text-left">
-                  <p className="text-xs font-semibold text-gray-900 leading-none">{studentName}</p>
-                  <p className="text-[11px] text-gray-500 leading-none mt-1">CS Student</p>
+                  <p className="text-xs font-semibold text-gray-900 leading-none">{effectiveName}</p>
+                  <p className="text-[11px] text-gray-500 leading-none mt-1">{effectiveRole}</p>
                 </div>
               </button>
 
               {showUserMenu && (
                 <div className="absolute right-0 mt-2 w-56 rounded-lg bg-white border border-gray-200 shadow-[0_4px_16px_rgba(0,0,0,0.12)] py-1.5 z-50">
                   <div className="px-3.5 py-2.5 border-b border-gray-100">
-                    <p className="text-xs font-semibold text-gray-900">{studentName}</p>
-                    <p className="text-[11px] text-gray-500">ashlin.student@university.edu</p>
+                    <p className="text-xs font-semibold text-gray-900">{effectiveName}</p>
+                    <p className="text-[11px] text-gray-500">{session.email || "user@university.edu"}</p>
                     <span className="inline-flex items-center gap-1 mt-1 text-[10px] text-[#057642] bg-[#eef8f1] px-1.5 py-0.5 rounded font-medium border border-[#bfe3c9]">
-                      <CheckCircle2 size={10} /> Active Student
+                      <CheckCircle2 size={10} /> {effectiveRole}
                     </span>
                   </div>
                   <button
@@ -298,6 +340,24 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
                     <Settings size={13} className="text-gray-400" />
                     <span>Settings &amp; Preferences</span>
                   </Link>
+                  <div className="border-t border-gray-100 my-1" />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowUserMenu(false);
+                      setSessionRole("alumni");
+                      router.push("/alumni-dashboard");
+                    }}
+                    className="w-full text-left flex items-center justify-between px-3.5 py-2 text-xs text-[#0a66c2] hover:bg-blue-50 transition-colors font-medium"
+                  >
+                    <span className="flex items-center gap-2">
+                      <ArrowRightLeft size={13} />
+                      <span>Switch to Alumni View</span>
+                    </span>
+                    <span className="text-[10px] text-blue-600 bg-blue-100/60 px-1.5 py-0.5 rounded">
+                      Demo
+                    </span>
+                  </button>
                   <div className="border-t border-gray-100 my-1" />
                   <Link
                     href="/"
@@ -371,9 +431,26 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
               type="button"
               onClick={() => {
                 setMobileOpen(false);
+                if (isAlumni) {
+                  setSessionRole("student");
+                  router.push("/dashboard");
+                } else {
+                  setSessionRole("alumni");
+                  router.push("/alumni-dashboard");
+                }
+              }}
+              className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs text-[#0a66c2] font-semibold hover:bg-blue-50 rounded-md"
+            >
+              <ArrowRightLeft size={14} />
+              <span>{isAlumni ? "Switch to Student Portal \u2192" : "Switch to Alumni Portal \u2192"}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileOpen(false);
                 onOpenEditProfile?.();
               }}
-              className="w-full text-left px-3 py-2 text-xs text-[#0a66c2] font-semibold hover:bg-blue-50 rounded-md"
+              className="w-full text-left px-3 py-2 text-xs text-gray-700 font-medium hover:bg-gray-50 rounded-md"
             >
               Update Profile Information &rarr;
             </button>
