@@ -3,29 +3,22 @@
 import Link from "next/link";
 import { useState } from "react";
 import {
-  Users,
-  Compass,
-  Brain,
-  FileText,
-  Map,
-  Star,
   ArrowRight,
   CheckCircle,
   Menu,
   X,
-  MapPin,
   Building2,
-  GraduationCap,
-  MessageCircle,
-  Briefcase,
-  Sparkles,
+  MapPin,
+  Compass,
+  Brain,
+  Map,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Avatar } from "@/components/ui/Avatar";
-import { Card } from "@/components/ui/Card";
 
-// ─── Shared wordmark ──────────────────────────────────────────────────────────
+// ─── Shared Wordmark ──────────────────────────────────────────────────────────
 function Wordmark({ dark = false }: { dark?: boolean }) {
   return (
     <span
@@ -43,10 +36,10 @@ function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-[#E5E7EB]">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#E5E7EB]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-14 sm:h-16">
-          {/* Wordmark */}
+          {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-2.5">
             <div className="h-7 w-7 rounded-md bg-[#0A66C2] flex items-center justify-center shrink-0">
               <span className="text-white text-xs font-bold">A</span>
@@ -54,8 +47,8 @@ function Header() {
             <Wordmark />
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-7">
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-8">
             <a
               href="#how-it-works"
               className="text-sm font-medium text-[#626262] hover:text-[#191919] transition-colors"
@@ -68,14 +61,15 @@ function Header() {
             >
               Features
             </a>
-            <Link
-              href="/alumni"
+            <a
+              href="#alumni"
               className="text-sm font-medium text-[#626262] hover:text-[#191919] transition-colors"
             >
               Discover Alumni
-            </Link>
+            </a>
           </nav>
 
+          {/* Auth Actions */}
           <div className="hidden md:flex items-center gap-3">
             <Button variant="ghost" size="sm" asChild>
               <Link href="/login" className="text-sm font-medium text-[#191919]">
@@ -89,7 +83,7 @@ function Header() {
             </Button>
           </div>
 
-          {/* Mobile toggle */}
+          {/* Mobile Menu Toggle */}
           <button
             className="md:hidden p-2 text-[#626262] hover:text-[#191919]"
             onClick={() => setMobileOpen((p) => !p)}
@@ -100,7 +94,7 @@ function Header() {
         </div>
       </div>
 
-      {/* Mobile nav */}
+      {/* Mobile Drawer */}
       {mobileOpen && (
         <div className="md:hidden border-t border-[#E5E7EB] bg-white px-4 py-3 flex flex-col gap-2">
           <a
@@ -117,13 +111,13 @@ function Header() {
           >
             Features
           </a>
-          <Link
-            href="/alumni"
+          <a
+            href="#alumni"
             className="text-sm py-2 font-medium text-[#191919] border-b border-gray-100"
             onClick={() => setMobileOpen(false)}
           >
             Discover Alumni
-          </Link>
+          </a>
           <div className="flex gap-2 pt-2">
             <Button variant="secondary" size="sm" fullWidth asChild>
               <Link href="/login">Log In</Link>
@@ -138,411 +132,53 @@ function Header() {
   );
 }
 
-// ─── Hero Visual (Open, Borderless Editorial Composition) ──────────────────────
-function HeroVisual() {
-  return (
-    <div className="relative w-full max-w-lg mx-auto lg:max-w-none">
-      {/* Clean, open editorial networking composition — without any enclosing browser mockup */}
-      <div className="space-y-3.5">
-        {/* Spotlight Alumni Card (Marcus Vance) */}
-        <div className="bg-white border border-[#E5E7EB] rounded-xl p-4 sm:p-5 shadow-sm hover:border-[#0A66C2]/40 transition-colors">
-          <div className="flex items-start justify-between gap-3 mb-3">
-            <div className="flex items-center gap-3 min-w-0">
-              <Avatar name="Marcus Vance" size="lg" />
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-sm font-semibold text-[#191919]">
-                    Marcus Vance
-                  </span>
-                  <span className="inline-flex items-center text-[10px] font-semibold text-[#0A66C2] bg-[#F0F7FE] border border-[#DCEAF8] px-1.5 py-0.5 rounded">
-                    Alum &apos;20
-                  </span>
-                </div>
-                <p className="text-xs text-[#626262] mt-0.5 truncate">
-                  Senior Backend Engineer · Datadog
-                </p>
-                <p className="text-[11px] text-gray-400 truncate">
-                  Ex-Google · B.S. in Computer Science
-                </p>
-              </div>
-            </div>
-            <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#057642] bg-[#EEF8F1] border border-[#BFE3C9] px-2 py-0.5 rounded-full shrink-0">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#057642]" />
-              Active Mentor
-            </span>
-          </div>
-
-          <p className="text-xs text-[#626262] leading-relaxed mb-3 bg-[#F7F9FC] border border-[#E5E7EB] rounded-lg p-3">
-            &ldquo;Went through the campus recruitment cycle myself. I help students
-            bridge the gap between coursework and production engineering standards.&rdquo;
-          </p>
-
-          <div className="flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-gray-100 text-xs">
-            <div className="flex flex-wrap gap-1.5">
-              <span className="text-[11px] font-medium text-[#0A66C2] bg-[#F0F7FE] px-2 py-0.5 rounded">
-                Distributed Systems
-              </span>
-              <span className="text-[11px] font-medium text-[#4A4A4A] bg-[#F3F5F7] px-2 py-0.5 rounded">
-                PostgreSQL
-              </span>
-              <span className="text-[11px] font-medium text-[#4A4A4A] bg-[#F3F5F7] px-2 py-0.5 rounded">
-                System Design
-              </span>
-            </div>
-            <span className="text-[11px] font-medium text-[#626262]">
-              96% response rate
-            </span>
-          </div>
-        </div>
-
-        {/* Connection Indicator Bar */}
-        <div className="flex items-center justify-between px-3 py-1 text-xs text-[#626262]">
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-[#0A66C2]" />
-            <span className="font-medium text-[#191919]">
-              Direct 1:1 Mentorship Path
-            </span>
-          </div>
-          <span className="text-[11px] text-[#0A66C2] font-medium flex items-center gap-1">
-            <Sparkles size={12} className="text-[#0A66C2]" />
-            Verified campus match
-          </span>
-        </div>
-
-        {/* Student Mentee Connection Card (Ashlin) */}
-        <div className="bg-white border border-[#E5E7EB] rounded-xl p-4 sm:p-5 shadow-sm hover:border-[#0A66C2]/40 transition-colors">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0">
-              <Avatar name="Ashlin" size="md" />
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-sm font-semibold text-[#191919]">Ashlin</span>
-                  <span className="text-[10px] font-medium text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">
-                    Student &apos;27
-                  </span>
-                </div>
-                <p className="text-xs text-[#626262] mt-0.5 truncate">
-                  Computer Science · Second Year
-                </p>
-                <p className="text-[11px] text-[#0A66C2] font-medium mt-0.5 truncate">
-                  Targeting: Full-Stack Software Engineer
-                </p>
-              </div>
-            </div>
-            <Link
-              href="/alumni"
-              className="text-xs font-semibold text-[#0A66C2] hover:text-[#004182] hover:underline shrink-0 flex items-center gap-1"
-            >
-              Connect <ArrowRight size={12} />
-            </Link>
-          </div>
-        </div>
-
-        {/* Companion Alum Preview (Elena Rostova) */}
-        <div className="bg-white border border-[#E5E7EB] rounded-xl p-3.5 sm:p-4 shadow-sm hover:border-[#0A66C2]/40 transition-colors">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0">
-              <Avatar name="Elena Rostova" size="md" />
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-semibold text-[#191919] truncate">
-                    Elena Rostova
-                  </span>
-                  <span className="text-[10px] text-[#0A66C2] font-semibold shrink-0">
-                    Alum &apos;19
-                  </span>
-                </div>
-                <p className="text-[11px] text-[#626262] truncate">
-                  Staff Software Engineer · Airbnb
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-1 text-[11px] text-[#626262] shrink-0">
-              <Building2 size={12} className="text-gray-400" />
-              <span>San Francisco, CA</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── How It Works Data ────────────────────────────────────────────────────────
-const HOW_IT_WORKS = [
+// ─── Real Mock Alumni for Discover Section ────────────────────────────────────
+const DIRECTORY_ALUMNI = [
   {
-    step: "01",
-    title: "Discover Alumni",
-    description:
-      "Search and filter alumni by company, role, skills, and industry to find mentors whose journeys align with your career goals.",
-    icon: Compass,
+    id: "rec-001",
+    name: "Marcus Vance",
+    role: "Senior Backend Engineer",
+    company: "Datadog",
+    former: "Ex-Google",
+    department: "Computer Science",
+    graduationYear: 2020,
+    location: "San Francisco, CA",
+    skills: ["Python", "PostgreSQL", "Distributed Systems", "Docker"],
   },
   {
-    step: "02",
-    title: "Connect with Mentors",
-    description:
-      "Reach out with personalized messages, ask targeted career questions, and learn from real professional experiences.",
-    icon: MessageCircle,
+    id: "rec-002",
+    name: "Elena Rostova",
+    role: "Staff Software Engineer",
+    company: "Airbnb",
+    former: "Ex-Microsoft",
+    department: "Computer Science",
+    graduationYear: 2019,
+    location: "Seattle, WA",
+    skills: ["Java", "React", "Microservices", "System Design"],
   },
   {
-    step: "03",
-    title: "Build Your Career",
-    description:
-      "Gain actionable industry insights, prepare for interviews, and map out a structured roadmap for your long-term success.",
-    icon: GraduationCap,
+    id: "rec-003",
+    name: "Dev Patel",
+    role: "VP of Product",
+    company: "Stripe",
+    former: "Ex-Meta",
+    department: "Economics & CS",
+    graduationYear: 2015,
+    location: "New York, NY",
+    skills: ["Product Strategy", "FinTech", "Pricing", "Leadership"],
+  },
+  {
+    id: "rec-004",
+    name: "Sarah Chen",
+    role: "Senior Frontend Architect",
+    company: "Vercel",
+    former: "Ex-Dropbox",
+    department: "Computer Science",
+    graduationYear: 2020,
+    location: "San Francisco, CA",
+    skills: ["React", "Next.js", "Design Systems", "Web Performance"],
   },
 ];
-
-// ─── Features Data ────────────────────────────────────────────────────────────
-const FEATURES = [
-  {
-    icon: Users,
-    title: "Smart Alumni Matching",
-    description:
-      "Find alumni whose career paths, industries, and technical skills are most relevant to where you want to go.",
-  },
-  {
-    icon: Brain,
-    title: "AI Career Assistant",
-    description:
-      "Get thoughtful, context-aware career guidance. Ask questions, explore options, and think through decisions.",
-  },
-  {
-    icon: MessageCircle,
-    title: "Direct Networking",
-    description:
-      "Connect directly with alumni who walked the same campus. Ask questions and learn about real industry realities.",
-  },
-  {
-    icon: Map,
-    title: "Career Roadmaps",
-    description:
-      "Map out a clear path to your target role with milestones, timelines, and skill-gap awareness.",
-  },
-  {
-    icon: FileText,
-    title: "Resume Review",
-    description:
-      "Get structured feedback on your resume: impact, clarity, ATS keywords, and specific improvement areas.",
-  },
-  {
-    icon: Star,
-    title: "Personalized Guidance",
-    description:
-      "Recommendations and career insights tailored to your goals, background, and the alumni in your network.",
-  },
-];
-
-// ─── Platform Preview Section ─────────────────────────────────────────────────
-function PlatformPreview() {
-  return (
-    <section id="alumni" className="py-16 md:py-24 border-t border-[#E5E7EB] bg-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left: text */}
-          <div>
-            <p className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wider mb-2.5">
-              How the platform helps
-            </p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#191919] mb-4 leading-tight tracking-tight">
-              Choose your direction.
-              <br />
-              Find who can help you get there.
-            </h2>
-            <p className="text-sm sm:text-base text-[#626262] mb-6 leading-relaxed">
-              Set a target role, and see alumni whose career journey is most
-              relevant to yours — filtered by company, industry, skills, and
-              graduation year.
-            </p>
-
-            <ul className="space-y-3 mb-8">
-              {[
-                "Filter by industry, company, or graduation year",
-                "Learn directly from engineers, PMs, and designers",
-                "Read their career story before reaching out",
-                "Connect with a personalized intro message",
-              ].map((point) => (
-                <li key={point} className="flex items-start gap-2.5 text-sm text-[#4A4A4A]">
-                  <CheckCircle size={16} className="text-[#057642] mt-0.5 shrink-0" />
-                  <span>{point}</span>
-                </li>
-              ))}
-            </ul>
-
-            <Button variant="primary" asChild>
-              <Link href="/alumni" className="inline-flex items-center">
-                Explore Alumni Directory <ArrowRight size={15} className="ml-1.5" />
-              </Link>
-            </Button>
-          </div>
-
-          {/* Right: mini alumni list preview */}
-          <div className="space-y-3">
-            {[
-              {
-                name: "Arjun Mehta",
-                role: "Senior PM",
-                company: "Stripe",
-                location: "San Francisco, CA",
-                year: 2018,
-                tags: ["Product Strategy", "FinTech", "PM Interviews"],
-              },
-              {
-                name: "Neha Kapoor",
-                role: "Engineering Manager",
-                company: "Airbnb",
-                location: "San Francisco, CA",
-                year: 2016,
-                tags: ["Engineering Leadership", "System Design", "Career Growth"],
-              },
-              {
-                name: "Sanya Gupta",
-                role: "UX Design Lead",
-                company: "Microsoft",
-                location: "Seattle, WA",
-                year: 2017,
-                tags: ["UX Research", "Design Systems", "Portfolio Reviews"],
-              },
-            ].map((a) => (
-              <Card
-                key={a.name}
-                padding="md"
-                className="bg-white border border-[#E5E7EB] hover:border-[#0A66C2]/40 transition-colors"
-              >
-                <div className="flex items-start gap-3">
-                  <Avatar name={a.name} size="lg" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <p className="text-sm font-semibold text-[#191919]">{a.name}</p>
-                        <p className="text-xs text-[#626262] flex items-center gap-1 mt-0.5">
-                          <Building2 size={11} />
-                          {a.role} · {a.company}
-                        </p>
-                        <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
-                          <MapPin size={11} />
-                          {a.location} · Class of {a.year}
-                        </p>
-                      </div>
-                      <span className="text-[11px] font-medium text-[#057642] bg-[#EEF8F1] border border-[#BFE3C9] px-2 py-0.5 rounded-full shrink-0">
-                        Verified Alum
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap gap-1 mt-2.5">
-                      {a.tags.map((t) => (
-                        <Badge key={t} size="sm" variant="default">
-                          {t}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── Footer ───────────────────────────────────────────────────────────────────
-function Footer() {
-  return (
-    <footer className="border-t border-[#E5E7EB] bg-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
-          {/* Brand */}
-          <div>
-            <Link href="/" className="flex items-center gap-2.5 mb-3">
-              <div className="h-7 w-7 rounded-md bg-[#0A66C2] flex items-center justify-center shrink-0">
-                <span className="text-white text-xs font-bold">A</span>
-              </div>
-              <Wordmark />
-            </Link>
-            <p className="text-sm text-[#626262] leading-relaxed">
-              Alumni networking and career mentorship for college students.
-            </p>
-          </div>
-
-          {/* Product */}
-          <div>
-            <p className="text-sm font-semibold text-[#191919] mb-3">Product</p>
-            <ul className="space-y-2">
-              {[
-                ["Discover Alumni", "/alumni"],
-                ["Direct Messages", "/messages"],
-                ["AI Career Assistant", "/career-assistant"],
-                ["Career Roadmap", "/career-roadmap"],
-                ["Resume Review", "/resume-review"],
-              ].map(([label, href]) => (
-                <li key={label}>
-                  <Link
-                    href={href}
-                    className="text-sm text-[#626262] hover:text-[#191919] transition-colors"
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div>
-            <p className="text-sm font-semibold text-[#191919] mb-3">Support</p>
-            <ul className="space-y-2">
-              {[
-                ["Help Center", "#"],
-                ["Contact Us", "#"],
-                ["For Universities", "#"],
-              ].map(([label, href]) => (
-                <li key={label}>
-                  <Link
-                    href={href}
-                    className="text-sm text-[#626262] hover:text-[#191919] transition-colors"
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <p className="text-sm font-semibold text-[#191919] mb-3">Legal</p>
-            <ul className="space-y-2">
-              {[
-                ["Privacy Policy", "#"],
-                ["Terms of Service", "#"],
-                ["Cookie Policy", "#"],
-              ].map(([label, href]) => (
-                <li key={label}>
-                  <Link
-                    href={href}
-                    className="text-sm text-[#626262] hover:text-[#191919] transition-colors"
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        <div className="border-t border-[#E5E7EB] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-[#626262]">
-            © 2026 AlumniPath. All rights reserved.
-          </p>
-          <p className="text-xs text-[#626262]">
-            Built for students, by people who were once students.
-          </p>
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 // ─── Main Landing Page ────────────────────────────────────────────────────────
 export default function LandingPage() {
@@ -551,182 +187,487 @@ export default function LandingPage() {
       <Header />
 
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="py-16 md:py-24 border-b border-[#E5E7EB]">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-              {/* Left Column */}
-              <div>
-                <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0A66C2] bg-[#F0F7FE] border border-[#DCEAF8] rounded-full px-3.5 py-1 mb-5">
-                  Your college network, working for your future
-                </p>
+        {/* ══════════════════════════════════════════════════════════════════════
+            STEP 2: CENTERED EDITORIAL HERO WITH WIDE PHOTOGRAPHIC VISUAL
+           ══════════════════════════════════════════════════════════════════════ */}
+        <section className="pt-16 sm:pt-20 md:pt-24 pb-16 md:pb-24 bg-white">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+            {/* Subtle intro label */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium text-[#0A66C2] bg-[#F0F7FE] border border-[#DCEAF8] mb-6">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#0A66C2]" />
+              <span>Verified University Alumni Network</span>
+            </div>
 
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.15] mb-5">
-                  <span className="text-[#191919]">Find the right people.</span>
-                  <br />
-                  <span className="text-[#0A66C2]">Build the right career.</span>
-                </h1>
+            {/* Centered Main Headline */}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#191919] max-w-3xl mx-auto leading-[1.12]">
+              Your college network.
+              <br />
+              <span className="text-[#0A66C2]">Your next opportunity.</span>
+            </h1>
 
-                <p className="text-base sm:text-lg text-[#626262] leading-relaxed mb-8 max-w-lg">
-                  Connect with alumni who understand your ambitions, learn from
-                  real career experiences, and build a clearer path toward your
-                  professional goals.
-                </p>
+            {/* Supporting Text */}
+            <p className="text-base sm:text-lg text-[#626262] max-w-2xl mx-auto leading-relaxed mt-5 mb-8">
+              Build meaningful connections with alumni, learn from their experiences,
+              and discover opportunities that move your career forward.
+            </p>
 
-                <div className="flex flex-col sm:flex-row gap-3 mb-8">
-                  <Button variant="primary" size="lg" asChild>
-                    <Link href="/alumni" className="inline-flex items-center justify-center">
-                      Find Your Mentor <ArrowRight size={15} className="ml-1.5" />
-                    </Link>
-                  </Button>
-                  <Button variant="secondary" size="lg" asChild>
-                    <a href="#how-it-works" className="inline-flex items-center justify-center">
-                      Explore How It Works
-                    </a>
-                  </Button>
+            {/* Two Primary Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
+              <Button variant="primary" size="lg" asChild>
+                <Link
+                  href="/alumni"
+                  className="inline-flex items-center justify-center px-6"
+                >
+                  Find Your Mentor <ArrowRight size={15} className="ml-2" />
+                </Link>
+              </Button>
+              <Button variant="secondary" size="lg" asChild>
+                <a
+                  href="#how-it-works"
+                  className="inline-flex items-center justify-center px-6"
+                >
+                  Explore the Network
+                </a>
+              </Button>
+            </div>
+
+            {/* Small Understated Line */}
+            <p className="text-xs sm:text-sm text-[#626262] font-normal mb-12 sm:mb-16">
+              Connecting students and alumni through shared experience.
+            </p>
+
+            {/* Wide, Editorial-Style Photographic Composition */}
+            <div className="relative w-full rounded-2xl overflow-hidden border border-[#E5E7EB] shadow-sm bg-[#F7F9FC]">
+              <div className="relative aspect-[16/8] sm:aspect-[21/9] w-full">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/hero-network.jpg"
+                  alt="University graduates and alumni celebrating academic milestones and professional connection"
+                  className="w-full h-full object-cover object-center"
+                />
+                {/* Subtle natural gradient overlay at bottom for seamless typography integration */}
+                <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/65 via-black/30 to-transparent flex items-end justify-between px-6 sm:px-8 py-5 text-white">
+                  <div className="flex items-center gap-2.5 text-xs sm:text-sm font-medium">
+                    <span className="h-2 w-2 rounded-full bg-[#34D399]" />
+                    <span>
+                      500+ verified alumni actively mentoring across 45+ industries
+                    </span>
+                  </div>
+                  <span className="hidden sm:inline-block text-xs text-white/80 font-normal">
+                    University Alumni Community
+                  </span>
                 </div>
-
-                <div className="pt-4 border-t border-[#E5E7EB] flex flex-wrap items-center gap-6 text-xs text-[#626262]">
-                  <div className="flex items-center gap-1.5">
-                    <CheckCircle size={14} className="text-[#057642]" />
-                    <span>Verified Alumni</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Briefcase size={14} className="text-[#0A66C2]" />
-                    <span>Top Tech &amp; Design Roles</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <CheckCircle size={14} className="text-[#057642]" />
-                    <span>Direct Inquiries</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Open, Borderless Visual */}
-              <div className="lg:pl-2">
-                <HeroVisual />
               </div>
             </div>
           </div>
         </section>
 
-        {/* How It Works Section */}
-        <section id="how-it-works" className="py-16 md:py-24 bg-white border-b border-[#E5E7EB]">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="text-center max-w-2xl mx-auto mb-14">
-              <p className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wider mb-2.5">
-                How it works
-              </p>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#191919] tracking-tight">
-                Three steps to a better career path
-              </h2>
-              <p className="text-sm sm:text-base text-[#626262] mt-3 leading-relaxed">
-                A structured, reliable way for students to connect with experienced
-                graduates who have walked the same path.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
-              {HOW_IT_WORKS.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <div
-                    key={item.step}
-                    className="bg-white border border-[#E5E7EB] rounded-lg p-6 hover:border-[#0A66C2]/40 transition-colors"
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="h-10 w-10 rounded-md bg-[#F0F7FE] border border-[#DCEAF8] flex items-center justify-center text-[#0A66C2]">
-                        <Icon size={18} />
-                      </div>
-                      <span className="text-xs font-bold text-[#0A66C2] bg-[#F0F7FE] px-2.5 py-0.5 rounded-full">
-                        Step {item.step}
-                      </span>
-                    </div>
-                    <h3 className="text-base font-semibold text-[#191919] mb-2">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-[#626262] leading-relaxed">
-                      {item.description}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* Features Section */}
+        {/* ══════════════════════════════════════════════════════════════════════
+            STEP 3: HOW IT WORKS (Horizontal 3-Step with Typography & Dividers)
+           ══════════════════════════════════════════════════════════════════════ */}
         <section
-          id="features"
-          className="py-16 md:py-24 bg-[#F7F9FC] border-b border-[#E5E7EB]"
+          id="how-it-works"
+          className="py-20 md:py-28 bg-white border-t border-[#E5E7EB]"
         >
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="text-center max-w-2xl mx-auto mb-14">
-              <p className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wider mb-2.5">
-                Platform features
+            <div className="max-w-2xl mb-16">
+              <p className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wider mb-3">
+                How It Works
               </p>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#191919] tracking-tight">
-                Everything you need to navigate your career
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#191919] tracking-tight">
+                A deliberate path from campus to industry.
               </h2>
-              <p className="text-sm sm:text-base text-[#626262] mt-3 leading-relaxed">
-                Comprehensive tools to help students bridge the gap between college
-                and professional life.
+              <p className="text-base text-[#626262] mt-3 leading-relaxed">
+                No cold messaging, no transactional exchanges. Just straightforward
+                mentorship anchored in verified university affiliation.
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {FEATURES.map((feature) => {
-                const Icon = feature.icon;
-                return (
-                  <Card
-                    key={feature.title}
-                    padding="md"
-                    className="bg-white border border-[#E5E7EB] rounded-lg hover:border-[#0A66C2]/40 transition-colors"
-                  >
-                    <div className="h-9 w-9 rounded-md bg-[#F0F7FE] border border-[#DCEAF8] flex items-center justify-center mb-3">
-                      <Icon size={17} className="text-[#0A66C2]" />
-                    </div>
-                    <h3 className="text-sm font-semibold text-[#191919] mb-1.5">
-                      {feature.title}
-                    </h3>
-                    <p className="text-sm text-[#626262] leading-relaxed">
-                      {feature.description}
-                    </p>
-                  </Card>
-                );
-              })}
+            {/* Horizontal three-step section using typography, spacing, and thin dividers */}
+            <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#E5E7EB] border-y border-[#E5E7EB]">
+              {/* Step 01 */}
+              <div className="py-8 md:py-10 md:pr-8">
+                <span className="text-xs font-bold text-[#0A66C2] tracking-wider uppercase block mb-2">
+                  01
+                </span>
+                <h3 className="text-xl font-bold text-[#191919] tracking-tight mb-3">
+                  Discover your network
+                </h3>
+                <p className="text-sm text-[#626262] leading-relaxed">
+                  Filter graduates by industry, technical stack, company, and
+                  graduation year to identify professionals whose trajectories
+                  align with your aspirations.
+                </p>
+              </div>
+
+              {/* Step 02 */}
+              <div className="py-8 md:py-10 md:px-8">
+                <span className="text-xs font-bold text-[#0A66C2] tracking-wider uppercase block mb-2">
+                  02
+                </span>
+                <h3 className="text-xl font-bold text-[#191919] tracking-tight mb-3">
+                  Build meaningful connections
+                </h3>
+                <p className="text-sm text-[#626262] leading-relaxed">
+                  Initiate direct conversations with tailored introductory notes.
+                  Ask targeted questions about hiring loops, team culture, and
+                  day-to-day engineering realities.
+                </p>
+              </div>
+
+              {/* Step 03 */}
+              <div className="py-8 md:py-10 md:pl-8">
+                <span className="text-xs font-bold text-[#0A66C2] tracking-wider uppercase block mb-2">
+                  03
+                </span>
+                <h3 className="text-xl font-bold text-[#191919] tracking-tight mb-3">
+                  Grow your career
+                </h3>
+                <p className="text-sm text-[#626262] leading-relaxed">
+                  Translate senior alumni insights into structured career roadmaps,
+                  interview confidence, and competitive resume positioning for
+                  high-impact internships and full-time roles.
+                </p>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Platform Preview Section */}
-        <PlatformPreview />
+        {/* ══════════════════════════════════════════════════════════════════════
+            STEP 3: FEATURES (Clean Editorial Layout with Alternating Content)
+           ══════════════════════════════════════════════════════════════════════ */}
+        <section
+          id="features"
+          className="py-20 md:py-28 bg-[#F7F9FC] border-t border-[#E5E7EB]"
+        >
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="max-w-2xl mb-16">
+              <p className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wider mb-3">
+                Platform Capabilities
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#191919] tracking-tight">
+                Designed for substantive professional guidance.
+              </h2>
+              <p className="text-base text-[#626262] mt-3 leading-relaxed">
+                Every feature is built to turn university camaraderie into
+                concrete career momentum.
+              </p>
+            </div>
 
-        {/* Final CTA Section */}
-        <section className="py-16 md:py-24 bg-white">
-          <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#191919] mb-4 leading-tight tracking-tight">
+            <div className="space-y-16 sm:space-y-20">
+              {/* Alternating Feature 1: Alumni Discovery & Direct Advisory */}
+              <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0A66C2] bg-white border border-[#E5E7EB] px-3 py-1 rounded-md mb-4">
+                    <Compass size={13} />
+                    <span>Direct Alumni Advisory</span>
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-[#191919] tracking-tight mb-4 leading-snug">
+                    Cut through cold outreach. Connect with alumni who actually respond.
+                  </h3>
+                  <p className="text-sm sm:text-base text-[#626262] leading-relaxed mb-6">
+                    Unlike open social networks where student messages get buried,
+                    AlumniPath links you directly with graduates committed to
+                    mentoring students from their alma mater.
+                  </p>
+                  <ul className="space-y-3 mb-8">
+                    {[
+                      "Verified university identity and graduation credentials",
+                      "Direct messaging without requiring expensive premium plans",
+                      "Contextual introductions based on target roles and tech stack",
+                    ].map((pt) => (
+                      <li
+                        key={pt}
+                        className="flex items-start gap-2.5 text-sm text-[#191919]"
+                      >
+                        <CheckCircle
+                          size={16}
+                          className="text-[#057642] mt-0.5 shrink-0"
+                        />
+                        <span>{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button variant="secondary" asChild>
+                    <Link href="/alumni">Browse Alumni Directory →</Link>
+                  </Button>
+                </div>
+
+                {/* Visual Representation of Feature 1 */}
+                <div className="bg-white border border-[#E5E7EB] rounded-xl p-6 shadow-sm">
+                  <div className="flex items-start justify-between gap-4 mb-4 pb-4 border-b border-[#E5E7EB]">
+                    <div className="flex items-center gap-3">
+                      <Avatar name="Marcus Vance" size="lg" />
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-base font-semibold text-[#191919]">
+                            Marcus Vance
+                          </span>
+                          <span className="text-[11px] font-semibold text-[#0A66C2] bg-[#F0F7FE] border border-[#DCEAF8] px-2 py-0.5 rounded">
+                            Verified Alum
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#626262] mt-0.5">
+                          Senior Backend Engineer · Datadog
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          Ex-Google · B.S. in Computer Science
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-semibold text-[#057642] bg-[#EEF8F1] border border-[#BFE3C9] px-2.5 py-1 rounded-full">
+                      96% Response
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-[#626262] leading-relaxed mb-4 bg-[#F7F9FC] border border-[#E5E7EB] rounded-lg p-3">
+                    &ldquo;I went through the campus recruitment cycle myself. I help
+                    motivated students bridge the gap between classroom theory and
+                    production engineering standards.&rdquo;
+                  </p>
+
+                  <div className="flex flex-wrap gap-1.5">
+                    <Badge variant="blue" size="sm">
+                      Distributed Systems
+                    </Badge>
+                    <Badge variant="default" size="sm">
+                      PostgreSQL
+                    </Badge>
+                    <Badge variant="default" size="sm">
+                      System Design
+                    </Badge>
+                    <Badge variant="default" size="sm">
+                      Docker
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+
+              {/* Thin Divider */}
+              <div className="border-t border-[#E5E7EB]" />
+
+              {/* Alternating Feature 2: AI Career Guidance & Structured Roadmaps */}
+              <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+                {/* Visual Representation of Feature 2 */}
+                <div className="order-2 lg:order-1 bg-white border border-[#E5E7EB] rounded-xl p-6 shadow-sm">
+                  <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#E5E7EB]">
+                    <div className="flex items-center gap-2">
+                      <Map size={16} className="text-[#0A66C2]" />
+                      <span className="text-sm font-semibold text-[#191919]">
+                        Target Career Roadmap: Full-Stack Engineer
+                      </span>
+                    </div>
+                    <span className="text-xs text-[#0A66C2] font-medium bg-[#F0F7FE] px-2 py-0.5 rounded">
+                      Milestone 2 of 4
+                    </span>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="border-l-2 border-[#057642] pl-3.5 py-0.5">
+                      <p className="text-xs font-bold text-[#057642] uppercase tracking-wider">
+                        Stage 1 · Completed
+                      </p>
+                      <p className="text-sm font-semibold text-[#191919]">
+                        Core Web Architecture &amp; Relational Databases
+                      </p>
+                      <p className="text-xs text-[#626262] mt-0.5">
+                        React state lifecycles, REST API standards, and PostgreSQL schemas
+                      </p>
+                    </div>
+
+                    <div className="border-l-2 border-[#0A66C2] pl-3.5 py-0.5">
+                      <p className="text-xs font-bold text-[#0A66C2] uppercase tracking-wider">
+                        Stage 2 · Current Focus
+                      </p>
+                      <p className="text-sm font-semibold text-[#191919]">
+                        Distributed Systems &amp; Concurrency
+                      </p>
+                      <p className="text-xs text-[#626262] mt-0.5">
+                        Redis caching layers, Docker containerization, and message queues
+                      </p>
+                    </div>
+
+                    <div className="border-l-2 border-gray-200 pl-3.5 py-0.5">
+                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                        Stage 3 · Upcoming
+                      </p>
+                      <p className="text-sm font-semibold text-gray-500">
+                        Technical Interview Loops &amp; System Design
+                      </p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        Mock architectural whiteboards with alumni mentors
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Text Description of Feature 2 */}
+                <div className="order-1 lg:order-2">
+                  <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0A66C2] bg-white border border-[#E5E7EB] px-3 py-1 rounded-md mb-4">
+                    <Brain size={13} />
+                    <span>AI Career Assistance</span>
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-[#191919] tracking-tight mb-4 leading-snug">
+                    Personalized career planning grounded in real alumni outcomes.
+                  </h3>
+                  <p className="text-sm sm:text-base text-[#626262] leading-relaxed mb-6">
+                    Synthesize actual career trajectories from your university into
+                    actionable milestones. Identify skill gaps before recruiters do
+                    and prepare with structured guidance.
+                  </p>
+                  <ul className="space-y-3 mb-8">
+                    {[
+                      "Custom milestones mapped to your target industry and graduation year",
+                      "Context-aware recommendations on projects and technical frameworks",
+                      "Actionable resume feedback tailored for modern applicant tracking systems",
+                    ].map((pt) => (
+                      <li
+                        key={pt}
+                        className="flex items-start gap-2.5 text-sm text-[#191919]"
+                      >
+                        <CheckCircle
+                          size={16}
+                          className="text-[#057642] mt-0.5 shrink-0"
+                        />
+                        <span>{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button variant="secondary" asChild>
+                    <Link href="/career-roadmap">Explore Career Roadmaps →</Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════════════════════════════════════════════
+            STEP 3: DISCOVER ALUMNI DIRECTORY SHOWCASE
+           ══════════════════════════════════════════════════════════════════════ */}
+        <section
+          id="alumni"
+          className="py-20 md:py-28 bg-white border-t border-[#E5E7EB]"
+        >
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+              <div>
+                <p className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wider mb-2.5">
+                  Verified Alumni Directory
+                </p>
+                <h2 className="text-3xl sm:text-4xl font-bold text-[#191919] tracking-tight">
+                  Experienced graduates ready to share their insights.
+                </h2>
+                <p className="text-base text-[#626262] mt-2">
+                  Search across engineering, product management, and design alumni
+                  who are actively open to connecting.
+                </p>
+              </div>
+              <Button variant="primary" asChild className="shrink-0">
+                <Link href="/alumni" className="inline-flex items-center">
+                  <Search size={14} className="mr-2" />
+                  View Full Directory
+                </Link>
+              </Button>
+            </div>
+
+            {/* Clean Directory Table / List Layout */}
+            <div className="border border-[#E5E7EB] rounded-xl overflow-hidden divide-y divide-[#E5E7EB] bg-white">
+              {DIRECTORY_ALUMNI.map((alumnus) => (
+                <div
+                  key={alumnus.id}
+                  className="p-5 sm:p-6 hover:bg-[#F7F9FC] transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                >
+                  <div className="flex items-start gap-3.5">
+                    <Avatar name={alumnus.name} size="lg" />
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Link
+                          href={`/alumni/${alumnus.id}`}
+                          className="text-base font-semibold text-[#191919] hover:text-[#0A66C2] transition-colors"
+                        >
+                          {alumnus.name}
+                        </Link>
+                        <span className="text-[11px] font-semibold text-[#0A66C2] bg-[#F0F7FE] border border-[#DCEAF8] px-2 py-0.5 rounded">
+                          Class of {alumnus.graduationYear}
+                        </span>
+                      </div>
+                      <p className="text-sm text-[#191919] mt-0.5 font-medium flex items-center gap-1.5">
+                        <Building2 size={13} className="text-gray-400" />
+                        {alumnus.role} · {alumnus.company}{" "}
+                        <span className="text-xs text-gray-400 font-normal">
+                          ({alumnus.former})
+                        </span>
+                      </p>
+                      <p className="text-xs text-[#626262] flex items-center gap-1 mt-0.5">
+                        <MapPin size={12} className="text-gray-400" />
+                        {alumnus.location} · {alumnus.department}
+                      </p>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {alumnus.skills.map((skill) => (
+                          <span
+                            key={skill}
+                            className="text-[11px] font-normal text-[#4A4A4A] bg-[#F3F5F7] px-2 py-0.5 rounded"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex sm:flex-col items-center sm:items-end justify-between shrink-0 gap-2 sm:gap-1.5 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100">
+                    <span className="text-[11px] font-medium text-[#057642] bg-[#EEF8F1] border border-[#BFE3C9] px-2 py-0.5 rounded-full">
+                      Verified Graduate
+                    </span>
+                    <Link
+                      href={`/alumni/${alumnus.id}`}
+                      className="text-xs font-semibold text-[#0A66C2] hover:text-[#004182] hover:underline flex items-center gap-1"
+                    >
+                      View Profile <ArrowRight size={12} />
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════════════════════════════════════════════
+            FINAL CALL TO ACTION
+           ══════════════════════════════════════════════════════════════════════ */}
+        <section className="py-20 md:py-28 bg-white border-t border-[#E5E7EB]">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+            <h2 className="text-3xl sm:text-4xl font-bold text-[#191919] mb-4 tracking-tight leading-tight">
               Your next career step starts with
               <br />
               the right conversation.
             </h2>
-            <p className="text-sm sm:text-base text-[#626262] mb-8 leading-relaxed">
-              Join other students who are connecting with alumni, getting real
-              guidance, and building careers with intention.
+            <p className="text-base text-[#626262] mb-8 leading-relaxed max-w-xl mx-auto">
+              Join students and alumni building purposeful careers through shared
+              university roots.
             </p>
             <div className="flex flex-col sm:flex-row justify-center items-center gap-3">
               <Button variant="primary" size="lg" asChild>
-                <Link href="/signup" className="inline-flex items-center">
-                  Create Your Account <ArrowRight size={15} className="ml-1.5" />
+                <Link
+                  href="/signup"
+                  className="inline-flex items-center px-6"
+                >
+                  Create Your Account <ArrowRight size={15} className="ml-2" />
                 </Link>
               </Button>
               <Button variant="secondary" size="lg" asChild>
-                <Link href="/alumni">Browse Directory</Link>
+                <Link href="/alumni" className="px-6">
+                  Browse Directory
+                </Link>
               </Button>
             </div>
-            <p className="text-xs text-[#626262] mt-4">
+            <p className="text-xs text-[#626262] mt-5">
               Already have an account?{" "}
-              <Link href="/login" className="text-[#0A66C2] font-medium hover:underline">
+              <Link
+                href="/login"
+                className="text-[#0A66C2] font-medium hover:underline"
+              >
                 Log In
               </Link>
             </p>
@@ -734,7 +675,101 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <Footer />
+      {/* ══════════════════════════════════════════════════════════════════════
+          FOOTER
+         ══════════════════════════════════════════════════════════════════════ */}
+      <footer className="border-t border-[#E5E7EB] bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+            {/* Brand */}
+            <div>
+              <Link href="/" className="flex items-center gap-2.5 mb-3">
+                <div className="h-7 w-7 rounded-md bg-[#0A66C2] flex items-center justify-center shrink-0">
+                  <span className="text-white text-xs font-bold">A</span>
+                </div>
+                <Wordmark />
+              </Link>
+              <p className="text-sm text-[#626262] leading-relaxed">
+                Alumni networking and career mentorship for university students.
+              </p>
+            </div>
+
+            {/* Product */}
+            <div>
+              <p className="text-sm font-semibold text-[#191919] mb-3">Product</p>
+              <ul className="space-y-2">
+                {[
+                  ["Discover Alumni", "/alumni"],
+                  ["Direct Messages", "/messages"],
+                  ["AI Career Assistant", "/career-assistant"],
+                  ["Career Roadmap", "/career-roadmap"],
+                  ["Resume Review", "/resume-review"],
+                ].map(([label, href]) => (
+                  <li key={label}>
+                    <Link
+                      href={href}
+                      className="text-sm text-[#626262] hover:text-[#191919] transition-colors"
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Support */}
+            <div>
+              <p className="text-sm font-semibold text-[#191919] mb-3">Support</p>
+              <ul className="space-y-2">
+                {[
+                  ["Help Center", "#"],
+                  ["Contact Us", "#"],
+                  ["For Universities", "#"],
+                ].map(([label, href]) => (
+                  <li key={label}>
+                    <Link
+                      href={href}
+                      className="text-sm text-[#626262] hover:text-[#191919] transition-colors"
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div>
+              <p className="text-sm font-semibold text-[#191919] mb-3">Legal</p>
+              <ul className="space-y-2">
+                {[
+                  ["Privacy Policy", "#"],
+                  ["Terms of Service", "#"],
+                  ["Cookie Policy", "#"],
+                ].map(([label, href]) => (
+                  <li key={label}>
+                    <Link
+                      href={href}
+                      className="text-sm text-[#626262] hover:text-[#191919] transition-colors"
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-[#E5E7EB] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-xs text-[#626262]">
+              © 2026 AlumniPath. All rights reserved.
+            </p>
+            <p className="text-xs text-[#626262]">
+              Built for students, by people who were once students.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
