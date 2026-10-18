@@ -495,9 +495,39 @@ export interface CommunityPost {
 
 // ─── Discover Student Model (Alumni View) ─────────────────────────────────────
 
+export interface StudentProjectDetail {
+  id: string;
+  title: string;
+  description: string;
+  techStack: string[];
+  githubUrl?: string;
+  demoUrl?: string;
+  role?: string;
+}
+
+export interface StudentEducation {
+  degree: string;
+  university: string;
+  department: string;
+  graduationYear: number;
+  academicYear: string;
+  gpa?: string;
+  isGpaPublic?: boolean;
+  coursework?: string[];
+}
+
+export interface StudentPrivacy {
+  isProfilePublic: boolean;
+  showGpa: boolean;
+  showEmail: boolean;
+  showResume: boolean;
+  showAchievements: boolean;
+}
+
 export interface DiscoverStudent {
   id: string;
   name: string;
+  email?: string;
   avatar?: string;
   headline: string;
   university: string;
@@ -507,10 +537,19 @@ export interface DiscoverStudent {
   careerGoal: string;
   skills: Skill[];
   interests: Interest[];
+  preferredIndustry?: string;
+  preferredIndustries?: string[];
   bio: string;
   gpa?: string;
   seekingMentorshipIn: string[];
   projects: string[];
+  detailedProjects?: StudentProjectDetail[];
+  education?: StudentEducation;
+  achievements?: string[];
+  mentorshipCadence?: string;
+  mentorshipStatement?: string;
+  privacy?: StudentPrivacy;
+  location?: string;
   matchScore?: number;
   isMentee?: boolean;
   hasPendingRequest?: boolean;

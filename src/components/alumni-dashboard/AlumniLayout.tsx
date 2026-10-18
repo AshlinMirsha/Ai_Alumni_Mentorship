@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { AlumniNav } from "@/components/alumni-dashboard/AlumniNav";
 import { AlumniSidebar } from "@/components/alumni-dashboard/AlumniSidebar";
 
@@ -27,7 +27,9 @@ export function AlumniLayout({ children }: AlumniLayoutProps) {
             onClick={() => setMobileMenuOpen(false)}
           />
           <div className="fixed inset-y-0 left-0 w-72 max-w-full bg-[#f3f5f7] shadow-xl z-50 p-4 overflow-y-auto">
-            <AlumniSidebar onItemClick={() => setMobileMenuOpen(false)} />
+            <Suspense fallback={null}>
+              <AlumniSidebar onItemClick={() => setMobileMenuOpen(false)} />
+            </Suspense>
           </div>
         </div>
       )}
@@ -37,7 +39,9 @@ export function AlumniLayout({ children }: AlumniLayoutProps) {
         <div className="flex flex-col lg:flex-row gap-5 items-start">
           {/* Desktop Left Sidebar */}
           <div className="hidden lg:block">
-            <AlumniSidebar />
+            <Suspense fallback={<div className="w-60 h-96 bg-white border border-gray-200 rounded-lg animate-pulse" />}>
+              <AlumniSidebar />
+            </Suspense>
           </div>
 
           {/* Main Dynamic Page Content */}

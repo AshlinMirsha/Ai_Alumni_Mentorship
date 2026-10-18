@@ -864,15 +864,38 @@ export function saveStudentsList(students: DiscoverStudent[]): void {
   }
 }
 
-export function offerMentorshipToStudent(studentId: string, focus: string): { success: boolean; requestId?: string } {
+export function offerMentorshipToStudent(
+  studentId: string,
+  focus?: string,
+  message?: string,
+  expertise?: string
+): { success: boolean; requestId?: string; reason?: string } {
   const students = loadStudentsList();
   const student = students.find((s) => s.id === studentId);
-  if (!student) return { success: false };
+  if (!student) return { success: false, reason: "Student profile not found." };
 
-  const alumni = loadAlumniProfile();
   const mentorshipActivity = loadMentorshipActivity();
 
+  // Prevent duplicate pending invitations
+  const alreadyPending =
+    student.hasPendingRequest ||
+    mentorshipActivity.pendingRequests.some(
+      (r) => (r.studentId === studentId || r.student?.id === studentId) && r.status === "pending"
+    );
+
+  if (alreadyPending) {
+    return {
+      success: false,
+      reason: "A mentorship invitation is already pending for this student.",
+    };
+  }
+
+  const alumni = loadAlumniProfile();
   const newRequestId = `req-alumni-${Date.now()}`;
+  const customMessage =
+    message?.trim() ||
+    `Hi ${student.name}! I reviewed your profile and projects at ${student.university} and would be glad to mentor you on ${focus || student.careerGoal}.`;
+
   const newRequest: Mentorship = {
     id: newRequestId,
     studentId: student.id,
@@ -891,13 +914,16 @@ export function offerMentorshipToStudent(studentId: string, focus: string): { su
       careerGoal: student.careerGoal,
       department: student.department,
       academicYear: student.academicYear,
+      interests: student.interests?.map((i) => i.name) || [],
+      skills: student.skills?.map((s) => s.name) || [],
     },
     status: "pending",
     sessionCount: 0,
     focus: focus || `Mentorship on ${student.careerGoal}`,
+    notes: expertise ? `Mentor relevant expertise: ${expertise}` : undefined,
     requestDate: new Date().toISOString().split("T")[0],
     startDate: new Date().toISOString().split("T")[0],
-    requestMessage: `Hi ${student.name}! I reviewed your profile and projects at ${student.university} and would be glad to mentor you on ${focus || student.careerGoal}.`,
+    requestMessage: customMessage,
     direction: "outgoing",
   };
 
@@ -906,7 +932,9 @@ export function offerMentorshipToStudent(studentId: string, focus: string): { su
     pendingRequests: [newRequest, ...mentorshipActivity.pendingRequests],
   });
 
-  const updatedStudents = students.map((s) => (s.id === studentId ? { ...s, hasPendingRequest: true } : s));
+  const updatedStudents = students.map((s) =>
+    s.id === studentId ? { ...s, hasPendingRequest: true } : s
+  );
   saveStudentsList(updatedStudents);
 
   addNotification({
@@ -922,6 +950,12 @@ export function offerMentorshipToStudent(studentId: string, focus: string): { su
 
   return { success: true, requestId: newRequestId };
 }
+
+export function getStudentById(studentId: string): DiscoverStudent | undefined {
+  const students = loadStudentsList();
+  return students.find((s) => s.id === studentId);
+}
+
 
 // ─── Upcoming Sessions Storage ────────────────────────────────────────────────
 
