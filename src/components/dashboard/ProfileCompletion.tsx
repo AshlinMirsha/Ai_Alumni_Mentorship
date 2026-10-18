@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Circle, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
+import { CheckCircle2, Circle, ChevronDown, ChevronUp } from "lucide-react";
 import type { ProfileCompletionResult } from "@/lib/mock-data";
 
 interface ProfileCompletionProps {
@@ -18,30 +18,29 @@ export function ProfileCompletion({
   const [showDetails, setShowDetails] = useState(false);
   const { percent, completedCount, totalCount, items } = completion;
 
-  // Color coding based on calculated percentage
   const getProgressColor = (pct: number) => {
-    if (pct >= 85) return "bg-emerald-500";
-    if (pct >= 60) return "bg-blue-600";
-    return "bg-amber-500";
+    if (pct >= 85) return "bg-[#057642]";
+    if (pct >= 60) return "bg-[#0a66c2]";
+    return "bg-[#915907]";
   };
 
   return (
-    <div className="bg-gray-50/70 border border-gray-200/80 rounded-lg p-3.5 sm:p-4">
+    <div className="bg-gray-50 border border-gray-200 rounded-md p-3">
       {/* Top summary header */}
-      <div className="flex items-center justify-between gap-2 mb-2">
+      <div className="flex items-center justify-between gap-2 mb-1.5">
         <div className="flex items-center gap-1.5">
           <span className="text-xs font-semibold text-gray-900">Profile Strength</span>
           <span className="text-[11px] text-gray-500">
-            ({completedCount}/{totalCount} completed)
+            ({completedCount}/{totalCount})
           </span>
         </div>
         <span className="text-xs font-bold text-gray-900">{percent}%</span>
       </div>
 
       {/* Progress Bar */}
-      <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden mb-2.5">
+      <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden mb-2">
         <div
-          className={`h-full rounded-full transition-all duration-500 ${getProgressColor(percent)}`}
+          className={`h-full rounded-full transition-all duration-300 ${getProgressColor(percent)}`}
           style={{ width: `${percent}%` }}
           role="progressbar"
           aria-valuenow={percent}
@@ -52,50 +51,49 @@ export function ProfileCompletion({
 
       {/* Subtext and toggle */}
       <div className="flex items-center justify-between text-[11px] text-gray-500">
-        <span>
+        <span className="truncate pr-1">
           {percent === 100
-            ? "Your profile is fully complete!"
-            : `${completion.missingCount} field${completion.missingCount > 1 ? "s" : ""} left to optimize matches`}
+            ? "Profile fully complete"
+            : `${completion.missingCount} field${completion.missingCount > 1 ? "s" : ""} left to optimize`}
         </span>
 
         {!compact && (
           <button
             type="button"
             onClick={() => setShowDetails((p) => !p)}
-            className="inline-flex items-center gap-0.5 text-blue-600 hover:text-blue-700 font-medium cursor-pointer"
+            className="inline-flex items-center gap-0.5 text-[#0a66c2] hover:text-[#004182] font-semibold shrink-0 cursor-pointer"
           >
-            <span>{showDetails ? "Hide breakdown" : "View breakdown"}</span>
-            {showDetails ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+            <span>{showDetails ? "Hide" : "Details"}</span>
+            {showDetails ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
           </button>
         )}
       </div>
 
-      {/* Detailed checklist derived from actual fields */}
+      {/* Detailed checklist */}
       {showDetails && !compact && (
-        <div className="mt-3.5 pt-3 border-t border-gray-200 space-y-2">
-          <p className="text-[11px] font-medium text-gray-700 flex items-center gap-1 mb-2">
-            <Sparkles size={12} className="text-blue-500" />
-            Field-by-field profile verification:
+        <div className="mt-2.5 pt-2.5 border-t border-gray-200 space-y-1.5">
+          <p className="text-[11px] font-semibold text-gray-700 mb-1">
+            Required Profile Fields:
           </p>
-          <div className="grid grid-cols-1 gap-1.5">
+          <div className="space-y-1">
             {items.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between text-xs py-1 px-2 rounded hover:bg-white transition-colors"
+                className="flex items-center justify-between text-xs py-0.5 px-1 rounded hover:bg-white"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   {item.completed ? (
-                    <CheckCircle2 size={14} className="text-emerald-600 shrink-0" />
+                    <CheckCircle2 size={13} className="text-[#057642] shrink-0" />
                   ) : (
-                    <Circle size={14} className="text-gray-300 shrink-0" />
+                    <Circle size={13} className="text-gray-300 shrink-0" />
                   )}
-                  <span className={item.completed ? "text-gray-800" : "text-gray-500"}>
+                  <span className={item.completed ? "text-gray-800" : "text-gray-500 text-[11px]"}>
                     {item.label}
                   </span>
                 </div>
                 <span
-                  className={`text-[11px] font-mono ${
-                    item.completed ? "text-emerald-700 font-medium" : "text-gray-400"
+                  className={`text-[10px] font-mono ${
+                    item.completed ? "text-[#057642] font-medium" : "text-gray-400"
                   }`}
                 >
                   +{item.points}%
@@ -108,9 +106,9 @@ export function ProfileCompletion({
             <button
               type="button"
               onClick={onOpenEditProfile}
-              className="mt-2 text-xs text-blue-600 hover:text-blue-800 font-medium underline block"
+              className="mt-1.5 text-xs text-[#0a66c2] hover:underline font-semibold block"
             >
-              Update fields in Edit Profile &rarr;
+              Complete fields in Edit Profile &rarr;
             </button>
           )}
         </div>

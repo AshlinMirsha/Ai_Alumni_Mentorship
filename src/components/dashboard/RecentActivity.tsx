@@ -13,56 +13,56 @@ export function RecentActivity({ activities = demoRecentActivities }: RecentActi
   const getIcon = (type: DemoActivity["type"]) => {
     switch (type) {
       case "profile":
-        return <UserCheck size={13} className="text-blue-600" />;
+        return <UserCheck size={12} className="text-[#0a66c2]" />;
       case "match":
-        return <Sparkles size={13} className="text-amber-600" />;
+        return <Sparkles size={12} className="text-[#915907]" />;
       case "roadmap":
-        return <Map size={13} className="text-indigo-600" />;
+        return <Map size={12} className="text-[#0a66c2]" />;
       case "mentorship":
-        return <Send size={13} className="text-emerald-600" />;
+        return <Send size={12} className="text-[#057642]" />;
     }
   };
 
   const getTagColor = (type: DemoActivity["type"]) => {
     switch (type) {
       case "profile":
-        return "bg-blue-50 text-blue-700 border-blue-200";
+        return "bg-[#ebf3fb] text-[#0a66c2] border-[#b2d5f8]";
       case "match":
-        return "bg-amber-50 text-amber-700 border-amber-200";
+        return "bg-[#fff8ea] text-[#915907] border-[#fde5b2]";
       case "roadmap":
-        return "bg-indigo-50 text-indigo-700 border-indigo-200";
+        return "bg-gray-100 text-gray-700 border-gray-200";
       case "mentorship":
-        return "bg-emerald-50 text-emerald-700 border-emerald-200";
+        return "bg-[#eef8f1] text-[#057642] border-[#bfe3c9]";
     }
   };
 
   return (
     <Card padding="md" className="border-gray-200 shadow-xs">
-      <CardHeader className="border-b border-gray-100 pb-3 mb-4 flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+      <CardHeader className="border-b border-gray-100 pb-2.5 mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Activity size={16} className="text-blue-600" />
+          <Activity size={15} className="text-[#0a66c2]" />
           <h2 className="text-sm font-bold text-gray-900">Recent Activity</h2>
         </div>
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-600 border border-gray-200">
-          <Info size={11} className="text-gray-400" />
-          Demo Records
+        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-600 border border-gray-200">
+          <Info size={10} className="text-gray-400" />
+          Demo Log
         </span>
       </CardHeader>
 
-      <CardBody className="space-y-3">
-        <div className="space-y-2.5">
+      <CardBody className="space-y-2.5">
+        <div className="space-y-2">
           {activities.map((item) => (
             <div
               key={item.id}
-              className="p-3 rounded-lg border border-gray-100 bg-gray-50/50 hover:bg-gray-50 transition-colors flex items-start gap-3"
+              className="p-2.5 rounded-md border border-gray-200 bg-white hover:border-gray-300 transition-colors flex items-start gap-2.5"
             >
-              <div className="h-7 w-7 rounded-full bg-white border border-gray-200 flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+              <div className="h-6 w-6 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center shrink-0 mt-0.5">
                 {getIcon(item.type)}
               </div>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2">
-                  <h3 className="text-xs font-bold text-gray-900">{item.title}</h3>
+                  <h3 className="text-xs font-bold text-gray-900 truncate">{item.title}</h3>
                   <span className="text-[10px] text-gray-400 font-medium shrink-0">
                     {item.timestamp}
                   </span>
@@ -70,7 +70,7 @@ export function RecentActivity({ activities = demoRecentActivities }: RecentActi
                 <p className="text-xs text-gray-600 mt-0.5 leading-snug">{item.description}</p>
                 {item.tag && (
                   <span
-                    className={`inline-block mt-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium border ${getTagColor(
+                    className={`inline-block mt-1 px-1.5 py-0.2 rounded text-[10px] font-semibold border ${getTagColor(
                       item.type
                     )}`}
                   >
@@ -82,9 +82,8 @@ export function RecentActivity({ activities = demoRecentActivities }: RecentActi
           ))}
         </div>
 
-        {/* Clear disclaimer */}
         <p className="text-[11px] text-gray-400 pt-1 leading-normal italic">
-          Note: This list contains illustrative demo activity logs for platform preview.
+          Sample audit trail for platform preview.
         </p>
       </CardBody>
     </Card>

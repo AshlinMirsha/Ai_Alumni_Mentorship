@@ -138,15 +138,15 @@ export default function DashboardPage() {
   const requestedAlumniIds = new Set(mentorshipData.pendingRequests.map((r: Mentorship) => r.alumniId));
 
   return (
-    <div className="min-h-screen bg-gray-50/60 flex flex-col antialiased">
+    <div className="min-h-screen bg-[#f3f5f7] flex flex-col antialiased">
       {/* Toast Notification Banner */}
       {toastMessage && (
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gray-900 text-white text-xs shadow-lg border border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-200"
+          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#191919] text-white text-xs shadow-lg border border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-200"
         >
-          <CheckCircle size={15} className="text-emerald-400 shrink-0" />
+          <CheckCircle size={15} className="text-[#057642] shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}

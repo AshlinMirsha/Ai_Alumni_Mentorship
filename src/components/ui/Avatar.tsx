@@ -8,23 +8,22 @@ interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const sizeClasses = {
-  xs: "h-6 w-6 text-xs",
+  xs: "h-6 w-6 text-[10px]",
   sm: "h-8 w-8 text-xs",
-  md: "h-9 w-9 text-sm",
-  lg: "h-10 w-10 text-sm",
-  xl: "h-12 w-12 text-base",
+  md: "h-9 w-9 text-xs",
+  lg: "h-11 w-11 text-sm",
+  xl: "h-14 w-14 text-base",
 };
 
-// Deterministic color from name
+// Professional palette for avatars without images
 const COLORS = [
-  "bg-blue-100 text-blue-700",
-  "bg-indigo-100 text-indigo-700",
-  "bg-violet-100 text-violet-700",
-  "bg-emerald-100 text-emerald-700",
-  "bg-amber-100 text-amber-700",
-  "bg-rose-100 text-rose-700",
-  "bg-teal-100 text-teal-700",
-  "bg-sky-100 text-sky-700",
+  "bg-[#ebf3fb] text-[#0a66c2] border border-[#b2d5f8]",
+  "bg-[#eef8f1] text-[#057642] border border-[#bfe3c9]",
+  "bg-[#f0f2fe] text-[#4338ca] border border-[#d3d8fd]",
+  "bg-[#fff8ea] text-[#915907] border border-[#fde5b2]",
+  "bg-[#f5f3ff] text-[#6d28d9] border border-[#ddd6fe]",
+  "bg-[#f0fdfa] text-[#0f766e] border border-[#99f6e4]",
+  "bg-[#f3f4f6] text-[#374151] border border-[#e5e7eb]",
 ];
 
 function getColor(name: string): string {
@@ -43,7 +42,7 @@ export function Avatar({ name, src, size = "md", className, ...props }: AvatarPr
     return (
       <div
         className={cn(
-          "rounded-full overflow-hidden shrink-0",
+          "rounded-full overflow-hidden shrink-0 border border-gray-200 bg-gray-100",
           sizeClasses[size],
           className
         )}
@@ -62,7 +61,7 @@ export function Avatar({ name, src, size = "md", className, ...props }: AvatarPr
   return (
     <div
       className={cn(
-        "rounded-full shrink-0 flex items-center justify-center font-semibold",
+        "rounded-full shrink-0 flex items-center justify-center font-semibold select-none",
         sizeClasses[size],
         colorClass,
         className

@@ -83,27 +83,27 @@ export default function ResumeReviewPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/60 flex flex-col antialiased">
+    <div className="min-h-screen bg-[#f3f5f7] flex flex-col antialiased">
       <DashboardNav studentName={student.name} />
 
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2 border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-gray-200">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#ebf3fb] text-[#0a66c2] border border-[#0a66c2]/20">
                 <FileText size={13} />
                 Career Portfolio
               </span>
               <span className="text-xs text-gray-400">·</span>
-              <span className="text-xs font-medium text-gray-500">
+              <span className="text-xs font-normal text-[#666666]">
                 ATS &amp; Recruiter Audit
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-2xl font-bold tracking-tight text-[#191919]">
               Resume Review
             </h1>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-[#666666] mt-0.5">
               Review your resume against your career goals and identify opportunities to improve it.
             </p>
           </div>
@@ -111,7 +111,7 @@ export default function ResumeReviewPage() {
           <div className="flex items-center gap-2.5">
             <Link
               href="/career-assistant?q=How%20can%20I%20improve%20my%20resume%20for%20software%20engineering%20roles%3F"
-              className="text-xs font-semibold text-blue-600 hover:text-blue-700 bg-white border border-gray-200 hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors inline-flex items-center gap-1.5"
+              className="text-xs font-semibold text-[#0a66c2] hover:text-[#004182] bg-white border border-gray-200 hover:bg-gray-50 px-3.5 py-1.5 rounded-full transition-colors inline-flex items-center gap-1.5 shadow-xs"
             >
               <Sparkles size={13} />
               Resume Writing Tips
@@ -128,12 +128,12 @@ export default function ResumeReviewPage() {
             onReviewAgain={handleReviewAgain}
           />
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-5">
             {/* 1. Upload Section */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-7 shadow-2xs space-y-4">
+            <div className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 shadow-xs space-y-4">
               <div className="flex items-center justify-between pb-2 border-b border-gray-100">
-                <h2 className="text-sm font-bold text-gray-900">1. Select Resume Document</h2>
-                <span className="text-[11px] text-gray-400">Local evaluation mode</span>
+                <h2 className="text-sm font-bold text-[#191919]">1. Select Resume Document</h2>
+                <span className="text-[11px] text-[#8c8c8c]">Local evaluation mode</span>
               </div>
 
               <ResumeUploader
@@ -145,23 +145,23 @@ export default function ResumeReviewPage() {
             </div>
 
             {/* 2. Target Role & Analysis Options Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {/* Target Role Selector */}
-              <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-2xs space-y-4">
+              <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-xs space-y-3.5">
                 <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
-                  <Target size={16} className="text-blue-600" />
-                  <h3 className="text-sm font-bold text-gray-900">2. Target Position Role</h3>
+                  <Target size={16} className="text-[#0a66c2]" />
+                  <h3 className="text-sm font-bold text-[#191919]">2. Target Position Role</h3>
                 </div>
 
-                <div className="space-y-2">
-                  <label htmlFor="target-role-select" className="text-xs font-semibold text-gray-700">
+                <div className="space-y-1.5">
+                  <label htmlFor="target-role-select" className="text-xs font-semibold text-[#191919]">
                     Match Against Benchmark Role
                   </label>
                   <select
                     id="target-role-select"
                     value={targetRole}
                     onChange={(e) => setTargetRole(e.target.value)}
-                    className="w-full rounded-lg border border-gray-200 bg-white text-xs text-gray-900 px-3 py-2.5 h-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 bg-white text-xs text-[#191919] px-3 py-2 h-9 focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2]"
                   >
                     {targetRoleOptions.map((role) => (
                       <option key={role} value={role}>
@@ -174,7 +174,7 @@ export default function ResumeReviewPage() {
 
                 {targetRole === "Custom Role" && (
                   <div className="space-y-1.5 pt-1">
-                    <label htmlFor="custom-role-input" className="text-xs font-semibold text-gray-700">
+                    <label htmlFor="custom-role-input" className="text-xs font-semibold text-[#191919]">
                       Specify Custom Title
                     </label>
                     <input
@@ -182,21 +182,21 @@ export default function ResumeReviewPage() {
                       type="text"
                       placeholder="e.g. Site Reliability Engineer"
                       onChange={(e) => setTargetRole(e.target.value)}
-                      className="w-full rounded-lg border border-gray-200 bg-white text-xs text-gray-900 px-3 py-2 h-9 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full rounded-md border border-gray-300 bg-white text-xs text-[#191919] px-3 py-2 h-9 focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2]"
                     />
                   </div>
                 )}
 
-                <p className="text-[11px] text-gray-400 leading-normal">
+                <p className="text-[11px] text-[#666666] leading-normal">
                   Our evaluation rules compare your resume against common industry expectations, keywords, and technical stacks for this target position.
                 </p>
               </div>
 
               {/* Analysis Options Controls */}
-              <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-2xs space-y-4">
+              <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-xs space-y-3.5">
                 <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
-                  <SlidersHorizontal size={16} className="text-blue-600" />
-                  <h3 className="text-sm font-bold text-gray-900">3. Review Criteria</h3>
+                  <SlidersHorizontal size={16} className="text-[#0a66c2]" />
+                  <h3 className="text-sm font-bold text-[#191919]">3. Review Criteria</h3>
                 </div>
 
                 <div className="space-y-3">
@@ -267,12 +267,12 @@ export default function ResumeReviewPage() {
             </div>
 
             {/* Action Bar */}
-            <div className="p-5 bg-white rounded-2xl border border-gray-200 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="text-xs text-gray-500">
+            <div className="p-4 sm:p-5 bg-white rounded-lg border border-gray-200 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-xs text-[#666666]">
                 {selectedFile ? (
                   <span>
-                    Ready to audit: <strong>{selectedFile.name}</strong> for{" "}
-                    <strong>{targetRole}</strong>
+                    Ready to audit: <strong className="text-[#191919]">{selectedFile.name}</strong> for{" "}
+                    <strong className="text-[#191919]">{targetRole}</strong>
                   </span>
                 ) : (
                   <span>Please choose a resume file above to enable review.</span>
@@ -284,7 +284,7 @@ export default function ResumeReviewPage() {
                 size="md"
                 disabled={!selectedFile || isAnalyzing}
                 onClick={handleStartReview}
-                className="w-full sm:w-auto px-6 py-2.5 text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-2xs"
+                className="w-full sm:w-auto px-6 py-2 text-xs font-semibold inline-flex items-center justify-center gap-2 rounded-full bg-[#0a66c2] hover:bg-[#004182] shadow-xs"
               >
                 {isAnalyzing ? (
                   <>

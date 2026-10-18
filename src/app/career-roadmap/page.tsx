@@ -113,13 +113,13 @@ export default function CareerRoadmapPage() {
     "Master cloud-native backend architecture, design robust REST APIs with PostgreSQL, and build deployable web services to meet junior-to-mid SWE hiring bars.";
 
   return (
-    <div className="min-h-screen bg-gray-50/60 flex flex-col antialiased">
+    <div className="min-h-screen bg-[#f3f5f7] flex flex-col antialiased">
       {/* Toast Notification */}
       {toastMessage && (
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gray-900 text-white text-xs shadow-lg border border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-200"
+          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#191919] text-white text-xs shadow-md border border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-200"
         >
           <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
           <span>{toastMessage}</span>
@@ -129,24 +129,24 @@ export default function CareerRoadmapPage() {
       {/* Navigation */}
       <DashboardNav studentName={student.name} />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         {/* Page Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-gray-200">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-gray-200">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#ebf3fb] text-[#0a66c2] border border-[#0a66c2]/20">
                 <Map size={13} />
                 Curriculum Track
               </span>
               <span className="text-xs text-gray-400">·</span>
-              <span className="text-xs font-medium text-gray-500">
+              <span className="text-xs font-normal text-[#666666]">
                 {stages.length} Milestones
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-2xl font-bold tracking-tight text-[#191919]">
               Your Career Roadmap
             </h1>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-[#666666] mt-0.5">
               A structured plan based on your target role and current skills.
             </p>
           </div>
@@ -169,7 +169,7 @@ export default function CareerRoadmapPage() {
               onClick={handleRegenerateRoadmap}
               className="text-xs inline-flex items-center gap-1.5"
             >
-              <Sparkles size={13} className="text-blue-600" />
+              <Sparkles size={13} className="text-[#0a66c2]" />
               {isRegenerating ? "Regenerating..." : "Regenerate Roadmap"}
             </Button>
 
@@ -177,7 +177,7 @@ export default function CareerRoadmapPage() {
               variant="ghost"
               size="sm"
               onClick={() => setShowResetConfirm(true)}
-              className="text-xs text-gray-500 hover:text-red-600 inline-flex items-center gap-1"
+              className="text-xs text-[#666666] hover:text-[#cc1016] inline-flex items-center gap-1"
             >
               <RotateCcw size={12} />
               Reset Progress
@@ -188,51 +188,51 @@ export default function CareerRoadmapPage() {
         {/* ========================================================================= */}
         {/* PROFILE CONTEXT CARD                                                      */}
         {/* ========================================================================= */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-7 shadow-2xs space-y-5">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-5 border-b border-gray-100">
+        <div className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-4 border-b border-gray-100">
             <div className="space-y-1">
-              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+              <span className="text-[11px] font-semibold text-[#666666] uppercase tracking-wider">
                 Current Target Career Track
               </span>
               <div className="flex items-center gap-2.5">
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+                <h2 className="text-xl font-bold text-[#191919]">
                   {targetRole}
                 </h2>
                 <button
                   type="button"
                   onClick={() => setIsEditRoleOpen(true)}
-                  className="p-1 rounded text-gray-400 hover:text-blue-600 hover:bg-gray-100 transition-colors"
+                  className="p-1 rounded text-gray-400 hover:text-[#0a66c2] hover:bg-gray-100 transition-colors"
                   title="Change Target Role"
                 >
                   <Edit3 size={14} />
                 </button>
               </div>
-              <p className="text-xs text-gray-500 leading-relaxed max-w-2xl pt-1">
-                <strong>Learning Objective:</strong> {learningObjective}
+              <p className="text-xs text-[#666666] leading-relaxed max-w-2xl pt-0.5">
+                <strong className="text-[#191919]">Learning Objective:</strong> {learningObjective}
               </p>
             </div>
 
             {/* Overall Progress Gauge (Calculated strictly from actual stage status) */}
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 min-w-56 shrink-0 space-y-2">
+            <div className="p-3.5 bg-gray-50 rounded-lg border border-gray-200 min-w-56 shrink-0 space-y-2">
               <div className="flex items-center justify-between text-xs font-semibold">
-                <span className="text-gray-700">Roadmap Completion</span>
-                <span className="text-blue-600 text-sm font-bold">{completionPercentage}%</span>
+                <span className="text-[#191919]">Roadmap Completion</span>
+                <span className="text-[#0a66c2] text-sm font-bold">{completionPercentage}%</span>
               </div>
 
               {/* Progress Bar */}
               <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-blue-600 rounded-full transition-all duration-300"
+                  className="h-full bg-[#0a66c2] rounded-full transition-all duration-300"
                   style={{ width: `${completionPercentage}%` }}
                 />
               </div>
 
-              <div className="flex items-center justify-between text-[11px] text-gray-500 pt-0.5">
+              <div className="flex items-center justify-between text-[11px] text-[#666666] pt-0.5">
                 <span>
-                  <strong>{completedStages}</strong> of {totalStages} completed
+                  <strong className="text-[#191919]">{completedStages}</strong> of {totalStages} completed
                 </span>
                 <span>
-                  <strong>{inProgressStages}</strong> active
+                  <strong className="text-[#191919]">{inProgressStages}</strong> active
                 </span>
               </div>
             </div>
@@ -241,11 +241,11 @@ export default function CareerRoadmapPage() {
           {/* Current Skills Chips */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-semibold text-gray-700">Your Current Skills:</span>
+              <span className="font-semibold text-[#191919]">Your Current Skills:</span>
               {student.skills.map((skill) => (
                 <span
                   key={skill.id || skill.name}
-                  className="px-2 py-0.5 bg-gray-100 border border-gray-200 text-gray-800 rounded-md font-medium text-[11px]"
+                  className="px-2.5 py-0.5 bg-gray-100 border border-gray-200 text-[#191919] rounded-full font-medium text-[11px]"
                 >
                   {skill.name}
                 </span>
@@ -254,7 +254,7 @@ export default function CareerRoadmapPage() {
 
             <Link
               href="/alumni"
-              className="text-xs font-semibold text-blue-600 hover:text-blue-700 inline-flex items-center gap-1 self-start sm:self-auto"
+              className="text-xs font-semibold text-[#0a66c2] hover:text-[#004182] inline-flex items-center gap-1 self-start sm:self-auto"
             >
               Find Mentors for this Role →
             </Link>
@@ -332,15 +332,15 @@ export default function CareerRoadmapPage() {
       {/* Reset Confirmation Dialog */}
       {showResetConfirm && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-xs"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
           role="dialog"
           aria-modal="true"
         >
-          <div className="bg-white rounded-xl shadow-xl border border-gray-200 max-w-sm w-full p-6 space-y-4">
-            <h3 className="text-base font-bold text-gray-900">
+          <div className="bg-white rounded-lg shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-200 max-w-sm w-full p-6 space-y-4">
+            <h3 className="text-base font-bold text-[#191919]">
               Reset Roadmap Progress?
             </h3>
-            <p className="text-xs text-gray-500 leading-relaxed">
+            <p className="text-xs text-[#666666] leading-relaxed">
               This will restore all stages to the default demo state. Any custom status toggles will be reset.
             </p>
             <div className="pt-2 flex justify-end gap-2.5">
@@ -348,6 +348,7 @@ export default function CareerRoadmapPage() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowResetConfirm(false)}
+                className="rounded-full"
               >
                 Cancel
               </Button>
@@ -355,7 +356,7 @@ export default function CareerRoadmapPage() {
                 variant="primary"
                 size="sm"
                 onClick={handleResetProgress}
-                className="bg-red-600 hover:bg-red-700"
+                className="bg-[#cc1016] hover:bg-red-800 rounded-full text-white"
               >
                 Yes, Reset Progress
               </Button>

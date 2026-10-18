@@ -80,7 +80,7 @@ function PasswordStrength({ password }: { password: string }) {
   };
   const score = Object.values(checks).filter(Boolean).length;
   const label = score < 2 ? "Weak" : score < 4 ? "Fair" : "Strong";
-  const color = score < 2 ? "bg-red-400" : score < 4 ? "bg-amber-400" : "bg-emerald-500";
+  const color = score < 2 ? "bg-[#cc1016]" : score < 4 ? "bg-[#915907]" : "bg-[#057642]";
 
   return (
     <div className="mt-1.5">
@@ -95,7 +95,7 @@ function PasswordStrength({ password }: { password: string }) {
           />
         ))}
       </div>
-      <p className={cn("text-xs", score < 2 ? "text-red-500" : score < 4 ? "text-amber-600" : "text-emerald-600")}>
+      <p className={cn("text-xs font-medium", score < 2 ? "text-[#cc1016]" : score < 4 ? "text-[#915907]" : "text-[#057642]")}>
         Password strength: {label}
       </p>
     </div>
@@ -121,7 +121,7 @@ function SelectField({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-medium text-gray-700">
+      <label htmlFor={id} className="text-xs font-semibold text-gray-700">
         {label}
       </label>
       <select
@@ -130,11 +130,11 @@ function SelectField({
         onChange={(e) => onChange(e.target.value)}
         aria-invalid={!!error}
         className={cn(
-          "w-full rounded-md border bg-white text-sm text-gray-900 px-3 py-2.5 h-10",
-          "border-gray-200 transition-colors duration-150",
-          "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+          "w-full rounded-lg border bg-white text-xs text-gray-900 px-3 py-2 h-10",
+          "border-gray-300 transition-colors duration-150",
+          "focus:outline-none focus:ring-1 focus:ring-[#0a66c2] focus:border-[#0a66c2]",
           !value && "text-gray-400",
-          error && "border-red-500 focus:ring-red-400"
+          error && "border-[#cc1016] focus:ring-[#cc1016] focus:border-[#cc1016]"
         )}
       >
         <option value="" disabled hidden>
@@ -147,7 +147,7 @@ function SelectField({
         ))}
       </select>
       {error && (
-        <p role="alert" className="text-xs text-red-600">
+        <p role="alert" className="text-xs text-[#cc1016]">
           {error}
         </p>
       )}
@@ -255,46 +255,46 @@ export default function SignupPage() {
   // ── Success state ──────────────────────────────────────────────────────────
   if (submitted) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f3f5f7] px-4">
         <div className="w-full max-w-sm text-center">
           <Link href="/" className="inline-flex items-center gap-2 mb-8">
-            <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-md bg-[#0a66c2] flex items-center justify-center">
               <span className="text-white text-sm font-bold">A</span>
             </div>
             <span className="text-lg font-bold tracking-tight text-gray-900">
-              Alumni<span className="text-blue-600">Path</span>
+              Alumni<span className="text-[#0a66c2]">Path</span>
             </span>
           </Link>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
-            <div className="h-12 w-12 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto mb-4">
-              <CheckCircle size={22} className="text-emerald-600" />
+          <div className="bg-white border border-gray-200 rounded-lg p-8 shadow-xs">
+            <div className="h-12 w-12 rounded-full bg-[#eef8f1] border border-[#bfe3c9] flex items-center justify-center mx-auto mb-4">
+              <CheckCircle size={22} className="text-[#057642]" />
             </div>
-            <h2 className="text-base font-semibold text-gray-900 mb-1">
+            <h2 className="text-base font-bold text-gray-900 mb-1">
               Account created!
             </h2>
-            <p className="text-sm text-gray-500 mb-2">
+            <p className="text-xs text-gray-600 mb-2">
               Welcome to AlumniPath,{" "}
-              <strong className="text-gray-800">{form.fullName.split(" ")[0]}</strong>.
+              <strong className="text-gray-900">{form.fullName.split(" ")[0]}</strong>.
             </p>
             {form.accountType === "alumni" && (
-              <div className="mt-3 mb-4 flex items-start gap-2 text-left rounded-md border border-blue-100 bg-blue-50 px-3 py-2.5 text-xs text-blue-800">
-                <Info size={13} className="shrink-0 mt-0.5" />
+              <div className="mt-3 mb-4 flex items-start gap-2 text-left rounded-lg border border-[#b2d5f8] bg-[#ebf3fb] px-3 py-2.5 text-xs text-[#004182]">
+                <Info size={14} className="shrink-0 mt-0.5 text-[#0a66c2]" />
                 <span>
                   Alumni accounts may require professional or institutional
                   verification before full access is granted.
                 </span>
               </div>
             )}
-            <Button variant="primary" fullWidth asChild>
+            <Button variant="primary" fullWidth asChild className="rounded-full font-semibold bg-[#0a66c2] hover:bg-[#004182] mt-2">
               <Link href="/dashboard">Go to Dashboard</Link>
             </Button>
           </div>
 
-          <p className="text-xs text-gray-400 mt-4">
+          <p className="text-xs text-gray-500 mt-5">
             Already have an account?{" "}
-            <Link href="/login" className="text-blue-600 hover:underline">
-              Log In
+            <Link href="/login" className="text-[#0a66c2] font-semibold hover:underline">
+              Sign In
             </Link>
           </p>
         </div>
@@ -304,24 +304,24 @@ export default function SignupPage() {
 
   // ── Form ───────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center py-10 px-4">
+    <div className="min-h-screen bg-[#f3f5f7] flex flex-col items-center justify-center py-10 px-4">
       {/* Logo */}
       <Link href="/" className="inline-flex items-center gap-2 mb-8">
-        <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
+        <div className="h-8 w-8 rounded-md bg-[#0a66c2] flex items-center justify-center">
           <span className="text-white text-sm font-bold">A</span>
         </div>
         <span className="text-lg font-bold tracking-tight text-gray-900">
-          Alumni<span className="text-blue-600">Path</span>
+          Alumni<span className="text-[#0a66c2]">Path</span>
         </span>
       </Link>
 
-      <div className="w-full max-w-lg bg-white border border-gray-200 rounded-xl shadow-sm p-8">
+      <div className="w-full max-w-lg bg-white border border-gray-200 rounded-lg shadow-xs p-8">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">Create your account</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight mb-1">Make the most of your college network</h1>
+          <p className="text-xs text-gray-600">
             Already have an account?{" "}
-            <Link href="/login" className="text-blue-600 font-medium hover:underline">
-              Log in
+            <Link href="/login" className="text-[#0a66c2] font-semibold hover:underline">
+              Sign in
             </Link>
           </p>
         </div>
@@ -408,7 +408,7 @@ export default function SignupPage() {
 
           {/* ── Account type ── */}
           <div className="space-y-3">
-            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
+            <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
               Account Type
             </h2>
 
@@ -419,35 +419,35 @@ export default function SignupPage() {
                   type="button"
                   onClick={() => updateField("accountType", type)}
                   className={cn(
-                    "relative flex flex-col items-start gap-1 rounded-lg border p-4 text-left transition-all duration-150",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
+                    "relative flex flex-col items-start gap-1.5 rounded-lg border p-3.5 text-left transition-all duration-150",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0a66c2]",
                     form.accountType === type
-                      ? "border-blue-500 bg-blue-50 ring-1 ring-blue-500"
+                      ? "border-[#0a66c2] bg-[#ebf3fb] ring-1 ring-[#0a66c2]"
                       : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
                   )}
                   aria-pressed={form.accountType === type}
                 >
                   <div className={cn(
                     "h-8 w-8 rounded-md flex items-center justify-center",
-                    form.accountType === type ? "bg-blue-100" : "bg-gray-100"
+                    form.accountType === type ? "bg-[#d0e2f5]" : "bg-gray-100"
                   )}>
                     {type === "student" ? (
-                      <GraduationCap size={16} className={form.accountType === type ? "text-blue-600" : "text-gray-500"} />
+                      <GraduationCap size={16} className={form.accountType === type ? "text-[#0a66c2]" : "text-gray-600"} />
                     ) : (
-                      <Briefcase size={16} className={form.accountType === type ? "text-blue-600" : "text-gray-500"} />
+                      <Briefcase size={16} className={form.accountType === type ? "text-[#0a66c2]" : "text-gray-600"} />
                     )}
                   </div>
-                  <span className={cn("text-sm font-semibold capitalize", form.accountType === type ? "text-blue-700" : "text-gray-800")}>
+                  <span className={cn("text-xs font-bold capitalize", form.accountType === type ? "text-[#004182]" : "text-gray-900")}>
                     {type}
                   </span>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-[11px] text-gray-500 leading-normal">
                     {type === "student"
-                      ? "Looking for guidance and mentors"
-                      : "Share experience & mentor students"}
+                      ? "Seeking career guidance and mentorship"
+                      : "Share experience & advise students"}
                   </span>
                   {form.accountType === type && (
                     <div className="absolute top-3 right-3">
-                      <CheckCircle size={15} className="text-blue-500" />
+                      <CheckCircle size={15} className="text-[#0a66c2]" />
                     </div>
                   )}
                 </button>
@@ -455,7 +455,7 @@ export default function SignupPage() {
             </div>
 
             {errors.accountType && (
-              <p role="alert" className="text-xs text-red-600 flex items-center gap-1">
+              <p role="alert" className="text-xs text-[#cc1016] flex items-center gap-1">
                 <AlertCircle size={12} /> {errors.accountType}
               </p>
             )}
@@ -475,9 +475,9 @@ export default function SignupPage() {
 
           {/* ── Student-specific fields ── */}
           {form.accountType === "student" && (
-            <div className="space-y-4 rounded-lg border border-blue-100 bg-blue-50/40 p-4">
-              <p className="text-xs font-semibold text-blue-700 flex items-center gap-1.5">
-                <GraduationCap size={13} /> Student details
+            <div className="space-y-4 rounded-lg border border-gray-200 bg-[#f9fafb] p-4">
+              <p className="text-xs font-bold text-[#0a66c2] flex items-center gap-1.5">
+                <GraduationCap size={14} /> Student details
               </p>
 
               <Input
@@ -504,13 +504,12 @@ export default function SignupPage() {
 
           {/* ── Alumni-specific fields ── */}
           {form.accountType === "alumni" && (
-            <div className="space-y-4 rounded-lg border border-indigo-100 bg-indigo-50/40 p-4">
+            <div className="space-y-4 rounded-lg border border-gray-200 bg-[#f9fafb] p-4">
               <div className="flex items-start gap-2">
-                <Info size={13} className="text-indigo-600 mt-0.5 shrink-0" />
-                <p className="text-xs text-indigo-700">
+                <Info size={14} className="text-[#0a66c2] mt-0.5 shrink-0" />
+                <p className="text-xs text-gray-700">
                   Alumni accounts may require professional or institutional
-                  verification before full access is granted. You will not
-                  receive a verified badge automatically.
+                  verification before full access is granted.
                 </p>
               </div>
 
@@ -559,24 +558,24 @@ export default function SignupPage() {
                   updateField("termsAccepted", e.target.checked);
                 }}
                 className={cn(
-                  "mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600",
-                  "focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
+                  "mt-0.5 h-4 w-4 rounded border-gray-300 text-[#0a66c2]",
+                  "focus:ring-2 focus:ring-[#0a66c2] focus:ring-offset-0"
                 )}
               />
-              <span className="text-sm text-gray-700 leading-relaxed">
+              <span className="text-xs text-gray-600 leading-relaxed">
                 I agree to the{" "}
-                <Link href="#" className="text-blue-600 hover:underline">
-                  Terms of Service
+                <Link href="#" className="text-[#0a66c2] hover:underline font-medium">
+                  User Agreement
                 </Link>{" "}
                 and{" "}
-                <Link href="#" className="text-blue-600 hover:underline">
+                <Link href="#" className="text-[#0a66c2] hover:underline font-medium">
                   Privacy Policy
                 </Link>
                 .
               </span>
             </label>
             {errors.termsAccepted && (
-              <p role="alert" className="text-xs text-red-600 flex items-center gap-1">
+              <p role="alert" className="text-xs text-[#cc1016] flex items-center gap-1">
                 <AlertCircle size={12} /> {errors.termsAccepted}
               </p>
             )}
@@ -588,16 +587,17 @@ export default function SignupPage() {
             size="lg"
             loading={loading}
             fullWidth
+            className="rounded-full font-semibold bg-[#0a66c2] hover:bg-[#004182]"
           >
-            {loading ? "Creating account…" : "Create Account"}
+            {loading ? "Creating account…" : "Agree & Join"}
           </Button>
         </form>
       </div>
 
-      <p className="text-xs text-gray-400 mt-5">
-        Already have an account?{" "}
-        <Link href="/login" className="text-blue-600 hover:underline">
-          Log In
+      <p className="text-xs text-gray-500 mt-5">
+        Already on AlumniPath?{" "}
+        <Link href="/login" className="text-[#0a66c2] font-semibold hover:underline">
+          Sign In
         </Link>
       </p>
     </div>

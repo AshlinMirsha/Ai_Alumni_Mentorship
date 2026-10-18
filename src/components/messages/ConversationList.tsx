@@ -33,15 +33,15 @@ export function ConversationList({
   return (
     <div className="flex flex-col h-full bg-white border-r border-gray-200">
       {/* Search Bar */}
-      <div className="p-3.5 border-b border-gray-200">
+      <div className="p-3 border-b border-gray-200">
         <div className="relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search conversations..."
-            className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+            placeholder="Search messages..."
+            className="w-full pl-8 pr-3 py-1.5 bg-gray-50 border border-gray-300 rounded-md text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all"
           />
         </div>
       </div>
@@ -64,16 +64,16 @@ export function ConversationList({
                 key={conv.id}
                 type="button"
                 onClick={() => onSelect(conv.id)}
-                className={`w-full text-left p-3.5 sm:p-4 flex items-start gap-3 transition-colors ${
+                className={`w-full text-left p-3 flex items-start gap-2.5 transition-colors cursor-pointer ${
                   isSelected
-                    ? "bg-blue-50/70 border-l-3 border-l-blue-600"
-                    : "hover:bg-gray-50/80"
+                    ? "bg-[#ebf3fb] border-l-3 border-l-[#0a66c2]"
+                    : "hover:bg-gray-50"
                 }`}
               >
                 <div className="relative shrink-0">
                   <Avatar name={conv.participantName} size="md" />
                   {hasUnread && (
-                    <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 bg-blue-600 rounded-full ring-2 ring-white" />
+                    <span className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-[#0a66c2] rounded-full ring-2 ring-white" />
                   )}
                 </div>
 
@@ -89,7 +89,7 @@ export function ConversationList({
                     <span className="text-[10px] text-gray-400 shrink-0">{dateStr}</span>
                   </div>
 
-                  <p className="text-[11px] text-gray-500 truncate mb-1">
+                  <p className="text-[11px] text-gray-500 truncate mb-0.5">
                     {conv.participantRole} · {conv.participantCompany}
                   </p>
 

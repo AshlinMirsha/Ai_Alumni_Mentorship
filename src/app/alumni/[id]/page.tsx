@@ -38,7 +38,7 @@ export default async function AlumniDetailPage({ params }: PageProps) {
 
   if (!alumnus) {
     return (
-      <div className="min-h-screen bg-gray-50/60 flex flex-col antialiased">
+      <div className="min-h-screen bg-[#f3f5f7] flex flex-col antialiased">
         <DashboardNav />
         <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-20 flex items-center justify-center">
           <EmptyState

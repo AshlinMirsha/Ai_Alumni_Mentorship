@@ -122,12 +122,12 @@ export function AlumniFilters({
   return (
     <div className="space-y-4">
       {/* Top Search & Filter Bar */}
-      <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-2xs space-y-3">
+      <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-xs space-y-3">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           {/* Prominent Search Input */}
           <div className="relative flex-1">
             <Search
-              size={17}
+              size={16}
               className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
             />
             <input
@@ -135,7 +135,7 @@ export function AlumniFilters({
               value={filters.searchQuery}
               onChange={(e) => onFilterChange("searchQuery", e.target.value)}
               placeholder="Search by name, role, company, or skill..."
-              className="w-full pl-10 pr-9 py-2.5 bg-gray-50/70 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+              className="w-full pl-9 pr-9 py-2 bg-white border border-gray-300 rounded-md text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#0a66c2] focus:border-[#0a66c2] transition-colors"
             />
             {filters.searchQuery && (
               <button
@@ -151,12 +151,12 @@ export function AlumniFilters({
 
           {/* Sort Control */}
           <div className="flex items-center gap-2 shrink-0">
-            <span className="text-xs text-gray-500 whitespace-nowrap hidden sm:inline">Sort by:</span>
+            <span className="text-xs font-medium text-gray-500 whitespace-nowrap hidden sm:inline">Sort by:</span>
             <select
               value={filters.sortBy}
               onChange={(e) => onFilterChange("sortBy", e.target.value)}
               aria-label="Sort alumni"
-              className="bg-white border border-gray-200 text-xs text-gray-800 font-medium rounded-lg px-3 py-2.5 h-10 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer"
+              className="bg-white border border-gray-300 text-xs text-gray-800 font-medium rounded-md px-3 py-2 h-9 focus:outline-none focus:ring-1 focus:ring-[#0a66c2] focus:border-[#0a66c2] cursor-pointer"
             >
               <option value="recommended">Recommended (Demo Match)</option>
               <option value="relevant">Most Relevant</option>
@@ -168,12 +168,12 @@ export function AlumniFilters({
             <button
               type="button"
               onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
-              className="lg:hidden flex items-center gap-1.5 px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold text-gray-700 hover:bg-gray-100 transition-colors"
+              className="lg:hidden flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-full text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
             >
               <SlidersHorizontal size={14} />
               <span>Filters</span>
               {activeCount > 0 && (
-                <span className="h-5 w-5 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center font-bold">
+                <span className="h-4 w-4 rounded-full bg-[#0a66c2] text-white text-[10px] flex items-center justify-center font-bold">
                   {activeCount}
                 </span>
               )}
@@ -444,9 +444,9 @@ export function AlumniFilters({
               {activeFilters.map((af) => (
                 <span
                   key={af.key}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-medium"
+                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#ebf3fb] text-[#004182] border border-[#b2d5f8] text-[11px] font-medium"
                 >
-                  <span className="text-blue-500 font-normal">{af.label}:</span>
+                  <span className="text-[#0a66c2] font-normal">{af.label}:</span>
                   <span className="font-semibold">{af.value}</span>
                   <button
                     type="button"
@@ -457,7 +457,7 @@ export function AlumniFilters({
                         onFilterChange(af.key, "all");
                       }
                     }}
-                    className="p-0.5 hover:text-blue-900 rounded-full hover:bg-blue-100 transition-colors"
+                    className="p-0.5 hover:text-[#004182] rounded-full hover:bg-[#d0e2f5] transition-colors"
                     aria-label={`Remove filter ${af.label}`}
                   >
                     <X size={11} />

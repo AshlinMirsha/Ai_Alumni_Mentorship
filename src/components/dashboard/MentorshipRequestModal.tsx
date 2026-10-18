@@ -88,7 +88,7 @@ function MentorshipRequestForm({
   };
 
   return (
-    <div className="relative w-full max-w-lg bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden my-8 max-h-[90vh] flex flex-col">
+    <div className="relative w-full max-w-lg bg-white rounded-lg shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-200 overflow-hidden my-8 max-h-[90vh] flex flex-col">
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-white shrink-0">
         <div className="flex items-center gap-2">
@@ -324,7 +324,7 @@ export function MentorshipRequestModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-xs overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="mentorship-request-modal-title"

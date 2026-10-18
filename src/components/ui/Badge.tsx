@@ -17,12 +17,12 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 
 const variantClasses: Record<BadgeVariant, string> = {
   default: "bg-gray-100 text-gray-700 border-gray-200",
-  blue: "bg-blue-50 text-blue-700 border-blue-200",
-  green: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  amber: "bg-amber-50 text-amber-700 border-amber-200",
-  red: "bg-red-50 text-red-700 border-red-200",
-  indigo: "bg-indigo-50 text-indigo-700 border-indigo-200",
-  gray: "bg-gray-50 text-gray-500 border-gray-200",
+  blue: "bg-[#ebf3fb] text-[#0a66c2] border-[#b2d5f8]",
+  green: "bg-[#eef8f1] text-[#057642] border-[#bfe3c9]",
+  amber: "bg-[#fff8ea] text-[#915907] border-[#fde5b2]",
+  red: "bg-[#feeff0] text-[#cc1016] border-[#f9c2c5]",
+  indigo: "bg-[#f0f2fe] text-[#4f46e5] border-[#d3d8fd]",
+  gray: "bg-gray-100 text-gray-600 border-gray-200",
 };
 
 export function Badge({
@@ -35,8 +35,8 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center border rounded font-medium",
-        size === "sm" ? "text-xs px-1.5 py-0.5" : "text-xs px-2 py-0.5",
+        "inline-flex items-center border rounded font-medium tracking-tight",
+        size === "sm" ? "text-[11px] px-1.5 py-0.5" : "text-xs px-2 py-0.5",
         variantClasses[variant],
         className
       )}

@@ -261,15 +261,15 @@ export default function AlumniDiscoveryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/60 flex flex-col antialiased">
+    <div className="min-h-screen bg-[#f3f5f7] flex flex-col antialiased">
       {/* Toast Notification Banner */}
       {toastMessage && (
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gray-900 text-white text-xs shadow-lg border border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-200"
+          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#191919] text-white text-xs shadow-lg border border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-200"
         >
-          <CheckCircle size={15} className="text-emerald-400 shrink-0" />
+          <CheckCircle size={15} className="text-[#057642] shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -280,10 +280,10 @@ export default function AlumniDiscoveryPage() {
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         {/* Page Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-gray-200/80">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-gray-200">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#ebf3fb] text-[#0a66c2] border border-[#b2d5f8]">
                 <Users size={13} />
                 Directory
               </span>
@@ -295,7 +295,7 @@ export default function AlumniDiscoveryPage() {
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
               Discover Alumni
             </h1>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-xs text-gray-600 mt-1">
               Find professionals whose experience and career journey align with your goals.
             </p>
           </div>
@@ -303,9 +303,9 @@ export default function AlumniDiscoveryPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/career-roadmap"
-              className="text-xs font-semibold text-blue-600 hover:text-blue-700 bg-white border border-gray-200 hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors inline-flex items-center gap-1.5"
+              className="text-xs font-semibold text-gray-700 hover:text-[#0a66c2] bg-white border border-gray-300 hover:bg-gray-50 px-3.5 py-2 rounded-full transition-colors inline-flex items-center gap-1.5 shadow-2xs"
             >
-              <Sparkles size={13} />
+              <Sparkles size={13} className="text-[#0a66c2]" />
               View Your Target Role Roadmap
             </Link>
           </div>

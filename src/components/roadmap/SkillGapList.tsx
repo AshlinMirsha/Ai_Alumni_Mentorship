@@ -68,24 +68,24 @@ export function SkillGapList({ student, targetRole }: SkillGapListProps) {
   );
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 shadow-2xs space-y-6">
+    <div className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 shadow-xs space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-200">
         <div>
           <div className="flex items-center gap-2">
-            <TrendingUp size={18} className="text-blue-600 shrink-0" />
-            <h2 className="text-base sm:text-lg font-bold text-gray-900">
+            <TrendingUp size={18} className="text-[#0a66c2] shrink-0" />
+            <h2 className="text-base sm:text-lg font-bold text-[#191919]">
               Skill-Gap Analysis for {targetRole}
             </h2>
           </div>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-xs text-[#666666] mt-0.5">
             Rule-based comparison comparing your self-reported profile skills with typical industry benchmarks.
           </p>
         </div>
 
         <Link
           href={`/career-assistant?q=${suggestedAssistantQuery}`}
-          className="text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50/70 hover:bg-blue-100/70 border border-blue-200 px-3 py-2 rounded-lg transition-colors inline-flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
+          className="text-xs font-semibold text-[#0a66c2] hover:text-[#004182] bg-white hover:bg-[#ebf3fb] border border-[#0a66c2] px-3.5 py-1.5 rounded-full transition-colors inline-flex items-center gap-1.5 shrink-0 self-start sm:self-auto shadow-xs"
         >
           <Sparkles size={13} />
           Ask AI About My Skill Gaps
@@ -93,12 +93,12 @@ export function SkillGapList({ student, targetRole }: SkillGapListProps) {
       </div>
 
       {/* 3-Column Skills Comparison Matrix */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* 1. Current Profile Skills */}
-        <div className="p-4 rounded-xl border border-gray-200 bg-gray-50/40 space-y-3">
+        <div className="p-4 rounded-lg border border-gray-200 bg-gray-50/50 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-gray-900">Your Current Skills</span>
-            <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+            <span className="text-xs font-bold text-[#191919]">Your Current Skills</span>
+            <span className="text-[10px] font-semibold text-[#057642] bg-[#eef8f1] border border-[#057642]/20 px-2 py-0.5 rounded-full">
               {student.skills.length} on profile
             </span>
           </div>
@@ -107,10 +107,10 @@ export function SkillGapList({ student, targetRole }: SkillGapListProps) {
             {student.skills.map((skill) => (
               <div
                 key={skill.id || skill.name}
-                className="flex items-center justify-between p-2 rounded-lg bg-white border border-gray-200 text-xs shadow-2xs"
+                className="flex items-center justify-between p-2 rounded-md bg-white border border-gray-200 text-xs shadow-xs"
               >
-                <span className="font-semibold text-gray-800">{skill.name}</span>
-                <span className="text-[10px] font-medium text-gray-500 capitalize bg-gray-100 px-1.5 py-0.5 rounded">
+                <span className="font-semibold text-[#191919]">{skill.name}</span>
+                <span className="text-[10px] font-medium text-[#666666] capitalize bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200">
                   {skill.level || "intermediate"}
                 </span>
               </div>
@@ -119,10 +119,10 @@ export function SkillGapList({ student, targetRole }: SkillGapListProps) {
         </div>
 
         {/* 2. Target Role Benchmark */}
-        <div className="p-4 rounded-xl border border-gray-200 bg-gray-50/40 space-y-3">
+        <div className="p-4 rounded-lg border border-gray-200 bg-gray-50/50 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-gray-900">Target Role Benchmark</span>
-            <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">
+            <span className="text-xs font-bold text-[#191919]">Target Role Benchmark</span>
+            <span className="text-[10px] font-semibold text-[#0a66c2] bg-[#ebf3fb] border border-[#0a66c2]/20 px-2 py-0.5 rounded-full">
               Industry Standard
             </span>
           </div>
@@ -133,17 +133,17 @@ export function SkillGapList({ student, targetRole }: SkillGapListProps) {
               return (
                 <div
                   key={idx}
-                  className="flex items-center justify-between p-2 rounded-lg bg-white border border-gray-200 text-xs shadow-2xs"
+                  className="flex items-center justify-between p-2 rounded-md bg-white border border-gray-200 text-xs shadow-xs"
                 >
                   <div className="flex items-center gap-1.5 truncate">
                     {hasSkill ? (
-                      <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
+                      <CheckCircle2 size={13} className="text-[#057642] shrink-0" />
                     ) : (
                       <span className="h-1.5 w-1.5 rounded-full bg-amber-400 shrink-0" />
                     )}
-                    <span className="font-medium text-gray-800 truncate">{bench.name}</span>
+                    <span className="font-medium text-[#191919] truncate">{bench.name}</span>
                   </div>
-                  <span className="text-[10px] text-gray-400 shrink-0">{bench.benchmarkLevel}</span>
+                  <span className="text-[10px] text-[#8c8c8c] shrink-0">{bench.benchmarkLevel}</span>
                 </div>
               );
             })}
@@ -151,10 +151,10 @@ export function SkillGapList({ student, targetRole }: SkillGapListProps) {
         </div>
 
         {/* 3. Recommended Development Priorities */}
-        <div className="p-4 rounded-xl border border-blue-200 bg-blue-50/30 space-y-3">
+        <div className="p-4 rounded-lg border border-[#0a66c2]/20 bg-[#ebf3fb]/20 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-blue-900">Skills to Develop</span>
-            <span className="text-[10px] font-semibold text-blue-700 bg-blue-100 px-2 py-0.5 rounded">
+            <span className="text-xs font-bold text-[#004182]">Skills to Develop</span>
+            <span className="text-[10px] font-semibold text-[#0a66c2] bg-[#ebf3fb] border border-[#0a66c2]/20 px-2 py-0.5 rounded-full">
               Priority Focus
             </span>
           </div>
@@ -163,21 +163,21 @@ export function SkillGapList({ student, targetRole }: SkillGapListProps) {
             {skillsToDevelop.map((gap, idx) => (
               <div
                 key={idx}
-                className="p-2.5 rounded-lg bg-white border border-blue-100 text-xs shadow-2xs space-y-1"
+                className="p-2.5 rounded-md bg-white border border-gray-200 text-xs shadow-xs space-y-1"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-gray-900">{gap.skill}</span>
+                  <span className="font-bold text-[#191919]">{gap.skill}</span>
                   <span
-                    className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded ${
+                    className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.2 rounded-full border ${
                       gap.priority === "high"
-                        ? "bg-red-50 text-red-700 border border-red-200"
-                        : "bg-amber-50 text-amber-700 border border-amber-200"
+                        ? "bg-[#feeff0] text-[#cc1016] border-[#cc1016]/20"
+                        : "bg-[#fff8ea] text-[#915907] border-[#915907]/20"
                     }`}
                   >
                     {gap.priority}
                   </span>
                 </div>
-                <p className="text-[11px] text-gray-500 leading-snug">{gap.reason}</p>
+                <p className="text-[11px] text-[#666666] leading-snug">{gap.reason}</p>
               </div>
             ))}
           </div>
@@ -185,20 +185,20 @@ export function SkillGapList({ student, targetRole }: SkillGapListProps) {
       </div>
 
       {/* Actionable Next Steps & Resources */}
-      <div className="p-4 sm:p-5 rounded-xl bg-gray-50 border border-gray-200 space-y-3">
-        <div className="flex items-center gap-2 text-xs font-bold text-gray-900">
-          <BookOpen size={15} className="text-blue-600" />
+      <div className="p-4 sm:p-5 rounded-lg bg-gray-50 border border-gray-200 space-y-3">
+        <div className="flex items-center gap-2 text-xs font-bold text-[#191919]">
+          <BookOpen size={15} className="text-[#0a66c2]" />
           <span>Curated Learning Steps to Close Gaps</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           {skillsToDevelop.map((item, idx) => (
-            <div key={idx} className="p-3 bg-white rounded-lg border border-gray-200 space-y-1.5">
-              <span className="font-bold text-gray-900">{item.skill} Action:</span>
-              <p className="text-[11px] text-gray-600 leading-relaxed">{item.suggestedNextStep}</p>
-              <div className="pt-1 flex flex-wrap gap-2 text-[10px] text-blue-600">
+            <div key={idx} className="p-3 bg-white rounded-md border border-gray-200 space-y-1.5 shadow-xs">
+              <span className="font-bold text-[#191919]">{item.skill} Action:</span>
+              <p className="text-[11px] text-[#666666] leading-relaxed">{item.suggestedNextStep}</p>
+              <div className="pt-1 flex flex-wrap gap-2 text-[10px] text-[#0a66c2]">
                 {item.resources.map((res, rIdx) => (
-                  <span key={rIdx} className="underline cursor-pointer hover:text-blue-800">
+                  <span key={rIdx} className="hover:underline cursor-pointer hover:text-[#004182]">
                     {res}
                   </span>
                 ))}
@@ -209,10 +209,10 @@ export function SkillGapList({ student, targetRole }: SkillGapListProps) {
       </div>
 
       {/* Honest Disclaimer Banner */}
-      <div className="p-3 bg-amber-50/60 border border-amber-200 rounded-xl flex items-start gap-2.5 text-xs text-amber-900">
-        <Info size={16} className="text-amber-600 shrink-0 mt-0.5" />
+      <div className="p-3.5 bg-white border border-gray-200 rounded-lg flex items-start gap-2.5 text-xs text-[#666666] shadow-xs">
+        <Info size={16} className="text-[#0a66c2] shrink-0 mt-0.5" />
         <p className="text-[11px] leading-relaxed">
-          <strong>Transparency Notice:</strong> Skill-gap comparisons are generated using transparent rule-based matching between your student profile and entry-level benchmark expectations for this role. The platform does not claim to have objectively evaluated your technical proficiency via live testing.
+          <strong className="text-[#191919]">Transparency Notice:</strong> Skill-gap comparisons are generated using transparent rule-based matching between your student profile and entry-level benchmark expectations for this role. The platform does not claim to have objectively evaluated your technical proficiency via live testing.
         </p>
       </div>
     </div>

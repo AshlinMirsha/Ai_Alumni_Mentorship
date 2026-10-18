@@ -125,13 +125,13 @@ export default function MentorshipPage() {
   const decliningItem = allMentorships.find((m) => m.id === decliningRequestId);
 
   return (
-    <div className="min-h-screen bg-gray-50/60 flex flex-col antialiased">
+    <div className="min-h-screen bg-[#f3f5f7] flex flex-col antialiased">
       {/* Toast Notification */}
       {toastMessage && (
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gray-900 text-white text-xs shadow-lg border border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-200"
+          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#191919] text-white text-xs shadow-md border border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-200"
         >
           <Check size={14} className="text-emerald-400 shrink-0" />
           <span>{toastMessage}</span>
@@ -140,24 +140,24 @@ export default function MentorshipPage() {
 
       <DashboardNav studentName={student.name} />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-5">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-gray-200">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-gray-200">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#ebf3fb] text-[#0a66c2] border border-[#0a66c2]/20">
                 <Compass size={13} />
                 Network Connections
               </span>
               <span className="text-xs text-gray-400">·</span>
-              <span className="text-xs font-medium text-gray-500">
+              <span className="text-xs font-normal text-[#666666]">
                 {acceptedCount} Active Relationships
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-2xl font-bold tracking-tight text-[#191919]">
               My Mentorships
             </h1>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-[#666666] mt-0.5">
               Manage your mentoring connections and requests.
             </p>
           </div>
@@ -179,7 +179,7 @@ export default function MentorshipPage() {
 
             <Link
               href="/alumni"
-              className="px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold inline-flex items-center gap-1.5 shadow-2xs transition-colors"
+              className="px-4 py-2 rounded-full bg-[#0a66c2] hover:bg-[#004182] text-white text-xs font-semibold inline-flex items-center gap-1.5 shadow-xs transition-colors"
             >
               <Users size={13} />
               <span>Discover Alumni</span>
@@ -190,7 +190,7 @@ export default function MentorshipPage() {
         {/* Filter Controls Row: Tabs + Direction Filter */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
           {/* Status Tabs */}
-          <div className="flex items-center gap-1 bg-white border border-gray-200 p-1 rounded-xl shadow-2xs overflow-x-auto">
+          <div className="flex items-center gap-1 bg-white border border-gray-200 p-1 rounded-lg shadow-xs overflow-x-auto">
             {[
               { key: "all" as TabKey, label: "All", count: totalCount },
               { key: "pending" as TabKey, label: "Pending", count: pendingCount },
@@ -201,18 +201,18 @@ export default function MentorshipPage() {
                 key={tab.key}
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all inline-flex items-center gap-2 shrink-0 ${
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all inline-flex items-center gap-2 shrink-0 ${
                   activeTab === tab.key
-                    ? "bg-blue-50 text-blue-700 shadow-2xs"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    ? "bg-[#ebf3fb] text-[#0a66c2] font-semibold"
+                    : "text-[#666666] hover:text-[#191919] hover:bg-gray-50"
                 }`}
               >
                 <span>{tab.label}</span>
                 <span
                   className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
                     activeTab === tab.key
-                      ? "bg-blue-200/70 text-blue-800"
-                      : "bg-gray-100 text-gray-600"
+                      ? "bg-[#0a66c2] text-white"
+                      : "bg-gray-100 text-[#666666]"
                   }`}
                 >
                   {tab.count}
@@ -224,11 +224,11 @@ export default function MentorshipPage() {
           {/* Direction Filter */}
           <div className="flex items-center gap-2 text-xs self-start sm:self-auto">
             <Filter size={13} className="text-gray-400 shrink-0" />
-            <span className="text-gray-500 hidden sm:inline">Perspective:</span>
+            <span className="text-[#666666] hidden sm:inline">Perspective:</span>
             <select
               value={directionFilter}
               onChange={(e) => setDirectionFilter(e.target.value as DirectionFilter)}
-              className="rounded-lg border border-gray-200 bg-white text-xs text-gray-800 px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-2xs cursor-pointer"
+              className="rounded-lg border border-gray-200 bg-white text-xs text-[#191919] px-2.5 py-1.5 focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] shadow-xs cursor-pointer"
             >
               <option value="all">All Inquiries ({totalCount})</option>
               <option value="outgoing">Outgoing (My Requests)</option>
@@ -238,18 +238,18 @@ export default function MentorshipPage() {
         </div>
 
         {/* Demo Mode Notice */}
-        <div className="p-3 bg-blue-50/50 border border-blue-100 rounded-xl flex items-center justify-between gap-3 text-xs text-blue-900">
+        <div className="p-3 bg-white border border-gray-200 rounded-lg flex items-center justify-between gap-3 text-xs text-[#666666] shadow-xs">
           <div className="flex items-center gap-2">
-            <Sparkles size={14} className="text-blue-600 shrink-0" />
+            <Sparkles size={14} className="text-[#0a66c2] shrink-0" />
             <span>
-              <strong>Simulated Mentorship Records:</strong> In this demo environment, requests, status transitions (Accept, Decline, Cancel), and conversation links update instantly in local browser storage and reflect on your dashboard.
+              <strong className="text-[#191919]">Simulated Mentorship Records:</strong> In this demo environment, requests, status transitions (Accept, Decline, Cancel), and conversation links update instantly in local browser storage and reflect on your dashboard.
             </span>
           </div>
         </div>
 
         {/* Mentorship Cards List or Meaningful Empty State */}
         {filteredList.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-3.5">
             {filteredList.map((mentorship) => (
               <MentorshipCard
                 key={mentorship.id}
@@ -263,21 +263,21 @@ export default function MentorshipPage() {
           </div>
         ) : (
           /* Empty States */
-          <div className="bg-white rounded-2xl border border-gray-200 p-10 sm:p-14 text-center space-y-4 shadow-2xs">
-            <div className="h-14 w-14 rounded-2xl bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-400 mx-auto">
+          <div className="bg-white rounded-lg border border-gray-200 p-10 sm:p-14 text-center space-y-4 shadow-xs">
+            <div className="h-12 w-12 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-400 mx-auto">
               {activeTab === "pending" ? (
-                <Clock size={24} />
+                <Clock size={22} />
               ) : activeTab === "accepted" ? (
-                <CheckCircle2 size={24} />
+                <CheckCircle2 size={22} />
               ) : activeTab === "declined" ? (
-                <XCircle size={24} />
+                <XCircle size={22} />
               ) : (
-                <Compass size={24} />
+                <Compass size={22} />
               )}
             </div>
 
-            <div className="space-y-1.5 max-w-sm mx-auto">
-              <h3 className="text-base font-bold text-gray-900">
+            <div className="space-y-1 max-w-sm mx-auto">
+              <h3 className="text-sm font-semibold text-[#191919]">
                 {activeTab === "pending"
                   ? "No pending mentorship requests"
                   : activeTab === "accepted"
@@ -286,7 +286,7 @@ export default function MentorshipPage() {
                   ? "No declined requests"
                   : "No mentorship connections found"}
               </h3>
-              <p className="text-xs text-gray-500 leading-relaxed">
+              <p className="text-xs text-[#666666] leading-relaxed">
                 {activeTab === "pending"
                   ? "You have answered or resolved all pending inquiries. Reach out to verified alumni to initiate a new career mentorship."
                   : activeTab === "accepted"
@@ -300,7 +300,7 @@ export default function MentorshipPage() {
             <div className="pt-2">
               <Link
                 href="/alumni"
-                className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold inline-flex items-center gap-1.5 shadow-2xs transition-colors"
+                className="px-4 py-2 rounded-full bg-[#0a66c2] hover:bg-[#004182] text-white text-xs font-semibold inline-flex items-center gap-1.5 shadow-xs transition-colors"
               >
                 <Users size={13} />
                 <span>Discover Alumni Mentors</span>

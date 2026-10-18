@@ -113,13 +113,13 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50/60 flex flex-col antialiased">
+    <div className="min-h-screen bg-[#f3f5f7] flex flex-col antialiased">
       {/* Toast Notification */}
       {toastMessage && (
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gray-900 text-white text-xs shadow-lg border border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-200"
+          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#191919] text-white text-xs shadow-md border border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-200"
         >
           <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
           <span>{toastMessage}</span>
@@ -128,22 +128,22 @@ export default function SettingsPage() {
 
       <DashboardNav studentName={student.name} />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2 border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-gray-200">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#ebf3fb] text-[#0a66c2] border border-[#0a66c2]/20">
                 <Settings size={13} />
                 User Preferences
               </span>
               <span className="text-xs text-gray-400">·</span>
-              <span className="text-xs font-medium text-gray-500">Student Account</span>
+              <span className="text-xs font-normal text-[#666666]">Student Account</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-2xl font-bold tracking-tight text-[#191919]">
               Platform Settings
             </h1>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-[#666666] mt-0.5">
               Manage your personal credentials, privacy rules, career targets, and alert preferences.
             </p>
           </div>
@@ -153,7 +153,7 @@ export default function SettingsPage() {
               variant="outline"
               size="sm"
               onClick={handleReset}
-              className="text-xs inline-flex items-center gap-1.5"
+              className="text-xs inline-flex items-center gap-1.5 rounded-full"
             >
               <RotateCcw size={12} />
               Reset All
@@ -162,19 +162,19 @@ export default function SettingsPage() {
         </div>
 
         {/* Demo Mode Notice */}
-        <div className="p-3 bg-blue-50/50 border border-blue-100 rounded-xl flex items-center justify-between gap-3 text-xs text-blue-900">
+        <div className="p-3.5 bg-white border border-gray-200 rounded-lg flex items-center justify-between gap-3 text-xs text-[#666666] shadow-xs">
           <div className="flex items-center gap-2">
-            <Info size={15} className="text-blue-600 shrink-0" />
+            <Info size={15} className="text-[#0a66c2] shrink-0" />
             <span>
-              <strong>Local Configuration:</strong> Preference changes are persisted in local browser storage and synchronize across the Dashboard, Mentorship, and Messages modules. In production, these changes will sync to the central PostgreSQL database.
+              <strong className="text-[#191919]">Local Configuration:</strong> Preference changes are persisted in local browser storage and synchronize across the Dashboard, Mentorship, and Messages modules. In production, these changes will sync to the central PostgreSQL database.
             </span>
           </div>
         </div>
 
         {/* Settings Layout: Left Tabs Sidebar + Right Form Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 items-start">
           {/* Navigation Sidebar */}
-          <div className="bg-white rounded-2xl border border-gray-200 p-2 sm:p-3 shadow-2xs space-y-1">
+          <div className="bg-white rounded-lg border border-gray-200 p-1.5 shadow-xs space-y-0.5">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -183,13 +183,13 @@ export default function SettingsPage() {
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all text-left ${
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium transition-all text-left ${
                     isActive
-                      ? "bg-blue-50 text-blue-700 shadow-2xs"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                      ? "bg-[#ebf3fb] text-[#0a66c2] font-semibold"
+                      : "text-[#666666] hover:text-[#191919] hover:bg-gray-50"
                   }`}
                 >
-                  <Icon size={15} className={isActive ? "text-blue-600" : "text-gray-400"} />
+                  <Icon size={15} className={isActive ? "text-[#0a66c2]" : "text-gray-400"} />
                   <span>{tab.label}</span>
                 </button>
               );
@@ -199,45 +199,45 @@ export default function SettingsPage() {
           {/* Settings Main Form Pane (3 Cols) */}
           <form
             onSubmit={handleSave}
-            className="lg:col-span-3 bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 shadow-2xs space-y-6"
+            className="lg:col-span-3 bg-white rounded-lg border border-gray-200 p-5 sm:p-7 shadow-xs space-y-5"
           >
             {/* 1. ACCOUNT SECTION */}
             {activeTab === "account" && (
-              <div className="space-y-6 animate-in fade-in duration-150">
-                <div className="pb-4 border-b border-gray-100">
-                  <h2 className="text-base font-bold text-gray-900">1. Account Credentials &amp; Access</h2>
-                  <p className="text-xs text-gray-500 mt-0.5">
+              <div className="space-y-5 animate-in fade-in duration-150">
+                <div className="pb-3 border-b border-gray-100">
+                  <h2 className="text-base font-bold text-[#191919]">1. Account Credentials &amp; Access</h2>
+                  <p className="text-xs text-[#666666] mt-0.5">
                     Your institutional authentication status and login information.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-gray-700 block">
+                    <label className="text-xs font-semibold text-[#191919] block">
                       Registered University Email
                     </label>
                     <input
                       type="email"
                       disabled
                       value={formData.account.email}
-                      className="w-full rounded-xl border border-gray-200 bg-gray-50 text-xs text-gray-600 px-3.5 py-2.5 cursor-not-allowed"
+                      className="w-full rounded-md border border-gray-200 bg-gray-50 text-xs text-[#666666] px-3 py-2 cursor-not-allowed"
                     />
-                    <p className="text-[11px] text-gray-400">
+                    <p className="text-[11px] text-[#8c8c8c]">
                       Managed by University of Technology Single Sign-On (SSO).
                     </p>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-gray-700 block">
+                    <label className="text-xs font-semibold text-[#191919] block">
                       Account Role &amp; Tier
                     </label>
                     <input
                       type="text"
                       disabled
                       value="Student Member (Active)"
-                      className="w-full rounded-xl border border-gray-200 bg-gray-50 text-xs text-gray-600 px-3.5 py-2.5 cursor-not-allowed"
+                      className="w-full rounded-md border border-gray-200 bg-gray-50 text-xs text-[#666666] px-3 py-2 cursor-not-allowed"
                     />
-                    <p className="text-[11px] text-gray-400">
+                    <p className="text-[11px] text-[#8c8c8c]">
                       Active since {formData.account.accountCreatedAt}.
                     </p>
                   </div>
@@ -245,15 +245,15 @@ export default function SettingsPage() {
 
                 <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <h3 className="text-xs font-bold text-gray-900">Session Management</h3>
-                    <p className="text-[11px] text-gray-500">Sign out of your active demo session.</p>
+                    <h3 className="text-xs font-bold text-[#191919]">Session Management</h3>
+                    <p className="text-[11px] text-[#666666]">Sign out of your active demo session.</p>
                   </div>
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
                     onClick={() => setShowLogoutConfirm(true)}
-                    className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 inline-flex items-center gap-1.5 self-start sm:self-auto"
+                    className="text-xs text-[#cc1016] hover:text-red-700 hover:bg-red-50 border-red-200 inline-flex items-center gap-1.5 self-start sm:self-auto rounded-full"
                   >
                     <LogOut size={13} />
                     <span>Log Out of Account</span>
@@ -264,17 +264,17 @@ export default function SettingsPage() {
 
             {/* 2. PROFILE SECTION */}
             {activeTab === "profile" && (
-              <div className="space-y-6 animate-in fade-in duration-150">
-                <div className="pb-4 border-b border-gray-100">
-                  <h2 className="text-base font-bold text-gray-900">2. Student Profile Details</h2>
-                  <p className="text-xs text-gray-500 mt-0.5">
+              <div className="space-y-5 animate-in fade-in duration-150">
+                <div className="pb-3 border-b border-gray-100">
+                  <h2 className="text-base font-bold text-[#191919]">2. Student Profile Details</h2>
+                  <p className="text-xs text-[#666666] mt-0.5">
                     Information visible to alumni mentors and peers in directory searches.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label htmlFor="student-name" className="text-xs font-semibold text-gray-700 block">
+                    <label htmlFor="student-name" className="text-xs font-semibold text-[#191919] block">
                       Full Name
                     </label>
                     <input
@@ -287,13 +287,13 @@ export default function SettingsPage() {
                           profile: { ...formData.profile, name: e.target.value },
                         })
                       }
-                      className="w-full rounded-xl border border-gray-200 bg-white text-xs text-gray-900 px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full rounded-md border border-gray-300 bg-white text-xs text-[#191919] px-3 py-2 h-9 focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2]"
                       required
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label htmlFor="student-department" className="text-xs font-semibold text-gray-700 block">
+                    <label htmlFor="student-department" className="text-xs font-semibold text-[#191919] block">
                       Academic Department / Major
                     </label>
                     <input
@@ -306,13 +306,13 @@ export default function SettingsPage() {
                           profile: { ...formData.profile, department: e.target.value },
                         })
                       }
-                      className="w-full rounded-xl border border-gray-200 bg-white text-xs text-gray-900 px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full rounded-md border border-gray-300 bg-white text-xs text-[#191919] px-3 py-2 h-9 focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2]"
                       required
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label htmlFor="academic-year" className="text-xs font-semibold text-gray-700 block">
+                    <label htmlFor="academic-year" className="text-xs font-semibold text-[#191919] block">
                       Current Academic Year
                     </label>
                     <select
@@ -324,7 +324,7 @@ export default function SettingsPage() {
                           profile: { ...formData.profile, academicYear: e.target.value },
                         })
                       }
-                      className="w-full rounded-xl border border-gray-200 bg-white text-xs text-gray-900 px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full rounded-md border border-gray-300 bg-white text-xs text-[#191919] px-3 py-2 h-9 focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2]"
                     >
                       <option value="First Year">First Year (Freshman)</option>
                       <option value="Second Year">Second Year (Sophomore)</option>
@@ -335,7 +335,7 @@ export default function SettingsPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label htmlFor="grad-year" className="text-xs font-semibold text-gray-700 block">
+                    <label htmlFor="grad-year" className="text-xs font-semibold text-[#191919] block">
                       Expected Graduation Year
                     </label>
                     <input
@@ -351,13 +351,13 @@ export default function SettingsPage() {
                           },
                         })
                       }
-                      className="w-full rounded-xl border border-gray-200 bg-white text-xs text-gray-900 px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full rounded-md border border-gray-300 bg-white text-xs text-[#191919] px-3 py-2 h-9 focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2]"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="bio-text" className="text-xs font-semibold text-gray-700 block">
+                  <label htmlFor="bio-text" className="text-xs font-semibold text-[#191919] block">
                     Bio &amp; Personal Background
                   </label>
                   <textarea
@@ -370,7 +370,7 @@ export default function SettingsPage() {
                         profile: { ...formData.profile, bio: e.target.value },
                       })
                     }
-                    className="w-full rounded-xl border border-gray-200 bg-white text-xs text-gray-900 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 leading-relaxed"
+                    className="w-full rounded-md border border-gray-300 bg-white text-xs text-[#191919] p-3 focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] leading-relaxed"
                   />
                 </div>
               </div>
@@ -378,16 +378,16 @@ export default function SettingsPage() {
 
             {/* 3. CAREER PREFERENCES */}
             {activeTab === "career" && (
-              <div className="space-y-6 animate-in fade-in duration-150">
-                <div className="pb-4 border-b border-gray-100">
-                  <h2 className="text-base font-bold text-gray-900">3. Career &amp; Mentorship Preferences</h2>
-                  <p className="text-xs text-gray-500 mt-0.5">
+              <div className="space-y-5 animate-in fade-in duration-150">
+                <div className="pb-3 border-b border-gray-100">
+                  <h2 className="text-base font-bold text-[#191919]">3. Career &amp; Mentorship Preferences</h2>
+                  <p className="text-xs text-[#666666] mt-0.5">
                     Shapes your personalized roadmap, alumni recommendations, and assistant prompts.
                   </p>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="target-role-pref" className="text-xs font-semibold text-gray-700 block">
+                  <label htmlFor="target-role-pref" className="text-xs font-semibold text-[#191919] block">
                     Target Primary Career Role
                   </label>
                   <input
@@ -403,27 +403,27 @@ export default function SettingsPage() {
                         },
                       })
                     }
-                    className="w-full rounded-xl border border-gray-200 bg-white text-xs text-gray-900 px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 bg-white text-xs text-[#191919] px-3 py-2 h-9 focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2]"
                     placeholder="e.g. Full-Stack Software Engineer, Machine Learning Engineer"
                   />
                 </div>
 
                 {/* Preferred Technical Skills */}
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-gray-700 block">
+                  <label className="text-xs font-semibold text-[#191919] block">
                     Technical Skills Focus Inventory
                   </label>
-                  <div className="flex flex-wrap gap-1.5 pb-2">
+                  <div className="flex flex-wrap gap-1.5 pb-1">
                     {formData.careerPreferences.preferredSkills.map((sk) => (
                       <span
                         key={sk}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200 text-xs font-medium text-blue-800"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#ebf3fb] border border-[#0a66c2]/20 text-xs font-medium text-[#0a66c2]"
                       >
                         <span>{sk}</span>
                         <button
                           type="button"
                           onClick={() => handleRemoveSkill(sk)}
-                          className="text-blue-500 hover:text-blue-800"
+                          className="text-[#0a66c2] hover:text-[#004182]"
                           title="Remove skill"
                         >
                           ×
@@ -444,14 +444,14 @@ export default function SettingsPage() {
                         }
                       }}
                       placeholder="Add a skill (e.g. Kubernetes, TypeScript, Go)..."
-                      className="flex-1 rounded-xl border border-gray-200 bg-white text-xs text-gray-900 px-3.5 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 rounded-md border border-gray-300 bg-white text-xs text-[#191919] px-3 py-2 h-9 focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2]"
                     />
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
                       onClick={handleAddSkill}
-                      className="text-xs"
+                      className="text-xs rounded-full"
                     >
                       Add Skill
                     </Button>
@@ -460,7 +460,7 @@ export default function SettingsPage() {
 
                 {/* Preferred Industries */}
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-gray-700 block">
+                  <label className="text-xs font-semibold text-[#191919] block">
                     Preferred Industries
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
@@ -477,7 +477,7 @@ export default function SettingsPage() {
                       return (
                         <label
                           key={ind}
-                          className="flex items-center gap-2.5 p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 cursor-pointer"
+                          className="flex items-center gap-2.5 p-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer"
                         >
                           <input
                             type="checkbox"
@@ -495,9 +495,9 @@ export default function SettingsPage() {
                                 },
                               });
                             }}
-                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            className="rounded border-gray-300 text-[#0a66c2] focus:ring-[#0a66c2]"
                           />
-                          <span className="text-gray-800 font-medium">{ind}</span>
+                          <span className="text-[#191919] font-medium">{ind}</span>
                         </label>
                       );
                     })}
@@ -508,15 +508,15 @@ export default function SettingsPage() {
 
             {/* 4. NOTIFICATION PREFERENCES */}
             {activeTab === "notifications" && (
-              <div className="space-y-6 animate-in fade-in duration-150">
-                <div className="pb-4 border-b border-gray-100">
-                  <h2 className="text-base font-bold text-gray-900">4. Notification Alerts &amp; Digest</h2>
-                  <p className="text-xs text-gray-500 mt-0.5">
+              <div className="space-y-5 animate-in fade-in duration-150">
+                <div className="pb-3 border-b border-gray-100">
+                  <h2 className="text-base font-bold text-[#191919]">4. Notification Alerts &amp; Digest</h2>
+                  <p className="text-xs text-[#666666] mt-0.5">
                     Control which platform events trigger in-app bell indicators and email notifications.
                   </p>
                 </div>
 
-                <div className="space-y-3.5">
+                <div className="space-y-3">
                   {[
                     {
                       key: "mentorshipRequests" as const,
@@ -541,11 +541,11 @@ export default function SettingsPage() {
                   ].map((item) => (
                     <label
                       key={item.key}
-                      className="flex items-start justify-between p-3.5 rounded-xl border border-gray-200 hover:bg-gray-50/70 transition-colors cursor-pointer gap-4"
+                      className="flex items-start justify-between p-3.5 rounded-lg border border-gray-200 hover:bg-gray-50/70 transition-colors cursor-pointer gap-4"
                     >
                       <div className="space-y-0.5">
-                        <span className="text-xs font-bold text-gray-900 block">{item.title}</span>
-                        <p className="text-[11px] text-gray-500 leading-relaxed">{item.description}</p>
+                        <span className="text-xs font-bold text-[#191919] block">{item.title}</span>
+                        <p className="text-[11px] text-[#666666] leading-relaxed">{item.description}</p>
                       </div>
                       <input
                         type="checkbox"
@@ -559,7 +559,7 @@ export default function SettingsPage() {
                             },
                           })
                         }
-                        className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 shrink-0"
+                        className="mt-1 h-4 w-4 rounded border-gray-300 text-[#0a66c2] focus:ring-[#0a66c2] shrink-0"
                       />
                     </label>
                   ))}
@@ -569,17 +569,17 @@ export default function SettingsPage() {
 
             {/* 5. PRIVACY SECTION */}
             {activeTab === "privacy" && (
-              <div className="space-y-6 animate-in fade-in duration-150">
-                <div className="pb-4 border-b border-gray-100">
-                  <h2 className="text-base font-bold text-gray-900">5. Privacy &amp; Directory Visibility</h2>
-                  <p className="text-xs text-gray-500 mt-0.5">
+              <div className="space-y-5 animate-in fade-in duration-150">
+                <div className="pb-3 border-b border-gray-100">
+                  <h2 className="text-base font-bold text-[#191919]">5. Privacy &amp; Directory Visibility</h2>
+                  <p className="text-xs text-[#666666] mt-0.5">
                     Determine who can find your profile and initiate contact.
                   </p>
                 </div>
 
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-gray-700 block">
+                    <label className="text-xs font-semibold text-[#191919] block">
                       Profile Discoverability
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -590,9 +590,9 @@ export default function SettingsPage() {
                       ].map((opt) => (
                         <label
                           key={opt.id}
-                          className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
+                          className={`p-3.5 rounded-lg border cursor-pointer transition-all ${
                             formData.privacy.profileVisibility === opt.id
-                              ? "border-blue-500 bg-blue-50/50 ring-1 ring-blue-500"
+                              ? "border-[#0a66c2] bg-[#ebf3fb]/40 ring-1 ring-[#0a66c2]"
                               : "border-gray-200 hover:bg-gray-50"
                           }`}
                         >
@@ -611,18 +611,18 @@ export default function SettingsPage() {
                                   },
                                 })
                               }
-                              className="text-blue-600 focus:ring-blue-500"
+                              className="text-[#0a66c2] focus:ring-[#0a66c2]"
                             />
-                            <span className="text-xs font-bold text-gray-900">{opt.title}</span>
+                            <span className="text-xs font-bold text-[#191919]">{opt.title}</span>
                           </div>
-                          <p className="text-[11px] text-gray-500 leading-snug">{opt.desc}</p>
+                          <p className="text-[11px] text-[#666666] leading-snug">{opt.desc}</p>
                         </label>
                       ))}
                     </div>
                   </div>
 
-                  <div className="space-y-2 pt-2">
-                    <label className="text-xs font-semibold text-gray-700 block">
+                  <div className="space-y-1.5 pt-2">
+                    <label className="text-xs font-semibold text-[#191919] block">
                       Mentorship Availability Status
                     </label>
                     <select
@@ -636,7 +636,7 @@ export default function SettingsPage() {
                           },
                         })
                       }
-                      className="w-full rounded-xl border border-gray-200 bg-white text-xs text-gray-900 px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full rounded-md border border-gray-300 bg-white text-xs text-[#191919] px-3 py-2 h-9 focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2]"
                     >
                       <option value="open">Open for Mentorship Inquiries</option>
                       <option value="busy">Limited Availability (Exam / Project Period)</option>
@@ -649,16 +649,16 @@ export default function SettingsPage() {
 
             {/* 6. APPEARANCE SECTION */}
             {activeTab === "appearance" && (
-              <div className="space-y-6 animate-in fade-in duration-150">
-                <div className="pb-4 border-b border-gray-100">
-                  <h2 className="text-base font-bold text-gray-900">6. Appearance &amp; Display Theme</h2>
-                  <p className="text-xs text-gray-500 mt-0.5">
+              <div className="space-y-5 animate-in fade-in duration-150">
+                <div className="pb-3 border-b border-gray-100">
+                  <h2 className="text-base font-bold text-[#191919]">6. Appearance &amp; Display Theme</h2>
+                  <p className="text-xs text-[#666666] mt-0.5">
                     Customize your color scheme preference and interface density.
                   </p>
                 </div>
 
                 <div className="space-y-3">
-                  <label className="text-xs font-semibold text-gray-700 block">
+                  <label className="text-xs font-semibold text-[#191919] block">
                     Color Theme Mode
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -679,13 +679,13 @@ export default function SettingsPage() {
                               appearance: { ...formData.appearance, theme: item.id },
                             })
                           }
-                          className={`p-4 rounded-xl border flex flex-col items-center gap-2.5 transition-all ${
+                          className={`p-3.5 rounded-lg border flex flex-col items-center gap-2 transition-all ${
                             isSelected
-                              ? "border-blue-600 bg-blue-50/50 ring-1 ring-blue-600 font-bold text-blue-900"
-                              : "border-gray-200 text-gray-700 hover:bg-gray-50"
+                              ? "border-[#0a66c2] bg-[#ebf3fb]/40 ring-1 ring-[#0a66c2] font-bold text-[#0a66c2]"
+                              : "border-gray-200 text-[#191919] hover:bg-gray-50"
                           }`}
                         >
-                          <Icon size={20} className={isSelected ? "text-blue-600" : "text-gray-400"} />
+                          <Icon size={18} className={isSelected ? "text-[#0a66c2]" : "text-gray-400"} />
                           <span className="text-xs">{item.label}</span>
                         </button>
                       );
@@ -694,10 +694,10 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="pt-2">
-                  <label className="flex items-center justify-between p-3.5 rounded-xl border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                  <label className="flex items-center justify-between p-3.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
                     <div>
-                      <span className="text-xs font-bold text-gray-900 block">Compact Card Density</span>
-                      <p className="text-[11px] text-gray-500">Reduce vertical card paddings in alumni search and dashboards.</p>
+                      <span className="text-xs font-bold text-[#191919] block">Compact Card Density</span>
+                      <p className="text-[11px] text-[#666666]">Reduce vertical card paddings in alumni search and dashboards.</p>
                     </div>
                     <input
                       type="checkbox"
@@ -711,7 +711,7 @@ export default function SettingsPage() {
                           },
                         })
                       }
-                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 rounded border-gray-300 text-[#0a66c2] focus:ring-[#0a66c2]"
                     />
                   </label>
                 </div>
@@ -719,15 +719,15 @@ export default function SettingsPage() {
             )}
 
             {/* Save Action Footer */}
-            <div className="pt-5 border-t border-gray-100 flex items-center justify-between">
-              <span className="text-[11px] text-gray-400">
+            <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
+              <span className="text-[11px] text-[#8c8c8c]">
                 Changes saved here persist in your local browser state.
               </span>
               <Button
                 type="submit"
                 variant="primary"
                 size="md"
-                className="px-6 py-2.5 text-xs font-semibold inline-flex items-center gap-2 shadow-2xs"
+                className="px-6 py-2 text-xs font-semibold inline-flex items-center gap-2 rounded-full bg-[#0a66c2] hover:bg-[#004182] shadow-xs"
               >
                 <Save size={14} />
                 <span>Save All Changes</span>
@@ -740,13 +740,13 @@ export default function SettingsPage() {
       {/* Logout Confirmation Dialog */}
       {showLogoutConfirm && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-xs"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
           role="dialog"
           aria-modal="true"
         >
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 max-w-sm w-full p-6 space-y-4">
-            <h3 className="text-base font-bold text-gray-900">Sign Out of AlumniPath?</h3>
-            <p className="text-xs text-gray-500 leading-relaxed">
+          <div className="bg-white rounded-lg shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-200 max-w-sm w-full p-6 space-y-4">
+            <h3 className="text-base font-bold text-[#191919]">Sign Out of AlumniPath?</h3>
+            <p className="text-xs text-[#666666] leading-relaxed">
               You will be redirected to the sign in page. Your mock profile and saved demo activity will remain stored in this browser.
             </p>
             <div className="pt-2 flex justify-end gap-2.5">
@@ -754,6 +754,7 @@ export default function SettingsPage() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowLogoutConfirm(false)}
+                className="rounded-full"
               >
                 Cancel
               </Button>
@@ -764,7 +765,7 @@ export default function SettingsPage() {
                   setShowLogoutConfirm(false);
                   router.push("/login");
                 }}
-                className="bg-red-600 hover:bg-red-700 text-white"
+                className="bg-[#cc1016] hover:bg-red-800 text-white rounded-full"
               >
                 Sign Out
               </Button>

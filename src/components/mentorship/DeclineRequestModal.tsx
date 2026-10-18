@@ -40,12 +40,12 @@ export function DeclineRequestModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
       role="dialog"
       aria-modal="true"
       aria-labelledby="decline-modal-title"
     >
-      <div className="bg-white rounded-2xl shadow-xl border border-gray-200 max-w-md w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-white rounded-lg shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-200 max-w-md w-full p-5 space-y-3.5">
         <div className="flex items-start justify-between">
           <div className="h-10 w-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
             <XCircle size={20} />

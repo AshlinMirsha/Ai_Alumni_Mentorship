@@ -10,23 +10,11 @@ import { cn } from "@/lib/utils";
 function Wordmark() {
   return (
     <span className="text-lg font-bold tracking-tight text-gray-900">
-      Alumni<span className="text-blue-600">Path</span>
+      Alumni<span className="text-[#0a66c2]">Path</span>
     </span>
   );
 }
 
-// Demo credentials notice
-function DemoNotice() {
-  return (
-    <div className="flex items-start gap-2.5 rounded-md border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-800">
-      <AlertCircle size={14} className="mt-0.5 shrink-0 text-amber-600" />
-      <span>
-        <strong>Demo mode:</strong> Authentication is not yet connected to a
-        backend. Use any email and password to explore the interface.
-      </span>
-    </div>
-  );
-}
 
 interface FormErrors {
   email?: string;
@@ -74,27 +62,27 @@ export default function LoginPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f3f5f7] px-4">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
+              <div className="h-8 w-8 rounded-md bg-[#0a66c2] flex items-center justify-center">
                 <span className="text-white text-sm font-bold">A</span>
               </div>
               <Wordmark />
             </Link>
           </div>
-          <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm text-center">
-            <div className="h-12 w-12 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto mb-4">
-              <svg className="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="bg-white border border-gray-200 rounded-lg p-8 shadow-xs text-center">
+            <div className="h-12 w-12 rounded-full bg-[#eef8f1] border border-[#bfe3c9] flex items-center justify-center mx-auto mb-4">
+              <svg className="h-6 w-6 text-[#057642]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="text-base font-semibold text-gray-900 mb-1">Sign in successful</h2>
-            <p className="text-sm text-gray-500 mb-6">
+            <h2 className="text-base font-bold text-gray-900 mb-1">Sign in successful</h2>
+            <p className="text-xs text-gray-600 mb-6">
               Welcome back! Redirecting you to your dashboard&hellip;
             </p>
-            <Button variant="primary" fullWidth asChild>
+            <Button variant="primary" fullWidth asChild className="rounded-full font-semibold bg-[#0a66c2] hover:bg-[#004182]">
               <Link href="/dashboard">Go to Dashboard</Link>
             </Button>
           </div>
@@ -104,74 +92,103 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-[#f3f5f7]">
       {/* Left panel — decorative */}
-      <div className="hidden lg:flex lg:w-2/5 bg-gray-900 flex-col justify-between p-12">
+      <div className="hidden lg:flex lg:w-2/5 bg-[#1b2a47] flex-col justify-between p-12 text-white">
         <Link href="/" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-md bg-[#0a66c2] flex items-center justify-center">
             <span className="text-white text-sm font-bold">A</span>
           </div>
           <span className="text-lg font-bold tracking-tight text-white">
-            Alumni<span className="text-blue-400">Path</span>
+            Alumni<span className="text-[#70b5f9]">Path</span>
           </span>
         </Link>
 
         <div>
-          <blockquote className="text-gray-300 text-lg leading-relaxed mb-6">
+          <blockquote className="text-gray-200 text-base leading-relaxed mb-6 font-normal">
             &ldquo;I had no idea how to break into product management. One
-            conversation with an alumni who had made that exact transition
-            changed my entire approach.&rdquo;
+            structured conversation with an alumnus who had made that exact transition
+            completely changed my trajectory.&rdquo;
           </blockquote>
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-300 text-sm font-semibold">
+            <div className="h-10 w-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white text-xs font-bold">
               PS
             </div>
             <div>
-              <p className="text-sm font-medium text-white">Priya S.</p>
-              <p className="text-xs text-gray-500">CS, University of Michigan · Class of 2025</p>
+              <p className="text-sm font-semibold text-white">Priya Sharma</p>
+              <p className="text-xs text-gray-300">CS, University of Michigan · Class of 2025</p>
             </div>
           </div>
         </div>
 
-        <p className="text-xs text-gray-600">
-          &copy; 2026 AlumniPath
+        <p className="text-xs text-gray-400">
+          &copy; 2026 AlumniPath · Professional Alumni Networking
         </p>
       </div>
 
       {/* Right panel — form */}
-      <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 px-4 py-12">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
         {/* Mobile logo */}
         <div className="lg:hidden text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-md bg-[#0a66c2] flex items-center justify-center">
               <span className="text-white text-sm font-bold">A</span>
             </div>
             <Wordmark />
           </Link>
         </div>
 
-        <div className="w-full max-w-sm">
+        <div className="w-full max-w-md bg-white border border-gray-200 rounded-lg p-8 shadow-xs">
           <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">Welcome back</h1>
-            <p className="text-sm text-gray-500">
-              Sign in to your account to continue.
+            <h1 className="text-2xl font-bold text-gray-900 tracking-tight mb-1">Sign in</h1>
+            <p className="text-xs text-gray-600">
+              Stay updated on your professional and mentorship community.
             </p>
           </div>
 
-          <DemoNotice />
+          <div className="mb-5 flex items-start gap-2.5 rounded-lg border border-[#b2d5f8] bg-[#ebf3fb] p-3 text-xs text-[#004182]">
+            <AlertCircle size={15} className="mt-0.5 shrink-0 text-[#0a66c2]" />
+            <div className="space-y-1.5 flex-1">
+              <p>
+                <strong>Demo mode:</strong> Use any email and password or click a quick-fill preset below to test:
+              </p>
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmail("priya@umich.edu");
+                    setPassword("password123");
+                  }}
+                  className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-white border border-[#b2d5f8] text-[#0a66c2] hover:bg-[#d0e2f5] transition-colors"
+                >
+                  Student (Priya)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmail("arjun@stripe.com");
+                    setPassword("password123");
+                  }}
+                  className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-white border border-[#b2d5f8] text-[#0a66c2] hover:bg-[#d0e2f5] transition-colors"
+                >
+                  Alumni (Arjun)
+                </button>
+              </div>
+            </div>
+          </div>
 
-          <form onSubmit={handleSubmit} noValidate className="mt-5 space-y-4">
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
             {/* Google sign-in (UI only) */}
             <button
               type="button"
               className={cn(
-                "w-full flex items-center justify-center gap-3 h-10 rounded-md border border-gray-200",
-                "bg-white text-sm font-medium text-gray-700",
+                "w-full flex items-center justify-center gap-3 h-10 rounded-full border border-gray-300",
+                "bg-white text-xs font-semibold text-gray-700",
                 "hover:bg-gray-50 transition-colors duration-150",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0a66c2]"
               )}
               onClick={() => {
-                setErrors({ general: "Google sign-in is not yet available in demo mode." });
+                setErrors({ general: "Google sign-in is not yet available in demo mode. Please use email and password." });
               }}
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
@@ -197,13 +214,13 @@ export default function LoginPage() {
 
             <div className="relative flex items-center">
               <div className="flex-1 border-t border-gray-200" />
-              <span className="px-3 text-xs text-gray-400">or</span>
+              <span className="px-3 text-xs text-gray-400 font-medium">or</span>
               <div className="flex-1 border-t border-gray-200" />
             </div>
 
             {errors.general && (
-              <div className="flex items-center gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-2.5 text-xs text-red-700">
-                <AlertCircle size={13} className="shrink-0" />
+              <div className="flex items-center gap-2 rounded-lg border border-[#f9d2d5] bg-[#feeff0] px-3 py-2 text-xs text-[#cc1016]">
+                <AlertCircle size={14} className="shrink-0" />
                 {errors.general}
               </div>
             )}
@@ -226,12 +243,12 @@ export default function LoginPage() {
 
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center justify-between">
-                <label htmlFor="login-password" className="text-sm font-medium text-gray-700">
+                <label htmlFor="login-password" className="text-xs font-semibold text-gray-700">
                   Password
                 </label>
                 <Link
                   href="#"
-                  className="text-xs text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
+                  className="text-xs text-[#0a66c2] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0a66c2] rounded"
                 >
                   Forgot password?
                 </Link>
@@ -269,11 +286,11 @@ export default function LoginPage() {
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}
                 className={cn(
-                  "h-4 w-4 rounded border-gray-300 text-blue-600",
-                  "focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
+                  "h-4 w-4 rounded border-gray-300 text-[#0a66c2]",
+                  "focus:ring-2 focus:ring-[#0a66c2] focus:ring-offset-0"
                 )}
               />
-              <span className="text-sm text-gray-700">Remember me for 30 days</span>
+              <span className="text-xs text-gray-700">Remember me for 30 days</span>
             </label>
 
             <Button
@@ -282,15 +299,16 @@ export default function LoginPage() {
               size="lg"
               loading={loading}
               fullWidth
+              className="rounded-full font-semibold bg-[#0a66c2] hover:bg-[#004182]"
             >
               {loading ? "Signing in…" : "Sign In"}
             </Button>
           </form>
 
-          <p className="mt-5 text-center text-sm text-gray-500">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-blue-600 font-medium hover:underline">
-              Create one
+          <p className="mt-6 text-center text-xs text-gray-600">
+            New to AlumniPath?{" "}
+            <Link href="/signup" className="text-[#0a66c2] font-semibold hover:underline">
+              Join now
             </Link>
           </p>
         </div>

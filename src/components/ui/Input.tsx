@@ -29,11 +29,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const inputId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
 
     return (
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-1.5 w-full">
         {label && (
           <label
             htmlFor={inputId}
-            className="text-sm font-medium text-gray-700"
+            className="text-xs font-semibold text-gray-700 tracking-tight"
           >
             {label}
           </label>
@@ -60,11 +60,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             }
             className={cn(
               "w-full rounded-md border bg-white text-sm text-gray-900 placeholder:text-gray-400",
-              "px-3 py-2.5 h-10",
-              "border-gray-200 transition-colors duration-150",
-              "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500",
+              "px-3 py-2 h-9",
+              "border-gray-300 transition-colors duration-150",
+              "focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2]",
               "disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed",
-              error && "border-red-500 focus:ring-red-400",
+              error && "border-red-500 focus:border-red-500 focus:ring-red-400",
               leadingIcon && "pl-9",
               trailingElement && "pr-10",
               className
@@ -80,12 +80,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         </div>
 
         {error && (
-          <p id={`${inputId}-error`} role="alert" className="text-xs text-red-600">
+          <p id={`${inputId}-error`} role="alert" className="text-xs text-red-600 mt-0.5">
             {error}
           </p>
         )}
         {!error && hint && (
-          <p id={`${inputId}-hint`} className="text-xs text-gray-500">
+          <p id={`${inputId}-hint`} className="text-xs text-gray-500 mt-0.5">
             {hint}
           </p>
         )}
