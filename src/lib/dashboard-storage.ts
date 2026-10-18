@@ -1029,6 +1029,55 @@ export function addOpportunity(newOpp: Opportunity): void {
   });
 }
 
+export function getOpportunityById(oppId: string): Opportunity | undefined {
+  const current = loadOpportunities();
+  return current.find((o) => o.id === oppId);
+}
+
+export function updateOpportunity(oppId: string, updates: Partial<Opportunity>): boolean {
+  const current = loadOpportunities();
+  const index = current.findIndex((o) => o.id === oppId);
+  if (index === -1) return false;
+
+  const updatedOpp = {
+    ...current[index],
+    ...updates,
+  };
+
+  const updatedList = [...current];
+  updatedList[index] = updatedOpp;
+  saveOpportunities(updatedList);
+  return true;
+}
+
+export function deleteOpportunity(oppId: string): boolean {
+  const current = loadOpportunities();
+  const updated = current.filter((o) => o.id !== oppId);
+  if (updated.length === current.length) return false;
+
+  saveOpportunities(updated);
+  return true;
+}
+
+export function toggleOpportunityStatus(oppId: string): boolean {
+  const current = loadOpportunities();
+  const index = current.findIndex((o) => o.id === oppId);
+  if (index === -1) return false;
+
+  const currentStatus = current[index].status || "active";
+  const newStatus = currentStatus === "active" ? "closed" : "active";
+
+  const updatedOpp: Opportunity = {
+    ...current[index],
+    status: newStatus,
+  };
+
+  const updatedList = [...current];
+  updatedList[index] = updatedOpp;
+  saveOpportunities(updatedList);
+  return true;
+}
+
 // ─── Community Posts Storage ──────────────────────────────────────────────────
 
 let cachedCommunityRaw: string | null = null;
@@ -1070,6 +1119,15 @@ export function addCommunityPost(post: CommunityPost): void {
   saveCommunityPosts([post, ...current]);
 }
 
+export function deleteCommunityPost(postId: string): boolean {
+  const current = loadCommunityPosts();
+  const updated = current.filter((p) => p.id !== postId);
+  if (updated.length === current.length) return false;
+
+  saveCommunityPosts(updated);
+  return true;
+}
+
 export function addCommunityComment(postId: string, comment: CommunityComment): void {
   const current = loadCommunityPosts();
   const updated = current.map((p) => {
@@ -1097,6 +1155,24 @@ export function likeCommunityPost(postId: string): void {
   });
   saveCommunityPosts(updated);
 }
+
+export function toggleLikeCommunityPost(postId: string): boolean {
+  const current = loadCommunityPosts();
+  const updated = current.map((p) => {
+    if (p.id === postId) {
+      const currentlyLiked = Boolean(p.likedByMe);
+      return {
+        ...p,
+        likedByMe: !currentlyLiked,
+        likes: currentlyLiked ? Math.max(0, p.likes - 1) : p.likes + 1,
+      };
+    }
+    return p;
+  });
+  saveCommunityPosts(updated);
+  return true;
+}
+
 
 // ─── Students List (Alumni Discovery View) ────────────────────────────────────
 

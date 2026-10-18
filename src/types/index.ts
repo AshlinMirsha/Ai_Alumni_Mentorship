@@ -467,7 +467,18 @@ export interface AuthSession {
 
 // ─── Opportunities & Referrals ────────────────────────────────────────────────
 
-export type OpportunityType = "internship" | "full_time" | "referral" | "shadowing" | "research";
+export type OpportunityType =
+  | "internship"
+  | "full_time"
+  | "referral"
+  | "workshop"
+  | "hackathon"
+  | "event"
+  | "shadowing"
+  | "research";
+
+export type WorkArrangement = "remote" | "hybrid" | "on_site";
+export type OpportunityStatus = "active" | "closed";
 
 export interface Opportunity {
   id: string;
@@ -476,6 +487,8 @@ export interface Opportunity {
   companyLogo?: string;
   location: string;
   type: OpportunityType;
+  workArrangement?: WorkArrangement;
+  status?: OpportunityStatus;
   postedByAlumniId: string;
   postedByAlumniName: string;
   postedByAlumniRole: string;
@@ -485,7 +498,9 @@ export interface Opportunity {
   requirements: string[];
   skills: string[];
   applyUrl?: string;
+  contactInstructions?: string;
   contactEmail?: string;
+  eligibility?: string;
   applicantsCount: number;
 }
 
@@ -503,6 +518,16 @@ export interface CommunityComment {
   likes: number;
 }
 
+export type CommunityCategory =
+  | "career_advice"
+  | "technical"
+  | "achievement"
+  | "event"
+  | "opportunity"
+  | "interview_prep"
+  | "networking"
+  | "general";
+
 export interface CommunityPost {
   id: string;
   title: string;
@@ -512,12 +537,15 @@ export interface CommunityPost {
   authorRole: string;
   authorType: UserRole;
   authorAvatar?: string;
-  category: "career_advice" | "technical" | "interview_prep" | "networking" | "general";
+  category: CommunityCategory;
   timestamp: string;
   likes: number;
+  likedByMe?: boolean;
   tags: string[];
   comments: CommunityComment[];
+  opportunityRefId?: string;
 }
+
 
 // ─── Discover Student Model (Alumni View) ─────────────────────────────────────
 

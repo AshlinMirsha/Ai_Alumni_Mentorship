@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { X, Send, MessagesSquare } from "lucide-react";
+import { X, Send, MessagesSquare, Sparkles, Check, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { addCommunityPost, loadAlumniProfile } from "@/lib/dashboard-storage";
-import type { CommunityPost } from "@/types";
+import { enhanceCommunityPost } from "@/services/ai-writing-assistant";
+import type { CommunityPost, CommunityCategory } from "@/types";
 
 interface NewDiscussionModalProps {
   isOpen: boolean;
@@ -20,18 +21,62 @@ export function NewDiscussionModal({
   const currentAlumni = loadAlumniProfile();
 
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState<CommunityPost["category"]>("career_advice");
+  const [category, setCategory] = useState<CommunityCategory>("career_advice");
   const [content, setContent] = useState("");
   const [tagsText, setTagsText] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  // AI Assistant states
+  const [isEnhancing, setIsEnhancing] = useState(false);
+  const [enhancedPreview, setEnhancedPreview] = useState<{
+    text: string;
+    improvements: string[];
+  } | null>(null);
 
   if (!isOpen) return null;
 
+  const handleEnhanceWithAI = async () => {
+    if (!content.trim()) {
+      setValidationError("Please write an initial draft or key thoughts first before requesting AI enhancement.");
+      return;
+    }
+    setValidationError(null);
+    setIsEnhancing(true);
+
+    try {
+      const res = await enhanceCommunityPost(content, category);
+      setEnhancedPreview({
+        text: res.enhancedText,
+        improvements: res.improvements,
+      });
+    } catch {
+      // fallback
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
+
+  const handleApplyAIEnhancement = () => {
+    if (enhancedPreview) {
+      setContent(enhancedPreview.text);
+      setEnhancedPreview(null);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !content.trim()) return;
+    if (!title.trim()) {
+      setValidationError("Please enter a discussion title or headline.");
+      return;
+    }
+    if (!content.trim()) {
+      setValidationError("Please enter the body of your discussion post.");
+      return;
+    }
 
     setSubmitting(true);
+    setValidationError(null);
 
     const tags = tagsText
       .split(",")
@@ -49,7 +94,8 @@ export function NewDiscussionModal({
       category,
       timestamp: new Date().toISOString(),
       likes: 1,
-      tags: tags.length > 0 ? tags : ["CareerAdvice", "TechCareers"],
+      likedByMe: true,
+      tags: tags.length > 0 ? tags : ["AlumniNetwork", "TechCareers"],
       comments: [],
     };
 
@@ -58,7 +104,7 @@ export function NewDiscussionModal({
       setSubmitting(false);
       onSuccess(newPost.title);
       onClose();
-    }, 350);
+    }, 250);
   };
 
   return (
@@ -70,15 +116,15 @@ export function NewDiscussionModal({
       />
 
       {/* Modal Dialog */}
-      <div className="relative bg-white rounded-lg border border-gray-200 shadow-xl w-full max-w-lg p-6 z-10 animate-in fade-in zoom-in-95">
+      <div className="relative bg-white rounded-lg border border-gray-200 shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 z-10 animate-in fade-in zoom-in-95">
         <div className="flex items-start justify-between pb-4 border-b border-gray-100">
           <div>
             <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
               <MessagesSquare size={16} className="text-[#0a66c2]" />
-              <span>Start a Community Discussion</span>
+              <span>Create Community Discussion Post</span>
             </h3>
             <p className="text-xs text-gray-500 mt-0.5">
-              Share industry perspective, answer career questions, or start a discussion for students.
+              Share career advice, technical wisdom, achievements, event announcements, or verified opportunities.
             </p>
           </div>
           <button
@@ -90,7 +136,14 @@ export function NewDiscussionModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4 text-xs">
+          {validationError && (
+            <div className="p-2.5 bg-red-50 border border-red-200 rounded-md text-xs text-red-700 flex items-center gap-2">
+              <AlertCircle size={14} className="shrink-0" />
+              <span>{validationError}</span>
+            </div>
+          )}
+
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1">
               Discussion Topic / Headline <span className="text-red-500">*</span>
@@ -107,33 +160,100 @@ export function NewDiscussionModal({
 
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1">
-              Discussion Category
+              Post Category <span className="text-red-500">*</span>
             </label>
             <select
               value={category}
-              onChange={(e) => setCategory(e.target.value as CommunityPost["category"])}
+              onChange={(e) => setCategory(e.target.value as CommunityCategory)}
               className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
             >
-              <option value="career_advice">Career Advice &amp; Progression</option>
+              <option value="career_advice">Career Advice &amp; Professional Progression</option>
+              <option value="technical">Technical Knowledge &amp; Systems Architecture</option>
+              <option value="achievement">Mentee &amp; Student Achievements</option>
+              <option value="event">Event Announcements &amp; Tech Talks</option>
+              <option value="opportunity">Verified Job &amp; Internship Opportunities</option>
               <option value="interview_prep">Technical Interview Preparation</option>
-              <option value="technical">Engineering &amp; System Design</option>
-              <option value="industry_trends">Industry Trends &amp; Future Tech</option>
               <option value="general">General Campus &amp; Alumni Q&amp;A</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">
-              Post Content <span className="text-red-500">*</span>
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs font-semibold text-gray-700">
+                Post Content <span className="text-red-500">*</span>
+              </label>
+              <button
+                type="button"
+                disabled={isEnhancing}
+                onClick={handleEnhanceWithAI}
+                className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#0a66c2] hover:text-[#004182] hover:underline"
+              >
+                <Sparkles size={12} className="text-amber-500" />
+                <span>{isEnhancing ? "Enhancing draft..." : "Enhance with AI Assistant"}</span>
+              </button>
+            </div>
             <textarea
-              rows={4}
+              rows={5}
               required
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Provide thoughtful advice, context, or questions for students..."
               className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
             />
+
+            {/* AI Review Panel */}
+            {enhancedPreview && (
+              <div className="mt-2.5 p-3.5 bg-blue-50/70 border border-blue-200 rounded-md animate-in fade-in">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-blue-900">
+                    <Sparkles size={13} className="text-amber-500 shrink-0" />
+                    <span>AI Writing Assistant Suggestion (Review Required)</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setEnhancedPreview(null)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+
+                <div className="mt-2 p-2.5 bg-white border border-blue-100 rounded text-xs text-gray-800 whitespace-pre-line leading-relaxed max-h-48 overflow-y-auto">
+                  {enhancedPreview.text}
+                </div>
+
+                <div className="mt-2 text-[11px] text-blue-800">
+                  <span className="font-semibold block mb-0.5">Improvements Applied:</span>
+                  <ul className="list-disc list-inside space-y-0.5">
+                    {enhancedPreview.improvements.map((imp, idx) => (
+                      <li key={idx}>{imp}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="mt-3 flex items-center justify-end gap-2 pt-2 border-t border-blue-200">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setEnhancedPreview(null)}
+                    className="text-xs text-gray-600"
+                  >
+                    Keep Original
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    size="sm"
+                    onClick={handleApplyAIEnhancement}
+                    className="text-xs bg-[#0a66c2] hover:bg-[#004182]"
+                  >
+                    <Check size={12} className="mr-1" />
+                    <span>Apply to Post</span>
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
 
           <div>
@@ -168,7 +288,7 @@ export function NewDiscussionModal({
               className="text-xs bg-[#0a66c2] hover:bg-[#004182] flex items-center gap-1.5"
             >
               <Send size={12} />
-              <span>{submitting ? "Publishing..." : "Publish Discussion"}</span>
+              <span>{submitting ? "Publishing..." : "Publish Post"}</span>
             </Button>
           </div>
         </form>
