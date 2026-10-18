@@ -7,7 +7,6 @@ import {
   Bell,
   Menu,
   X,
-  Compass,
   Users,
   Map,
   Sparkles,
@@ -80,7 +79,6 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
     : [
         { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
         { label: "Discover Alumni", href: "/alumni", icon: Users },
-        { label: "Mentorships", href: "/mentorship", icon: Compass },
         { label: "Messages", href: "/messages", icon: MessageSquare },
         { label: "Career Roadmap", href: "/career-roadmap", icon: Map },
         { label: "AI Assistant", href: "/career-assistant", icon: Sparkles },
@@ -268,11 +266,11 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
 
                   <div className="p-2 border-t border-gray-100 bg-gray-50/70 flex items-center justify-between px-3 text-xs">
                     <Link
-                      href="/mentorship"
+                      href={isAlumni ? "/alumni-dashboard/requests" : "/alumni"}
                       onClick={() => setShowNotifications(false)}
                       className="text-[11px] text-[#0a66c2] font-semibold hover:underline"
                     >
-                      Mentorship activity &rarr;
+                      {isAlumni ? "Review requests \u2192" : "Discover alumni \u2192"}
                     </Link>
                     <Link
                       href="/messages"

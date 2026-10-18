@@ -1,28 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { Users, Sparkles, FileText, Map, ArrowRight, Compass, MessageSquare, Briefcase } from "lucide-react";
+import { Users, Sparkles, FileText, Map, ArrowRight, Settings, MessageSquare, Briefcase } from "lucide-react";
 import { Card, CardHeader, CardBody } from "@/components/ui/Card";
 
 export function QuickActions() {
   const actions = [
     {
       title: "Discover Alumni",
-      description: "Search verified alumni mentors by company, skills, and industry.",
+      description: "Search verified alumni professionals by company, skills, and industry.",
       href: "/alumni",
       icon: Users,
       badgeText: "Directory",
     },
     {
-      title: "My Mentorships",
-      description: "Review pending requests, accepted connections, and mentee inquiries.",
-      href: "/mentorship",
-      icon: Compass,
-      badgeText: "Connections",
+      title: "Profile & Settings",
+      description: "Manage privacy preferences, technical skills, and account details.",
+      href: "/settings",
+      icon: Settings,
+      badgeText: "Preferences",
     },
     {
       title: "Direct Messages",
-      description: "Exchange direct career guidance with your alumni mentors.",
+      description: "Exchange career questions and guidance with alumni connections.",
       href: "/messages",
       icon: MessageSquare,
       badgeText: "Messages",

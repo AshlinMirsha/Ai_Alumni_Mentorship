@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { Users, CheckCircle, Sparkles, FilterX } from "lucide-react";
+import { Users, Sparkles, FilterX } from "lucide-react";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
 import { AlumniCard } from "@/components/alumni/AlumniCard";
 import {
@@ -11,20 +11,14 @@ import {
   initialFilterState,
 } from "@/components/alumni/AlumniFilters";
 import { EmptyState } from "@/components/dashboard/EmptyState";
-import { MentorshipRequestModal } from "@/components/dashboard/MentorshipRequestModal";
 import {
   alumniData,
   currentStudent,
-  initialMentorshipActivity,
 } from "@/lib/mock-data";
 import {
   subscribeToDashboardStorage,
   loadStudentProfile,
-  loadMentorshipActivity,
-  saveMentorshipActivity,
-  addNotification,
 } from "@/lib/dashboard-storage";
-import type { Alumni, Mentorship, MentorshipActivityData } from "@/types";
 
 export default function AlumniDiscoveryPage() {
   const student = useSyncExternalStore(
@@ -32,27 +26,9 @@ export default function AlumniDiscoveryPage() {
     loadStudentProfile,
     () => currentStudent
   );
-  const mentorshipData = useSyncExternalStore(
-    subscribeToDashboardStorage,
-    loadMentorshipActivity,
-    () => initialMentorshipActivity
-  );
 
   // Filter state
   const [filters, setFilters] = useState<AlumniFilterState>(initialFilterState);
-
-  // Modal & Toast states
-  const [selectedAlumniForRequest, setSelectedAlumniForRequest] = useState<
-    (Alumni & { experienceYears?: string }) | null
-  >(null);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 4500);
-  };
 
   const handleFilterChange = <K extends keyof AlumniFilterState>(
     key: K,
@@ -222,58 +198,8 @@ export default function AlumniDiscoveryPage() {
     }
   }, [filteredAlumni, filters.sortBy, student.skills]);
 
-  // Mentorship tracking
-  const requestedAlumniIds = useMemo(() => {
-    return new Set(
-      mentorshipData.pendingRequests.map((r: Mentorship) => r.alumniId)
-    );
-  }, [mentorshipData.pendingRequests]);
-
-  const acceptedAlumniIds = useMemo(() => {
-    return new Set(
-      mentorshipData.acceptedMentorships.map((m: Mentorship) => m.alumniId)
-    );
-  }, [mentorshipData.acceptedMentorships]);
-
-  const handleOpenMentorshipModal = (
-    alumnus: Alumni & { experienceYears?: string }
-  ) => {
-    setSelectedAlumniForRequest(alumnus);
-  };
-
-  const handleSubmitMentorshipRequest = (newRequest: Mentorship) => {
-    const updated: MentorshipActivityData = {
-      ...mentorshipData,
-      pendingRequests: [newRequest, ...mentorshipData.pendingRequests],
-    };
-    saveMentorshipActivity(updated);
-    addNotification({
-      id: `notif-${Date.now()}`,
-      type: "mentorship_request",
-      title: `Mentorship request sent to ${newRequest.alumni.name}`,
-      description: `Your request for "${newRequest.focus}" has been logged in My Mentorships.`,
-      timestamp: new Date().toISOString(),
-      read: false,
-      actionUrl: "/mentorship",
-      actorName: newRequest.alumni.name,
-    });
-    showToast(`Mentorship request submitted to ${newRequest.alumni.name}!`);
-  };
-
   return (
     <div className="min-h-screen bg-[#f3f5f7] flex flex-col antialiased">
-      {/* Toast Notification Banner */}
-      {toastMessage && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#191919] text-white text-xs shadow-lg border border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-200"
-        >
-          <CheckCircle size={15} className="text-[#057642] shrink-0" />
-          <span>{toastMessage}</span>
-        </div>
-      )}
-
       {/* Navigation */}
       <DashboardNav studentName={student.name} />
 
@@ -338,9 +264,6 @@ export default function AlumniDiscoveryPage() {
               <AlumniCard
                 key={alumnus.id}
                 alumni={alumnus}
-                isRequested={requestedAlumniIds.has(alumnus.id)}
-                isAccepted={acceptedAlumniIds.has(alumnus.id)}
-                onRequestMentorship={handleOpenMentorshipModal}
               />
             ))}
           </div>
@@ -355,21 +278,6 @@ export default function AlumniDiscoveryPage() {
           />
         )}
       </main>
-
-      {/* Mentorship Request Modal */}
-      <MentorshipRequestModal
-        isOpen={Boolean(selectedAlumniForRequest)}
-        alumni={selectedAlumniForRequest}
-        studentName={student.name}
-        studentCareerGoal={student.careerGoal || "Full-Stack Software Engineer"}
-        onClose={() => setSelectedAlumniForRequest(null)}
-        onSubmitRequest={handleSubmitMentorshipRequest}
-        isAlreadyRequested={
-          selectedAlumniForRequest
-            ? requestedAlumniIds.has(selectedAlumniForRequest.id)
-            : false
-        }
-      />
 
       {/* Shared Footer */}
       <footer className="mt-auto border-t border-gray-200 bg-white py-6">

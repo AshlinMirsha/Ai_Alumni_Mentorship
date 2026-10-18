@@ -185,7 +185,7 @@ export default function SettingsPage() {
           <div className="flex items-center gap-2">
             <Info size={15} className="text-[#0a66c2] shrink-0" />
             <span>
-              <strong className="text-[#191919]">Local Configuration:</strong> Preference changes are persisted in local browser storage and synchronize across the Dashboard, Mentorship, and Messages modules. In production, these changes will sync to the central PostgreSQL database.
+              <strong className="text-[#191919]">Local Configuration:</strong> Preference changes are persisted in local browser storage and synchronize across the Dashboard, Messages, and Career modules. In production, these changes will sync to the central PostgreSQL database.
             </span>
           </div>
         </div>
@@ -403,7 +403,9 @@ export default function SettingsPage() {
             {activeTab === "career" && (
               <div className="space-y-5 animate-in fade-in duration-150">
                 <div className="pb-3 border-b border-gray-100">
-                  <h2 className="text-base font-bold text-[#191919]">3. Career &amp; Mentorship Preferences</h2>
+                  <h2 className="text-base font-bold text-[#191919]">
+                    {isAlumni ? "3. Mentorship & Professional Preferences" : "3. Career & Networking Preferences"}
+                  </h2>
                   <p className="text-xs text-[#666666] mt-0.5">
                     Shapes your personalized roadmap, alumni recommendations, and assistant prompts.
                   </p>
@@ -540,28 +542,47 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="space-y-3">
-                  {[
-                    {
-                      key: "mentorshipRequests" as const,
-                      title: "Mentorship Inquiries & Updates",
-                      description: "Alert me when a mentor accepts, declines, or sends a response to my request.",
-                    },
-                    {
-                      key: "messages" as const,
-                      title: "Direct Messages",
-                      description: "Notify me when a mentor or mentee sends a new chat message.",
-                    },
-                    {
-                      key: "careerReminders" as const,
-                      title: "Career Roadmap Milestones",
-                      description: "Send reminders for active roadmap stages and capstone project deliverables.",
-                    },
-                    {
-                      key: "weeklyDigest" as const,
-                      title: "Weekly Network Digest",
-                      description: "Summary of new alumni mentors matching your target role and skills.",
-                    },
-                  ].map((item) => (
+                  {(isAlumni
+                    ? [
+                        {
+                          key: "mentorshipRequests" as const,
+                          title: "Mentorship Inquiries & Updates",
+                          description: "Alert me when a student submits or updates a mentorship inquiry.",
+                        },
+                        {
+                          key: "messages" as const,
+                          title: "Direct Messages",
+                          description: "Notify me when a student or mentee sends a new chat message.",
+                        },
+                        {
+                          key: "careerReminders" as const,
+                          title: "Mentorship Session Reminders",
+                          description: "Send reminders for upcoming scheduled mentorship sessions.",
+                        },
+                        {
+                          key: "weeklyDigest" as const,
+                          title: "Weekly Network Digest",
+                          description: "Summary of new student mentees matching your industry expertise.",
+                        },
+                      ]
+                    : [
+                        {
+                          key: "messages" as const,
+                          title: "Direct Messages",
+                          description: "Notify me when an alumnus sends a new chat message.",
+                        },
+                        {
+                          key: "careerReminders" as const,
+                          title: "Career Roadmap Milestones",
+                          description: "Send reminders for active roadmap stages and capstone project deliverables.",
+                        },
+                        {
+                          key: "weeklyDigest" as const,
+                          title: "Weekly Network Digest",
+                          description: "Summary of new alumni profiles matching your target career role.",
+                        },
+                      ]
+                  ).map((item) => (
                     <label
                       key={item.key}
                       className="flex items-start justify-between p-3.5 rounded-lg border border-gray-200 hover:bg-gray-50/70 transition-colors cursor-pointer gap-4"
@@ -644,28 +665,30 @@ export default function SettingsPage() {
                     </div>
                   </div>
 
-                  <div className="space-y-1.5 pt-2">
-                    <label className="text-xs font-semibold text-[#191919] block">
-                      Mentorship Availability Status
-                    </label>
-                    <select
-                      value={formData.privacy.mentorshipAvailability}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          privacy: {
-                            ...formData.privacy,
-                            mentorshipAvailability: e.target.value as "open" | "busy" | "closed",
-                          },
-                        })
-                      }
-                      className="w-full rounded-md border border-gray-300 bg-white text-xs text-[#191919] px-3 py-2 h-9 focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2]"
-                    >
-                      <option value="open">Open for Mentorship Inquiries</option>
-                      <option value="busy">Limited Availability (Exam / Project Period)</option>
-                      <option value="closed">Not Currently Seeking Mentorship</option>
-                    </select>
-                  </div>
+                  {isAlumni && (
+                    <div className="space-y-1.5 pt-2">
+                      <label className="text-xs font-semibold text-[#191919] block">
+                        Mentorship Availability Status
+                      </label>
+                      <select
+                        value={formData.privacy.mentorshipAvailability}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            privacy: {
+                              ...formData.privacy,
+                              mentorshipAvailability: e.target.value as "open" | "busy" | "closed",
+                            },
+                          })
+                        }
+                        className="w-full rounded-md border border-gray-300 bg-white text-xs text-[#191919] px-3 py-2 h-9 focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2]"
+                      >
+                        <option value="open">Open for Mentorship Inquiries</option>
+                        <option value="busy">Limited Availability (Exam / Project Period)</option>
+                        <option value="closed">Not Currently Seeking Mentorship</option>
+                      </select>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -825,8 +848,8 @@ export default function SettingsPage() {
                 <Link href="/dashboard" className="hover:text-gray-900 transition-colors">
                   Student Dashboard
                 </Link>
-                <Link href="/mentorship" className="hover:text-gray-900 transition-colors">
-                  Mentorships
+                <Link href="/alumni" className="hover:text-gray-900 transition-colors">
+                  Discover Alumni
                 </Link>
                 <Link href="/messages" className="hover:text-gray-900 transition-colors">
                   Messages

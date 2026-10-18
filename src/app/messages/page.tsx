@@ -122,24 +122,36 @@ export default function MessagesPage() {
             <p className="text-xs text-gray-500 mt-1">
               {isAlumni
                 ? "Direct communication with your student mentees and network connections."
-                : "Direct communication with your accepted alumni mentors and student connections."}
+                : "Direct communication with your alumni network connections and peers."}
             </p>
           </div>
 
           <div className="flex items-center gap-2 text-xs">
-            <Link
-              href="/mentorship"
-              className="px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold transition-colors inline-flex items-center gap-1"
-            >
-              <span>Manage Requests</span>
-            </Link>
-            <Link
-              href="/alumni"
-              className="px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-blue-600 font-semibold transition-colors inline-flex items-center gap-1"
-            >
-              <Users size={12} />
-              <span>Browse Mentors</span>
-            </Link>
+            {isAlumni ? (
+              <>
+                <Link
+                  href="/alumni-dashboard/requests"
+                  className="px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold transition-colors inline-flex items-center gap-1"
+                >
+                  <span>Mentorship Requests</span>
+                </Link>
+                <Link
+                  href="/alumni-dashboard/students"
+                  className="px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-[#0a66c2] font-semibold transition-colors inline-flex items-center gap-1"
+                >
+                  <Users size={12} />
+                  <span>Discover Students</span>
+                </Link>
+              </>
+            ) : (
+              <Link
+                href="/alumni"
+                className="px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-[#0a66c2] font-semibold transition-colors inline-flex items-center gap-1"
+              >
+                <Users size={12} />
+                <span>Discover Alumni</span>
+              </Link>
+            )}
           </div>
         </div>
 
@@ -221,8 +233,8 @@ export default function MessagesPage() {
                 <Link href="/dashboard" className="hover:text-gray-900 transition-colors">
                   Student Dashboard
                 </Link>
-                <Link href="/mentorship" className="hover:text-gray-900 transition-colors">
-                  Mentorships
+                <Link href="/career-assistant" className="hover:text-gray-900 transition-colors">
+                  AI Assistant
                 </Link>
                 <Link href="/career-roadmap" className="hover:text-gray-900 transition-colors">
                   Career Roadmap

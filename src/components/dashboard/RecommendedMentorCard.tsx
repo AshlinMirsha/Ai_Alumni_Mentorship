@@ -1,6 +1,7 @@
 "use client";
 
-import { Building2, Briefcase, UserPlus, Check } from "lucide-react";
+import Link from "next/link";
+import { Building2, Briefcase, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
@@ -10,15 +11,13 @@ import type { RecommendedAlumni } from "@/types";
 interface RecommendedMentorCardProps {
   alumni: RecommendedAlumni;
   onViewProfile: (alumni: RecommendedAlumni) => void;
-  onRequestMentorship: (alumni: RecommendedAlumni) => void;
+  onRequestMentorship?: (alumni: RecommendedAlumni) => void;
   isRequested?: boolean;
 }
 
 export function RecommendedMentorCard({
   alumni,
   onViewProfile,
-  onRequestMentorship,
-  isRequested = false,
 }: RecommendedMentorCardProps) {
   return (
     <Card
@@ -64,7 +63,7 @@ export function RecommendedMentorCard({
             </span>
             <span className="text-gray-300">•</span>
             <span className="text-[11px] text-gray-500 truncate">
-              {alumni.mentorshipAvailability === "available" ? "Open to mentor" : "Limited capacity"}
+              {alumni.location || "Alumni Professional"}
             </span>
           </div>
 
@@ -100,27 +99,19 @@ export function RecommendedMentorCard({
           onClick={() => onViewProfile(alumni)}
           className="text-xs h-7 flex-1"
         >
-          View Profile
+          Quick View
         </Button>
 
         <Button
-          variant={isRequested ? "secondary" : "primary"}
+          variant="primary"
           size="sm"
-          disabled={isRequested}
-          onClick={() => onRequestMentorship(alumni)}
-          className="text-xs h-7 flex-1 inline-flex items-center justify-center gap-1"
+          asChild
+          className="text-xs h-7 flex-1"
         >
-          {isRequested ? (
-            <>
-              <Check size={12} className="text-[#057642]" />
-              <span>Requested</span>
-            </>
-          ) : (
-            <>
-              <UserPlus size={12} />
-              <span>Connect</span>
-            </>
-          )}
+          <Link href={`/alumni/${alumni.id}`} className="inline-flex items-center justify-center gap-1">
+            <span>View Profile</span>
+            <ArrowRight size={12} />
+          </Link>
         </Button>
       </div>
     </Card>

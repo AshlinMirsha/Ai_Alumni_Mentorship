@@ -10,17 +10,14 @@ import { StudentProfileCard } from "@/components/dashboard/StudentProfileCard";
 import { RecommendedMentorCard } from "@/components/dashboard/RecommendedMentorCard";
 import { CareerOverview } from "@/components/dashboard/CareerOverview";
 import { CareerRoadmapPreview } from "@/components/dashboard/CareerRoadmapPreview";
-import { MentorshipActivity } from "@/components/dashboard/MentorshipActivity";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { EditProfileModal } from "@/components/dashboard/EditProfileModal";
 import { AlumniDetailModal } from "@/components/dashboard/AlumniDetailModal";
-import { MentorshipRequestModal } from "@/components/dashboard/MentorshipRequestModal";
 import {
   recommendedAlumniData,
   currentStudent,
   initialRoadmapStages,
-  initialMentorshipActivity,
 } from "@/lib/mock-data";
 import {
   subscribeToDashboardStorage,
@@ -30,17 +27,11 @@ import {
   loadRoadmapStages,
   saveRoadmapStages,
   resetRoadmapStages,
-  loadMentorshipActivity,
-  saveMentorshipActivity,
-  resetMentorshipActivity,
-  addNotification,
 } from "@/lib/dashboard-storage";
 import type {
   Student,
   RoadmapStageStatus,
   RecommendedAlumni,
-  Mentorship,
-  MentorshipActivityData,
 } from "@/types";
 
 export default function DashboardPage() {
@@ -54,16 +45,10 @@ export default function DashboardPage() {
     loadRoadmapStages,
     () => initialRoadmapStages
   );
-  const mentorshipData = useSyncExternalStore(
-    subscribeToDashboardStorage,
-    loadMentorshipActivity,
-    () => initialMentorshipActivity
-  );
 
   // Modal states
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [selectedAlumniForDetail, setSelectedAlumniForDetail] = useState<RecommendedAlumni | null>(null);
-  const [selectedAlumniForRequest, setSelectedAlumniForRequest] = useState<RecommendedAlumni | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
@@ -97,45 +82,6 @@ export default function DashboardPage() {
     resetRoadmapStages();
     showToast("Roadmap stages reset to initial demo track.");
   };
-
-  // Mentorship request submission handler
-  const handleSubmitMentorshipRequest = (newRequest: Mentorship) => {
-    const updated: MentorshipActivityData = {
-      ...mentorshipData,
-      pendingRequests: [newRequest, ...mentorshipData.pendingRequests],
-    };
-    saveMentorshipActivity(updated);
-    addNotification({
-      id: `notif-${Date.now()}`,
-      type: "mentorship_request",
-      title: `Mentorship request sent to ${newRequest.alumni.name}`,
-      description: `Your request for "${newRequest.focus}" has been recorded. Check My Mentorships for status updates.`,
-      timestamp: new Date().toISOString(),
-      read: false,
-      actionUrl: "/mentorship",
-      actorName: newRequest.alumni.name,
-    });
-    showToast(`Mentorship request sent to ${newRequest.alumni.name}!`);
-  };
-
-  // Mentorship activity empty state & reset handlers
-  const handleClearMentorshipActivity = () => {
-    const cleared: MentorshipActivityData = {
-      pendingRequests: [],
-      acceptedMentorships: [],
-      recentConversations: [],
-    };
-    saveMentorshipActivity(cleared);
-    showToast("Simulated empty mentorship activity state.");
-  };
-
-  const handleResetMentorshipActivity = () => {
-    resetMentorshipActivity();
-    showToast("Mentorship activity sample records restored.");
-  };
-
-  // Check if an alumni has a pending request
-  const requestedAlumniIds = new Set(mentorshipData.pendingRequests.map((r: Mentorship) => r.alumniId));
 
   return (
     <div className="min-h-screen bg-[#f3f5f7] flex flex-col antialiased">
@@ -191,7 +137,7 @@ export default function DashboardPage() {
                     </h2>
                   </div>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    Alumni mentors matched with your {student.department} background and {student.careerGoal || "Full-Stack Software Engineer"} aspirations
+                    Alumni professionals matched with your {student.department} background and {student.careerGoal || "Full-Stack Software Engineer"} aspirations
                   </p>
                 </div>
 
@@ -210,8 +156,6 @@ export default function DashboardPage() {
                     key={alumni.id}
                     alumni={alumni}
                     onViewProfile={(selected) => setSelectedAlumniForDetail(selected)}
-                    onRequestMentorship={(selected) => setSelectedAlumniForRequest(selected)}
-                    isRequested={requestedAlumniIds.has(alumni.id)}
                   />
                 ))}
               </div>
@@ -231,15 +175,6 @@ export default function DashboardPage() {
                 stages={roadmapStages}
                 onStatusChange={handleRoadmapStatusChange}
                 onResetRoadmap={handleResetRoadmap}
-              />
-            </section>
-
-            {/* SECTION 6: MENTORSHIP ACTIVITY */}
-            <section aria-label="Mentorship Activity">
-              <MentorshipActivity
-                activityData={mentorshipData}
-                onClearActivity={handleClearMentorshipActivity}
-                onResetActivity={handleResetMentorshipActivity}
               />
             </section>
           </div>
@@ -286,19 +221,6 @@ export default function DashboardPage() {
         isOpen={Boolean(selectedAlumniForDetail)}
         onClose={() => setSelectedAlumniForDetail(null)}
         alumni={selectedAlumniForDetail}
-        onRequestMentorship={(alumni) => {
-          setSelectedAlumniForDetail(null);
-          setSelectedAlumniForRequest(alumni);
-        }}
-      />
-
-      {/* Mentorship Request Modal */}
-      <MentorshipRequestModal
-        isOpen={Boolean(selectedAlumniForRequest)}
-        onClose={() => setSelectedAlumniForRequest(null)}
-        alumni={selectedAlumniForRequest}
-        studentName={student.name}
-        onSubmitRequest={handleSubmitMentorshipRequest}
       />
 
       {/* Footer */}

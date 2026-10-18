@@ -5,10 +5,7 @@ import {
   X,
   Send,
   MessageSquare,
-  Lock,
-  Sparkles,
   CheckCircle2,
-  Clock,
 } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
@@ -18,9 +15,9 @@ interface SendMessageModalProps {
   alumni: Alumni & { experienceYears?: string };
   isOpen: boolean;
   onClose: () => void;
-  isAccepted: boolean;
-  isPending: boolean;
-  onOpenMentorshipRequest: () => void;
+  isAccepted?: boolean;
+  isPending?: boolean;
+  onOpenMentorshipRequest?: () => void;
   onSendMessage?: (conversation: Conversation) => void;
 }
 
@@ -28,9 +25,6 @@ export function SendMessageModal({
   alumni,
   isOpen,
   onClose,
-  isAccepted,
-  isPending,
-  onOpenMentorshipRequest,
   onSendMessage,
 }: SendMessageModalProps) {
   const [messageText, setMessageText] = useState("");
@@ -99,9 +93,9 @@ export function SendMessageModal({
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-white">
           <div className="flex items-center gap-2">
-            <MessageSquare size={16} className="text-blue-600" />
+            <MessageSquare size={16} className="text-[#0a66c2]" />
             <h2 id="message-modal-title" className="text-base font-bold text-gray-900">
-              {isAccepted ? `Message ${alumni.name}` : "Direct Messaging Restricted"}
+              Message {alumni.name}
             </h2>
           </div>
           <button
@@ -115,105 +109,53 @@ export function SendMessageModal({
         </div>
 
         {/* Content */}
-        {isAccepted ? (
-          /* Active Mentorship Conversation Flow */
-          sentSuccess ? (
-            <div className="p-8 text-center space-y-3">
-              <div className="h-12 w-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
-                <CheckCircle2 size={24} />
-              </div>
-              <h3 className="text-base font-bold text-gray-900">Message Delivered!</h3>
-              <p className="text-xs text-gray-500 max-w-sm mx-auto">
-                Your message has been sent to <strong>{alumni.name}</strong> as part of your active mentorship thread.
-              </p>
+        {sentSuccess ? (
+          <div className="p-8 text-center space-y-3">
+            <div className="h-12 w-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+              <CheckCircle2 size={24} />
             </div>
-          ) : (
-            <form onSubmit={handleSend} className="p-6 space-y-4">
-              <div className="flex items-center gap-3 p-3 bg-emerald-50/70 border border-emerald-100 rounded-lg">
-                <Avatar name={alumni.name} size="md" />
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold text-gray-900">{alumni.name}</p>
-                  <p className="text-[11px] text-emerald-700 font-medium">
-                    Active Mentorship Partner
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label htmlFor="mentor-message-text" className="text-xs font-semibold text-gray-700">
-                  Your Message
-                </label>
-                <textarea
-                  id="mentor-message-text"
-                  rows={4}
-                  value={messageText}
-                  onChange={(e) => setMessageText(e.target.value)}
-                  placeholder={`Write your message or question for ${alumni.name.split(" ")[0]}...`}
-                  required
-                  className="w-full rounded-md border border-gray-200 bg-white text-xs text-gray-900 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div className="pt-2 border-t border-gray-100 flex items-center justify-end gap-2.5">
-                <Button type="button" variant="ghost" size="sm" onClick={onClose}>
-                  Cancel
-                </Button>
-                <Button type="submit" variant="primary" size="sm" className="inline-flex items-center gap-1.5">
-                  <Send size={13} />
-                  Send Message
-                </Button>
-              </div>
-            </form>
-          )
+            <h3 className="text-base font-bold text-gray-900">Message Delivered!</h3>
+            <p className="text-xs text-gray-500 max-w-sm mx-auto">
+              Your message has been sent to <strong>{alumni.name}</strong>. You can continue the discussion in your Direct Messages inbox.
+            </p>
+          </div>
         ) : (
-          /* Unlinked/Unauthorized Messaging Explanation */
-          <div className="p-6 space-y-4">
-            <div className="flex items-start gap-3 p-3.5 bg-amber-50 border border-amber-200 rounded-lg text-amber-900">
-              <Lock size={18} className="text-amber-600 shrink-0 mt-0.5" />
-              <div className="text-xs space-y-1">
-                <p className="font-bold">Mentorship Required for Direct Messaging</p>
-                <p className="text-amber-800 leading-relaxed">
-                  To protect alumni schedules and ensure meaningful mentorship relationships, direct messaging is enabled exclusively between accepted mentors and mentees.
+          <form onSubmit={handleSend} className="p-6 space-y-4">
+            <div className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+              <Avatar name={alumni.name} size="md" />
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-bold text-gray-900">{alumni.name}</p>
+                <p className="text-[11px] text-gray-500 font-medium truncate">
+                  {alumni.role} · {alumni.company}
                 </p>
               </div>
             </div>
 
-            <div className="text-xs text-gray-600 space-y-2">
-              <p>
-                {isPending ? (
-                  <span className="flex items-center gap-1.5 text-amber-700 font-medium">
-                    <Clock size={13} />
-                    You have a pending mentorship request with {alumni.name}. Direct messaging will automatically unlock once accepted.
-                  </span>
-                ) : (
-                  <span>
-                    Submit a mentorship request to introduce yourself and establish an initial connection with {alumni.name}.
-                  </span>
-                )}
-              </p>
+            <div className="space-y-1.5">
+              <label htmlFor="mentor-message-text" className="text-xs font-semibold text-gray-700">
+                Your Message
+              </label>
+              <textarea
+                id="mentor-message-text"
+                rows={4}
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+                placeholder={`Introduce yourself or ask ${alumni.name.split(" ")[0]} a question about ${alumni.company}...`}
+                required
+                className="w-full rounded-md border border-gray-200 bg-white text-xs text-gray-900 p-3 focus:outline-none focus:ring-2 focus:ring-[#0a66c2]"
+              />
             </div>
 
-            <div className="pt-3 border-t border-gray-100 flex items-center justify-end gap-2.5">
+            <div className="pt-2 border-t border-gray-100 flex items-center justify-end gap-2.5">
               <Button type="button" variant="ghost" size="sm" onClick={onClose}>
-                Close
+                Cancel
               </Button>
-              {!isPending && (
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="sm"
-                  onClick={() => {
-                    onClose();
-                    onOpenMentorshipRequest();
-                  }}
-                  className="inline-flex items-center gap-1.5"
-                >
-                  <Sparkles size={13} />
-                  Request Mentorship
-                </Button>
-              )}
+              <Button type="submit" variant="primary" size="sm" className="inline-flex items-center gap-1.5">
+                <Send size={13} />
+                Send Message
+              </Button>
             </div>
-          </div>
+          </form>
         )}
       </div>
     </div>

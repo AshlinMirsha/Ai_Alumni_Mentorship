@@ -104,18 +104,6 @@ export function AlumniFilters({
       value: gradLabels[filters.graduationYearRange] || filters.graduationYearRange,
     });
   }
-  if (filters.availability !== "all") {
-    const availLabels: Record<string, string> = {
-      available: "Available for Mentorship",
-      limited: "Limited Spots",
-      unavailable: "Not Accepting Mentees",
-    };
-    activeFilters.push({
-      key: "availability",
-      label: "Status",
-      value: availLabels[filters.availability] || filters.availability,
-    });
-  }
 
   const activeCount = activeFilters.length;
 
@@ -182,7 +170,7 @@ export function AlumniFilters({
         </div>
 
         {/* Filter Controls Row (Desktop) */}
-        <div className="hidden lg:grid grid-cols-7 gap-2.5 pt-3 border-t border-gray-100">
+        <div className="hidden lg:grid grid-cols-6 gap-2.5 pt-3 border-t border-gray-100">
           {/* Role Filter */}
           <div>
             <label className="block text-[11px] font-semibold text-gray-500 mb-1">Job Role</label>
@@ -280,21 +268,6 @@ export function AlumniFilters({
               <option value="before-2018">Before 2018</option>
             </select>
           </div>
-
-          {/* Availability Filter */}
-          <div>
-            <label className="block text-[11px] font-semibold text-gray-500 mb-1">Availability</label>
-            <select
-              value={filters.availability}
-              onChange={(e) => onFilterChange("availability", e.target.value)}
-              className="w-full bg-white border border-gray-200 rounded-md text-xs text-gray-800 px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="all">All Statuses</option>
-              <option value="available">Available</option>
-              <option value="limited">Limited Spots</option>
-              <option value="unavailable">Unavailable</option>
-            </select>
-          </div>
         </div>
 
         {/* Mobile Collapsible Filter Drawer */}
@@ -390,20 +363,6 @@ export function AlumniFilters({
                   <option value="2021-2024">2021–2024 (Recent)</option>
                   <option value="2018-2020">2018–2020</option>
                   <option value="before-2018">Before 2018</option>
-                </select>
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-gray-600 mb-1">Mentorship Availability</label>
-                <select
-                  value={filters.availability}
-                  onChange={(e) => onFilterChange("availability", e.target.value)}
-                  className="w-full bg-white border border-gray-200 rounded-lg text-xs text-gray-800 px-3 py-2"
-                >
-                  <option value="all">All Statuses</option>
-                  <option value="available">Available</option>
-                  <option value="limited">Limited Spots</option>
-                  <option value="unavailable">Unavailable</option>
                 </select>
               </div>
             </div>

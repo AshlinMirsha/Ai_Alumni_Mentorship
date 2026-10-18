@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect } from "react";
-import { X, MapPin, Briefcase, GraduationCap, CheckCircle, Clock } from "lucide-react";
+import { X, MapPin, Briefcase, GraduationCap, CheckCircle, Clock, ArrowRight } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -11,14 +12,13 @@ interface AlumniDetailModalProps {
   alumni: RecommendedAlumni | null;
   isOpen: boolean;
   onClose: () => void;
-  onRequestMentorship: (alumni: RecommendedAlumni) => void;
+  onRequestMentorship?: (alumni: RecommendedAlumni) => void;
 }
 
 export function AlumniDetailModal({
   alumni,
   isOpen,
   onClose,
-  onRequestMentorship,
 }: AlumniDetailModalProps) {
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -110,11 +110,11 @@ export function AlumniDetailModal({
             </div>
           </div>
 
-          {/* Mentorship Focus Areas */}
+          {/* Expertise & Focus Areas */}
           {alumni.mentorshipAreas.length > 0 && (
             <div>
               <h4 className="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">
-                Mentorship Focus Areas
+                Primary Expertise &amp; Focus Areas
               </h4>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                 {alumni.mentorshipAreas.map((area, idx) => (
@@ -180,7 +180,7 @@ export function AlumniDetailModal({
         {/* Footer */}
         <div className="p-3.5 border-t border-gray-200 bg-gray-50/70 flex items-center justify-between gap-3 shrink-0">
           <span className="text-[11px] text-gray-500">
-            {alumni.totalMentees} active mentees
+            {alumni.company} · {alumni.location}
           </span>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={onClose}>
@@ -189,12 +189,16 @@ export function AlumniDetailModal({
             <Button
               variant="primary"
               size="sm"
-              onClick={() => {
-                onClose();
-                onRequestMentorship(alumni);
-              }}
+              asChild
             >
-              Request Mentorship
+              <Link
+                href={`/alumni/${alumni.id}`}
+                onClick={onClose}
+                className="inline-flex items-center gap-1.5"
+              >
+                <span>View Full Profile</span>
+                <ArrowRight size={13} />
+              </Link>
             </Button>
           </div>
         </div>

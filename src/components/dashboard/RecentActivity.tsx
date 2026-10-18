@@ -10,6 +10,8 @@ interface RecentActivityProps {
 }
 
 export function RecentActivity({ activities = demoRecentActivities }: RecentActivityProps) {
+  const visibleActivities = activities.filter((item) => item.type !== "mentorship");
+
   const getIcon = (type: DemoActivity["type"]) => {
     switch (type) {
       case "profile":
@@ -51,7 +53,7 @@ export function RecentActivity({ activities = demoRecentActivities }: RecentActi
 
       <CardBody className="space-y-2.5">
         <div className="space-y-2">
-          {activities.map((item) => (
+          {visibleActivities.map((item) => (
             <div
               key={item.id}
               className="p-2.5 rounded-md border border-gray-200 bg-white hover:border-gray-300 transition-colors flex items-start gap-2.5"

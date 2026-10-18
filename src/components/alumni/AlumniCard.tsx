@@ -2,52 +2,26 @@
 
 import Link from "next/link";
 import {
-  CheckCircle2,
   Briefcase,
   GraduationCap,
   Sparkles,
   ArrowUpRight,
-  Send,
-  Clock,
   ShieldCheck,
+  Clock,
 } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
 import type { Alumni } from "@/types";
 
 interface AlumniCardProps {
   alumni: Alumni & { experienceYears?: string };
   isRequested?: boolean;
   isAccepted?: boolean;
-  onRequestMentorship: (alumni: Alumni & { experienceYears?: string }) => void;
+  onRequestMentorship?: (alumni: Alumni & { experienceYears?: string }) => void;
 }
 
 export function AlumniCard({
   alumni,
-  isRequested = false,
-  isAccepted = false,
-  onRequestMentorship,
 }: AlumniCardProps) {
-  // Format availability badge
-  const availabilityBadge = {
-    available: {
-      label: "Available",
-      variant: "green" as const,
-      dotClass: "bg-emerald-500",
-    },
-    limited: {
-      label: "Limited Spots",
-      variant: "amber" as const,
-      dotClass: "bg-amber-500",
-    },
-    unavailable: {
-      label: "Unavailable",
-      variant: "gray" as const,
-      dotClass: "bg-gray-400",
-    },
-  }[alumni.mentorshipAvailability];
-
   // Display experience
   const expDisplay =
     alumni.experienceYears ||
@@ -158,16 +132,13 @@ export function AlumniCard({
           </div>
         </div>
 
-        {/* Availability indicator & response details */}
+        {/* Location & response details */}
         <div className="flex items-center justify-between pt-2 border-t border-gray-100 text-[11px] text-gray-500 mb-1">
-          <span className="inline-flex items-center gap-1.5 font-medium">
-            <span className={`h-1.5 w-1.5 rounded-full ${availabilityBadge.dotClass}`} />
-            <Badge variant={availabilityBadge.variant} size="sm">
-              {availabilityBadge.label}
-            </Badge>
+          <span className="inline-flex items-center gap-1.5 text-gray-600 font-medium">
+            <span>{alumni.location || "Alumni Professional"}</span>
           </span>
           <span className="text-gray-400">
-            {alumni.totalMentees} mentees · {alumni.responseRate}% response
+            {alumni.responseRate}% response rate
           </span>
         </div>
       </div>
@@ -182,39 +153,12 @@ export function AlumniCard({
           <ArrowUpRight size={13} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
         </Link>
 
-        {isAccepted ? (
-          <Link
-            href={`/mentorship`}
-            className="text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 py-1.5 rounded-md transition-colors inline-flex items-center gap-1"
-          >
-            <CheckCircle2 size={13} />
-            Mentorship Active
-          </Link>
-        ) : isRequested ? (
-          <span className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-md inline-flex items-center gap-1 cursor-default">
-            <Clock size={12} />
-            Request Pending
-          </span>
-        ) : alumni.mentorshipAvailability === "unavailable" ? (
-          <Button
-            size="sm"
-            variant="outline"
-            disabled
-            className="text-xs py-1.5 px-3 opacity-60 cursor-not-allowed"
-          >
-            Not Accepting
-          </Button>
-        ) : (
-          <Button
-            size="sm"
-            variant="primary"
-            onClick={() => onRequestMentorship(alumni)}
-            className="text-xs py-1.5 px-3 inline-flex items-center gap-1 shadow-2xs"
-          >
-            <Send size={12} />
-            Request Mentorship
-          </Button>
-        )}
+        <Link
+          href={`/alumni/${alumni.id}`}
+          className="text-xs font-semibold text-[#0a66c2] bg-[#ebf3fb] hover:bg-[#d0e5f9] border border-[#b2d5f8] px-3 py-1.5 rounded-md transition-colors inline-flex items-center gap-1"
+        >
+          <span>Connect &amp; Message</span>
+        </Link>
       </div>
     </div>
   );

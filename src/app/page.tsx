@@ -470,7 +470,7 @@ function Footer() {
             <ul className="space-y-2">
               {[
                 ["Discover Alumni", "/alumni"],
-                ["My Mentorships", "/mentorship"],
+                ["Direct Messages", "/messages"],
                 ["AI Career Assistant", "/career-assistant"],
                 ["Career Roadmap", "/career-roadmap"],
                 ["Resume Review", "/resume-review"],

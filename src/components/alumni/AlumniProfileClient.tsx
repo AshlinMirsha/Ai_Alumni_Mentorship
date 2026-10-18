@@ -5,17 +5,16 @@ import Link from "next/link";
 import {
   ArrowLeft,
   Share2,
-  Send,
   MessageSquare,
   Sparkles,
-  CheckCircle2,
-  Clock,
   Briefcase,
   GraduationCap,
   MapPin,
   Globe,
   ShieldCheck,
   Check,
+  CheckCircle2,
+  Clock,
   ExternalLink,
   Award,
   Users,
@@ -28,7 +27,6 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardHeader, CardBody } from "@/components/ui/Card";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
-import { MentorshipRequestModal } from "@/components/dashboard/MentorshipRequestModal";
 import { SendMessageModal } from "@/components/alumni/SendMessageModal";
 import {
   currentStudent,
@@ -41,7 +39,7 @@ import {
   saveMentorshipActivity,
   addNotification,
 } from "@/lib/dashboard-storage";
-import type { Alumni, Mentorship, MentorshipActivityData, Conversation } from "@/types";
+import type { Alumni, MentorshipActivityData, Conversation } from "@/types";
 
 interface AlumniProfileClientProps {
   alumni: Alumni & { experienceYears?: string };
@@ -60,7 +58,6 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
   );
 
   // Modal states
-  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
@@ -72,14 +69,6 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
     }, 4000);
   };
 
-  // Status checks
-  const isPending = mentorshipData.pendingRequests.some(
-    (r: Mentorship) => r.alumniId === alumni.id
-  );
-  const isAccepted = mentorshipData.acceptedMentorships.some(
-    (m: Mentorship) => m.alumniId === alumni.id
-  );
-
   // Handle Share Profile
   const handleShareProfile = () => {
     if (typeof window !== "undefined") {
@@ -88,26 +77,6 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
       showToast("Profile link copied to clipboard!");
       setTimeout(() => setCopiedLink(false), 2500);
     }
-  };
-
-  // Handle Mentorship Request Submission
-  const handleSubmitMentorshipRequest = (newRequest: Mentorship) => {
-    const updated: MentorshipActivityData = {
-      ...mentorshipData,
-      pendingRequests: [newRequest, ...mentorshipData.pendingRequests],
-    };
-    saveMentorshipActivity(updated);
-    addNotification({
-      id: `notif-${Date.now()}`,
-      type: "mentorship_request",
-      title: `Mentorship request sent to ${alumni.name}`,
-      description: `Your request for "${newRequest.focus}" has been recorded. Check My Mentorships for status updates.`,
-      timestamp: new Date().toISOString(),
-      read: false,
-      actionUrl: "/mentorship",
-      actorName: alumni.name,
-    });
-    showToast(`Mentorship request submitted to ${alumni.name}!`);
   };
 
   // Handle Sending a Direct Message
@@ -136,17 +105,17 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
   // Availability styling
   const availabilityBadge = {
     available: {
-      label: "Available for Mentorship",
+      label: "Active Member",
       variant: "green" as const,
       dotClass: "bg-emerald-500",
     },
     limited: {
-      label: "Limited Spots Available",
+      label: "Limited Availability",
       variant: "amber" as const,
       dotClass: "bg-amber-500",
     },
     unavailable: {
-      label: "Not Currently Accepting Mentees",
+      label: "Offline",
       variant: "gray" as const,
       dotClass: "bg-gray-400",
     },
@@ -211,45 +180,14 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
 
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                {isAccepted ? (
-                  <div className="text-center py-1.5 px-3 rounded-full bg-[#eef8f1] border border-[#bfe3c9] text-xs font-semibold text-[#057642] flex items-center justify-center gap-1.5">
-                    <CheckCircle2 size={13} className="text-[#057642]" />
-                    Mentorship Active
-                  </div>
-                ) : isPending ? (
-                  <div className="text-center py-1.5 px-3 rounded-full bg-[#fff8ea] border border-[#fde5b2] text-xs font-semibold text-[#915907] flex items-center justify-center gap-1.5 cursor-default">
-                    <Clock size={13} className="text-[#915907]" />
-                    Request Pending
-                  </div>
-                ) : alumni.mentorshipAvailability === "unavailable" ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled
-                    className="rounded-full text-xs opacity-60 cursor-not-allowed"
-                  >
-                    Not Accepting Mentees
-                  </Button>
-                ) : (
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => setIsRequestModalOpen(true)}
-                    className="rounded-full font-semibold bg-[#0a66c2] hover:bg-[#004182] text-xs inline-flex items-center justify-center gap-1.5"
-                  >
-                    <Send size={12} />
-                    Request Mentorship
-                  </Button>
-                )}
-
                 <Button
-                  variant="outline"
+                  variant="primary"
                   size="sm"
                   onClick={() => setIsMessageModalOpen(true)}
-                  className="rounded-full font-semibold border-gray-300 text-gray-700 hover:bg-gray-50 text-xs inline-flex items-center justify-center gap-1.5"
+                  className="rounded-full font-semibold bg-[#0a66c2] hover:bg-[#004182] text-xs inline-flex items-center justify-center gap-1.5"
                 >
-                  <MessageSquare size={12} />
-                  Message
+                  <MessageSquare size={13} />
+                  Send Message
                 </Button>
 
                 <Button
@@ -326,7 +264,7 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
               </div>
             </div>
 
-            {/* Mentorship Availability Status Banner */}
+            {/* Status Banner */}
             <div className="pt-3.5 mt-3.5 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3 text-xs">
               <div className="flex items-center gap-2 font-medium text-gray-700">
                 <span className={`h-2 w-2 rounded-full ${availabilityBadge.dotClass}`} />
@@ -335,7 +273,7 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
                 </Badge>
                 <span className="text-gray-400 text-[11px] hidden sm:inline">·</span>
                 <span className="text-gray-500 text-[11px] hidden sm:inline">
-                  {alumni.totalMentees} students mentored
+                  {alumni.company} Alumni Network
                 </span>
               </div>
 
@@ -412,7 +350,7 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
 
               <div className="bg-gray-50 p-2.5 rounded-md border border-gray-200">
                 <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
-                  Mentorship Focus
+                  Primary Focus Area
                 </p>
                 <p className="text-xs font-semibold text-gray-900 mt-0.5 truncate">
                   {alumni.mentorshipAreas[0] || "Architecture & System Design"}
@@ -666,12 +604,12 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
               </CardBody>
             </Card>
 
-            {/* 7. Mentorship Interests */}
+            {/* 7. Advisory & Focus Areas */}
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <Users size={16} className="text-blue-600" />
-                  <h2 className="text-sm font-bold text-gray-900">7. Mentorship Interests</h2>
+                  <Users size={16} className="text-[#0a66c2]" />
+                  <h2 className="text-sm font-bold text-gray-900">7. Advisory &amp; Focus Areas</h2>
                 </div>
               </CardHeader>
               <CardBody className="space-y-3.5 pt-3">
@@ -684,14 +622,14 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
                       {alumni.mentorshipAreas.map((area, idx) => (
                         <span
                           key={idx}
-                          className="text-[11px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded"
+                          className="text-[11px] font-medium bg-[#ebf3fb] text-[#0a66c2] border border-[#b2d5f8] px-2 py-0.5 rounded"
                         >
                           {area}
                         </span>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-xs text-gray-500 italic">General mentorship available upon request.</p>
+                    <p className="text-xs text-gray-500 italic">General industry guidance available upon request.</p>
                   )}
                 </div>
 
@@ -703,7 +641,7 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
                     <ul className="space-y-1.5 text-xs text-gray-600">
                       {alumni.mentorshipInterests.map((interest, idx) => (
                         <li key={idx} className="flex items-start gap-1.5">
-                          <span className="text-blue-500 font-bold">•</span>
+                          <span className="text-[#0a66c2] font-bold">•</span>
                           <span>{interest}</span>
                         </li>
                       ))}
@@ -713,8 +651,8 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
 
                 <div className="p-3 bg-gray-50 rounded-lg border border-gray-200 text-xs space-y-1">
                   <div className="flex justify-between text-gray-600">
-                    <span>Mentees Advised:</span>
-                    <span className="font-semibold text-gray-900">{alumni.totalMentees}</span>
+                    <span>Graduation Class:</span>
+                    <span className="font-semibold text-gray-900">Class of {alumni.graduationYear}</span>
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>Response Rate:</span>
@@ -731,25 +669,11 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
         </div>
       </main>
 
-      {/* Mentorship Request Modal */}
-      <MentorshipRequestModal
-        isOpen={isRequestModalOpen}
-        alumni={alumni}
-        studentName={student.name}
-        studentCareerGoal={student.careerGoal || "Full-Stack Software Engineer"}
-        onClose={() => setIsRequestModalOpen(false)}
-        onSubmitRequest={handleSubmitMentorshipRequest}
-        isAlreadyRequested={isPending}
-      />
-
       {/* Send Message Modal */}
       <SendMessageModal
         isOpen={isMessageModalOpen}
         alumni={alumni}
-        isAccepted={isAccepted}
-        isPending={isPending}
         onClose={() => setIsMessageModalOpen(false)}
-        onOpenMentorshipRequest={() => setIsRequestModalOpen(true)}
         onSendMessage={handleSendMessage}
       />
 
