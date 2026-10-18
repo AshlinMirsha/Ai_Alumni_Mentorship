@@ -570,9 +570,17 @@ export function scheduleMentorshipSession(data: {
   time: string;
   meetUrl?: string;
   agenda?: string;
-}): { success: boolean; session?: MentorshipSession } {
+}): { success: boolean; session?: MentorshipSession; error?: string } {
   if (!data.topic.trim() || !data.date || !data.time) {
-    return { success: false };
+    return { success: false, error: "Please provide a session topic, date, and time." };
+  }
+
+  const conflictCheck = checkSessionConflict(data.date, data.time);
+  if (conflictCheck.hasConflict && conflictCheck.conflictingSession) {
+    return {
+      success: false,
+      error: `Scheduling conflict: You already have a session scheduled with ${conflictCheck.conflictingSession.studentName} on ${data.date} at ${data.time}.`,
+    };
   }
 
   const newSession: MentorshipSession = {
@@ -584,7 +592,7 @@ export function scheduleMentorshipSession(data: {
     topic: data.topic.trim(),
     date: data.date,
     time: data.time,
-    status: "scheduled",
+    status: data.meetUrl?.trim() ? "confirmed" : "scheduled",
     meetUrl: data.meetUrl?.trim() || undefined,
     agenda: data.agenda?.trim() || undefined,
   };
@@ -598,7 +606,7 @@ export function scheduleMentorshipSession(data: {
     if (m.studentId === data.studentId || m.student?.id === data.studentId) {
       return {
         ...m,
-        nextSession: `${data.date}T${data.time}:00Z`,
+        nextSession: `${data.date} at ${data.time}`,
       };
     }
     return m;
@@ -623,6 +631,208 @@ export function scheduleMentorshipSession(data: {
   return { success: true, session: newSession };
 }
 
+export function checkSessionConflict(
+  date: string,
+  time: string,
+  excludeSessionId?: string
+): { hasConflict: boolean; conflictingSession?: MentorshipSession } {
+  const sessions = loadUpcomingSessions();
+  const conflict = sessions.find(
+    (s) =>
+      s.id !== excludeSessionId &&
+      s.status !== "cancelled" &&
+      s.status !== "completed" &&
+      s.date.trim().toLowerCase() === date.trim().toLowerCase() &&
+      s.time.trim().toLowerCase() === time.trim().toLowerCase()
+  );
+  return {
+    hasConflict: !!conflict,
+    conflictingSession: conflict,
+  };
+}
+
+export function rescheduleMentorshipSession(
+  sessionId: string,
+  data: {
+    date: string;
+    time: string;
+    topic?: string;
+    meetUrl?: string;
+    agenda?: string;
+    reason?: string;
+  }
+): { success: boolean; session?: MentorshipSession; error?: string } {
+  const sessions = loadUpcomingSessions();
+  const index = sessions.findIndex((s) => s.id === sessionId);
+  if (index === -1) {
+    return { success: false, error: "Session not found." };
+  }
+
+  const conflictCheck = checkSessionConflict(data.date, data.time, sessionId);
+  if (conflictCheck.hasConflict && conflictCheck.conflictingSession) {
+    return {
+      success: false,
+      error: `Scheduling conflict: You already have a session scheduled with ${conflictCheck.conflictingSession.studentName} on ${data.date} at ${data.time}.`,
+    };
+  }
+
+  const oldSession = sessions[index];
+  const updatedSession: MentorshipSession = {
+    ...oldSession,
+    previousDate: oldSession.date,
+    previousTime: oldSession.time,
+    date: data.date,
+    time: data.time,
+    topic: data.topic?.trim() || oldSession.topic,
+    meetUrl: data.meetUrl !== undefined ? (data.meetUrl.trim() || undefined) : oldSession.meetUrl,
+    agenda: data.agenda !== undefined ? (data.agenda.trim() || undefined) : oldSession.agenda,
+    status: "rescheduled",
+  };
+
+  const updatedSessions = [...sessions];
+  updatedSessions[index] = updatedSession;
+  saveUpcomingSessions(updatedSessions);
+
+  // Update mentorship nextSession in acceptedMentorships
+  const currentActivity = loadMentorshipActivity();
+  const updatedAccepted = currentActivity.acceptedMentorships.map((m) => {
+    if (m.studentId === oldSession.studentId || m.student?.id === oldSession.studentId) {
+      return {
+        ...m,
+        nextSession: `${data.date} at ${data.time}`,
+      };
+    }
+    return m;
+  });
+  saveMentorshipActivity({
+    ...currentActivity,
+    acceptedMentorships: updatedAccepted,
+  });
+
+  addNotification({
+    id: `notif-${Date.now()}`,
+    type: "session_rescheduled",
+    title: `Session rescheduled with ${oldSession.studentName}`,
+    description: `Moved to ${data.date} at ${data.time} (was ${oldSession.date} at ${oldSession.time})`,
+    timestamp: new Date().toISOString(),
+    read: false,
+    actionUrl: "/alumni-dashboard/mentees",
+    actorName: oldSession.studentName,
+  });
+
+  return { success: true, session: updatedSession };
+}
+
+export function cancelMentorshipSession(
+  sessionId: string,
+  reason?: string
+): { success: boolean; session?: MentorshipSession; error?: string } {
+  const sessions = loadUpcomingSessions();
+  const index = sessions.findIndex((s) => s.id === sessionId);
+  if (index === -1) {
+    return { success: false, error: "Session not found." };
+  }
+
+  const oldSession = sessions[index];
+  const updatedSession: MentorshipSession = {
+    ...oldSession,
+    status: "cancelled",
+    cancelledAt: new Date().toISOString(),
+    cancellationReason: reason?.trim() || "Cancelled by mentor",
+  };
+
+  const updatedSessions = [...sessions];
+  updatedSessions[index] = updatedSession;
+  saveUpcomingSessions(updatedSessions);
+
+  // Clear nextSession in acceptedMentorships
+  const currentActivity = loadMentorshipActivity();
+  const updatedAccepted = currentActivity.acceptedMentorships.map((m) => {
+    if (m.studentId === oldSession.studentId || m.student?.id === oldSession.studentId) {
+      return {
+        ...m,
+        nextSession: undefined,
+      };
+    }
+    return m;
+  });
+  saveMentorshipActivity({
+    ...currentActivity,
+    acceptedMentorships: updatedAccepted,
+  });
+
+  addNotification({
+    id: `notif-${Date.now()}`,
+    type: "session_cancelled",
+    title: `Session cancelled with ${oldSession.studentName}`,
+    description: `Session "${oldSession.topic}" on ${oldSession.date} was cancelled.${reason ? ` Reason: ${reason}` : ""}`,
+    timestamp: new Date().toISOString(),
+    read: false,
+    actionUrl: "/alumni-dashboard/mentees",
+    actorName: oldSession.studentName,
+  });
+
+  return { success: true, session: updatedSession };
+}
+
+export function completeMentorshipSession(
+  sessionId: string,
+  notes?: string
+): { success: boolean; session?: MentorshipSession; error?: string } {
+  const sessions = loadUpcomingSessions();
+  const index = sessions.findIndex((s) => s.id === sessionId);
+  if (index === -1) {
+    return { success: false, error: "Session not found." };
+  }
+
+  const oldSession = sessions[index];
+  const updatedSession: MentorshipSession = {
+    ...oldSession,
+    status: "completed",
+    completedAt: new Date().toISOString(),
+    notes: notes?.trim() || oldSession.notes,
+  };
+
+  const updatedSessions = [...sessions];
+  updatedSessions[index] = updatedSession;
+  saveUpcomingSessions(updatedSessions);
+
+  // Increment session count in acceptedMentorships
+  const currentActivity = loadMentorshipActivity();
+  const updatedAccepted = currentActivity.acceptedMentorships.map((m) => {
+    if (m.studentId === oldSession.studentId || m.student?.id === oldSession.studentId) {
+      return {
+        ...m,
+        sessionCount: (m.sessionCount || 0) + 1,
+        nextSession: undefined,
+      };
+    }
+    return m;
+  });
+  saveMentorshipActivity({
+    ...currentActivity,
+    acceptedMentorships: updatedAccepted,
+  });
+
+  addNotification({
+    id: `notif-${Date.now()}`,
+    type: "session_reminder",
+    title: `Session completed with ${oldSession.studentName}`,
+    description: `Completed "${oldSession.topic}". Mentorship history updated.`,
+    timestamp: new Date().toISOString(),
+    read: false,
+    actionUrl: "/alumni-dashboard/mentees",
+    actorName: oldSession.studentName,
+  });
+
+  return { success: true, session: updatedSession };
+}
+
+export function getSessionById(sessionId: string): MentorshipSession | undefined {
+  return loadUpcomingSessions().find((s) => s.id === sessionId);
+}
+
+
 
 // ─── Messaging Actions ────────────────────────────────────────────────────────
 
@@ -636,15 +846,21 @@ export function sendConversationMessage(conversationId: string, content: string)
   const convIndex = current.recentConversations.findIndex((c) => c.id === conversationId);
   if (convIndex === -1) return null;
 
+  const auth = loadAuthSession();
+  const isAlumni = auth.role === "alumni";
+  const alumni = loadAlumniProfile();
   const student = loadStudentProfile();
+
+  const senderId = isAlumni ? alumni.id : student.id;
+  const senderName = isAlumni ? alumni.name : student.name;
   const targetConv = current.recentConversations[convIndex];
   const nowIso = new Date().toISOString();
 
   const newMessage: Message = {
     id: `msg-${Date.now()}`,
     conversationId,
-    senderId: student.id,
-    senderName: student.name,
+    senderId,
+    senderName,
     content: content.trim(),
     timestamp: nowIso,
     read: true,
@@ -932,6 +1148,10 @@ export function setSessionRole(role: UserRole): AuthSession {
       : { ...defaultStudentSession, isAuthenticated: true };
   saveAuthSession(updated);
   return updated;
+}
+
+export function getSessionRole(): UserRole {
+  return loadAuthSession().role;
 }
 
 export function logoutAuthSession(): void {

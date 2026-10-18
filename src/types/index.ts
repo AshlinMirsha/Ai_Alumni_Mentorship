@@ -86,6 +86,9 @@ export interface Alumni {
   responseRate: number; // percentage 0-100
   averageResponseTime: string; // e.g. "within 2 days"
   totalMentees: number;
+  maxMentees?: number;
+  university?: string;
+  visibilityPreference?: "public" | "university_only" | "private";
   matchScore?: number; // computed match score 0-100
   matchExplanation?: string;
   lastActive?: string;
@@ -203,8 +206,13 @@ export interface Conversation {
 
 export type NotificationType =
   | "mentorship_request"
+  | "mentorship_accepted"
+  | "mentorship_declined"
   | "message"
   | "session_reminder"
+  | "session_rescheduled"
+  | "session_cancelled"
+  | "opportunity_update"
   | "profile_view"
   | "match_suggestion";
 
@@ -621,10 +629,15 @@ export interface MentorshipSession {
   topic: string;
   date: string;
   time: string;
-  status: "confirmed" | "scheduled" | "completed" | "rescheduled";
+  status: "confirmed" | "scheduled" | "completed" | "rescheduled" | "cancelled";
   meetUrl?: string;
   agenda?: string;
   notes?: string;
+  previousDate?: string;
+  previousTime?: string;
+  completedAt?: string;
+  cancelledAt?: string;
+  cancellationReason?: string;
 }
 
 export interface UniversityEvent {
@@ -646,6 +659,59 @@ export interface MentorshipTip {
   category: string;
 }
 
+// ─── AI Mentorship Assistant ──────────────────────────────────────────────────
 
+export interface SessionPreparationResult {
+  objectives: string[];
+  discussionPrompts: string[];
+  technicalExercises: string[];
+  suggestedTakeaway: string;
+  draftAgenda: string;
+}
 
+export interface CareerGuidanceResult {
+  targetRole: string;
+  keyCompetencies: string[];
+  discussionTopics: { title: string; description: string }[];
+  recommendedProjects: { title: string; description: string; techStack: string[] }[];
+  strategicAdvice: string[];
+}
 
+export interface LearningRoadmapPhase {
+  title: string;
+  weeks: string;
+  description: string;
+  milestones: { title: string; targetWeeks: string }[];
+}
+
+export interface LearningRoadmapResult {
+  menteeName: string;
+  targetRole: string;
+  overview: string;
+  phases: LearningRoadmapPhase[];
+}
+
+export interface StudentMatchRecommendation {
+  studentId: string;
+  studentName: string;
+  department: string;
+  academicYear: string;
+  matchScore: number;
+  matchReasons: string[];
+  suggestedTopics: string[];
+  careerGoal: string;
+}
+
+export interface StudentMatchingResult {
+  recommendations: StudentMatchRecommendation[];
+  summary: string;
+}
+
+export interface SessionSummaryResult {
+  executiveSummary: string;
+  keyHighlights: string[];
+  studentActionItems: string[];
+  mentorActionItems?: string[];
+  recommendedNextTopic: string;
+  formattedNotes: string;
+}

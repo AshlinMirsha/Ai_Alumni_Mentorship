@@ -40,6 +40,10 @@ import {
   loadUpcomingSessions,
   loadUniversityEvents,
   toggleEventRsvp,
+  scheduleMentorshipSession,
+  rescheduleMentorshipSession,
+  cancelMentorshipSession,
+  completeMentorshipSession,
 } from "@/lib/dashboard-storage";
 import {
   defaultAlumniUser,
@@ -54,6 +58,9 @@ import { OfferMentorshipModal } from "@/components/alumni-dashboard/OfferMentors
 import { PostOpportunityModal } from "@/components/alumni-dashboard/PostOpportunityModal";
 import { StudentDetailModal } from "@/components/alumni-dashboard/StudentDetailModal";
 import { SessionDetailModal } from "@/components/alumni-dashboard/SessionDetailModal";
+import { ScheduleSessionModal } from "@/components/alumni-dashboard/ScheduleSessionModal";
+import { CancelSessionModal } from "@/components/alumni-dashboard/CancelSessionModal";
+import { AIMentorshipAssistantModal } from "@/components/alumni-dashboard/AIMentorshipAssistantModal";
 import type { DiscoverStudent, MentorshipSession, Mentorship } from "@/types";
 
 export default function AlumniDashboardPage() {
@@ -97,6 +104,10 @@ export default function AlumniDashboardPage() {
   const [selectedStudentForDetail, setSelectedStudentForDetail] = useState<DiscoverStudent | null>(null);
   const [selectedStudentForOffer, setSelectedStudentForOffer] = useState<DiscoverStudent | null>(null);
   const [selectedSessionForDetail, setSelectedSessionForDetail] = useState<MentorshipSession | null>(null);
+  const [sessionToReschedule, setSessionToReschedule] = useState<MentorshipSession | null>(null);
+  const [sessionToCancel, setSessionToCancel] = useState<MentorshipSession | null>(null);
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+  const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
   const [isPostOpportunityOpen, setIsPostOpportunityOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -105,6 +116,73 @@ export default function AlumniDashboardPage() {
     setTimeout(() => {
       setToastMessage(null);
     }, 4000);
+  };
+
+  const handleScheduleSubmit = (sessionData: {
+    studentId: string;
+    studentName: string;
+    studentDepartment?: string;
+    studentAcademicYear?: string;
+    topic: string;
+    date: string;
+    time: string;
+    meetUrl?: string;
+    agenda?: string;
+  }) => {
+    const res = scheduleMentorshipSession(sessionData);
+    if (!res.success) {
+      showToast(res.error || "Failed to schedule session due to a conflict.");
+      return;
+    }
+    showToast(`Session successfully scheduled with ${sessionData.studentName} for ${sessionData.date} at ${sessionData.time}!`);
+    setIsScheduleModalOpen(false);
+  };
+
+  const handleRescheduleConfirm = (
+    sessionId: string,
+    data: {
+      date: string;
+      time: string;
+      topic?: string;
+      meetUrl?: string;
+      agenda?: string;
+    }
+  ) => {
+    const res = rescheduleMentorshipSession(sessionId, data);
+    if (!res.success) {
+      showToast(res.error || "Failed to reschedule session.");
+      return;
+    }
+    showToast(`Session rescheduled to ${data.date} at ${data.time}!`);
+    setSessionToReschedule(null);
+    if (selectedSessionForDetail?.id === sessionId) {
+      setSelectedSessionForDetail(res.session || null);
+    }
+  };
+
+  const handleCancelConfirm = (sessionId: string, reason: string) => {
+    const res = cancelMentorshipSession(sessionId, reason);
+    if (!res.success) {
+      showToast(res.error || "Failed to cancel session.");
+      return;
+    }
+    showToast("Session cancelled. Notifications updated.");
+    setSessionToCancel(null);
+    if (selectedSessionForDetail?.id === sessionId) {
+      setSelectedSessionForDetail(res.session || null);
+    }
+  };
+
+  const handleCompleteSession = (session: MentorshipSession, notes?: string) => {
+    const res = completeMentorshipSession(session.id, notes);
+    if (!res.success) {
+      showToast(res.error || "Failed to complete session.");
+      return;
+    }
+    showToast(`Session "${session.topic}" marked as completed!`);
+    if (selectedSessionForDetail?.id === session.id) {
+      setSelectedSessionForDetail(res.session || null);
+    }
   };
 
   const pendingRequests = mentorshipActivity.pendingRequests;
@@ -216,7 +294,17 @@ export default function AlumniDashboardPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0 flex-wrap">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setIsAIAssistantOpen(true)}
+              className="text-xs flex items-center gap-1.5 text-[#0a66c2] border-[#b2d5f8] hover:bg-blue-50"
+            >
+              <Sparkles size={13} />
+              <span>AI Assistant</span>
+            </Button>
             <Button
               variant="outline"
               size="sm"
@@ -478,16 +566,31 @@ export default function AlumniDashboardPage() {
             aria-label="Upcoming Mentorship Sessions"
             className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs"
           >
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-gray-100 gap-2">
               <div>
                 <h2 className="text-sm font-bold text-gray-900">Upcoming Mentorship Sessions</h2>
                 <p className="text-xs text-gray-500 mt-0.5">
                   Confirmed and scheduled 1:1 sessions with student mentees
                 </p>
               </div>
-              <span className="text-xs font-semibold text-[#0a66c2]">
-                {upcomingSessions.length} active sessions
-              </span>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsScheduleModalOpen(true)}
+                  className="text-xs h-7 px-2.5 text-[#0a66c2] border-[#b2d5f8] hover:bg-blue-50 flex items-center gap-1"
+                >
+                  <Plus size={11} />
+                  <span>Schedule Session</span>
+                </Button>
+                <Link
+                  href="/alumni-dashboard/mentees"
+                  className="text-xs font-semibold text-[#0a66c2] hover:underline"
+                >
+                  View All &rarr;
+                </Link>
+              </div>
             </div>
 
             <div className="mt-4 space-y-3">
@@ -941,6 +1044,44 @@ export default function AlumniDashboardPage() {
         session={selectedSessionForDetail}
         isOpen={Boolean(selectedSessionForDetail)}
         onClose={() => setSelectedSessionForDetail(null)}
+        onReschedule={(session) => {
+          setSelectedSessionForDetail(null);
+          setSessionToReschedule(session);
+        }}
+        onCancel={(session) => {
+          setSelectedSessionForDetail(null);
+          setSessionToCancel(session);
+        }}
+        onComplete={handleCompleteSession}
+      />
+
+      {/* Schedule / Reschedule Session Modal */}
+      <ScheduleSessionModal
+        isOpen={isScheduleModalOpen || Boolean(sessionToReschedule)}
+        sessionToReschedule={sessionToReschedule}
+        activeMentees={activeMentees}
+        onClose={() => {
+          setIsScheduleModalOpen(false);
+          setSessionToReschedule(null);
+        }}
+        onSessionScheduled={handleScheduleSubmit}
+        onSessionRescheduled={handleRescheduleConfirm}
+        onOpenAIAssistant={() => setIsAIAssistantOpen(true)}
+      />
+
+      {/* Cancel Session Confirmation Modal */}
+      <CancelSessionModal
+        isOpen={Boolean(sessionToCancel)}
+        session={sessionToCancel}
+        onClose={() => setSessionToCancel(null)}
+        onConfirmCancel={handleCancelConfirm}
+      />
+
+      {/* AI Mentorship Assistant Modal */}
+      <AIMentorshipAssistantModal
+        isOpen={isAIAssistantOpen}
+        onClose={() => setIsAIAssistantOpen(false)}
+        activeMentees={activeMentees}
       />
 
       {/* Post Opportunity Modal */}

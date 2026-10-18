@@ -21,14 +21,18 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
+import { AlumniNav } from "@/components/alumni-dashboard/AlumniNav";
 import {
   subscribeToDashboardStorage,
   loadStudentProfile,
+  loadAlumniProfile,
+  loadAuthSession,
   loadUserSettings,
   saveUserSettings,
   resetUserSettings,
+  defaultStudentSession,
 } from "@/lib/dashboard-storage";
-import { currentStudent, initialUserSettings } from "@/lib/mock-data";
+import { currentStudent, defaultAlumniUser, initialUserSettings } from "@/lib/mock-data";
 import type { UserSettings } from "@/types";
 
 type SectionTab =
@@ -41,10 +45,23 @@ type SectionTab =
 
 export default function SettingsPage() {
   const router = useRouter();
+  const authSession = useSyncExternalStore(
+    subscribeToDashboardStorage,
+    loadAuthSession,
+    () => defaultStudentSession
+  );
+  const isAlumni = authSession.role === "alumni";
+
   const student = useSyncExternalStore(
     subscribeToDashboardStorage,
     loadStudentProfile,
     () => currentStudent
+  );
+
+  const alumni = useSyncExternalStore(
+    subscribeToDashboardStorage,
+    loadAlumniProfile,
+    () => defaultAlumniUser
   );
 
   const initialSettings = useSyncExternalStore(
@@ -126,7 +143,7 @@ export default function SettingsPage() {
         </div>
       )}
 
-      <DashboardNav studentName={student.name} />
+      {isAlumni ? <AlumniNav /> : <DashboardNav studentName={student.name} />}
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         {/* Header */}
@@ -138,7 +155,9 @@ export default function SettingsPage() {
                 User Preferences
               </span>
               <span className="text-xs text-gray-400">·</span>
-              <span className="text-xs font-normal text-[#666666]">Student Account</span>
+              <span className="text-xs font-normal text-[#666666]">
+                {isAlumni ? "Verified Alumni Mentor Account" : "Student Account"}
+              </span>
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-[#191919]">
               Platform Settings
@@ -219,11 +238,13 @@ export default function SettingsPage() {
                     <input
                       type="email"
                       disabled
-                      value={formData.account.email}
+                      value={isAlumni ? (authSession.email || "marcus.vance@datadog.com") : formData.account.email}
                       className="w-full rounded-md border border-gray-200 bg-gray-50 text-xs text-[#666666] px-3 py-2 cursor-not-allowed"
                     />
                     <p className="text-[11px] text-[#8c8c8c]">
-                      Managed by University of Technology Single Sign-On (SSO).
+                      {isAlumni
+                        ? "Verified corporate & institutional address."
+                        : "Managed by University of Technology Single Sign-On (SSO)."}
                     </p>
                   </div>
 
@@ -234,11 +255,13 @@ export default function SettingsPage() {
                     <input
                       type="text"
                       disabled
-                      value="Student Member (Active)"
+                      value={isAlumni ? `Alumni Mentor · ${alumni.company}` : "Student Member (Active)"}
                       className="w-full rounded-md border border-gray-200 bg-gray-50 text-xs text-[#666666] px-3 py-2 cursor-not-allowed"
                     />
                     <p className="text-[11px] text-[#8c8c8c]">
-                      Active since {formData.account.accountCreatedAt}.
+                      {isAlumni
+                        ? `Class of ${alumni.graduationYear} · ${alumni.department}`
+                        : `Active since ${formData.account.accountCreatedAt}.`}
                     </p>
                   </div>
                 </div>
@@ -779,18 +802,40 @@ export default function SettingsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
           <p>© 2026 AlumniPath · AI-Powered Alumni Networking &amp; Career Mentorship</p>
           <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="hover:text-gray-900 transition-colors">
-              Student Dashboard
-            </Link>
-            <Link href="/mentorship" className="hover:text-gray-900 transition-colors">
-              Mentorships
-            </Link>
-            <Link href="/messages" className="hover:text-gray-900 transition-colors">
-              Messages
-            </Link>
-            <Link href="/career-roadmap" className="hover:text-gray-900 transition-colors">
-              Career Roadmap
-            </Link>
+            {isAlumni ? (
+              <>
+                <Link href="/alumni-dashboard" className="hover:text-gray-900 transition-colors">
+                  Alumni Dashboard
+                </Link>
+                <Link href="/alumni-dashboard/students" className="hover:text-gray-900 transition-colors">
+                  Discover Students
+                </Link>
+                <Link href="/alumni-dashboard/mentees" className="hover:text-gray-900 transition-colors">
+                  My Mentees
+                </Link>
+                <Link href="/alumni-dashboard/opportunities" className="hover:text-gray-900 transition-colors">
+                  Opportunities
+                </Link>
+                <Link href="/alumni-dashboard/profile" className="hover:text-gray-900 transition-colors">
+                  Alumni Profile
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/dashboard" className="hover:text-gray-900 transition-colors">
+                  Student Dashboard
+                </Link>
+                <Link href="/mentorship" className="hover:text-gray-900 transition-colors">
+                  Mentorships
+                </Link>
+                <Link href="/messages" className="hover:text-gray-900 transition-colors">
+                  Messages
+                </Link>
+                <Link href="/career-roadmap" className="hover:text-gray-900 transition-colors">
+                  Career Roadmap
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </footer>

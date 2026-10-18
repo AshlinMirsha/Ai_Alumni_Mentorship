@@ -16,6 +16,7 @@ import {
   Video,
   Clock,
   User,
+  Sparkles,
 } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
@@ -35,6 +36,7 @@ interface MentorshipDetailsModalProps {
   onScheduleSession?: (mentee: Mentorship) => void;
   onEndMentorship?: (mentee: Mentorship) => void;
   onViewStudentProfile?: (studentId: string) => void;
+  onOpenAIAssistant?: (mentee: Mentorship) => void;
 }
 
 export function MentorshipDetailsModal({
@@ -44,6 +46,7 @@ export function MentorshipDetailsModal({
   onScheduleSession,
   onEndMentorship,
   onViewStudentProfile,
+  onOpenAIAssistant,
 }: MentorshipDetailsModalProps) {
   const [newMilestoneTitle, setNewMilestoneTitle] = useState("");
   const [newMilestoneDueDate, setNewMilestoneDueDate] = useState("");
@@ -144,10 +147,22 @@ export function MentorshipDetailsModal({
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
+            {onOpenAIAssistant && isActive && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => onOpenAIAssistant(mentorship)}
+                className="text-xs text-[#0a66c2] border-[#b2d5f8] hover:bg-blue-50 flex items-center gap-1.5"
+              >
+                <Sparkles size={12} />
+                <span className="hidden sm:inline">AI Assistant</span>
+              </Button>
+            )}
             <button
               type="button"
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 p-1.5 rounded-md"
+              className="text-gray-400 hover:text-gray-600 p-1.5 rounded-md hover:bg-gray-100 transition-colors"
             >
               <X size={18} />
             </button>

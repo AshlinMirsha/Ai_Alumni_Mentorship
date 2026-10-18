@@ -5,16 +5,20 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { MessageSquare, Users, Sparkles, ShieldCheck } from "lucide-react";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
+import { AlumniNav } from "@/components/alumni-dashboard/AlumniNav";
 import { ConversationList } from "@/components/messages/ConversationList";
 import { ConversationView } from "@/components/messages/ConversationView";
 import {
   subscribeToDashboardStorage,
   loadStudentProfile,
+  loadAlumniProfile,
+  loadAuthSession,
   loadConversations,
   sendConversationMessage,
   markConversationAsRead,
+  defaultStudentSession,
 } from "@/lib/dashboard-storage";
-import { currentStudent, initialMentorshipActivity } from "@/lib/mock-data";
+import { currentStudent, defaultAlumniUser, initialMentorshipActivity } from "@/lib/mock-data";
 
 function MessagesQueryHandler({
   onSelectConversation,
@@ -50,10 +54,23 @@ function MessagesQueryHandler({
 }
 
 export default function MessagesPage() {
+  const authSession = useSyncExternalStore(
+    subscribeToDashboardStorage,
+    loadAuthSession,
+    () => defaultStudentSession
+  );
+  const isAlumni = authSession.role === "alumni";
+
   const student = useSyncExternalStore(
     subscribeToDashboardStorage,
     loadStudentProfile,
     () => currentStudent
+  );
+
+  const alumni = useSyncExternalStore(
+    subscribeToDashboardStorage,
+    loadAlumniProfile,
+    () => defaultAlumniUser
   );
 
   const conversations = useSyncExternalStore(
@@ -84,7 +101,7 @@ export default function MessagesPage() {
 
   return (
     <div className="min-h-screen bg-[#f3f5f7] flex flex-col antialiased">
-      <DashboardNav studentName={student.name} />
+      {isAlumni ? <AlumniNav /> : <DashboardNav studentName={student.name} />}
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col">
         {/* Compact Page Header */}
@@ -99,11 +116,13 @@ export default function MessagesPage() {
               </h1>
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#eef8f1] text-[#057642] border border-[#bfe3c9]">
                 <ShieldCheck size={11} className="text-[#057642]" />
-                Mentorship Verified
+                {isAlumni ? "Verified Alumni Mentor" : "Mentorship Verified"}
               </span>
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              Direct communication with your accepted alumni mentors and student connections.
+              {isAlumni
+                ? "Direct communication with your student mentees and network connections."
+                : "Direct communication with your accepted alumni mentors and student connections."}
             </p>
           </div>
 
@@ -159,7 +178,7 @@ export default function MessagesPage() {
           >
             <ConversationView
               conversation={activeConversation}
-              currentUserId={student.id}
+              currentUserId={isAlumni ? alumni.id : student.id}
               onSendMessage={handleSendMessage}
               onBackMobile={() => setShowMobileChat(false)}
             />
@@ -179,18 +198,40 @@ export default function MessagesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
           <p>© 2026 AlumniPath · AI-Powered Alumni Networking &amp; Career Mentorship</p>
           <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="hover:text-gray-900 transition-colors">
-              Student Dashboard
-            </Link>
-            <Link href="/mentorship" className="hover:text-gray-900 transition-colors">
-              Mentorships
-            </Link>
-            <Link href="/career-roadmap" className="hover:text-gray-900 transition-colors">
-              Career Roadmap
-            </Link>
-            <Link href="/alumni" className="hover:text-gray-900 transition-colors">
-              Alumni Directory
-            </Link>
+            {isAlumni ? (
+              <>
+                <Link href="/alumni-dashboard" className="hover:text-gray-900 transition-colors">
+                  Alumni Dashboard
+                </Link>
+                <Link href="/alumni-dashboard/students" className="hover:text-gray-900 transition-colors">
+                  Discover Students
+                </Link>
+                <Link href="/alumni-dashboard/mentees" className="hover:text-gray-900 transition-colors">
+                  My Mentees
+                </Link>
+                <Link href="/alumni-dashboard/opportunities" className="hover:text-gray-900 transition-colors">
+                  Opportunities
+                </Link>
+                <Link href="/alumni-dashboard/community" className="hover:text-gray-900 transition-colors">
+                  Community
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/dashboard" className="hover:text-gray-900 transition-colors">
+                  Student Dashboard
+                </Link>
+                <Link href="/mentorship" className="hover:text-gray-900 transition-colors">
+                  Mentorships
+                </Link>
+                <Link href="/career-roadmap" className="hover:text-gray-900 transition-colors">
+                  Career Roadmap
+                </Link>
+                <Link href="/alumni" className="hover:text-gray-900 transition-colors">
+                  Alumni Directory
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </footer>
