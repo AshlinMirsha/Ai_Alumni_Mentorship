@@ -1092,8 +1092,8 @@ export function resetUserSettings(): UserSettings {
 export const defaultStudentSession: AuthSession = {
   isAuthenticated: true,
   role: "student",
-  email: "ashlin.student@university.edu",
-  name: "Ashlin",
+  email: "mirsha.student@university.edu",
+  name: "Mirsha",
   avatar: undefined,
   headline: "Second-year CS Student · Aspiring Full-Stack Software Engineer",
   department: "Computer Science",

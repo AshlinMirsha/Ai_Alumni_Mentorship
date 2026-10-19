@@ -12,42 +12,47 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({
-  studentName = "Ashlin",
+  studentName = "Mirsha",
   department = "Computer Science",
   academicYear = "Second Year",
   onOpenEditProfile,
 }: DashboardHeaderProps) {
   return (
-    <div className="bg-white border-b border-gray-200 shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          {/* Greeting text */}
+    <div className="bg-white border-b border-[#E1E5EA]">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 sm:py-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          {/* Left: Badges, Greeting, Subtitle */}
           <div className="space-y-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-semibold bg-[#ebf3fb] text-[#0a66c2] border border-[#b2d5f8]">
-                <Sparkles size={11} className="text-[#0a66c2]" />
+            <div className="flex flex-wrap items-center gap-2 mb-1">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[6px] text-xs font-semibold bg-[#F0F5FA] text-[#2166A5] border border-[#D0E0EF]">
+                <Sparkles size={12} className="text-[#2166A5]" />
                 Student Hub
               </span>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-600 border border-gray-200">
-                <GraduationCap size={12} className="text-gray-500" />
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[6px] text-xs font-medium bg-[#F5F7FA] text-[#4B5563] border border-[#E1E5EA]">
+                <GraduationCap size={13} className="text-[#626262]" />
                 {academicYear} · {department}
               </span>
             </div>
 
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-2xl sm:text-[26px] font-bold tracking-tight text-[#191919]">
               Good morning, {studentName}
             </h1>
 
-            <p className="text-xs sm:text-sm text-gray-600">
+            <p className="text-xs sm:text-sm text-[#626262]">
               Here is your career network and learning progress at a glance.
             </p>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            <Button variant="primary" size="md" asChild>
-              <Link href="/alumni" className="inline-flex items-center gap-1.5">
-                <Users size={15} />
+          {/* Right: Actions */}
+          <div className="flex items-center gap-2.5 shrink-0 self-start sm:self-center">
+            <Button
+              variant="primary"
+              size="md"
+              asChild
+              className="h-[40px] px-4 rounded-[8px] font-medium bg-[#2166A5] hover:bg-[#194F82] !text-white text-white border-0 shadow-none whitespace-nowrap"
+            >
+              <Link href="/alumni" className="inline-flex items-center gap-2">
+                <Users size={15} className="!text-white text-white" />
                 <span>Discover Alumni</span>
               </Link>
             </Button>
@@ -56,9 +61,9 @@ export function DashboardHeader({
               variant="secondary"
               size="md"
               onClick={onOpenEditProfile}
-              className="inline-flex items-center gap-1.5"
+              className="h-[40px] px-4 rounded-[8px] font-medium bg-white hover:bg-[#F5F7FA] text-[#252525] border border-[#D5D9DE] shadow-none whitespace-nowrap"
             >
-              <UserCheck size={14} className="text-gray-600" />
+              <UserCheck size={15} className="text-[#4B5563] mr-1.5" />
               <span>Update Profile</span>
             </Button>
           </div>

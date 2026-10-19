@@ -25,7 +25,7 @@ import type {
 export const currentStudent: Student = {
   id: "s-001",
   userId: "u-001",
-  name: "Ashlin",
+  name: "Mirsha",
   avatar: undefined,
   headline: "Second-year Computer Science student · Aspiring Full-Stack Software Engineer",
   university: "University of Technology",
