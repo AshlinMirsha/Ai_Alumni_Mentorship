@@ -41,7 +41,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
         <div className="relative flex items-center">
           {leadingIcon && (
-            <span className="absolute left-3 text-gray-400 pointer-events-none flex items-center">
+            <span className="absolute left-3.5 text-gray-400 pointer-events-none flex items-center justify-center">
               {leadingIcon}
             </span>
           )}
@@ -58,14 +58,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                 ? `${inputId}-hint`
                 : undefined
             }
+            style={{ backgroundColor: "#FFFFFF", ...(props.style || {}) }}
             className={cn(
-              "w-full rounded-md border bg-white text-sm text-gray-900 placeholder:text-gray-400",
-              "px-3 py-2 h-9",
-              "border-gray-300 transition-colors duration-150",
-              "focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2]",
+              "w-full rounded-[8px] border bg-white text-sm text-[#191919] placeholder:text-[#6B7280]",
+              "px-3.5 py-2.5 h-[44px]",
+              "border-[#D1D5DB] transition-all duration-150",
+              "focus:outline-none focus:border-[#2166A5] focus:ring-2 focus:ring-[#2166A5]/20",
               "disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed",
-              error && "border-red-500 focus:border-red-500 focus:ring-red-400",
-              leadingIcon && "pl-9",
+              error && "border-red-500 focus:border-red-500 focus:ring-red-400/20",
+              leadingIcon && "pl-10",
               trailingElement && "pr-10",
               className
             )}
@@ -73,7 +74,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           />
 
           {trailingElement && (
-            <span className="absolute right-3 flex items-center">
+            <span className="absolute right-3.5 flex items-center justify-center">
               {trailingElement}
             </span>
           )}
