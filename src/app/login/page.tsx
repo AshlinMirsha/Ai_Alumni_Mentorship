@@ -10,7 +10,6 @@ import {
   Lock,
   AlertCircle,
   CheckCircle,
-  Quote,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -167,9 +166,9 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-white">
       {/* ════════════════════════════════════════════════════════════════════════
-          LEFT SECTION (~45%): SOPHISTICATED EDITORIAL & ALUMNI NETWORK HIGHLIGHT
+          LEFT SECTION (~45%): SOPHISTICATED EDITORIAL PROMOTIONAL PANEL
          ════════════════════════════════════════════════════════════════════════ */}
-      <aside className="hidden lg:flex lg:w-[45%] xl:w-[42%] bg-[#F8FAFC] border-r border-[#E5E7EB] flex-col justify-between p-8 xl:p-12 min-h-screen relative">
+      <aside className="hidden lg:flex lg:w-[45%] xl:w-[46%] bg-[#F7F9FC] border-r border-[#E5E7EB] flex-col justify-between px-12 xl:px-16 py-12 min-h-screen">
         {/* Brand Logo Header */}
         <div>
           <Link href="/" className="inline-flex items-center gap-2.5 group">
@@ -180,85 +179,46 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        {/* Central Content: Headline, Supporting Paragraph, Visual & Testimonial */}
-        <div className="my-auto py-8 max-w-[440px]">
-          {/* Subtle network badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium text-[#2166A5] bg-[#F0F5FA] border border-[#D0E0EF] mb-5">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#2166A5]" />
-            <span>Verified University Alumni Network</span>
-          </div>
-
-          {/* Compelling Headline */}
-          <h1 className="text-3xl sm:text-4xl lg:text-[38px] font-bold text-[#191919] tracking-tight leading-[1.15] mb-4">
-            Your network.
-            <br />
-            <span className="text-[#2166A5]">Your next opportunity.</span>
-          </h1>
-
-          {/* Supporting Text */}
-          <p className="text-[15px] text-[#4B5563] leading-relaxed mb-6">
-            Connect with alumni, learn from real career experiences, and find
-            guidance for your professional journey.
+        {/* Central Editorial Content Block */}
+        <div className="my-auto py-8 max-w-[460px] w-full">
+          {/* Small Introductory Label (Small uppercase, slight letter spacing, restrained blue accent, no pill) */}
+          <p className="text-xs font-semibold tracking-wider uppercase text-[#2166A5] mb-4">
+            YOUR UNIVERSITY. YOUR NETWORK.
           </p>
 
-          {/* Tasteful Photographic Visual */}
-          <div className="relative w-full rounded-xl overflow-hidden border border-[#E5E7EB] shadow-xs bg-white mb-6">
+          {/* Main Primary Headline (38-42px on desktop, 650-700 weight, line-height 1.15, dark charcoal, "a connection." in #2166A5) */}
+          <h1 className="text-3xl sm:text-4xl lg:text-[40px] xl:text-[42px] font-bold text-[#191919] tracking-tight leading-[1.15] mb-5">
+            Your next chapter
+            <br />
+            starts with <span className="text-[#2166A5]">a connection.</span>
+          </h1>
+
+          {/* Supporting Paragraph (16-17px, line height 1.65, muted gray, max-w ~440px, left-aligned) */}
+          <p className="text-[16px] sm:text-[17px] text-[#626262] leading-[1.65] max-w-[440px] mb-8">
+            Connect with alumni who have been where you want to go. Learn from
+            their experiences and move forward with confidence.
+          </p>
+
+          {/* Large Editorial Landscape Photograph (16:9 aspect, object-cover, 10px rounded corners, thin border, NO overlaid labels) */}
+          <div className="relative w-full rounded-[10px] overflow-hidden border border-[#E5E7EB] shadow-xs bg-white mb-3.5">
             <div className="relative aspect-[16/9] w-full">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/hero-network.jpg"
-                alt="University Alumni and Mentorship Network"
+                alt="University Alumni and Student Mentorship"
                 className="w-full h-full object-cover object-center"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
-              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs">
-                <span className="font-medium bg-black/40 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/20">
-                  Campus & Global Alumni
-                </span>
-                <span className="text-[11px] font-medium text-white/90">
-                  1,200+ Verified Mentors
-                </span>
-              </div>
             </div>
           </div>
 
-          {/* Refined Testimonial Card */}
-          <div className="bg-white border border-[#E5E7EB] rounded-xl p-4 sm:p-5 shadow-xs">
-            <div className="flex items-center gap-1.5 mb-2 text-[#2166A5]">
-              <Quote size={15} className="rotate-180 opacity-80" />
-              <span className="text-[11px] uppercase tracking-wider font-semibold text-[#2166A5]">
-                Alumni Perspective
-              </span>
-            </div>
-            <blockquote className="text-[#374151] text-xs sm:text-sm leading-relaxed mb-3.5">
-              &ldquo;Connecting with our university&apos;s alumni transformed my
-              career journey. Now as an alumnus, guiding current students
-              through technical interviews is the most rewarding way to give
-              back.&rdquo;
-            </blockquote>
-            <div className="flex items-center justify-between pt-3 border-t border-[#F3F4F6]">
-              <div className="flex items-center gap-2.5">
-                <div className="h-8 w-8 rounded-full bg-[#F0F5FA] border border-[#D0E0EF] text-[#2166A5] flex items-center justify-center text-xs font-bold shrink-0">
-                  MV
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-[#191919]">
-                    Marcus Vance
-                  </p>
-                  <p className="text-[11px] text-[#626262]">
-                    Senior Backend Engineer at Datadog · Class of 2020
-                  </p>
-                </div>
-              </div>
-              <span className="text-[10px] text-[#626262] bg-[#F3F4F6] px-2 py-0.5 rounded font-medium shrink-0 ml-2">
-                Demo Persona
-              </span>
-            </div>
-          </div>
+          {/* Subtle Supporting Line beneath image (Plain text, no card, no border, no shadow) */}
+          <p className="text-xs sm:text-sm text-[#626262] font-normal">
+            Strong connections can shape your career.
+          </p>
         </div>
 
         {/* Left Column Subtle Footer */}
-        <div className="pt-4 text-xs text-[#8C8C8C] flex items-center justify-between">
+        <div className="pt-6 text-xs text-[#8C8C8C] flex items-center justify-between max-w-[460px]">
           <span>&copy; 2026 AlumniPath</span>
           <span>Career Mentorship Platform</span>
         </div>
