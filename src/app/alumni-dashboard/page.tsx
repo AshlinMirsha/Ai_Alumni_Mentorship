@@ -25,7 +25,6 @@ import {
   GraduationCap,
   Sparkles,
   AlertCircle,
-  CheckCircle,
 } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
@@ -134,7 +133,7 @@ export default function AlumniDashboardPage() {
       showToast(res.error || "Failed to schedule session due to a conflict.");
       return;
     }
-    showToast(`Session successfully scheduled with ${sessionData.studentName} for ${sessionData.date} at ${sessionData.time}!`);
+    showToast(`Session scheduled with ${sessionData.studentName} for ${sessionData.date} at ${sessionData.time}!`);
     setIsScheduleModalOpen(false);
   };
 
@@ -185,13 +184,12 @@ export default function AlumniDashboardPage() {
     }
   };
 
-  const pendingRequests = mentorshipActivity.pendingRequests;
+  const pendingRequests = mentorshipActivity.pendingRequests || [];
   const activeMentees = mentorshipActivity.acceptedMentorships || [];
   const myOpportunities = opportunities.filter(
     (o) => o.postedByAlumniId === alumni.id || o.postedByAlumniName === alumni.name
   );
 
-  // Total completed sessions calculation (Marcus Vance has 14 sessions logged)
   const completedSessionsCount = 14;
 
   const handleAccept = (requestId: string, studentName: string) => {
@@ -215,7 +213,6 @@ export default function AlumniDashboardPage() {
     );
   };
 
-  // Open profile modal for a pending request student
   const openStudentProfileForRequest = (req: Mentorship) => {
     const found = students.find((s) => s.id === req.studentId || s.name === req.student?.name);
     if (found) {
@@ -250,210 +247,433 @@ export default function AlumniDashboardPage() {
     setSelectedStudentForDetail(fallback);
   };
 
-  // Filter recommendations: students whose skills / interests align with Marcus Vance (Go, Python, Systems, PostgreSQL, Docker)
   const recommendedStudents = students
     .filter((st) => !st.isMentee)
     .slice(0, 3);
 
-  // Profile completion percent
   const profileCompletion = 92;
 
+  // Active upcoming sessions (not completed or cancelled)
+  const activeUpcomingSessions = upcomingSessions.filter(
+    (s) => s.status !== "completed" && s.status !== "cancelled"
+  );
+
   return (
-    <div className="space-y-5">
+    <div className="w-full space-y-6">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-5 right-5 z-50 bg-gray-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
-          <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-5 right-5 z-50 bg-[#191919] text-white text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 border border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-200"
+        >
+          <CheckCircle2 size={15} className="text-[#057642] shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* ─── SECTION 1: WELCOME SECTION ────────────────────────────────────────── */}
-      <section aria-label="Welcome Banner" className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex items-start gap-4">
-            <Avatar name={alumni.name} size="lg" className="shrink-0" />
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-lg font-bold text-gray-900 tracking-tight">
-                  Welcome back, {alumni.name}
-                </h1>
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#057642] bg-[#eef8f1] px-2 py-0.5 rounded-full border border-[#bfe3c9]">
-                  <ShieldCheck size={11} /> Verified Mentor
-                </span>
-                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                  Demo Data Active
-                </span>
-              </div>
-              <p className="text-xs font-medium text-gray-700 mt-1">
-                {alumni.role} at <span className="font-semibold text-gray-900">{alumni.company}</span>
-              </p>
-              <p className="text-xs text-gray-500 mt-1 max-w-2xl leading-relaxed">
-                You have <strong className="text-gray-800">{pendingRequests.length} pending mentorship requests</strong> waiting for your review and <strong className="text-gray-800">{upcomingSessions.length} upcoming 1:1 sessions</strong> scheduled this week. Thank you for empowering our student community!
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0 flex-wrap">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setIsAIAssistantOpen(true)}
-              className="text-xs flex items-center gap-1.5 text-[#0a66c2] border-[#b2d5f8] hover:bg-blue-50"
-            >
-              <Sparkles size={13} />
-              <span>AI Assistant</span>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              asChild
-              className="text-xs flex items-center gap-1.5 text-gray-700 border-gray-300 hover:bg-gray-50"
-            >
-              <Link href="/alumni-dashboard/profile">
-                <Edit3 size={13} className="text-[#0a66c2]" />
-                <span>Edit Profile</span>
-              </Link>
-            </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              asChild
-              className="bg-[#0a66c2] hover:bg-[#004182] text-xs flex items-center gap-1.5"
-            >
-              <Link href="/alumni-dashboard/students">
-                <Users size={13} />
-                <span>Discover Students</span>
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── SECTION 3: MENTORSHIP OVERVIEW (COMPACT STATISTICS) ───────────────── */}
-      <section aria-label="Mentorship Overview">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {/* 1. Pending Requests */}
-          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-xs hover:border-gray-300 transition-colors">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-gray-500">Pending Requests</span>
-              <div className="h-7 w-7 rounded-full bg-blue-50 text-[#0a66c2] flex items-center justify-center">
-                <Inbox size={15} />
-              </div>
-            </div>
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-gray-900">{pendingRequests.length}</span>
-              <span className="text-[11px] text-gray-500">awaiting review</span>
-            </div>
-            <Link
-              href="/alumni-dashboard/requests"
-              className="mt-2 text-[11px] font-semibold text-[#0a66c2] hover:underline flex items-center gap-1"
-            >
-              <span>Review requests</span>
-              <ChevronRight size={11} />
-            </Link>
-          </div>
-
-          {/* 2. Active Mentees */}
-          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-xs hover:border-gray-300 transition-colors">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-gray-500">Active Mentees</span>
-              <div className="h-7 w-7 rounded-full bg-emerald-50 text-[#057642] flex items-center justify-center">
-                <UserCheck size={15} />
-              </div>
-            </div>
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-gray-900">{activeMentees.length}</span>
-              <span className="text-[11px] text-gray-500">of 5 slots filled</span>
-            </div>
-            <Link
-              href="/alumni-dashboard/mentees"
-              className="mt-2 text-[11px] font-semibold text-[#0a66c2] hover:underline flex items-center gap-1"
-            >
-              <span>Manage cohort</span>
-              <ChevronRight size={11} />
-            </Link>
-          </div>
-
-          {/* 3. Upcoming Sessions */}
-          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-xs hover:border-gray-300 transition-colors">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-gray-500">Upcoming Sessions</span>
-              <div className="h-7 w-7 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center">
-                <Calendar size={15} />
-              </div>
-            </div>
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-gray-900">{upcomingSessions.length}</span>
-              <span className="text-[11px] text-gray-500">scheduled calls</span>
-            </div>
-            <span className="mt-2 text-[11px] text-gray-500 block truncate">
-              Next: {upcomingSessions[0]?.date.split(",")[0] || "None scheduled"}
-            </span>
-          </div>
-
-          {/* 4. Completed Sessions */}
-          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-xs hover:border-gray-300 transition-colors">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-gray-500">Completed Sessions</span>
-              <div className="h-7 w-7 rounded-full bg-purple-50 text-purple-700 flex items-center justify-center">
-                <Clock size={15} />
-              </div>
-            </div>
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-gray-900">{completedSessionsCount}</span>
-              <span className="text-[11px] text-[#057642] font-semibold">18 total hours</span>
-            </div>
-            <span className="mt-2 text-[11px] text-gray-400 block">
-              100% attendance rate
-            </span>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── TWO-COLUMN WORKSPACE (Center Feed: 8 cols | Right Sidebar: 4 cols) ─── */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
-        {/* CENTER MAIN FEED (8 COLS) */}
-        <div className="xl:col-span-8 space-y-5">
-          {/* ─── SECTION 4: PENDING REQUESTS ─────────────────────────────────────── */}
+      {/* ─────────────────────────────────────────────────────────────
+          TWO-COLUMN GRID: Main Content (~68%) / Supporting Sidebar (~32%)
+          Gap: 24px (gap-6), top-aligned (items-start)
+      ───────────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.9fr)_minmax(320px,0.9fr)] gap-6 items-start">
+        {/* ─────────────────────────────────────────────────────────────
+            LEFT COLUMN (~68% width): PRIMARY ALUMNI & MENTORSHIP WORKSPACE
+        ───────────────────────────────────────────────────────────── */}
+        <div className="space-y-6 min-w-0">
+          {/* ─── 1. COMPACT PROFESSIONAL PROFILE SUMMARY (PHASE 3) ─── */}
           <section
-            aria-label="Pending Mentorship Requests"
-            className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs"
+            aria-label="Alumni Profile Summary"
+            className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs"
           >
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+              {/* Identity & Credentials */}
+              <div className="flex items-start gap-4 min-w-0">
+                <Avatar
+                  name={alumni.name}
+                  size="lg"
+                  className="shrink-0 ring-1 ring-gray-100 bg-white"
+                />
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h1 className="text-lg sm:text-xl font-bold text-[#191919] tracking-tight truncate">
+                      {alumni.name}
+                    </h1>
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#057642] bg-[#EEF8F1] px-2 py-0.5 rounded-full border border-[#BFE3C9] shrink-0">
+                      <ShieldCheck size={12} />
+                      <span>Verified Mentor</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#057642] bg-emerald-50/50 px-2 py-0.5 rounded-full border border-emerald-100 shrink-0">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#057642] animate-pulse" />
+                      <span>Accepting Mentees ({activeMentees.length}/5 slots)</span>
+                    </span>
+                  </div>
+
+                  {/* Professional Position */}
+                  <p className="text-xs sm:text-[13px] font-semibold text-[#191919] mt-1 flex items-center gap-1.5 flex-wrap">
+                    <span>{alumni.role}</span>
+                    <span className="text-[#666666] font-normal">at</span>
+                    <span className="text-[#0A66C2] font-semibold">{alumni.company}</span>
+                    <span className="text-gray-300 hidden sm:inline">·</span>
+                    <span className="text-[#666666] font-normal text-xs">Ex-Google</span>
+                  </p>
+
+                  {/* University & Location Metadata */}
+                  <div className="mt-1.5 flex items-center gap-3 text-xs text-[#666666] flex-wrap">
+                    <span className="flex items-center gap-1">
+                      <GraduationCap size={13} className="text-[#666666] shrink-0" />
+                      <span>{alumni.university || "University of Technology"} · {alumni.department || "Computer Science"} &apos;20</span>
+                    </span>
+                    <span className="text-gray-300">·</span>
+                    <span className="flex items-center gap-1">
+                      <MapPin size={12} className="text-[#666666] shrink-0" />
+                      <span>{alumni.location || "San Francisco, CA"}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto flex-wrap">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsAIAssistantOpen(true)}
+                  className="h-8 px-3 text-xs font-semibold text-[#0A66C2] border-[#B2D5F8] hover:bg-blue-50 flex items-center gap-1.5 cursor-pointer shadow-none"
+                >
+                  <Sparkles size={13} />
+                  <span>AI Assistant</span>
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  asChild
+                  className="h-8 px-3 text-xs font-semibold text-[#191919] border-[#D9D9D9] hover:bg-gray-50 flex items-center gap-1.5 cursor-pointer shadow-none"
+                >
+                  <Link href="/alumni-dashboard/profile">
+                    <Edit3 size={13} className="text-[#666666]" />
+                    <span>Edit Profile</span>
+                  </Link>
+                </Button>
+
+                <Button
+                  variant="primary"
+                  size="sm"
+                  asChild
+                  className="h-8 px-3 text-xs font-semibold bg-[#0A66C2] hover:bg-[#004182] !text-white text-white flex items-center gap-1.5 cursor-pointer border-0 shadow-none"
+                >
+                  <Link href="/alumni-dashboard/students">
+                    <Users size={13} className="!text-white text-white" />
+                    <span>Discover Students</span>
+                  </Link>
+                </Button>
+              </div>
+            </div>
+
+            {/* Concise Domain Focus Tags */}
+            <div className="mt-3.5 pt-3 border-t border-gray-100 flex items-center gap-2 flex-wrap text-xs">
+              <span className="text-[11px] font-semibold text-[#666666] uppercase tracking-wider mr-1">
+                Mentoring Focus:
+              </span>
+              {[
+                "Distributed Systems",
+                "Go & Python Backend",
+                "PostgreSQL Query Optimization",
+                "Production Docker",
+                "System Design Interviews",
+              ].map((domain) => (
+                <span
+                  key={domain}
+                  className="text-xs font-medium px-2.5 py-0.5 rounded-md bg-[#F3F4F6] text-[#191919]"
+                >
+                  {domain}
+                </span>
+              ))}
+            </div>
+          </section>
+
+          {/* ─── 2. MENTORSHIP OVERVIEW METRICS STRIP ─── */}
+          <section aria-label="Mentorship Metrics Summary" className="w-full">
+            <div className="bg-white border border-[#D9D9D9] rounded-lg shadow-xs overflow-hidden">
+              <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-gray-200">
+                {/* 1. Pending Requests */}
+                <Link
+                  href="/alumni-dashboard/requests"
+                  className="p-4 flex flex-col justify-between group hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-xs font-medium text-[#666666]">Pending Requests</span>
+                    <Inbox size={15} className="text-[#0A66C2] group-hover:scale-105 transition-transform" />
+                  </div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-bold tracking-tight text-[#191919]">
+                      {pendingRequests.length}
+                    </span>
+                    <span className="text-xs text-[#0A66C2] font-semibold">
+                      {pendingRequests.length === 1 ? "Review" : "Reviews"}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#666666] mt-2 truncate flex items-center justify-between">
+                    <span>Awaiting your decision</span>
+                    <ChevronRight size={12} className="text-gray-400 group-hover:text-[#0A66C2]" />
+                  </p>
+                </Link>
+
+                {/* 2. Active Mentees */}
+                <Link
+                  href="/alumni-dashboard/mentees"
+                  className="p-4 flex flex-col justify-between group hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-xs font-medium text-[#666666]">Active Mentees</span>
+                    <UserCheck size={15} className="text-[#057642] group-hover:scale-105 transition-transform" />
+                  </div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-bold tracking-tight text-[#191919]">
+                      {activeMentees.length}
+                    </span>
+                    <span className="text-xs text-[#666666]">of 5 slots filled</span>
+                  </div>
+                  <p className="text-[11px] text-[#666666] mt-2 truncate flex items-center justify-between">
+                    <span>Manage cohort</span>
+                    <ChevronRight size={12} className="text-gray-400 group-hover:text-[#057642]" />
+                  </p>
+                </Link>
+
+                {/* 3. Upcoming Sessions */}
+                <div className="p-4 flex flex-col justify-between hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-xs font-medium text-[#666666]">Upcoming Sessions</span>
+                    <Calendar size={15} className="text-[#B45309]" />
+                  </div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-bold tracking-tight text-[#191919]">
+                      {activeUpcomingSessions.length}
+                    </span>
+                    <span className="text-xs text-[#666666]">scheduled calls</span>
+                  </div>
+                  <p className="text-[11px] text-[#666666] mt-2 truncate">
+                    {activeUpcomingSessions[0]
+                      ? `Next: ${activeUpcomingSessions[0].date.split(",")[0]}`
+                      : "No sessions this week"}
+                  </p>
+                </div>
+
+                {/* 4. Completed Sessions */}
+                <div className="p-4 flex flex-col justify-between hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-xs font-medium text-[#666666]">Completed Sessions</span>
+                    <Clock size={15} className="text-[#6B21A8]" />
+                  </div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-bold tracking-tight text-[#191919]">
+                      {completedSessionsCount}
+                    </span>
+                    <span className="text-xs text-[#057642] font-semibold">18 hours total</span>
+                  </div>
+                  <p className="text-[11px] text-[#666666] mt-2 truncate">
+                    100% attendance rate
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ─── 3. UPCOMING MENTORSHIP SESSIONS (PHASE 4 — PRIMARY FEATURE) ─── */}
+          <section
+            aria-labelledby="upcoming-sessions-title"
+            className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-gray-100 gap-2">
+              <div>
+                <h2
+                  id="upcoming-sessions-title"
+                  className="text-base sm:text-lg font-bold text-[#191919] tracking-tight"
+                >
+                  Upcoming Mentorship Sessions
+                </h2>
+                <p className="text-xs text-[#666666] mt-0.5">
+                  Confirmed and scheduled 1:1 sessions with student mentees
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2.5 shrink-0">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsScheduleModalOpen(true)}
+                  className="h-8 px-3 text-xs font-semibold text-[#0A66C2] border-[#B2D5F8] hover:bg-blue-50 flex items-center gap-1.5 cursor-pointer shadow-none"
+                >
+                  <Plus size={13} />
+                  <span>Schedule Session</span>
+                </Button>
+
+                <Link
+                  href="/alumni-dashboard/mentees"
+                  className="text-xs font-semibold text-[#0A66C2] hover:underline inline-flex items-center gap-1"
+                >
+                  <span>View All Sessions</span>
+                  <ArrowRight size={12} />
+                </Link>
+              </div>
+            </div>
+
+            {/* Sessions List */}
+            <div className="mt-4 space-y-3">
+              {activeUpcomingSessions.length === 0 ? (
+                <div className="py-8 text-center bg-gray-50/50 rounded-lg border border-dashed border-gray-200">
+                  <Calendar size={24} className="text-gray-400 mx-auto mb-2" />
+                  <p className="text-xs font-semibold text-[#191919]">
+                    No upcoming mentorship sessions scheduled
+                  </p>
+                  <p className="text-[11px] text-[#666666] mt-1 max-w-sm mx-auto">
+                    You can schedule a 1:1 call with any of your active mentees or review incoming requests.
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsScheduleModalOpen(true)}
+                    className="mt-3 text-xs font-medium text-[#0A66C2] border-[#B2D5F8]"
+                  >
+                    + Schedule New Session
+                  </Button>
+                </div>
+              ) : (
+                activeUpcomingSessions.map((session) => (
+                  <div
+                    key={session.id}
+                    className="p-4 rounded-lg border border-[#D9D9D9] bg-white hover:border-[#0A66C2] transition-colors"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      {/* Left: Mentee Avatar, Name, Topic, Date/Time */}
+                      <div className="flex items-start gap-3.5 min-w-0">
+                        <Avatar name={session.studentName} size="md" className="shrink-0 ring-1 ring-gray-100" />
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="text-sm font-bold text-[#191919] truncate">
+                              {session.studentName}
+                            </h3>
+                            <span className="text-[11px] text-[#666666]">
+                              {session.studentAcademicYear || "Undergraduate"} · {session.studentDepartment || "Computer Science"}
+                            </span>
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                                session.status === "confirmed"
+                                  ? "bg-[#EEF8F1] text-[#057642] border border-[#BFE3C9]"
+                                  : "bg-[#EFF6FF] text-[#0A66C2] border border-[#BFDBFE]"
+                              }`}
+                            >
+                              {session.status}
+                            </span>
+                          </div>
+
+                          {/* Mentorship Topic (Prominent) */}
+                          <p className="text-xs sm:text-[13px] font-semibold text-[#191919] mt-1 leading-snug">
+                            {session.topic}
+                          </p>
+
+                          {/* Date and Time */}
+                          <div className="mt-1.5 flex items-center gap-3 text-xs text-[#666666] flex-wrap">
+                            <span className="flex items-center gap-1 font-medium text-[#191919]">
+                              <Calendar size={13} className="text-[#0A66C2] shrink-0" />
+                              <span>{session.date}</span>
+                            </span>
+                            <span className="text-gray-300">·</span>
+                            <span className="flex items-center gap-1">
+                              <Clock size={13} className="text-gray-400 shrink-0" />
+                              <span>{session.time}</span>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right: Actions (Join Meeting & View Details) */}
+                      <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                        {session.meetUrl ? (
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            asChild
+                            className="bg-[#057642] hover:bg-[#045D34] !text-white text-white text-xs h-[34px] px-3 font-semibold flex items-center gap-1.5 border-0 shadow-none cursor-pointer"
+                          >
+                            <a
+                              href={session.meetUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <Video size={13} className="!text-white text-white shrink-0" />
+                              <span>Join Meeting</span>
+                              <ExternalLink size={11} className="!text-white text-white shrink-0" />
+                            </a>
+                          </Button>
+                        ) : (
+                          <span className="text-[11px] text-[#666666] italic bg-gray-50 px-2.5 py-1.5 rounded-md border border-gray-200">
+                            Link sent 15m prior
+                          </span>
+                        )}
+
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setSelectedSessionForDetail(session)}
+                          className="h-[34px] px-3 text-xs font-semibold text-[#191919] border-[#D9D9D9] hover:bg-gray-50 cursor-pointer shadow-none"
+                        >
+                          View Details
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </section>
+
+          {/* ─── 4. RECENT MENTORSHIP REQUESTS ─── */}
+          <section
+            aria-labelledby="recent-requests-title"
+            className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs"
+          >
+            <div className="flex items-center justify-between pb-3.5 border-b border-gray-100">
               <div className="flex items-center gap-2">
-                <h2 className="text-sm font-bold text-gray-900">Recent Mentorship Requests</h2>
+                <h2
+                  id="recent-requests-title"
+                  className="text-base sm:text-lg font-bold text-[#191919] tracking-tight"
+                >
+                  Recent Mentorship Requests
+                </h2>
                 {pendingRequests.length > 0 && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#ebf3fb] text-[#0a66c2]">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EBF3FB] text-[#0A66C2]">
                     {pendingRequests.length} pending
                   </span>
                 )}
               </div>
               <Link
                 href="/alumni-dashboard/requests"
-                className="text-xs font-semibold text-[#0a66c2] hover:underline flex items-center gap-1"
+                className="text-xs font-semibold text-[#0A66C2] hover:underline flex items-center gap-1"
               >
-                <span>View all</span>
+                <span>View all requests</span>
                 <ArrowRight size={12} />
               </Link>
             </div>
 
             <div className="mt-4 divide-y divide-gray-100">
               {pendingRequests.length === 0 ? (
-                <div className="py-8 text-center">
-                  <div className="h-10 w-10 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center mx-auto mb-2">
-                    <Inbox size={20} />
-                  </div>
-                  <p className="text-xs font-medium text-gray-900">No pending mentorship requests</p>
-                  <p className="text-[11px] text-gray-500 mt-1 max-w-sm mx-auto">
-                    You have responded to all incoming requests. You can proactively browse students looking for mentors.
+                <div className="py-8 text-center bg-gray-50/50 rounded-lg border border-dashed border-gray-200">
+                  <Inbox size={24} className="text-gray-400 mx-auto mb-2" />
+                  <p className="text-xs font-semibold text-[#191919]">No pending mentorship requests</p>
+                  <p className="text-[11px] text-[#666666] mt-1 max-w-sm mx-auto">
+                    You have responded to all incoming student inquiries. You can discover students to offer mentorship.
                   </p>
                   <Button
                     variant="outline"
                     size="sm"
                     asChild
-                    className="mt-3 text-xs"
+                    className="mt-3 text-xs font-medium text-[#0A66C2] border-[#B2D5F8]"
                   >
                     <Link href="/alumni-dashboard/students">Discover Students &rarr;</Link>
                   </Button>
@@ -469,46 +689,46 @@ export default function AlumniDashboardPage() {
                     <div key={req.id} className="py-4 first:pt-0 last:pb-0">
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex items-start gap-3 min-w-0">
-                          <Avatar name={studentName} size="md" className="shrink-0" />
+                          <Avatar name={studentName} size="md" className="shrink-0 ring-1 ring-gray-100" />
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                              <h3 className="text-xs font-bold text-gray-900 truncate">
+                              <h3 className="text-xs sm:text-sm font-bold text-[#191919] truncate">
                                 {studentName}
                               </h3>
-                              <span className="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.2 rounded">
+                              <span className="text-[10px] text-[#666666] bg-gray-100 px-1.5 py-0.2 rounded font-medium">
                                 {studentYear}
                               </span>
                             </div>
-                            <p className="text-[11px] text-gray-500 truncate mt-0.5">
+                            <p className="text-xs text-[#666666] truncate mt-0.5">
                               {studentDept} · University of Technology
                             </p>
-                            <div className="mt-1 flex items-center gap-1.5 text-[11px] text-[#0a66c2]">
-                              <Target size={11} className="shrink-0" />
-                              <span className="font-medium truncate">
-                                Career Interest: {careerInterest}
+                            <div className="mt-1 flex items-center gap-1.5 text-xs text-[#0A66C2]">
+                              <Target size={12} className="shrink-0" />
+                              <span className="font-semibold truncate">
+                                Career Goal: {careerInterest}
                               </span>
                             </div>
                           </div>
                         </div>
 
-                        <span className="text-[10px] text-gray-400 shrink-0">
+                        <span className="text-[11px] text-gray-400 shrink-0 font-medium">
                           {req.requestDate}
                         </span>
                       </div>
 
-                      {/* Request Message */}
+                      {/* Request Message Quote */}
                       {req.requestMessage && (
-                        <div className="mt-2.5 bg-gray-50/80 rounded-md p-2.5 border border-gray-100">
-                          <p className="text-xs text-gray-700 leading-relaxed italic">
+                        <div className="mt-2.5 bg-gray-50/80 rounded-md p-3 border border-gray-200">
+                          <p className="text-xs text-[#191919] leading-relaxed italic">
                             &ldquo;{req.requestMessage}&rdquo;
                           </p>
                           {req.student?.skills && req.student.skills.length > 0 && (
-                            <div className="mt-2 flex items-center gap-1 flex-wrap">
-                              <span className="text-[10px] text-gray-400 font-medium mr-1">Skills:</span>
+                            <div className="mt-2 flex items-center gap-1.5 flex-wrap">
+                              <span className="text-[10px] text-[#666666] font-semibold mr-1">Skills:</span>
                               {req.student.skills.slice(0, 4).map((sk) => (
                                 <span
                                   key={sk}
-                                  className="text-[10px] bg-white border border-gray-200 px-1.5 py-0.2 rounded text-gray-600"
+                                  className="text-[11px] bg-white border border-[#D9D9D9] px-2 py-0.5 rounded text-[#191919] font-medium"
                                 >
                                   {sk}
                                 </span>
@@ -525,7 +745,7 @@ export default function AlumniDashboardPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => openStudentProfileForRequest(req)}
-                          className="text-xs text-gray-600 hover:text-[#0a66c2] hover:bg-blue-50 px-2.5 h-8"
+                          className="text-xs text-[#666666] hover:text-[#0A66C2] hover:bg-blue-50 px-2.5 h-8 font-semibold cursor-pointer"
                         >
                           <Users size={12} className="mr-1.5" />
                           <span>View Profile</span>
@@ -537,7 +757,7 @@ export default function AlumniDashboardPage() {
                             variant="outline"
                             size="sm"
                             onClick={() => handleDecline(req.id, studentName)}
-                            className="text-xs text-gray-600 hover:text-red-600 hover:border-red-200 h-8 px-3"
+                            className="text-xs text-[#666666] hover:text-red-600 hover:border-red-200 h-8 px-3 font-medium cursor-pointer"
                           >
                             <X size={12} className="mr-1" />
                             <span>Decline</span>
@@ -547,9 +767,9 @@ export default function AlumniDashboardPage() {
                             variant="primary"
                             size="sm"
                             onClick={() => handleAccept(req.id, studentName)}
-                            className="text-xs bg-[#0a66c2] hover:bg-[#004182] h-8 px-3"
+                            className="text-xs bg-[#0A66C2] hover:bg-[#004182] !text-white text-white h-8 px-3.5 font-semibold cursor-pointer border-0 shadow-none"
                           >
-                            <Check size={12} className="mr-1" />
+                            <Check size={12} className="mr-1 !text-white text-white" />
                             <span>Accept</span>
                           </Button>
                         </div>
@@ -561,186 +781,72 @@ export default function AlumniDashboardPage() {
             </div>
           </section>
 
-          {/* ─── SECTION 5: UPCOMING SESSIONS ────────────────────────────────────── */}
+          {/* ─── 5. RECOMMENDED STUDENTS TO MENTOR ─── */}
           <section
-            aria-label="Upcoming Mentorship Sessions"
-            className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs"
+            aria-labelledby="recommended-students-title"
+            className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs"
           >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-gray-100 gap-2">
-              <div>
-                <h2 className="text-sm font-bold text-gray-900">Upcoming Mentorship Sessions</h2>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  Confirmed and scheduled 1:1 sessions with student mentees
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsScheduleModalOpen(true)}
-                  className="text-xs h-7 px-2.5 text-[#0a66c2] border-[#b2d5f8] hover:bg-blue-50 flex items-center gap-1"
-                >
-                  <Plus size={11} />
-                  <span>Schedule Session</span>
-                </Button>
-                <Link
-                  href="/alumni-dashboard/mentees"
-                  className="text-xs font-semibold text-[#0a66c2] hover:underline"
-                >
-                  View All &rarr;
-                </Link>
-              </div>
-            </div>
-
-            <div className="mt-4 space-y-3">
-              {upcomingSessions.length === 0 ? (
-                <div className="py-6 text-center text-xs text-gray-500">
-                  No upcoming mentorship sessions scheduled.
-                </div>
-              ) : (
-                upcomingSessions.map((session) => (
-                  <div
-                    key={session.id}
-                    className="p-3.5 rounded-lg border border-gray-200 bg-white hover:border-gray-300 transition-colors"
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                      <div className="flex items-start gap-3 min-w-0">
-                        <Avatar name={session.studentName} size="md" className="shrink-0" />
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <h4 className="text-xs font-bold text-gray-900">
-                              {session.studentName}
-                            </h4>
-                            <span
-                              className={`px-1.5 py-0.2 rounded text-[10px] font-bold uppercase tracking-wider ${
-                                session.status === "confirmed"
-                                  ? "bg-[#eef8f1] text-[#057642] border border-[#bfe3c9]"
-                                  : "bg-blue-50 text-[#0a66c2] border border-[#b2d5f8]"
-                              }`}
-                            >
-                              {session.status}
-                            </span>
-                          </div>
-                          <p className="text-xs font-semibold text-gray-800 mt-0.5 leading-snug">
-                            {session.topic}
-                          </p>
-                          <div className="mt-1 flex items-center gap-3 text-[11px] text-gray-500 flex-wrap">
-                            <span className="flex items-center gap-1 font-medium text-gray-700">
-                              <Calendar size={12} className="text-[#0a66c2]" />
-                              {session.date}
-                            </span>
-                            <span>·</span>
-                            <span className="flex items-center gap-1">
-                              <Clock size={12} className="text-gray-400" />
-                              {session.time}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Session Actions: Meeting Link (only when exists!) & View Details */}
-                      <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
-                        {session.meetUrl ? (
-                          <Button
-                            variant="primary"
-                            size="sm"
-                            asChild
-                            className="bg-[#057642] hover:bg-[#045d34] text-xs h-8 px-2.5 flex items-center gap-1.5"
-                          >
-                            <a
-                              href={session.meetUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <Video size={12} />
-                              <span>Join Meet</span>
-                              <ExternalLink size={10} />
-                            </a>
-                          </Button>
-                        ) : (
-                          <span className="text-[11px] text-gray-400 italic bg-gray-50 px-2 py-1 rounded border border-gray-100">
-                            Link sent 15m prior
-                          </span>
-                        )}
-
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setSelectedSessionForDetail(session)}
-                          className="text-xs h-8 px-2.5 text-gray-700 border-gray-300 hover:bg-gray-50"
-                        >
-                          View Details
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </section>
-
-          {/* ─── SECTION 6: STUDENT RECOMMENDATIONS ──────────────────────────────── */}
-          <section
-            aria-label="Student Recommendations"
-            className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs"
-          >
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+            <div className="flex items-center justify-between pb-3.5 border-b border-gray-100">
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-sm font-bold text-gray-900">Recommended Students</h2>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#0a66c2] bg-blue-50 px-1.5 py-0.5 rounded">
-                    <Sparkles size={10} /> Skills Match
+                  <h2
+                    id="recommended-students-title"
+                    className="text-base sm:text-lg font-bold text-[#191919] tracking-tight"
+                  >
+                    Recommended Students
+                  </h2>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#0A66C2] bg-blue-50 px-2 py-0.5 rounded border border-[#B2D5F8]">
+                    <Sparkles size={11} /> Skills Match
                   </span>
                 </div>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-[#666666] mt-0.5">
                   Students whose career interests align with your systems, Go, and backend expertise
                 </p>
               </div>
+
               <Link
                 href="/alumni-dashboard/students"
-                className="text-xs font-semibold text-[#0a66c2] hover:underline flex items-center gap-1"
+                className="text-xs font-semibold text-[#0A66C2] hover:underline flex items-center gap-1 shrink-0"
               >
                 <span>Browse all</span>
                 <ArrowRight size={12} />
               </Link>
             </div>
 
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3.5">
               {recommendedStudents.map((st) => (
                 <div
                   key={st.id}
-                  className="p-3.5 rounded-lg border border-gray-200 bg-gray-50/30 flex flex-col justify-between hover:border-gray-300 transition-colors"
+                  className="p-3.5 rounded-lg border border-[#D9D9D9] bg-white flex flex-col justify-between hover:border-[#0A66C2] transition-colors"
                 >
                   <div>
                     <div className="flex items-start justify-between gap-2">
-                      <Avatar name={st.name} size="md" />
+                      <Avatar name={st.name} size="md" className="ring-1 ring-gray-100" />
                       {st.matchScore && (
-                        <span className="text-[10px] font-bold text-[#057642] bg-[#eef8f1] border border-[#bfe3c9] px-1.5 py-0.2 rounded shrink-0">
+                        <span className="text-[10px] font-bold text-[#057642] bg-[#EEF8F1] border border-[#BFE3C9] px-2 py-0.5 rounded-full shrink-0">
                           {st.matchScore}% Match
                         </span>
                       )}
                     </div>
 
-                    <h4 className="text-xs font-bold text-gray-900 mt-2 truncate">
+                    <h4 className="text-xs font-bold text-[#191919] mt-2 truncate">
                       {st.name}
                     </h4>
-                    <p className="text-[11px] text-gray-500 truncate">
+                    <p className="text-[11px] text-[#666666] truncate">
                       {st.academicYear} · {st.department}
                     </p>
 
-                    <p className="text-[11px] text-gray-700 mt-1 line-clamp-2">
-                      Goal: <strong className="font-semibold text-gray-900">{st.careerGoal}</strong>
+                    <p className="text-xs text-[#191919] mt-1.5 line-clamp-2">
+                      Goal: <strong className="font-semibold text-[#0A66C2]">{st.careerGoal}</strong>
                     </p>
 
-                    <div className="mt-2 flex gap-1 flex-wrap">
+                    <div className="mt-2.5 flex gap-1 flex-wrap">
                       {st.skills.slice(0, 3).map((sk) => {
                         const skName = typeof sk === "string" ? sk : sk.name;
                         return (
                           <span
                             key={skName}
-                            className="text-[10px] bg-white border border-gray-200 px-1.5 py-0.5 rounded text-gray-600"
+                            className="text-[10px] bg-[#F3F4F6] px-1.5 py-0.5 rounded text-[#191919] font-medium"
                           >
                             {skName}
                           </span>
@@ -749,11 +855,11 @@ export default function AlumniDashboardPage() {
                     </div>
                   </div>
 
-                  <div className="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between gap-2">
+                  <div className="mt-3.5 pt-2.5 border-t border-gray-100 flex items-center justify-between gap-2">
                     <button
                       type="button"
                       onClick={() => setSelectedStudentForDetail(st)}
-                      className="text-[11px] font-semibold text-gray-600 hover:text-[#0a66c2] hover:underline"
+                      className="text-xs font-semibold text-[#666666] hover:text-[#0A66C2] hover:underline cursor-pointer"
                     >
                       View Profile
                     </button>
@@ -762,7 +868,7 @@ export default function AlumniDashboardPage() {
                       size="sm"
                       onClick={() => setSelectedStudentForOffer(st)}
                       disabled={st.hasPendingRequest}
-                      className="text-[11px] py-1 px-2.5 h-auto text-[#0a66c2] border-[#b2d5f8] hover:bg-blue-50"
+                      className="text-xs py-1 px-2.5 h-auto font-semibold text-[#0A66C2] border-[#B2D5F8] hover:bg-blue-50 cursor-pointer"
                     >
                       {st.hasPendingRequest ? "Pending" : "Offer Mentorship"}
                     </Button>
@@ -773,155 +879,129 @@ export default function AlumniDashboardPage() {
           </section>
         </div>
 
-        {/* ─── SECTION 7 & 2: RIGHT SIDEBAR (4 COLS) ────────────────────────────── */}
-        <aside aria-label="Alumni Context Sidebar" className="xl:col-span-4 space-y-5">
-          {/* ─── SECTION 2: PROFILE SUMMARY CARD ─────────────────────────────────── */}
-          <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs">
-            <div className="flex items-start gap-3.5">
-              <Avatar name={alumni.name} size="lg" className="shrink-0" />
-              <div className="min-w-0 flex-1">
-                <h3 className="text-sm font-bold text-gray-900 truncate">
-                  {alumni.name}
-                </h3>
-                <p className="text-xs font-semibold text-[#0a66c2] truncate">
-                  {alumni.role}
-                </p>
-                <p className="text-xs text-gray-600 truncate">{alumni.company}</p>
-                <div className="mt-1 flex items-center gap-1 text-[11px] text-gray-400">
-                  <GraduationCap size={12} className="shrink-0" />
-                  <span className="truncate">University of Technology · &apos;18</span>
-                </div>
-              </div>
+        {/* ─────────────────────────────────────────────────────────────
+            RIGHT COLUMN (~32% width): SUPPORTING SIDEBAR (PHASE 5)
+            Ordered: Profile Completion -> Reminders -> Events -> Opportunities -> Updates
+        ───────────────────────────────────────────────────────────── */}
+        <aside aria-label="Alumni Supporting Sidebar" className="space-y-6 min-w-0">
+          {/* ─── A. PROFILE COMPLETION ─── */}
+          <div className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs">
+            <div className="flex items-center justify-between pb-2.5 border-b border-gray-100">
+              <h3 className="text-sm font-bold text-[#191919]">Profile Completion</h3>
+              <span className="text-xs font-bold text-[#057642]">{profileCompletion}% Complete</span>
             </div>
 
-            {/* Skills & Expertise */}
-            <div className="mt-3.5 pt-3 border-t border-gray-100">
-              <span className="text-[11px] font-bold text-gray-600 uppercase tracking-wider block mb-1.5">
-                Expertise &amp; Topics
-              </span>
-              <div className="flex flex-wrap gap-1.5">
-                {[
-                  "Distributed Systems",
-                  "Go",
-                  "Python",
-                  "PostgreSQL",
-                  "Docker",
-                  "Observability",
-                ].map((skill) => (
-                  <span
-                    key={skill}
-                    className="text-[11px] font-medium bg-gray-100 text-gray-700 px-2 py-0.5 rounded"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Profile Completion Indicator */}
-            <div className="mt-4 pt-3.5 border-t border-gray-100">
-              <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-gray-800">Profile Completion</span>
-                <span className="font-bold text-[#057642]">{profileCompletion}% Complete</span>
-              </div>
+            <div className="mt-3">
               <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
                 <div
                   className="h-full bg-[#057642] rounded-full transition-all duration-300"
                   style={{ width: `${profileCompletion}%` }}
                 />
               </div>
-              <p className="text-[11px] text-gray-500 mt-1.5">
-                Complete the remaining 8% to boost mentee match accuracy.
+              <p className="text-xs text-[#666666] mt-2 leading-relaxed">
+                Complete the remaining 8% to maximize your visibility and student match accuracy.
               </p>
             </div>
 
             <div className="mt-3 pt-3 border-t border-gray-100">
               <Link
                 href="/alumni-dashboard/profile"
-                className="text-xs text-[#0a66c2] font-semibold hover:underline flex items-center justify-center gap-1"
+                className="text-xs font-semibold text-[#0A66C2] hover:underline flex items-center justify-between"
               >
-                <span>Edit Full Profile</span>
-                <ChevronRight size={12} />
+                <span>Edit Full Profile Details</span>
+                <ChevronRight size={13} />
               </Link>
             </div>
           </div>
 
-          {/* ─── Profile Completion Reminders ─────────────────────────────────── */}
-          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-xs">
+          {/* ─── B. PROFILE REMINDERS ─── */}
+          <div className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs">
             <div className="flex items-center gap-2 pb-2.5 border-b border-gray-100">
-              <AlertCircle size={14} className="text-[#0a66c2]" />
-              <h3 className="text-xs font-bold text-gray-900">Profile Reminders</h3>
+              <AlertCircle size={15} className="text-[#0A66C2]" />
+              <h3 className="text-sm font-bold text-[#191919]">Profile Reminders</h3>
             </div>
-            <ul className="mt-3 space-y-2 text-xs">
-              <li className="flex items-start gap-2 text-gray-700">
-                <span className="h-4 w-4 rounded-full bg-blue-50 text-[#0a66c2] flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+
+            <ul className="mt-3 space-y-2.5 text-xs">
+              <li className="flex items-start gap-2.5 text-[#191919]">
+                <span className="h-4 w-4 rounded-full bg-blue-50 text-[#0A66C2] flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
                   +4%
                 </span>
-                <span className="text-[11px]">Add your personal LinkedIn URL to verified contacts</span>
+                <span className="text-xs text-[#666666] leading-snug">
+                  Add your personal LinkedIn URL to verified contacts
+                </span>
               </li>
-              <li className="flex items-start gap-2 text-gray-700">
-                <span className="h-4 w-4 rounded-full bg-blue-50 text-[#0a66c2] flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+              <li className="flex items-start gap-2.5 text-[#191919]">
+                <span className="h-4 w-4 rounded-full bg-blue-50 text-[#0A66C2] flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
                   +4%
                 </span>
-                <span className="text-[11px]">Set 2 preferred weekly office hours time windows</span>
+                <span className="text-xs text-[#666666] leading-snug">
+                  Set 2 preferred weekly office hours time windows
+                </span>
               </li>
             </ul>
-            <Link
-              href="/alumni-dashboard/profile"
-              className="mt-3 text-[11px] font-semibold text-[#0a66c2] hover:underline block text-right"
-            >
-              Complete Now &rarr;
-            </Link>
+
+            <div className="mt-3.5 pt-3 border-t border-gray-100">
+              <Link
+                href="/alumni-dashboard/profile"
+                className="text-xs font-semibold text-[#0A66C2] hover:underline flex items-center justify-between"
+              >
+                <span>Complete Reminders Now</span>
+                <ArrowRight size={12} />
+              </Link>
+            </div>
           </div>
 
-          {/* ─── Upcoming University Events ───────────────────────────────────── */}
-          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-xs">
-            <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+          {/* ─── C. CAMPUS EVENTS ─── */}
+          <div className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs">
+            <div className="flex items-center justify-between pb-2.5 border-b border-gray-100">
               <div className="flex items-center gap-1.5">
-                <Calendar size={14} className="text-[#0a66c2]" />
-                <h3 className="text-xs font-bold text-gray-900">Campus Events</h3>
+                <Calendar size={15} className="text-[#0A66C2]" />
+                <h3 className="text-sm font-bold text-[#191919]">Campus Events</h3>
               </div>
-              <span className="text-[10px] text-gray-400">Fall 2026</span>
+              <span className="text-[11px] font-medium text-[#666666]">Fall 2026</span>
             </div>
 
             <div className="mt-3 divide-y divide-gray-100">
-              {universityEvents.map((event) => (
-                <div key={event.id} className="py-2.5 first:pt-0 last:pb-0">
+              {universityEvents.slice(0, 3).map((event) => (
+                <div key={event.id} className="py-3 first:pt-0 last:pb-0">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#0a66c2] bg-blue-50 px-1.5 py-0.2 rounded">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#0A66C2] bg-blue-50 px-2 py-0.5 rounded">
                       {event.category}
                     </span>
-                    <span className="text-[10px] text-gray-400">
+                    <span className="text-[11px] text-[#666666]">
                       {event.rsvpCount} RSVPs
                     </span>
                   </div>
-                  <h4 className="text-xs font-bold text-gray-900 mt-1 leading-snug">
+
+                  <h4 className="text-xs font-bold text-[#191919] mt-1.5 leading-snug">
                     {event.title}
                   </h4>
-                  <div className="mt-1 text-[11px] text-gray-500 space-y-0.5">
+
+                  <div className="mt-1 text-xs text-[#666666] space-y-0.5">
                     <p>{event.date} · {event.time}</p>
-                    <p className="flex items-center gap-1 text-gray-400">
-                      <MapPin size={10} />
+                    <p className="flex items-center gap-1 text-[#666666]">
+                      <MapPin size={11} className="shrink-0" />
                       <span>{event.location}</span>
                     </p>
                   </div>
-                  <div className="mt-2 flex items-center justify-between">
-                    <p className="text-[10px] text-gray-500 line-clamp-1 flex-1 pr-2">
+
+                  <div className="mt-2.5 flex items-center justify-between gap-2">
+                    <p className="text-[11px] text-[#666666] line-clamp-1 flex-1">
                       {event.description}
                     </p>
                     <Button
                       variant={event.isRegistered ? "outline" : "primary"}
                       size="sm"
                       onClick={() => handleToggleRsvp(event.id, event.title)}
-                      className={`text-[10px] h-6 px-2 shrink-0 ${
+                      className={`text-xs h-7 px-2.5 shrink-0 font-medium cursor-pointer ${
                         event.isRegistered
-                          ? "text-[#057642] border-[#bfe3c9] bg-[#eef8f1] hover:bg-[#e4f4e8]"
-                          : "bg-[#0a66c2] hover:bg-[#004182]"
+                          ? "text-[#057642] border-[#BFE3C9] bg-[#EEF8F1] hover:bg-[#E4F4E8]"
+                          : "bg-[#0A66C2] hover:bg-[#004182] !text-white text-white border-0 shadow-none"
                       }`}
                     >
                       {event.isRegistered ? (
                         <span className="flex items-center gap-1">
-                          <CheckCircle size={10} /> Registered
+                          <CheckCircle2 size={11} /> Registered
                         </span>
                       ) : (
                         "RSVP"
@@ -933,54 +1013,54 @@ export default function AlumniDashboardPage() {
             </div>
           </div>
 
-          {/* ─── Relevant Career Opportunities ────────────────────────────────── */}
-          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-xs">
-            <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+          {/* ─── D. CAREER OPPORTUNITIES ─── */}
+          <div className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs">
+            <div className="flex items-center justify-between pb-2.5 border-b border-gray-100">
               <div className="flex items-center gap-1.5">
-                <Briefcase size={14} className="text-[#0a66c2]" />
-                <h3 className="text-xs font-bold text-gray-900">Career Opportunities</h3>
+                <Briefcase size={15} className="text-[#0A66C2]" />
+                <h3 className="text-sm font-bold text-[#191919]">Career Opportunities</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsPostOpportunityOpen(true)}
-                className="text-[11px] font-semibold text-[#0a66c2] hover:underline flex items-center gap-1"
+                className="text-xs font-semibold text-[#0A66C2] hover:underline flex items-center gap-1 cursor-pointer"
               >
-                <Plus size={11} />
-                <span>Post</span>
+                <Plus size={12} />
+                <span>Post Opportunity</span>
               </button>
             </div>
 
             <div className="mt-3 space-y-2.5">
               {myOpportunities.length === 0 ? (
-                <p className="text-xs text-gray-500 py-2 text-center">
-                  No active postings. Post an internship or referral to connect with talent.
+                <p className="text-xs text-[#666666] py-3 text-center">
+                  No active postings. Publish an internship or role referral to connect with verified students.
                 </p>
               ) : (
-                myOpportunities.map((opp) => (
+                myOpportunities.slice(0, 3).map((opp) => (
                   <div
                     key={opp.id}
-                    className="p-2.5 rounded-md border border-gray-100 bg-gray-50/50 hover:bg-gray-50 transition-colors"
+                    className="p-3 rounded-lg border border-gray-100 bg-gray-50/50 hover:bg-gray-50 transition-colors"
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-gray-900 truncate">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-bold text-[#191919] truncate">
                         {opp.title}
                       </span>
-                      <span className="text-[10px] uppercase font-bold text-[#0a66c2] bg-blue-50 px-1.5 py-0.5 rounded shrink-0">
+                      <span className="text-[10px] uppercase font-bold text-[#0A66C2] bg-blue-50 px-1.5 py-0.5 rounded shrink-0">
                         {opp.type}
                       </span>
                     </div>
-                    <p className="text-[11px] text-gray-500 mt-0.5">
+                    <p className="text-xs text-[#666666] mt-0.5">
                       {opp.company} · {opp.location}
                     </p>
-                    <div className="mt-2 flex items-center justify-between text-[11px]">
+                    <div className="mt-2 flex items-center justify-between text-xs pt-1 border-t border-gray-100">
                       <span className="text-[#057642] font-semibold">
                         {opp.applicantsCount} applicants
                       </span>
                       <Link
                         href="/alumni-dashboard/opportunities"
-                        className="text-[#0a66c2] hover:underline font-medium"
+                        className="text-[#0A66C2] hover:underline font-semibold"
                       >
-                        View applicants &rarr;
+                        View &rarr;
                       </Link>
                     </div>
                   </div>
@@ -989,24 +1069,23 @@ export default function AlumniDashboardPage() {
             </div>
           </div>
 
-          {/* ─── Mentorship Tips Widget ───────────────────────────────────────── */}
-          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-xs">
+          {/* ─── E. RELEVANT UPDATES (MENTORSHIP BEST PRACTICES) ─── */}
+          <div className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs">
             <div className="flex items-center gap-2 pb-2.5 border-b border-gray-100">
-              <Award size={14} className="text-amber-600" />
-              <h3 className="text-xs font-bold text-gray-900">Mentorship Tips</h3>
+              <Award size={15} className="text-[#B45309]" />
+              <h3 className="text-sm font-bold text-[#191919]">Mentorship Best Practices</h3>
             </div>
-            <div className="mt-3 space-y-2.5">
-              {mentorshipTipsData.map((tip) => (
-                <div key={tip.id} className="text-xs bg-amber-50/40 p-2.5 rounded-lg border border-amber-100">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800">
-                      {tip.category}
-                    </span>
-                  </div>
-                  <h5 className="font-bold text-gray-900 text-[11px] mt-0.5">
+
+            <div className="mt-3 space-y-3">
+              {mentorshipTipsData.slice(0, 2).map((tip) => (
+                <div key={tip.id} className="text-xs bg-amber-50/50 p-3 rounded-lg border border-amber-100">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800">
+                    {tip.category}
+                  </span>
+                  <h5 className="font-bold text-[#191919] text-xs mt-0.5">
                     {tip.title}
                   </h5>
-                  <p className="text-[11px] text-gray-600 mt-1 leading-relaxed">
+                  <p className="text-xs text-[#666666] mt-1 leading-relaxed">
                     {tip.tip}
                   </p>
                 </div>
@@ -1016,7 +1095,9 @@ export default function AlumniDashboardPage() {
         </aside>
       </div>
 
-      {/* ─── MODALS ────────────────────────────────────────────────────────────── */}
+      {/* ─────────────────────────────────────────────────────────────
+          MODALS & DIALOGS (ALL PRESERVED FUNCTIONALITY)
+      ───────────────────────────────────────────────────────────── */}
 
       {/* Student Detail Modal (for View Profile) */}
       <StudentDetailModal

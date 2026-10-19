@@ -2,7 +2,7 @@
 
 import { useState, useSyncExternalStore, useRef, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   Bell,
   Menu,
@@ -15,6 +15,12 @@ import {
   Briefcase,
   ArrowRightLeft,
   CheckCheck,
+  LayoutDashboard,
+  Users,
+  Inbox,
+  UserCheck,
+  MessagesSquare,
+  MessageSquare,
 } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import {
@@ -24,8 +30,9 @@ import {
   markAllNotificationsAsRead,
   setSessionRole,
   loadAlumniProfile,
+  loadMentorshipActivity,
 } from "@/lib/dashboard-storage";
-import { notificationsData, defaultAlumniUser } from "@/lib/mock-data";
+import { notificationsData, defaultAlumniUser, initialMentorshipActivity } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 interface AlumniNavProps {
@@ -35,6 +42,7 @@ interface AlumniNavProps {
 
 export function AlumniNav({ onMobileToggle, mobileOpen }: AlumniNavProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -53,7 +61,35 @@ export function AlumniNav({ onMobileToggle, mobileOpen }: AlumniNavProps) {
     () => defaultAlumniUser
   );
 
+  const mentorshipActivity = useSyncExternalStore(
+    subscribeToDashboardStorage,
+    loadMentorshipActivity,
+    () => initialMentorshipActivity
+  );
+
+  const pendingRequestsCount = mentorshipActivity.pendingRequests?.length || 0;
+  const activeMenteesCount = mentorshipActivity.acceptedMentorships?.length || 0;
   const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const navItems = [
+    { label: "Dashboard", href: "/alumni-dashboard", icon: LayoutDashboard, badge: null },
+    { label: "Discover Students", href: "/alumni-dashboard/students", icon: Users, badge: null },
+    {
+      label: "Requests",
+      href: "/alumni-dashboard/requests",
+      icon: Inbox,
+      badge: pendingRequestsCount > 0 ? `${pendingRequestsCount}` : null,
+    },
+    {
+      label: "My Mentees",
+      href: "/alumni-dashboard/mentees",
+      icon: UserCheck,
+      badge: activeMenteesCount > 0 ? `${activeMenteesCount}` : null,
+    },
+    { label: "Opportunities", href: "/alumni-dashboard/opportunities", icon: Briefcase, badge: null },
+    { label: "Community", href: "/alumni-dashboard/community", icon: MessagesSquare, badge: null },
+    { label: "Messages", href: "/messages", icon: MessageSquare, badge: null },
+  ];
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -81,51 +117,71 @@ export function AlumniNav({ onMobileToggle, mobileOpen }: AlumniNavProps) {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-xs">
+    <header className="sticky top-0 z-40 bg-white border-b border-[#D9D9D9]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-[54px] gap-4">
           {/* Left: Brand & Portal Badge */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-6 xl:gap-8 h-full shrink-0">
             <Link href="/alumni-dashboard" className="flex items-center gap-2.5 group">
-              <div className="h-7 w-7 rounded bg-[#0a66c2] flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#004182]">
+              <div className="h-7 w-7 rounded bg-[#0A66C2] flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#004182]">
                 <span className="text-white text-xs font-bold tracking-tight">A</span>
               </div>
-              <span className="text-base font-bold tracking-tight text-gray-900 hidden sm:inline-block">
-                Alumni<span className="text-[#0a66c2]">Path</span>
+              <span className="text-base font-bold tracking-tight text-[#191919] hidden sm:inline-block">
+                Alumni<span className="text-[#0A66C2]">Path</span>
               </span>
             </Link>
 
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#ebf3fb] text-[#0a66c2] border border-[#b2d5f8]">
-              <Briefcase size={11} className="text-[#0a66c2]" />
-              <span>Alumni Portal</span>
-            </span>
+            {/* Desktop Navigation Links */}
+            <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5 h-full">
+              {navItems.map((item) => {
+                const isActive = pathname === item.href;
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "inline-flex items-center gap-1.5 h-[54px] px-2.5 text-xs font-medium border-b-2 transition-colors",
+                      isActive
+                        ? "border-[#0A66C2] text-[#0A66C2] font-semibold"
+                        : "border-transparent text-[#666666] hover:text-[#191919] hover:border-gray-300"
+                    )}
+                  >
+                    <Icon size={14} className={isActive ? "text-[#0A66C2]" : "text-[#666666]"} />
+                    <span>{item.label}</span>
+                    {item.badge && (
+                      <span className="text-[10px] font-bold bg-[#EBF3FB] text-[#0A66C2] px-1.5 py-0.2 rounded-full">
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
           </div>
-
-          {/* Center: Search Bar */}
-          <form
-            onSubmit={handleSearchSubmit}
-            className="hidden md:flex flex-1 max-w-md items-center relative"
-          >
-            <Search size={15} className="absolute left-3 text-gray-400 pointer-events-none" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search students, skills, topics, opportunities..."
-              className="w-full pl-9 pr-4 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-full text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0a66c2] focus:border-[#0a66c2] transition-colors"
-            />
-          </form>
 
           {/* Right Controls */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Search Input */}
+            <form onSubmit={handleSearchSubmit} className="hidden 2xl:flex items-center relative">
+              <Search size={14} className="absolute left-2.5 text-gray-400 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search students, skills..."
+                className="w-48 pl-8 pr-3 py-1 text-xs bg-gray-50 border border-gray-200 rounded-full text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0A66C2] focus:border-[#0A66C2] transition-colors"
+              />
+            </form>
+
             {/* Quick Role Switcher Pill */}
             <button
               type="button"
               onClick={handleSwitchToStudent}
               title="Click to preview the platform as a student"
-              className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 border border-gray-200 rounded-full transition-colors"
+              className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-[#666666] hover:text-[#191919] hover:bg-gray-100 border border-[#D9D9D9] rounded-full transition-colors"
             >
-              <ArrowRightLeft size={12} className="text-gray-500" />
+              <ArrowRightLeft size={12} className="text-[#666666]" />
               <span>Switch to Student View</span>
             </button>
 
