@@ -16,27 +16,27 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-[#174A7E] text-white border border-[#174A7E] hover:bg-[#123A63] hover:border-[#123A63] active:bg-[#0e2e4f] transition-colors duration-150",
+    "bg-[#2166A5] !text-white text-white border-0 hover:bg-[#194F82] active:bg-[#143F68] transition-colors duration-150 shadow-none [&_*]:!text-white [&_*]:text-white",
   secondary:
-    "bg-white text-[#191919] border border-[#E5E7EB] hover:bg-[#F3F5F7] hover:border-gray-300 hover:text-[#191919] active:bg-gray-100 transition-colors duration-150",
+    "bg-white text-[#252525] border border-[#D5D9DE] hover:bg-[#F5F7FA] hover:border-[#C5C9CE] hover:text-[#252525] active:bg-[#ECEFF3] transition-colors duration-150 shadow-none",
   ghost:
-    "bg-transparent text-gray-600 border border-transparent hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200 transition-colors duration-150",
+    "bg-transparent text-gray-600 border-0 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200 transition-colors duration-150 shadow-none",
   outline:
-    "bg-transparent text-[#174A7E] border border-[#174A7E] hover:bg-[#F0F5FA] hover:border-[#123A63] active:bg-[#D0E0EF] transition-colors duration-150",
+    "bg-transparent text-[#2166A5] border border-[#2166A5] hover:bg-[#F0F5FA] hover:border-[#194F82] active:bg-[#D0E0EF] transition-colors duration-150 shadow-none",
   danger:
-    "bg-red-600 text-white border border-red-600 hover:bg-red-700 hover:border-red-700 active:bg-red-800 transition-colors duration-150",
+    "bg-red-600 !text-white text-white border-0 hover:bg-red-700 active:bg-red-800 transition-colors duration-150 shadow-none",
 };
 
 const sizeClasses: Record<Size, string> = {
-  sm: "h-8 px-3.5 text-xs gap-1.5 rounded-md font-semibold",
-  md: "h-9 px-4 text-sm gap-2 rounded-md font-semibold",
-  lg: "h-11 px-6 text-sm gap-2 rounded-md font-semibold",
+  sm: "h-[38px] px-4 text-xs sm:text-sm gap-1.5 rounded-[8px] font-medium",
+  md: "h-[40px] px-5 text-sm gap-2 rounded-[8px] font-medium",
+  lg: "h-[44px] px-6 sm:px-7 text-sm gap-2 rounded-[8px] font-medium",
 };
 
 const baseClass = (variant: Variant, size: Size, fullWidth: boolean, className?: string) =>
   cn(
     "inline-flex items-center justify-center transition-colors duration-150 cursor-pointer select-none",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#174A7E] focus-visible:ring-offset-2",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2166A5] focus-visible:ring-offset-2",
     variantClasses[variant],
     sizeClasses[size],
     fullWidth && "w-full",

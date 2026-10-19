@@ -26,7 +26,7 @@ function Wordmark({ dark = false }: { dark?: boolean }) {
         dark ? "text-white" : "text-[#191919]"
       }`}
     >
-      Alumni<span className="text-[#174A7E]">Path</span>
+      Alumni<span className="text-[#2166A5]">Path</span>
     </span>
   );
 }
@@ -41,7 +41,7 @@ function Header() {
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="h-7 w-7 rounded-md bg-[#174A7E] flex items-center justify-center shrink-0">
+            <div className="h-7 w-7 rounded-[8px] bg-[#2166A5] flex items-center justify-center shrink-0">
               <span className="text-white text-xs font-bold">A</span>
             </div>
             <Wordmark />
@@ -77,7 +77,7 @@ function Header() {
               </Link>
             </Button>
             <Button variant="primary" size="sm" asChild>
-              <Link href="/signup" className="text-sm font-medium">
+              <Link href="/signup" className="!text-white text-white font-medium text-sm">
                 Get Started
               </Link>
             </Button>
@@ -123,7 +123,9 @@ function Header() {
               <Link href="/login">Log In</Link>
             </Button>
             <Button variant="primary" size="sm" fullWidth asChild>
-              <Link href="/signup">Get Started</Link>
+              <Link href="/signup" className="!text-white text-white font-medium">
+                Get Started
+              </Link>
             </Button>
           </div>
         </div>
@@ -195,8 +197,8 @@ export default function LandingPage() {
             {/* Centered Hero Content Block */}
             <div className="max-w-3xl mx-auto text-center flex flex-col items-center">
               {/* Subtle intro label */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-medium text-[#174A7E] bg-[#F0F5FA] border border-[#D0E0EF] mb-6 select-none">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#174A7E]" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-medium text-[#2166A5] bg-[#F0F5FA] border border-[#D0E0EF] mb-6 select-none">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#2166A5]" />
                 <span>Verified University Alumni Network</span>
               </div>
 
@@ -204,11 +206,11 @@ export default function LandingPage() {
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#191919] max-w-3xl mx-auto leading-[1.12] text-center">
                 Your college network.
                 <br />
-                <span className="text-[#174A7E]">Your next opportunity.</span>
+                <span className="text-[#2166A5]">Your next opportunity.</span>
               </h1>
 
-              {/* Perfectly Centered Supporting Paragraph with Balanced Wrapping */}
-              <p className="text-center text-base sm:text-lg text-[#626262] max-w-[540px] mx-auto leading-relaxed mt-5 mb-8 [text-wrap:balance]">
+              {/* Elegantly Balanced Supporting Paragraph */}
+              <p className="text-center text-[17px] sm:text-[18px] text-[#626262] leading-[1.6] max-w-[650px] mx-auto mt-5 sm:mt-6 mb-8 sm:mb-9 [text-wrap:balance]">
                 Build meaningful connections with alumni, learn from their experiences,
                 and discover opportunities that move your career forward.
               </p>
@@ -218,15 +220,16 @@ export default function LandingPage() {
                 <Button variant="primary" size="lg" asChild className="w-full sm:w-auto">
                   <Link
                     href="/alumni"
-                    className="inline-flex items-center justify-center px-6"
+                    className="inline-flex items-center justify-center gap-2 !text-white text-white font-medium px-6 sm:px-7"
                   >
-                    Find Your Mentor <ArrowRight size={15} className="ml-2" />
+                    <span>Find Your Mentor</span>
+                    <ArrowRight size={16} className="!text-white text-white shrink-0" />
                   </Link>
                 </Button>
                 <Button variant="secondary" size="lg" asChild className="w-full sm:w-auto">
                   <a
                     href="#how-it-works"
-                    className="inline-flex items-center justify-center px-6"
+                    className="inline-flex items-center justify-center font-medium px-6 sm:px-7"
                   >
                     Explore the Network
                   </a>
@@ -234,7 +237,7 @@ export default function LandingPage() {
               </div>
 
               {/* Centered Small Understated Line */}
-              <p className="text-center text-xs sm:text-sm text-[#626262] font-normal mb-12 sm:mb-16">
+              <p className="text-center text-xs sm:text-sm text-[#626262] font-normal mt-1 mb-10 sm:mb-14">
                 Connecting students and alumni through shared experience.
               </p>
             </div>
@@ -274,7 +277,7 @@ export default function LandingPage() {
         >
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <div className="max-w-2xl mb-16">
-              <p className="text-xs font-semibold text-[#174A7E] uppercase tracking-wider mb-3">
+              <p className="text-xs font-semibold text-[#2166A5] uppercase tracking-wider mb-3">
                 How It Works
               </p>
               <h2 className="text-3xl sm:text-4xl font-bold text-[#191919] tracking-tight">
@@ -290,7 +293,7 @@ export default function LandingPage() {
             <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#E5E7EB] border-y border-[#E5E7EB]">
               {/* Step 01 */}
               <div className="py-8 md:py-10 md:pr-8">
-                <span className="text-xs font-bold text-[#174A7E] tracking-wider uppercase block mb-2">
+                <span className="text-xs font-bold text-[#2166A5] tracking-wider uppercase block mb-2">
                   01
                 </span>
                 <h3 className="text-xl font-bold text-[#191919] tracking-tight mb-3">
@@ -305,7 +308,7 @@ export default function LandingPage() {
 
               {/* Step 02 */}
               <div className="py-8 md:py-10 md:px-8">
-                <span className="text-xs font-bold text-[#174A7E] tracking-wider uppercase block mb-2">
+                <span className="text-xs font-bold text-[#2166A5] tracking-wider uppercase block mb-2">
                   02
                 </span>
                 <h3 className="text-xl font-bold text-[#191919] tracking-tight mb-3">
@@ -320,7 +323,7 @@ export default function LandingPage() {
 
               {/* Step 03 */}
               <div className="py-8 md:py-10 md:pl-8">
-                <span className="text-xs font-bold text-[#174A7E] tracking-wider uppercase block mb-2">
+                <span className="text-xs font-bold text-[#2166A5] tracking-wider uppercase block mb-2">
                   03
                 </span>
                 <h3 className="text-xl font-bold text-[#191919] tracking-tight mb-3">
@@ -345,7 +348,7 @@ export default function LandingPage() {
         >
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <div className="max-w-2xl mb-16">
-              <p className="text-xs font-semibold text-[#174A7E] uppercase tracking-wider mb-3">
+              <p className="text-xs font-semibold text-[#2166A5] uppercase tracking-wider mb-3">
                 Platform Capabilities
               </p>
               <h2 className="text-3xl sm:text-4xl font-bold text-[#191919] tracking-tight">
@@ -361,7 +364,7 @@ export default function LandingPage() {
               {/* Alternating Feature 1: Alumni Discovery & Direct Advisory */}
               <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#174A7E] bg-white border border-[#E5E7EB] px-3 py-1 rounded-md mb-4">
+                  <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2166A5] bg-white border border-[#E5E7EB] px-3 py-1 rounded-md mb-4">
                     <Compass size={13} />
                     <span>Direct Alumni Advisory</span>
                   </div>
@@ -406,7 +409,7 @@ export default function LandingPage() {
                           <span className="text-base font-semibold text-[#191919]">
                             Marcus Vance
                           </span>
-                          <span className="text-[11px] font-semibold text-[#174A7E] bg-[#F0F5FA] border border-[#D0E0EF] px-2 py-0.5 rounded">
+                          <span className="text-[11px] font-semibold text-[#2166A5] bg-[#F0F5FA] border border-[#D0E0EF] px-2 py-0.5 rounded">
                             Verified Alum
                           </span>
                         </div>
@@ -455,12 +458,12 @@ export default function LandingPage() {
                 <div className="order-2 lg:order-1 bg-white border border-[#E5E7EB] rounded-xl p-6 shadow-sm">
                   <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#E5E7EB]">
                     <div className="flex items-center gap-2">
-                      <Map size={16} className="text-[#174A7E]" />
+                      <Map size={16} className="text-[#2166A5]" />
                       <span className="text-sm font-semibold text-[#191919]">
                         Target Career Roadmap: Full-Stack Engineer
                       </span>
                     </div>
-                    <span className="text-xs text-[#174A7E] font-medium bg-[#F0F5FA] px-2 py-0.5 rounded">
+                    <span className="text-xs text-[#2166A5] font-medium bg-[#F0F5FA] px-2 py-0.5 rounded">
                       Milestone 2 of 4
                     </span>
                   </div>
@@ -478,8 +481,8 @@ export default function LandingPage() {
                       </p>
                     </div>
 
-                    <div className="border-l-2 border-[#174A7E] pl-3.5 py-0.5">
-                      <p className="text-xs font-bold text-[#174A7E] uppercase tracking-wider">
+                    <div className="border-l-2 border-[#2166A5] pl-3.5 py-0.5">
+                      <p className="text-xs font-bold text-[#2166A5] uppercase tracking-wider">
                         Stage 2 · Current Focus
                       </p>
                       <p className="text-sm font-semibold text-[#191919]">
@@ -506,7 +509,7 @@ export default function LandingPage() {
 
                 {/* Text Description of Feature 2 */}
                 <div className="order-1 lg:order-2">
-                  <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#174A7E] bg-white border border-[#E5E7EB] px-3 py-1 rounded-md mb-4">
+                  <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2166A5] bg-white border border-[#E5E7EB] px-3 py-1 rounded-md mb-4">
                     <Brain size={13} />
                     <span>AI Career Assistance</span>
                   </div>
@@ -555,7 +558,7 @@ export default function LandingPage() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
               <div>
-                <p className="text-xs font-semibold text-[#174A7E] uppercase tracking-wider mb-2.5">
+                <p className="text-xs font-semibold text-[#2166A5] uppercase tracking-wider mb-2.5">
                   Verified Alumni Directory
                 </p>
                 <h2 className="text-3xl sm:text-4xl font-bold text-[#191919] tracking-tight">
@@ -567,8 +570,8 @@ export default function LandingPage() {
                 </p>
               </div>
               <Button variant="primary" asChild className="shrink-0">
-                <Link href="/alumni" className="inline-flex items-center">
-                  <Search size={14} className="mr-2" />
+                <Link href="/alumni" className="inline-flex items-center !text-white text-white">
+                  <Search size={14} className="mr-2 !text-white text-white" />
                   View Full Directory
                 </Link>
               </Button>
@@ -587,11 +590,11 @@ export default function LandingPage() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <Link
                           href={`/alumni/${alumnus.id}`}
-                          className="text-base font-semibold text-[#191919] hover:text-[#174A7E] transition-colors"
+                          className="text-base font-semibold text-[#191919] hover:text-[#2166A5] transition-colors"
                         >
                           {alumnus.name}
                         </Link>
-                        <span className="text-[11px] font-semibold text-[#174A7E] bg-[#F0F5FA] border border-[#D0E0EF] px-2 py-0.5 rounded">
+                        <span className="text-[11px] font-semibold text-[#2166A5] bg-[#F0F5FA] border border-[#D0E0EF] px-2 py-0.5 rounded">
                           Class of {alumnus.graduationYear}
                         </span>
                       </div>
@@ -625,7 +628,7 @@ export default function LandingPage() {
                     </span>
                     <Link
                       href={`/alumni/${alumnus.id}`}
-                      className="text-xs font-semibold text-[#174A7E] hover:text-[#123A63] hover:underline flex items-center gap-1"
+                      className="text-xs font-semibold text-[#2166A5] hover:text-[#194F82] hover:underline flex items-center gap-1"
                     >
                       View Profile <ArrowRight size={12} />
                     </Link>
@@ -654,13 +657,14 @@ export default function LandingPage() {
               <Button variant="primary" size="lg" asChild>
                 <Link
                   href="/signup"
-                  className="inline-flex items-center px-6"
+                  className="inline-flex items-center px-6 !text-white text-white font-medium"
                 >
-                  Create Your Account <ArrowRight size={15} className="ml-2" />
+                  <span>Create Your Account</span>
+                  <ArrowRight size={15} className="ml-2 !text-white text-white shrink-0" />
                 </Link>
               </Button>
               <Button variant="secondary" size="lg" asChild>
-                <Link href="/alumni" className="px-6">
+                <Link href="/alumni" className="px-6 font-medium">
                   Browse Directory
                 </Link>
               </Button>
@@ -669,7 +673,7 @@ export default function LandingPage() {
               Already have an account?{" "}
               <Link
                 href="/login"
-                className="text-[#174A7E] font-medium hover:underline"
+                className="text-[#2166A5] font-medium hover:underline"
               >
                 Log In
               </Link>
@@ -687,7 +691,7 @@ export default function LandingPage() {
             {/* Brand */}
             <div>
               <Link href="/" className="flex items-center gap-2.5 mb-3">
-                <div className="h-7 w-7 rounded-md bg-[#174A7E] flex items-center justify-center shrink-0">
+                <div className="h-7 w-7 rounded-[8px] bg-[#2166A5] flex items-center justify-center shrink-0">
                   <span className="text-white text-xs font-bold">A</span>
                 </div>
                 <Wordmark />
