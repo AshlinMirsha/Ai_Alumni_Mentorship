@@ -2,22 +2,23 @@
 
 import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { Users, ArrowRight, Info, CheckCircle } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { ArrowRight, CheckCircle } from "lucide-react";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { StudentProfileCard } from "@/components/dashboard/StudentProfileCard";
+import { CareerStatsStrip } from "@/components/dashboard/CareerStatsStrip";
 import { RecommendedMentorCard } from "@/components/dashboard/RecommendedMentorCard";
-import { CareerOverview } from "@/components/dashboard/CareerOverview";
 import { CareerRoadmapPreview } from "@/components/dashboard/CareerRoadmapPreview";
+import { StudentProfileCard } from "@/components/dashboard/StudentProfileCard";
+import { CareerOverview } from "@/components/dashboard/CareerOverview";
 import { QuickActions } from "@/components/dashboard/QuickActions";
-import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { EditProfileModal } from "@/components/dashboard/EditProfileModal";
 import { AlumniDetailModal } from "@/components/dashboard/AlumniDetailModal";
 import {
   recommendedAlumniData,
   currentStudent,
   initialRoadmapStages,
+  initialMentorshipActivity,
+  calculateProfileCompletion,
 } from "@/lib/mock-data";
 import {
   subscribeToDashboardStorage,
@@ -27,6 +28,7 @@ import {
   loadRoadmapStages,
   saveRoadmapStages,
   resetRoadmapStages,
+  loadMentorshipActivity,
 } from "@/lib/dashboard-storage";
 import type {
   Student,
@@ -44,6 +46,11 @@ export default function DashboardPage() {
     subscribeToDashboardStorage,
     loadRoadmapStages,
     () => initialRoadmapStages
+  );
+  const mentorshipActivity = useSyncExternalStore(
+    subscribeToDashboardStorage,
+    loadMentorshipActivity,
+    () => initialMentorshipActivity
   );
 
   // Modal states
@@ -83,81 +90,89 @@ export default function DashboardPage() {
     showToast("Roadmap stages reset to initial demo track.");
   };
 
+  // Real statistics computation
+  const profileCompletion = calculateProfileCompletion(student);
+  const connectionsCount =
+    (mentorshipActivity.acceptedMentorships?.length || 0) +
+    (mentorshipActivity.pendingRequests?.length || 0);
+  const completedStages = roadmapStages.filter((s) => s.status === "completed").length;
+  const unreadMessagesCount = (mentorshipActivity.recentConversations || []).reduce(
+    (sum, c) => sum + (c.unreadCount || 0),
+    0
+  );
+
   return (
-    <div className="min-h-screen bg-[#F5F7FA] flex flex-col antialiased">
+    <div className="min-h-screen bg-[#F9FAFB] flex flex-col antialiased">
       {/* Toast Notification Banner */}
       {toastMessage && (
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 rounded-[8px] bg-[#191919] text-white text-xs shadow-lg border border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-200"
+          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#111827] text-white text-xs shadow-lg border border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-200"
         >
           <CheckCircle size={15} className="text-[#057642] shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Application Navigation Shell */}
+      {/* A. TOP NAVIGATION */}
       <DashboardNav
         studentName={student.name}
         onOpenEditProfile={() => setIsEditProfileOpen(true)}
       />
 
-      {/* COMPACT DASHBOARD HEADER */}
-      <DashboardHeader
-        studentName={student.name}
-        department={student.department}
-        academicYear={student.academicYear || "Second Year"}
-        onOpenEditProfile={() => setIsEditProfileOpen(true)}
-      />
+      {/* CENTERED DASHBOARD CONTAINER (Max-width 1280px) */}
+      <main className="flex-1 max-w-[1280px] w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8 pb-16">
+        {/* B. WELCOME HEADER */}
+        <DashboardHeader
+          studentName={student.name}
+          department={student.department}
+          academicYear={student.academicYear || "Second Year"}
+          onOpenEditProfile={() => setIsEditProfileOpen(true)}
+        />
 
-      {/* MAIN TWO-COLUMN DASHBOARD LAYOUT (68% Left / 32% Right, aligned to max-w 1200px) */}
-      <main className="flex-1 max-w-[1200px] w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.9fr)_minmax(300px,0.9fr)] gap-6 items-start">
+        {/* C. CAREER OVERVIEW STRIP */}
+        <CareerStatsStrip
+          profilePercent={profileCompletion.percent}
+          connectionsCount={connectionsCount}
+          roadmapCompletedCount={completedStages}
+          roadmapTotalCount={roadmapStages.length}
+          unreadMessagesCount={unreadMessagesCount}
+          onOpenEditProfile={() => setIsEditProfileOpen(true)}
+        />
+
+        {/* TWO-COLUMN GRID: Left ~68% / Right ~32%, aligned at top */}
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.9fr)_minmax(320px,0.9fr)] gap-8 items-start">
           {/* ─────────────────────────────────────────────────────────────
-              LEFT COLUMN (~68% width): PRIMARY DASHBOARD CONTENT
+              D. MAIN CONTENT AREA (Left Column ~68%)
           ───────────────────────────────────────────────────────────── */}
-          <div className="space-y-6 min-w-0">
-            {/* Mobile-only Student Profile Card (at top on mobile viewports) */}
-            <div className="block lg:hidden">
-              <StudentProfileCard
-                student={student}
-                onOpenEditProfile={() => setIsEditProfileOpen(true)}
-              />
-            </div>
-
-            {/* 1. RECOMMENDED ALUMNI */}
-            <section aria-labelledby="recommended-alumni-title" className="space-y-3.5">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          <div className="space-y-8 min-w-0">
+            {/* 1. RECOMMENDED FOR YOU */}
+            <section aria-labelledby="recommended-alumni-title" className="space-y-4">
+              <div className="flex items-end justify-between gap-3">
                 <div>
-                  <div className="flex items-center gap-2">
-                    <div className="h-6 w-6 rounded-[4px] bg-[#F0F5FA] text-[#2166A5] flex items-center justify-center border border-[#D0E0EF]">
-                      <Users size={14} />
-                    </div>
-                    <h2 id="recommended-alumni-title" className="text-base sm:text-lg font-bold text-[#191919] tracking-tight">
-                      Recommended Alumni
-                    </h2>
-                  </div>
-                  <p className="text-xs sm:text-sm text-[#626262] mt-0.5">
-                    Alumni professionals matched with your {student.department} background and {student.careerGoal || "Full-Stack Software Engineer"} aspirations
+                  <h2
+                    id="recommended-alumni-title"
+                    className="text-lg sm:text-xl font-bold text-[#111827] tracking-tight"
+                  >
+                    Recommended for you
+                  </h2>
+                  <p className="text-xs sm:text-[13px] text-[#4B5563] mt-0.5">
+                    Professionals whose experience aligns with your career interests.
                   </p>
                 </div>
 
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  asChild
-                  className="self-start sm:self-auto shrink-0 text-xs h-[32px] px-3 font-medium bg-white hover:bg-[#F5F7FA] text-[#252525] border border-[#D5D9DE] shadow-none"
+                <Link
+                  href="/alumni"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#1E40AF] hover:underline shrink-0"
                 >
-                  <Link href="/alumni" className="inline-flex items-center gap-1.5 whitespace-nowrap">
-                    <span>View All Alumni</span>
-                    <ArrowRight size={13} />
-                  </Link>
-                </Button>
+                  <span>View all</span>
+                  <ArrowRight size={13} />
+                </Link>
               </div>
 
-              {/* 3 Alumni Cards Grid (repeat(3, minmax(0, 1fr))) */}
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {/* Responsive layout with comfortable spacing (2 columns on tablet/desktop) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                 {recommendedAlumniData.map((alumni) => (
                   <RecommendedMentorCard
                     key={alumni.id}
@@ -166,20 +181,13 @@ export default function DashboardPage() {
                   />
                 ))}
               </div>
-
-              {/* Illustrative demo match score disclaimer note */}
-              <div className="flex items-start gap-2 p-2.5 rounded-[6px] bg-white border border-[#E1E5EA] text-xs text-[#626262]">
-                <Info size={14} className="text-[#2166A5] shrink-0 mt-0.5" />
-                <span>
-                  <strong className="text-[#191919]">Note:</strong> Displayed match scores are illustrative demo scores derived from shared technical skills, academic department, and target career goals.
-                </span>
-              </div>
             </section>
 
-            {/* 2. CAREER ROADMAP TRACK */}
-            <section aria-label="Career Roadmap Track">
+            {/* 2. COMPACT ROADMAP PREVIEW */}
+            <section aria-label="Career Roadmap Overview">
               <CareerRoadmapPreview
                 stages={roadmapStages}
+                targetCareer={student.careerGoal || "Full-Stack Software Engineer"}
                 onStatusChange={handleRoadmapStatusChange}
                 onResetRoadmap={handleResetRoadmap}
               />
@@ -187,28 +195,23 @@ export default function DashboardPage() {
           </div>
 
           {/* ─────────────────────────────────────────────────────────────
-              RIGHT SIDEBAR (~32% width): CONTEXTUAL TOOLS & PROFILE
+              E. COMPACT SUPPORTING SIDEBAR (Right Column ~32%)
           ───────────────────────────────────────────────────────────── */}
           <aside className="space-y-6 min-w-0">
-            {/* A. STUDENT PROFILE (Desktop only - mobile is at top) */}
-            <div className="hidden lg:block">
-              <StudentProfileCard
-                student={student}
-                onOpenEditProfile={() => setIsEditProfileOpen(true)}
-              />
-            </div>
+            {/* A. YOUR PROFILE */}
+            <StudentProfileCard
+              student={student}
+              onOpenEditProfile={() => setIsEditProfileOpen(true)}
+            />
 
-            {/* B. CAREER FOCUS */}
+            {/* B. NEXT CAREER STEP */}
             <CareerOverview
               targetRole={student.careerGoal || "Full-Stack Software Engineer"}
               currentSkills={student.skills.map((s) => (typeof s === "string" ? s : s.name))}
             />
 
-            {/* C. CAREER TOOLS */}
+            {/* C. QUICK ACCESS */}
             <QuickActions />
-
-            {/* RECENT ACTIVITY (Compact audit log) */}
-            <RecentActivity />
           </aside>
         </div>
       </main>
@@ -230,20 +233,20 @@ export default function DashboardPage() {
       />
 
       {/* Footer */}
-      <footer className="mt-auto border-t border-[#E1E5EA] bg-white py-6">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#626262]">
-          <p>© 2026 AlumniPath · AI-Powered Alumni Networking & Career Mentorship</p>
+      <footer className="mt-auto border-t border-[#E5E7EB] bg-white py-6">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#6B7280]">
+          <p>© 2026 AlumniPath · AI-Powered Alumni Networking &amp; Career Mentorship</p>
           <div className="flex items-center gap-4">
-            <Link href="/alumni" className="hover:text-[#191919] transition-colors">
+            <Link href="/alumni" className="hover:text-[#111827] transition-colors">
               Alumni Directory
             </Link>
-            <Link href="/career-roadmap" className="hover:text-[#191919] transition-colors">
+            <Link href="/career-roadmap" className="hover:text-[#111827] transition-colors">
               Roadmaps
             </Link>
-            <Link href="/career-assistant" className="hover:text-[#191919] transition-colors">
+            <Link href="/career-assistant" className="hover:text-[#111827] transition-colors">
               AI Assistant
             </Link>
-            <Link href="/" className="hover:text-[#191919] transition-colors">
+            <Link href="/" className="hover:text-[#111827] transition-colors">
               Platform Home
             </Link>
           </div>

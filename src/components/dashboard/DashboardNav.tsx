@@ -101,28 +101,28 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 bg-white border-b border-[#E5E7EB]">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-[54px]">
           {/* Logo & Brand */}
-          <div className="flex items-center gap-4 xl:gap-6">
+          <div className="flex items-center gap-6 xl:gap-8 h-full">
             <Link href={isAlumni ? "/alumni-dashboard" : "/dashboard"} className="flex items-center gap-2.5 group shrink-0">
-              <div className="h-7 w-7 rounded bg-[#0a66c2] flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#004182]">
+              <div className="h-7 w-7 rounded-md bg-[#1E40AF] flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#1D4ED8]">
                 <span className="text-white text-xs font-bold tracking-tight">A</span>
               </div>
-              <span className="text-base font-bold tracking-tight text-gray-900 hidden sm:inline-block">
-                Alumni<span className="text-[#0a66c2]">Path</span>
+              <span className="text-base font-bold tracking-tight text-[#111827] hidden sm:inline-block">
+                Alumni<span className="text-[#1E40AF]">Path</span>
               </span>
             </Link>
 
             {isAlumni && (
-              <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#ebf3fb] text-[#0a66c2] border border-[#b2d5f8]">
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#EFF6FF] text-[#1E40AF] border border-[#BFDBFE]">
                 Alumni Portal
               </span>
             )}
 
-            {/* Desktop Navigation Links */}
-            <nav className="hidden lg:flex items-center gap-1">
+            {/* Desktop Navigation Links (Clean horizontal tabs, active highlight) */}
+            <nav className="hidden lg:flex items-center gap-1 xl:gap-2 h-full">
               {navItems.map((item) => {
                 const isActive = pathname === item.href;
                 const Icon = item.icon;
@@ -131,13 +131,13 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-150",
+                      "inline-flex items-center gap-1.5 h-[54px] px-3 text-xs font-medium border-b-2 transition-colors",
                       isActive
-                        ? "bg-[#ebf3fb] text-[#0a66c2] font-semibold"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/70"
+                        ? "border-[#1E40AF] text-[#1E40AF] font-semibold"
+                        : "border-transparent text-[#4B5563] hover:text-[#111827] hover:border-gray-300"
                     )}
                   >
-                    <Icon size={14} className={isActive ? "text-[#0a66c2]" : "text-gray-500"} />
+                    <Icon size={14} className={isActive ? "text-[#1E40AF]" : "text-[#6B7280]"} />
                     <span>{item.label}</span>
                   </Link>
                 );
