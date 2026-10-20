@@ -101,28 +101,28 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-[#E5E7EB]">
+    <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-2xl border-b border-black/[0.06] shadow-[0_1px_2px_rgba(0,0,0,0.02),0_4px_16px_rgba(0,0,0,0.02)]">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-[54px]">
+        <div className="flex items-center justify-between h-[56px]">
           {/* Logo & Brand */}
           <div className="flex items-center gap-6 xl:gap-8 h-full">
             <Link href={isAlumni ? "/alumni-dashboard" : "/dashboard"} className="flex items-center gap-2.5 group shrink-0">
-              <div className="h-7 w-7 rounded-md bg-[#1E40AF] flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#1D4ED8]">
+              <div className="h-7 w-7 rounded-lg bg-[#0a66c2] flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_2px_4px_rgba(10,102,194,0.3)] transition-transform group-hover:scale-105">
                 <span className="text-white text-xs font-bold tracking-tight">A</span>
               </div>
-              <span className="text-base font-bold tracking-tight text-[#111827] hidden sm:inline-block">
-                Alumni<span className="text-[#1E40AF]">Path</span>
+              <span className="text-base font-bold tracking-tight text-[#1d1d1f] hidden sm:inline-block">
+                Alumni<span className="text-[#0a66c2]">Path</span>
               </span>
             </Link>
 
             {isAlumni && (
-              <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#EFF6FF] text-[#1E40AF] border border-[#BFDBFE]">
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#0a66c2]/10 text-[#0a66c2] border border-[#0a66c2]/20">
                 Alumni Portal
               </span>
             )}
 
-            {/* Desktop Navigation Links (Clean horizontal tabs, active highlight) */}
-            <nav className="hidden lg:flex items-center gap-1 xl:gap-2 h-full">
+            {/* Desktop Navigation Links (Clean pill highlights, Apple-grade tracking) */}
+            <nav className="hidden lg:flex items-center gap-1 h-full">
               {navItems.map((item) => {
                 const isActive = pathname === item.href;
                 const Icon = item.icon;
@@ -131,13 +131,13 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "inline-flex items-center gap-1.5 h-[54px] px-3 text-xs font-medium border-b-2 transition-colors",
+                      "inline-flex items-center gap-1.5 h-[34px] px-3 rounded-lg text-xs font-medium transition-all duration-200",
                       isActive
-                        ? "border-[#1E40AF] text-[#1E40AF] font-semibold"
-                        : "border-transparent text-[#4B5563] hover:text-[#111827] hover:border-gray-300"
+                        ? "bg-[#0a66c2]/[0.08] text-[#0a66c2] font-semibold shadow-[inset_0_0_0_1px_rgba(10,102,194,0.18)]"
+                        : "text-[#515154] hover:text-[#1d1d1f] hover:bg-black/[0.04]"
                     )}
                   >
-                    <Icon size={14} className={isActive ? "text-[#1E40AF]" : "text-[#6B7280]"} />
+                    <Icon size={14} className={isActive ? "text-[#0a66c2]" : "text-[#86868b]"} />
                     <span>{item.label}</span>
                   </Link>
                 );
@@ -185,16 +185,16 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
               </button>
 
               {showNotifications && (
-                <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-lg bg-white border border-gray-200 shadow-[0_4px_16px_rgba(0,0,0,0.12)] py-1.5 z-50">
-                  <div className="px-4 py-2 border-b border-gray-100 flex items-center justify-between">
+                <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl liquid-glass-elevated border border-white/80 shadow-[0_20px_48px_-12px_rgba(10,22,40,0.14)] py-2 z-50 overflow-hidden">
+                  <div className="px-4 py-2.5 border-b border-black/[0.06] flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
-                      <h4 className="text-xs font-bold text-gray-900">Notifications</h4>
+                      <h4 className="text-xs font-bold text-[#1d1d1f]">Notifications</h4>
                       {unreadCount > 0 ? (
-                        <span className="text-[10px] font-bold bg-[#ebf3fb] text-[#0a66c2] px-1.5 py-0.2 rounded-full border border-[#b2d5f8]">
+                        <span className="text-[10px] font-bold bg-[#0a66c2]/10 text-[#0a66c2] px-2 py-0.5 rounded-full border border-[#0a66c2]/20">
                           {unreadCount} unread
                         </span>
                       ) : (
-                        <span className="text-[10px] text-gray-400 font-medium">All caught up</span>
+                        <span className="text-[10px] text-[#86868b] font-medium">All caught up</span>
                       )}
                     </div>
                     {unreadCount > 0 && (
@@ -305,11 +305,11 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
               </button>
 
               {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-56 rounded-lg bg-white border border-gray-200 shadow-[0_4px_16px_rgba(0,0,0,0.12)] py-1.5 z-50">
-                  <div className="px-3.5 py-2.5 border-b border-gray-100">
-                    <p className="text-xs font-semibold text-gray-900">{effectiveName}</p>
-                    <p className="text-[11px] text-gray-500">{session.email || "user@university.edu"}</p>
-                    <span className="inline-flex items-center gap-1 mt-1 text-[10px] text-[#057642] bg-[#eef8f1] px-1.5 py-0.5 rounded font-medium border border-[#bfe3c9]">
+                <div className="absolute right-0 mt-2 w-56 rounded-2xl liquid-glass-elevated border border-white/80 shadow-[0_20px_48px_-12px_rgba(10,22,40,0.14)] py-2 z-50 overflow-hidden">
+                  <div className="px-4 py-2.5 border-b border-black/[0.06]">
+                    <p className="text-xs font-semibold text-[#1d1d1f]">{effectiveName}</p>
+                    <p className="text-[11px] text-[#6e6e73] truncate">{session.email || "user@university.edu"}</p>
+                    <span className="inline-flex items-center gap-1 mt-1.5 text-[10px] text-[#057642] bg-[#057642]/10 px-2 py-0.5 rounded-full font-medium border border-[#057642]/20">
                       <CheckCircle2 size={10} /> {effectiveRole}
                     </span>
                   </div>

@@ -1,547 +1,1036 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   ArrowRight,
-  CheckCircle,
+  CheckCircle2,
   Menu,
   X,
-  Building2,
-  MapPin,
-  Compass,
-  Brain,
-  Map,
   Search,
+  Check,
+  ChevronRight,
+  ShieldCheck,
+  Send,
+  GraduationCap,
+  Sparkles,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Avatar } from "@/components/ui/Avatar";
+import { alumniData } from "@/lib/mock-data";
+import { ScrollMotionDirector } from "@/components/landing/ScrollMotionDirector";
 
-// ─── Shared Wordmark ──────────────────────────────────────────────────────────
-function Wordmark({ dark = false }: { dark?: boolean }) {
+// ─── Pure Monochrome Wordmark ──────────────────────────────────────────────────
+function Wordmark() {
   return (
-    <span
-      className={`text-lg font-bold tracking-tight ${
-        dark ? "text-white" : "text-[#191919]"
-      }`}
-    >
-      Alumni<span className="text-[#2166A5]">Path</span>
+    <span className="text-base font-bold tracking-tight text-[#090909] select-none">
+      Alumni<span className="text-[#454545]">Path</span>
     </span>
   );
 }
 
-// ─── Header ───────────────────────────────────────────────────────────────────
-function Header() {
+// ─── Floating Monochrome Capsule Header ─────────────────────────────────────────
+function FloatingHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#E5E7EB]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-14 sm:h-16">
-          {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="h-7 w-7 rounded-[8px] bg-[#2166A5] flex items-center justify-center shrink-0">
-              <span className="text-white text-xs font-bold">A</span>
-            </div>
-            <Wordmark />
-          </Link>
-
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8">
-            <a
-              href="#how-it-works"
-              className="text-sm font-medium text-[#626262] hover:text-[#191919] transition-colors"
-            >
-              How It Works
-            </a>
-            <a
-              href="#features"
-              className="text-sm font-medium text-[#626262] hover:text-[#191919] transition-colors"
-            >
-              Features
-            </a>
-            <a
-              href="#alumni"
-              className="text-sm font-medium text-[#626262] hover:text-[#191919] transition-colors"
-            >
-              Discover Alumni
-            </a>
-          </nav>
-
-          {/* Auth Actions */}
-          <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/login" className="text-sm font-medium text-[#191919]">
-                Log In
-              </Link>
-            </Button>
-            <Button variant="primary" size="sm" asChild>
-              <Link href="/signup" className="!text-white text-white font-medium text-sm">
-                Get Started
-              </Link>
-            </Button>
+    <div className="sticky top-4 z-50 max-w-5xl mx-auto px-4 sm:px-6">
+      <header className="bg-white/95 backdrop-blur-md rounded-full px-4 sm:px-6 py-2.5 flex items-center justify-between border border-[#E7E7E7] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] transition-all duration-200">
+        {/* Brand Logo */}
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="h-7 w-7 rounded-lg bg-[#090909] text-white flex items-center justify-center shrink-0 font-bold text-xs tracking-tight shadow-xs transition-transform duration-200 group-hover:scale-105">
+            <span>A</span>
           </div>
+          <Wordmark />
+        </Link>
 
-          {/* Mobile Menu Toggle */}
-          <button
-            className="md:hidden p-2 text-[#626262] hover:text-[#191919]"
-            onClick={() => setMobileOpen((p) => !p)}
-            aria-label="Toggle navigation"
+        {/* Desktop Nav Links */}
+        <nav className="hidden md:flex items-center gap-7">
+          <a
+            href="#how-it-operates"
+            className="text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
           >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+            Operational Rail
+          </a>
+          <a
+            href="#network-hud"
+            className="text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
+          >
+            Network HUD
+          </a>
+          <a
+            href="#continuum"
+            className="text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
+          >
+            The Continuum
+          </a>
+          <a
+            href="#directory"
+            className="text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
+          >
+            Directory
+          </a>
+          <a
+            href="#metrics"
+            className="text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
+          >
+            Impact
+          </a>
+        </nav>
+
+        {/* Auth CTAs */}
+        <div className="hidden md:flex items-center gap-3">
+          <Link
+            href="/login"
+            className="text-xs font-medium text-[#737373] hover:text-[#090909] px-2 py-1 transition-colors"
+          >
+            Sign In
+          </Link>
+          <Button variant="primary" size="sm" asChild className="rounded-full">
+            <Link href="/signup" className="text-xs px-4">
+              Join Network
+            </Link>
+          </Button>
         </div>
-      </div>
+
+        {/* Mobile Hamburger */}
+        <button
+          className="md:hidden p-1.5 text-[#090909]"
+          onClick={() => setMobileOpen((p) => !p)}
+          aria-label="Toggle navigation"
+        >
+          {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+        </button>
+      </header>
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-[#E5E7EB] bg-white px-4 py-3 flex flex-col gap-2">
+        <div className="md:hidden mt-2 bg-white rounded-2xl p-4 border border-[#E7E7E7] shadow-[0_16px_36px_-8px_rgba(0,0,0,0.12)] flex flex-col gap-2.5 animate-in fade-in duration-150">
           <a
-            href="#how-it-works"
-            className="text-sm py-2 font-medium text-[#191919] border-b border-gray-100"
+            href="#how-it-operates"
+            className="text-xs font-medium py-2 text-[#090909] border-b border-[#E7E7E7]"
             onClick={() => setMobileOpen(false)}
           >
-            How It Works
+            Operational Rail
           </a>
           <a
-            href="#features"
-            className="text-sm py-2 font-medium text-[#191919] border-b border-gray-100"
+            href="#network-hud"
+            className="text-xs font-medium py-2 text-[#090909] border-b border-[#E7E7E7]"
             onClick={() => setMobileOpen(false)}
           >
-            Features
+            Network HUD
           </a>
           <a
-            href="#alumni"
-            className="text-sm py-2 font-medium text-[#191919] border-b border-gray-100"
+            href="#continuum"
+            className="text-xs font-medium py-2 text-[#090909] border-b border-[#E7E7E7]"
             onClick={() => setMobileOpen(false)}
           >
-            Discover Alumni
+            The Continuum
+          </a>
+          <a
+            href="#directory"
+            className="text-xs font-medium py-2 text-[#090909] border-b border-[#E7E7E7]"
+            onClick={() => setMobileOpen(false)}
+          >
+            Directory
+          </a>
+          <a
+            href="#metrics"
+            className="text-xs font-medium py-2 text-[#090909] border-b border-[#E7E7E7]"
+            onClick={() => setMobileOpen(false)}
+          >
+            Impact
           </a>
           <div className="flex gap-2 pt-2">
-            <Button variant="secondary" size="sm" fullWidth asChild>
-              <Link href="/login">Log In</Link>
+            <Button variant="secondary" size="sm" fullWidth asChild className="rounded-full">
+              <Link href="/login">Sign In</Link>
             </Button>
-            <Button variant="primary" size="sm" fullWidth asChild>
-              <Link href="/signup" className="!text-white text-white font-medium">
-                Get Started
-              </Link>
+            <Button variant="primary" size="sm" fullWidth asChild className="rounded-full">
+              <Link href="/signup">Join Network</Link>
             </Button>
           </div>
         </div>
       )}
-    </header>
+    </div>
   );
 }
 
-// ─── Real Mock Alumni for Discover Section ────────────────────────────────────
-const DIRECTORY_ALUMNI = [
+// ─── Trajectory Hub Mock Nodes ──────────────────────────────────────────────────
+interface TrajectoryNode {
+  id: string;
+  name: string;
+  role: string;
+  company: string;
+  former: string;
+  graduationYear: number;
+  degree: string;
+  hub: "Cloud & Infra" | "Frontend Systems" | "Product Strategy" | "AI & ML";
+  responseRate: string;
+  skills: string[];
+  mentorshipQuote: string;
+}
+
+const TRAJECTORY_NODES: TrajectoryNode[] = [
   {
-    id: "rec-001",
+    id: "node-1",
     name: "Marcus Vance",
-    role: "Senior Backend Engineer",
+    role: "Senior Infrastructure Engineer",
     company: "Datadog",
     former: "Ex-Google",
-    department: "Computer Science",
     graduationYear: 2020,
-    location: "San Francisco, CA",
-    skills: ["Python", "PostgreSQL", "Distributed Systems", "Docker"],
+    degree: "B.S. in Computer Science",
+    hub: "Cloud & Infra",
+    responseRate: "96.4%",
+    skills: ["Distributed Systems", "Go", "Kubernetes", "PostgreSQL"],
+    mentorshipQuote:
+      "I bridged the gap between academic theory and high-concurrency production systems. Happy to inspect your architecture.",
   },
   {
-    id: "rec-002",
+    id: "node-2",
     name: "Elena Rostova",
     role: "Staff Software Engineer",
     company: "Airbnb",
     former: "Ex-Microsoft",
-    department: "Computer Science",
     graduationYear: 2019,
-    location: "Seattle, WA",
-    skills: ["Java", "React", "Microservices", "System Design"],
+    degree: "B.S. in Computer Science",
+    hub: "Cloud & Infra",
+    responseRate: "94.2%",
+    skills: ["System Design", "Java", "Microservices", "Scalability"],
+    mentorshipQuote:
+      "Campus recruiting can feel opaque. Let's do mock whiteboard loops and talk about what team leads actually evaluate.",
   },
   {
-    id: "rec-003",
-    name: "Dev Patel",
-    role: "VP of Product",
-    company: "Stripe",
-    former: "Ex-Meta",
-    department: "Economics & CS",
-    graduationYear: 2015,
-    location: "New York, NY",
-    skills: ["Product Strategy", "FinTech", "Pricing", "Leadership"],
-  },
-  {
-    id: "rec-004",
+    id: "node-3",
     name: "Sarah Chen",
     role: "Senior Frontend Architect",
     company: "Vercel",
     former: "Ex-Dropbox",
-    department: "Computer Science",
     graduationYear: 2020,
-    location: "San Francisco, CA",
-    skills: ["React", "Next.js", "Design Systems", "Web Performance"],
+    degree: "B.S. in Computer Science",
+    hub: "Frontend Systems",
+    responseRate: "98.1%",
+    skills: ["Next.js", "React 19", "Design Systems", "Web Performance"],
+    mentorshipQuote:
+      "Crafting pixel-perfect, accessible user interfaces is an engineering discipline. I can help refine your portfolio code.",
+  },
+  {
+    id: "node-4",
+    name: "Arjun Mehta",
+    role: "Senior Product Manager",
+    company: "Stripe",
+    former: "Ex-Google",
+    graduationYear: 2018,
+    degree: "B.S. in Computer Science",
+    hub: "Product Strategy",
+    responseRate: "92.0%",
+    skills: ["FinTech", "Product Strategy", "Pricing", "APIs"],
+    mentorshipQuote:
+      "Transitioning from technical coursework into product leadership requires commercial clarity and crisp communication.",
+  },
+  {
+    id: "node-5",
+    name: "Dr. Aisha Al-Mansoor",
+    role: "Senior AI Engineer",
+    company: "Cohere",
+    former: "Ex-Meta AI",
+    graduationYear: 2018,
+    degree: "Ph.D. in Computer Science",
+    hub: "AI & ML",
+    responseRate: "95.0%",
+    skills: ["PyTorch", "LLM Inference", "Transformers", "Model Evals"],
+    mentorshipQuote:
+      "From university research lab to foundation model training. Let's discuss research paper implementation and AI roles.",
   },
 ];
 
-// ─── Main Landing Page ────────────────────────────────────────────────────────
-export default function LandingPage() {
-  return (
-    <div className="min-h-screen flex flex-col bg-white">
-      <Header />
+// Architectural Grayscale Covers for Directory Spotlight
+const ARCH_COVERS = [
+  "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80",
+];
 
-      <main className="flex-1">
+export default function LandingPage() {
+  const [selectedNode, setSelectedNode] = useState<TrajectoryNode>(TRAJECTORY_NODES[0]);
+  const [activeHubFilter, setActiveHubFilter] = useState<string>("All");
+  const [pingSent, setPingSent] = useState(false);
+  const [activeStoryStage, setActiveStoryStage] = useState<number>(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [conversionRole, setConversionRole] = useState<"student" | "alumni">("student");
+
+  const filteredAlumni = useMemo(() => {
+    return alumniData.filter((a) => {
+      const matchSearch =
+        !searchQuery.trim() ||
+        a.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+        a.company.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+        a.role.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+        a.skills.some((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase().trim()));
+
+      const matchCategory =
+        selectedCategory === "All" ||
+        (selectedCategory === "Cloud & Infra" && (a.role.includes("Backend") || a.role.includes("Infrastructure") || a.role.includes("DevOps"))) ||
+        (selectedCategory === "Frontend & Design" && (a.role.includes("Frontend") || a.role.includes("Design") || a.role.includes("Full-Stack"))) ||
+        (selectedCategory === "Product Strategy" && (a.role.includes("Product") || a.role.includes("Manager"))) ||
+        (selectedCategory === "AI & ML" && (a.role.includes("AI") || a.role.includes("Machine") || a.role.includes("Data")));
+
+      return matchSearch && matchCategory;
+    });
+  }, [searchQuery, selectedCategory]);
+
+  const handlePing = () => {
+    setPingSent(true);
+    setTimeout(() => setPingSent(false), 3000);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#FAFAFA] text-[#090909] relative selection:bg-black selection:text-white overflow-x-hidden">
+      {/* Varaxis-Inspired Scroll Motion Director */}
+      <ScrollMotionDirector />
+
+      {/* Floating Header */}
+      <FloatingHeader />
+
+      <main>
         {/* ══════════════════════════════════════════════════════════════════════
-            STEP 2: CENTERED EDITORIAL HERO WITH WIDE PHOTOGRAPHIC VISUAL
+            HERO SECTION: ASYMMETRIC REFERENCE 1 LAYOUT WITH VARAXIS SCROLL DYNAMICS
+            Left: Editorial Copy & CTAs | Right: Asset Graphics Constellation
            ══════════════════════════════════════════════════════════════════════ */}
-        <section className="pt-16 sm:pt-20 md:pt-24 pb-16 md:pb-24 bg-white">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            {/* Centered Hero Content Block */}
-            <div className="max-w-3xl mx-auto text-center flex flex-col items-center">
-              {/* Subtle intro label */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-medium text-[#2166A5] bg-[#F0F5FA] border border-[#D0E0EF] mb-6 select-none">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#2166A5]" />
-                <span>Verified University Alumni Network</span>
+        <section className="pt-12 sm:pt-16 pb-16 sm:pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            {/* Left Column: Hero Content */}
+            <div className="lg:col-span-6 flex flex-col items-start text-left" data-vx-observe="true">
+              {/* Collegiate pill */}
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-[#E7E7E7] text-xs font-medium text-[#242424] mb-6 shadow-xs select-none">
+                <span className="w-2 h-2 rounded-full bg-[#090909]" />
+                <span>Verified Collegiate Network</span>
               </div>
 
-              {/* Centered Main Headline */}
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#191919] max-w-3xl mx-auto leading-[1.12] text-center">
-                Your college network.
+              {/* Kinetic Two-Tone Headline (Varaxis Word Settle) */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08] mb-6 text-[#090909]">
+                <span className="vx-word mr-3.5" style={{ "--o": -1 } as React.CSSProperties}>Your</span>
+                <span className="vx-word mr-3.5" style={{ "--o": 0.55 } as React.CSSProperties}>college</span>
+                <span className="vx-word" style={{ "--o": -0.45 } as React.CSSProperties}>network.</span>
                 <br />
-                <span className="text-[#2166A5]">Your next opportunity.</span>
+                <span className="text-[#737373] font-bold">
+                  <span className="vx-word mr-3.5" style={{ "--o": 0.8 } as React.CSSProperties}>Your</span>
+                  <span className="vx-word mr-3.5" style={{ "--o": -0.65 } as React.CSSProperties}>next</span>
+                  <span className="vx-word" style={{ "--o": 1.15 } as React.CSSProperties}>trajectory.</span>
+                </span>
               </h1>
 
-              {/* Elegantly Balanced Supporting Paragraph */}
-              <p className="text-center text-[17px] sm:text-[18px] text-[#626262] leading-[1.6] max-w-[650px] mx-auto mt-5 sm:mt-6 mb-8 sm:mb-9 [text-wrap:balance]">
-                Build meaningful connections with alumni, learn from their experiences,
-                and discover opportunities that move your career forward.
+              {/* Supporting Editorial Prose */}
+              <p className="text-base sm:text-lg text-[#454545] leading-relaxed max-w-xl mb-8">
+                Direct, asynchronous mentorship connecting university students with alumni working across Tier-1 engineering, product, and design organizations.
               </p>
 
-              {/* Centered Primary & Secondary Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 mb-4 w-full sm:w-auto">
-                <Button variant="primary" size="lg" asChild className="w-full sm:w-auto">
-                  <Link
-                    href="/alumni"
-                    className="inline-flex items-center justify-center gap-2 !text-white text-white font-medium px-6 sm:px-7"
-                  >
-                    <span>Find Your Mentor</span>
-                    <ArrowRight size={16} className="!text-white text-white shrink-0" />
+              {/* Dual Tactile CTAs */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 w-full sm:w-auto mb-8">
+                <Button variant="primary" size="lg" asChild className="rounded-full px-7">
+                  <Link href="/alumni" className="flex items-center justify-center gap-2 group">
+                    <span>Explore Alumni Directory</span>
+                    <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
                   </Link>
                 </Button>
-                <Button variant="secondary" size="lg" asChild className="w-full sm:w-auto">
-                  <a
-                    href="#how-it-works"
-                    className="inline-flex items-center justify-center font-medium px-6 sm:px-7"
-                  >
-                    Explore the Network
+                <Button variant="secondary" size="lg" asChild className="rounded-full px-7">
+                  <a href="#how-it-operates" className="flex items-center justify-center gap-2">
+                    <span>Operational Rail</span>
                   </a>
                 </Button>
               </div>
 
-              {/* Centered Small Understated Line */}
-              <p className="text-center text-xs sm:text-sm text-[#626262] font-normal mt-1 mb-10 sm:mb-14">
-                Connecting students and alumni through shared experience.
-              </p>
+              {/* Checkmarks Row (Matching Reference 1) */}
+              <div className="space-y-2 sm:space-y-0 sm:flex sm:items-center sm:gap-6 text-xs text-[#737373] font-medium pt-2 border-t border-[#E7E7E7] w-full max-w-xl">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[#090909] font-bold">✓</span>
+                  <span>Institutional .edu verification required</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[#090909] font-bold">✓</span>
+                  <span>Zero recruiter spam</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[#090909] font-bold">✓</span>
+                  <span>96% mean response rate</span>
+                </div>
+              </div>
             </div>
 
-            {/* Wide, Editorial-Style Photographic Composition */}
-            <div className="relative w-full rounded-2xl overflow-hidden border border-[#E5E7EB] shadow-sm bg-[#F7F9FC]">
-              <div className="relative aspect-[16/8] sm:aspect-[21/9] w-full">
+            {/* Right Column: Hero Visual Asset (Parallax Drift on Scroll) */}
+            <div className="lg:col-span-6 relative flex items-center justify-center">
+              <div
+                className="relative w-full max-w-[560px] lg:max-w-none vx-parallax-asset"
+                data-parallax="hero"
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/hero-network.jpg"
-                  alt="University graduates and alumni celebrating academic milestones and professional connection"
-                  className="w-full h-full object-cover object-center"
+                  src="/landinpage_assets.png"
+                  alt="Alumni Network Constellation, Directory Card, and 96.4% Response Rate"
+                  className="w-full h-auto object-contain select-none pointer-events-none drop-shadow-md rounded-2xl"
+                  loading="eager"
                 />
-                {/* Subtle natural gradient overlay at bottom for seamless typography integration */}
-                <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/65 via-black/30 to-transparent flex items-end justify-between px-6 sm:px-8 py-5 text-white">
-                  <div className="flex items-center gap-2.5 text-xs sm:text-sm font-medium">
-                    <span className="h-2 w-2 rounded-full bg-[#34D399]" />
-                    <span>
-                      500+ verified alumni actively mentoring across 45+ industries
-                    </span>
-                  </div>
-                  <span className="hidden sm:inline-block text-xs text-white/80 font-normal">
-                    University Alumni Community
-                  </span>
-                </div>
               </div>
             </div>
           </div>
         </section>
 
         {/* ══════════════════════════════════════════════════════════════════════
-            STEP 3: HOW IT WORKS (Horizontal 3-Step with Typography & Dividers)
+            COMPANY LOGO STRIP: OUR ALUMNI WORK AT (MONOCHROME WORDMARKS)
            ══════════════════════════════════════════════════════════════════════ */}
-        <section
-          id="how-it-works"
-          className="py-20 md:py-28 bg-white border-t border-[#E5E7EB]"
-        >
-          <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="max-w-2xl mb-16">
-              <p className="text-xs font-semibold text-[#2166A5] uppercase tracking-wider mb-3">
-                How It Works
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#191919] tracking-tight">
-                A deliberate path from campus to industry.
+        <section className="border-y border-[#E7E7E7] bg-white py-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p className="text-[11px] font-semibold tracking-widest uppercase text-[#737373] mb-6">
+              OUR ALUMNI WORK AT
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 md:gap-16 opacity-75 grayscale hover:grayscale-0 transition-all">
+              <span className="font-bold text-lg tracking-tight text-[#090909]">datadog</span>
+              <span className="font-extrabold text-xl tracking-tight text-[#090909]">stripe</span>
+              <span className="font-semibold text-lg tracking-tight text-[#090909]">▲ Vercel</span>
+              <span className="font-bold text-xl tracking-tight text-[#090909]">airbnb</span>
+              <span className="font-black text-lg tracking-wider text-[#090909]">NETFLIX</span>
+              <span className="font-bold text-lg tracking-tight text-[#090909]">Google</span>
+              <span className="font-semibold text-lg tracking-tight text-[#090909]">Microsoft</span>
+              <span className="text-xs font-semibold text-[#737373]">+ MANY MORE</span>
+            </div>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════════════════════════════════════════════
+            THE PREMISE: THREE CORE REALITIES (VARAXIS-INSPIRED WORD DRIFT)
+           ══════════════════════════════════════════════════════════════════════ */}
+        <section className="py-20 sm:py-28 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="space-y-16 sm:space-y-24">
+            {/* Statement 01 */}
+            <div data-vx-observe="true" className="space-y-3">
+              <span className="font-mono text-xs font-semibold text-[#737373] tracking-widest uppercase">
+                01 · THE PROBLEM
+              </span>
+              <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#090909] leading-tight">
+                <span className="vx-word mr-3" style={{ "--o": -1 } as React.CSSProperties}>Talent</span>
+                <span className="vx-word mr-3" style={{ "--o": 0.55 } as React.CSSProperties}>arrives</span>
+                <span className="vx-word mr-3" style={{ "--o": -0.35 } as React.CSSProperties}>in</span>
+                <span className="vx-word" style={{ "--o": 0.9 } as React.CSSProperties}>isolation.</span>
               </h2>
-              <p className="text-base text-[#626262] mt-3 leading-relaxed">
-                No cold messaging, no transactional exchanges. Just straightforward
-                mentorship anchored in verified university affiliation.
+              <p className="text-base sm:text-lg text-[#555555] max-w-2xl leading-relaxed">
+                Graduates disperse into high-growth technology companies while undergraduate students navigate opaque job boards and blind application queues.
               </p>
+              <div className="vx-rule mt-6 max-w-sm">
+                <div className="vx-rule-solid" />
+              </div>
             </div>
 
-            {/* Horizontal three-step section using typography, spacing, and thin dividers */}
-            <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#E5E7EB] border-y border-[#E5E7EB]">
-              {/* Step 01 */}
-              <div className="py-8 md:py-10 md:pr-8">
-                <span className="text-xs font-bold text-[#2166A5] tracking-wider uppercase block mb-2">
-                  01
-                </span>
-                <h3 className="text-xl font-bold text-[#191919] tracking-tight mb-3">
-                  Discover your network
-                </h3>
-                <p className="text-sm text-[#626262] leading-relaxed">
-                  Filter graduates by industry, technical stack, company, and
-                  graduation year to identify professionals whose trajectories
-                  align with your aspirations.
-                </p>
+            {/* Statement 02 */}
+            <div data-vx-observe="true" className="space-y-3 sm:ml-12 md:ml-20">
+              <span className="font-mono text-xs font-semibold text-[#737373] tracking-widest uppercase">
+                02 · THE FRICTION
+              </span>
+              <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#090909] leading-tight">
+                <span className="vx-word mr-3" style={{ "--o": -1 } as React.CSSProperties}>Cold</span>
+                <span className="vx-word mr-3" style={{ "--o": 0.55 } as React.CSSProperties}>outreach</span>
+                <span className="vx-word mr-3" style={{ "--o": -0.35 } as React.CSSProperties}>becomes</span>
+                <span className="vx-word" style={{ "--o": 0.9 } as React.CSSProperties}>noise.</span>
+              </h2>
+              <p className="text-base sm:text-lg text-[#555555] max-w-2xl leading-relaxed">
+                An 8% response rate on LinkedIn and recruiter algorithms drain student momentum away from engineering portfolio craftsmanship and system design fundamentals.
+              </p>
+              <div className="vx-rule mt-6 max-w-sm">
+                <div className="vx-rule-solid" />
               </div>
+            </div>
 
-              {/* Step 02 */}
-              <div className="py-8 md:py-10 md:px-8">
-                <span className="text-xs font-bold text-[#2166A5] tracking-wider uppercase block mb-2">
-                  02
-                </span>
-                <h3 className="text-xl font-bold text-[#191919] tracking-tight mb-3">
-                  Build meaningful connections
-                </h3>
-                <p className="text-sm text-[#626262] leading-relaxed">
-                  Initiate direct conversations with tailored introductory notes.
-                  Ask targeted questions about hiring loops, team culture, and
-                  day-to-day engineering realities.
-                </p>
-              </div>
-
-              {/* Step 03 */}
-              <div className="py-8 md:py-10 md:pl-8">
-                <span className="text-xs font-bold text-[#2166A5] tracking-wider uppercase block mb-2">
-                  03
-                </span>
-                <h3 className="text-xl font-bold text-[#191919] tracking-tight mb-3">
-                  Grow your career
-                </h3>
-                <p className="text-sm text-[#626262] leading-relaxed">
-                  Translate senior alumni insights into structured career roadmaps,
-                  interview confidence, and competitive resume positioning for
-                  high-impact internships and full-time roles.
-                </p>
+            {/* Statement 03 */}
+            <div data-vx-observe="true" className="space-y-3 sm:ml-24 md:ml-36">
+              <span className="font-mono text-xs font-semibold text-[#737373] tracking-widest uppercase">
+                03 · THE RESOLUTION
+              </span>
+              <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#090909] leading-tight">
+                <span className="vx-word mr-3" style={{ "--o": -1 } as React.CSSProperties}>Collegiate</span>
+                <span className="vx-word mr-3" style={{ "--o": 0.55 } as React.CSSProperties}>trust</span>
+                <span className="vx-word mr-3" style={{ "--o": -0.35 } as React.CSSProperties}>gives</span>
+                <span className="vx-word" style={{ "--o": 0.9 } as React.CSSProperties}>velocity.</span>
+              </h2>
+              <p className="text-base sm:text-lg text-[#555555] max-w-2xl leading-relaxed">
+                A shared alma mater creates instant institutional affinity. AlumniPath turns impersonal hiring hurdles into asynchronous, high-trust mentorship loops.
+              </p>
+              <div className="vx-rule mt-6 max-w-sm">
+                <div className="vx-rule-solid" />
               </div>
             </div>
           </div>
         </section>
 
         {/* ══════════════════════════════════════════════════════════════════════
-            STEP 3: FEATURES (Clean Editorial Layout with Alternating Content)
+            HOW MENTORSHIP OPERATES: 5-STATION SCROLL-SCRUBBED TRACK (VARAXIS PRINCIPLES LINE)
            ══════════════════════════════════════════════════════════════════════ */}
-        <section
-          id="features"
-          className="py-20 md:py-28 bg-[#F7F9FC] border-t border-[#E5E7EB]"
-        >
-          <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="max-w-2xl mb-16">
-              <p className="text-xs font-semibold text-[#2166A5] uppercase tracking-wider mb-3">
-                Platform Capabilities
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#191919] tracking-tight">
-                Designed for substantive professional guidance.
+        <section id="how-it-operates" className="py-24 border-t border-[#E7E7E7] bg-white scroll-mt-20">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-2xl mb-16" data-vx-observe="true">
+              <span className="font-mono text-xs font-semibold uppercase tracking-wider text-[#737373] block mb-2">
+                OPERATIONAL ARCHITECTURE
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#090909]">
+                <span className="vx-word mr-3" style={{ "--o": -0.8 } as React.CSSProperties}>How</span>
+                <span className="vx-word mr-3" style={{ "--o": 0.6 } as React.CSSProperties}>AlumniPath</span>
+                <span className="vx-word" style={{ "--o": -0.5 } as React.CSSProperties}>operates.</span>
               </h2>
-              <p className="text-base text-[#626262] mt-3 leading-relaxed">
-                Every feature is built to turn university camaraderie into
-                concrete career momentum.
+              <p className="text-sm sm:text-base text-[#555555] mt-3 leading-relaxed">
+                Five verifiable stations embedded into every mentorship engagement, continuously scrubbed as you advance.
               </p>
             </div>
 
-            <div className="space-y-16 sm:space-y-20">
-              {/* Alternating Feature 1: Alumni Discovery & Direct Advisory */}
-              <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-                <div>
-                  <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2166A5] bg-white border border-[#E5E7EB] px-3 py-1 rounded-md mb-4">
-                    <Compass size={13} />
-                    <span>Direct Alumni Advisory</span>
-                  </div>
-                  <h3 className="text-2xl sm:text-3xl font-bold text-[#191919] tracking-tight mb-4 leading-snug">
-                    Cut through cold outreach. Connect with alumni who actually respond.
-                  </h3>
-                  <p className="text-sm sm:text-base text-[#626262] leading-relaxed mb-6">
-                    Unlike open social networks where student messages get buried,
-                    AlumniPath links you directly with graduates committed to
-                    mentoring students from their alma mater.
-                  </p>
-                  <ul className="space-y-3 mb-8">
-                    {[
-                      "Verified university identity and graduation credentials",
-                      "Direct messaging without requiring expensive premium plans",
-                      "Contextual introductions based on target roles and tech stack",
-                    ].map((pt) => (
-                      <li
-                        key={pt}
-                        className="flex items-start gap-2.5 text-sm text-[#191919]"
+            {/* The Live Track Container */}
+            <div className="relative pl-10 sm:pl-16 md:pl-20 vx-track" data-line-track="true">
+              {/* Stationary Guide Rail */}
+              <div className="vx-rail w-[2px] top-4 bottom-4 left-4 sm:left-6 -translate-x-1/2" />
+              {/* Dynamic Scroll-Scrubbed Fill Line */}
+              <div
+                className="vx-fill w-[2px] top-4 left-4 sm:left-6 -translate-x-1/2"
+                data-line-fill="true"
+                style={{ height: "0%" }}
+              />
+
+              {/* Station List */}
+              <div className="space-y-12 sm:space-y-16">
+                {[
+                  {
+                    num: "01",
+                    title: "Capture & Institutional Verification",
+                    kicker: "Cryptographic Campus Binding",
+                    desc: "Every alumnus and student registers with verified institutional credentials. Accounts are cross-referenced with academic records and enterprise corporate emails to guarantee absolute identity authenticity.",
+                    meta: "FERPA Compliant · Zero Spam Policy",
+                  },
+                  {
+                    num: "02",
+                    title: "Trajectory & Skill Gap Calibration",
+                    kicker: "Production Engineering Milestones",
+                    desc: "Students map university coursework against real-world production competencies (distributed concurrency, microservices, system design loops). Immediate clarity on what senior engineers actually look for.",
+                    meta: "7 Comprehensive Milestones · Real Tech Stacks",
+                  },
+                  {
+                    num: "03",
+                    title: "Asynchronous Direct Advisory",
+                    kicker: "High-Signal Structured Notes",
+                    desc: "No scheduling back-and-forth or missed video calls. Students submit structured guidance requests with project repos and specific questions; mentors respond with deep technical advisory.",
+                    meta: "< 24h Mean Turnaround · 96.4% Response",
+                  },
+                  {
+                    num: "04",
+                    title: "Deep Architecture Teardown & Mock Loops",
+                    kicker: "Senior Engineering Review",
+                    desc: "Staff and Senior Engineers from Datadog, Stripe, Airbnb, and Vercel conduct line-by-line portfolio teardowns, resume audits, and mock technical whiteboard loops.",
+                    meta: "Google XYZ Format · Real Whiteboard Rubrics",
+                  },
+                  {
+                    num: "05",
+                    title: "Placement Endorsement & Internal Referral",
+                    kicker: "Direct Collegiate Bridge",
+                    desc: "Once milestones and advisory loops are mastered, mentors write direct internal referral recommendations into their organizations, bypassing automated ATS resume screening entirely.",
+                    meta: "Direct Hiring Loop · Top Tier-1 Tech Placement",
+                  },
+                ].map((station, idx) => (
+                  <div key={station.num} className="relative group">
+                    {/* Floating Station Node Marker */}
+                    <div className="absolute -left-10 sm:-left-16 md:-left-20 top-1">
+                      <span
+                        className="vx-station-node"
+                        data-station-node="true"
+                        data-step={idx === 0 ? "head" : "ahead"}
                       >
-                        <CheckCircle
-                          size={16}
-                          className="text-[#057642] mt-0.5 shrink-0"
-                        />
-                        <span>{pt}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button variant="secondary" asChild>
-                    <Link href="/alumni">Browse Alumni Directory →</Link>
-                  </Button>
-                </div>
+                        {station.num}
+                      </span>
+                    </div>
 
-                {/* Visual Representation of Feature 1 */}
-                <div className="bg-white border border-[#E5E7EB] rounded-xl p-6 shadow-sm">
-                  <div className="flex items-start justify-between gap-4 mb-4 pb-4 border-b border-[#E5E7EB]">
-                    <div className="flex items-center gap-3">
-                      <Avatar name="Marcus Vance" size="lg" />
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-base font-semibold text-[#191919]">
-                            Marcus Vance
+                    {/* Station Content Card */}
+                    <div
+                      className="vx-station-card p-6 sm:p-8 rounded-2xl bg-[#FAFAFA] border border-[#E7E7E7]"
+                      data-station-card="true"
+                      data-step={idx === 0 ? "head" : "ahead"}
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                        <span className="font-mono text-[11px] font-bold text-[#737373] uppercase tracking-wider">
+                          Station {station.num} · {station.kicker}
+                        </span>
+                        <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-white border border-[#E7E7E7] text-[#242424] w-fit">
+                          {station.meta}
+                        </span>
+                      </div>
+                      <h3 className="text-xl sm:text-2xl font-bold text-[#090909] mb-2">
+                        {station.title}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-[#555555] leading-relaxed max-w-3xl">
+                        {station.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════════════════════════════════════════════
+            INTERACTIVE NETWORK HUD (TELEMETRY & MENTOR DISCOVERY)
+           ══════════════════════════════════════════════════════════════════════ */}
+        <section id="network-hud" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-20">
+          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-[#E7E7E7] shadow-[0_8px_32px_-8px_rgba(0,0,0,0.04)] relative">
+            {/* Telemetry Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-[#E7E7E7] gap-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#090909]" />
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#090909]">
+                    Live Network Trajectory HUD
+                  </h3>
+                </div>
+                <p className="text-sm font-semibold text-[#090909] mt-1">
+                  Direct Collegiate Bridge · University of Technology
+                </p>
+              </div>
+
+              {/* Hub Filter Tabs */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+                {["All", "Cloud & Infra", "Frontend Systems", "Product Strategy", "AI & ML"].map((hub) => (
+                  <button
+                    key={hub}
+                    type="button"
+                    onClick={() => setActiveHubFilter(hub)}
+                    className={`text-xs font-medium px-3.5 py-1.5 rounded-full transition-all shrink-0 ${
+                      activeHubFilter === hub
+                        ? "bg-[#090909] text-white"
+                        : "text-[#555555] hover:text-[#090909] hover:bg-[#F4F4F4]"
+                    }`}
+                  >
+                    {hub}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Matrix & Detail Hologram Card */}
+            <div className="grid lg:grid-cols-12 gap-8 items-center py-8">
+              {/* Left: Node Selector Matrix */}
+              <div className="lg:col-span-7 space-y-3">
+                <p className="text-xs font-semibold text-[#737373] uppercase tracking-wider mb-2">
+                  Select a Verified Alumnus Node
+                </p>
+                <div className="space-y-2.5">
+                  {TRAJECTORY_NODES.filter(
+                    (node) => activeHubFilter === "All" || node.hub === activeHubFilter
+                  ).map((node) => {
+                    const isSelected = selectedNode.id === node.id;
+                    return (
+                      <div
+                        key={node.id}
+                        onClick={() => setSelectedNode(node)}
+                        className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                          isSelected
+                            ? "bg-[#F4F4F4] border-[#090909] shadow-xs"
+                            : "bg-white border-[#E7E7E7] hover:border-[#A8A8A8]"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <Avatar name={node.name} size="md" />
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-sm font-bold text-[#090909] truncate">
+                                {node.name}
+                              </span>
+                              <span className="text-[10px] font-semibold text-[#242424] bg-white border border-[#E7E7E7] px-2 py-0.5 rounded-full">
+                                Class of &apos;{String(node.graduationYear).slice(-2)}
+                              </span>
+                            </div>
+                            <p className="text-xs text-[#555555] truncate mt-0.5">
+                              {node.role} · <strong className="text-[#090909]">{node.company}</strong>{" "}
+                              <span className="text-[#737373] font-normal">({node.former})</span>
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 shrink-0">
+                          <span className="hidden sm:inline-block text-[11px] font-medium text-[#242424] bg-white border border-[#E7E7E7] px-2.5 py-0.5 rounded-full">
+                            {node.responseRate} Resp
                           </span>
-                          <span className="text-[11px] font-semibold text-[#2166A5] bg-[#F0F5FA] border border-[#D0E0EF] px-2 py-0.5 rounded">
-                            Verified Alum
+                          <div
+                            className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
+                              isSelected ? "bg-[#090909] text-white" : "bg-[#F4F4F4] text-[#737373]"
+                            }`}
+                          >
+                            <ChevronRight size={13} />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Right: Focused Node Detail Card */}
+              <div className="lg:col-span-5">
+                <div className="bg-[#F4F4F4] rounded-2xl p-6 border border-[#E7E7E7] shadow-xs">
+                  <div className="flex items-start justify-between gap-3 pb-4 border-b border-[#E7E7E7]">
+                    <div className="flex items-center gap-3">
+                      <Avatar name={selectedNode.name} size="lg" />
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <h4 className="text-base font-bold text-[#090909]">{selectedNode.name}</h4>
+                          <span title="Verified Alumni">
+                            <ShieldCheck size={14} className="text-[#090909]" />
                           </span>
                         </div>
-                        <p className="text-xs text-[#626262] mt-0.5">
-                          Senior Backend Engineer · Datadog
+                        <p className="text-xs font-semibold text-[#090909] mt-0.5">
+                          {selectedNode.role} at {selectedNode.company}
                         </p>
-                        <p className="text-xs text-gray-400">
-                          Ex-Google · B.S. in Computer Science
+                        <p className="text-[11px] text-[#737373]">
+                          {selectedNode.former} · {selectedNode.degree}
                         </p>
                       </div>
                     </div>
-                    <span className="text-xs font-semibold text-[#057642] bg-[#EEF8F1] border border-[#BFE3C9] px-2.5 py-1 rounded-full">
-                      96% Response
-                    </span>
-                  </div>
-
-                  <p className="text-xs text-[#626262] leading-relaxed mb-4 bg-[#F7F9FC] border border-[#E5E7EB] rounded-lg p-3">
-                    &ldquo;I went through the campus recruitment cycle myself. I help
-                    motivated students bridge the gap between classroom theory and
-                    production engineering standards.&rdquo;
-                  </p>
-
-                  <div className="flex flex-wrap gap-1.5">
-                    <Badge variant="blue" size="sm">
-                      Distributed Systems
-                    </Badge>
-                    <Badge variant="default" size="sm">
-                      PostgreSQL
-                    </Badge>
-                    <Badge variant="default" size="sm">
-                      System Design
-                    </Badge>
-                    <Badge variant="default" size="sm">
-                      Docker
+                    <Badge variant="dark" size="sm">
+                      Active Mentor
                     </Badge>
                   </div>
+
+                  {/* Trajectory Timeline Pill */}
+                  <div className="my-4 p-3 rounded-xl bg-white border border-[#E7E7E7]">
+                    <div className="flex items-center justify-between text-[11px] text-[#555555] font-medium mb-1.5">
+                      <span className="flex items-center gap-1">
+                        <GraduationCap size={12} className="text-[#090909]" />
+                        Campus Root
+                      </span>
+                      <span>Current Organization</span>
+                    </div>
+                    <div className="w-full bg-[#E7E7E7] h-1.5 rounded-full overflow-hidden">
+                      <div className="bg-[#090909] h-full w-full rounded-full" />
+                    </div>
+                    <div className="flex items-center justify-between text-[10px] text-[#737373] mt-1">
+                      <span>Class of {selectedNode.graduationYear}</span>
+                      <span>{selectedNode.company}</span>
+                    </div>
+                  </div>
+
+                  {/* Mentorship Insight */}
+                  <div className="p-3.5 rounded-xl bg-white border border-[#E7E7E7] text-xs text-[#454545] leading-relaxed mb-4 italic">
+                    &ldquo;{selectedNode.mentorshipQuote}&rdquo;
+                  </div>
+
+                  {/* Skills pills */}
+                  <div className="flex flex-wrap gap-1.5 mb-5">
+                    {selectedNode.skills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white border border-[#E7E7E7] text-[#242424]"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      fullWidth
+                      onClick={handlePing}
+                      className="rounded-full text-xs"
+                    >
+                      {pingSent ? (
+                        <span className="flex items-center gap-1.5">
+                          <Check size={14} /> Advisory Note Sent!
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1.5">
+                          <Send size={13} /> Request Guidance Note
+                        </span>
+                      )}
+                    </Button>
+                    <Button variant="secondary" size="sm" asChild className="rounded-full text-xs shrink-0">
+                      <Link href="/alumni">Directory</Link>
+                    </Button>
+                  </div>
+
+                  {pingSent && (
+                    <p className="text-[11px] text-[#090909] font-medium text-center mt-2.5">
+                      ✓ Connected to queue. {selectedNode.name} usually responds in 4 hours.
+                    </p>
+                  )}
                 </div>
               </div>
+            </div>
 
-              {/* Thin Divider */}
-              <div className="border-t border-[#E5E7EB]" />
+            {/* Bottom Bar */}
+            <div className="pt-4 border-t border-[#E7E7E7] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#737373]">
+              <div className="flex items-center gap-4">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#090909]" />
+                  Real-Time Network Telemetry
+                </span>
+                <span>45+ Companies Represented</span>
+              </div>
+              <Link
+                href="/alumni"
+                className="font-semibold text-[#090909] hover:underline flex items-center gap-1"
+              >
+                Explore All 540+ Alumni Trajectories <ArrowRight size={13} />
+              </Link>
+            </div>
+          </div>
+        </section>
 
-              {/* Alternating Feature 2: AI Career Guidance & Structured Roadmaps */}
-              <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-                {/* Visual Representation of Feature 2 */}
-                <div className="order-2 lg:order-1 bg-white border border-[#E5E7EB] rounded-xl p-6 shadow-sm">
-                  <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#E5E7EB]">
-                    <div className="flex items-center gap-2">
-                      <Map size={16} className="text-[#2166A5]" />
-                      <span className="text-sm font-semibold text-[#191919]">
-                        Target Career Roadmap: Full-Stack Engineer
-                      </span>
-                    </div>
-                    <span className="text-xs text-[#2166A5] font-medium bg-[#F0F5FA] px-2 py-0.5 rounded">
-                      Milestone 2 of 4
-                    </span>
-                  </div>
+        {/* ══════════════════════════════════════════════════════════════════════
+            THE MENTORSHIP CONTINUUM (3-PHASE EDITORIAL STORYTELLING)
+           ══════════════════════════════════════════════════════════════════════ */}
+        <section id="continuum" className="py-20 border-t border-[#E7E7E7] bg-white scroll-mt-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-2xl mb-12" data-vx-observe="true">
+              <p className="font-mono text-xs font-bold uppercase tracking-wider text-[#737373] mb-2">
+                THE MENTORSHIP CONTINUUM
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#090909]">
+                <span className="vx-word mr-3" style={{ "--o": -0.9 } as React.CSSProperties}>A</span>
+                <span className="vx-word mr-3" style={{ "--o": 0.45 } as React.CSSProperties}>deliberate</span>
+                <span className="vx-word mr-3" style={{ "--o": -0.6 } as React.CSSProperties}>bridge</span>
+                <span className="vx-word mr-3" style={{ "--o": 0.8 } as React.CSSProperties}>from</span>
+                <span className="vx-word mr-3" style={{ "--o": -0.3 } as React.CSSProperties}>student</span>
+                <span className="vx-word mr-3" style={{ "--o": 0.65 } as React.CSSProperties}>ambitions</span>
+                <span className="vx-word mr-3" style={{ "--o": -0.5 } as React.CSSProperties}>to</span>
+                <span className="vx-word mr-3" style={{ "--o": 0.95 } as React.CSSProperties}>senior</span>
+                <span className="vx-word" style={{ "--o": -1.1 } as React.CSSProperties}>execution.</span>
+              </h2>
+              <p className="text-sm sm:text-base text-[#555555] mt-3 leading-relaxed">
+                Cold LinkedIn DMs have an 8% response rate. AlumniPath creates verified, high-trust collegiate channels designed for substance.
+              </p>
+            </div>
 
-                  <div className="space-y-4">
-                    <div className="border-l-2 border-[#057642] pl-3.5 py-0.5">
-                      <p className="text-xs font-bold text-[#057642] uppercase tracking-wider">
-                        Stage 1 · Completed
-                      </p>
-                      <p className="text-sm font-semibold text-[#191919]">
-                        Core Web Architecture &amp; Relational Databases
-                      </p>
-                      <p className="text-xs text-[#626262] mt-0.5">
-                        React state lifecycles, REST API standards, and PostgreSQL schemas
-                      </p>
-                    </div>
-
-                    <div className="border-l-2 border-[#2166A5] pl-3.5 py-0.5">
-                      <p className="text-xs font-bold text-[#2166A5] uppercase tracking-wider">
-                        Stage 2 · Current Focus
-                      </p>
-                      <p className="text-sm font-semibold text-[#191919]">
-                        Distributed Systems &amp; Concurrency
-                      </p>
-                      <p className="text-xs text-[#626262] mt-0.5">
-                        Redis caching layers, Docker containerization, and message queues
-                      </p>
-                    </div>
-
-                    <div className="border-l-2 border-gray-200 pl-3.5 py-0.5">
-                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                        Stage 3 · Upcoming
-                      </p>
-                      <p className="text-sm font-semibold text-gray-500">
-                        Technical Interview Loops &amp; System Design
-                      </p>
-                      <p className="text-xs text-gray-400 mt-0.5">
-                        Mock architectural whiteboards with alumni mentors
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Text Description of Feature 2 */}
-                <div className="order-1 lg:order-2">
-                  <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2166A5] bg-white border border-[#E5E7EB] px-3 py-1 rounded-md mb-4">
-                    <Brain size={13} />
-                    <span>AI Career Assistance</span>
-                  </div>
-                  <h3 className="text-2xl sm:text-3xl font-bold text-[#191919] tracking-tight mb-4 leading-snug">
-                    Personalized career planning grounded in real alumni outcomes.
-                  </h3>
-                  <p className="text-sm sm:text-base text-[#626262] leading-relaxed mb-6">
-                    Synthesize actual career trajectories from your university into
-                    actionable milestones. Identify skill gaps before recruiters do
-                    and prepare with structured guidance.
-                  </p>
-                  <ul className="space-y-3 mb-8">
-                    {[
-                      "Custom milestones mapped to your target industry and graduation year",
-                      "Context-aware recommendations on projects and technical frameworks",
-                      "Actionable resume feedback tailored for modern applicant tracking systems",
-                    ].map((pt) => (
-                      <li
-                        key={pt}
-                        className="flex items-start gap-2.5 text-sm text-[#191919]"
+            <div className="grid lg:grid-cols-12 gap-8 items-start">
+              {/* Left Column: Stage Selector */}
+              <div className="lg:col-span-5 space-y-3.5">
+                {[
+                  {
+                    act: "01",
+                    title: "The Verification Gate",
+                    tag: "Trust & Credibility",
+                    desc: "Every alumnus and student registers with verified university identity. Zero spam, zero fake recruiters — only graduates committed to advising their alma mater.",
+                  },
+                  {
+                    act: "02",
+                    title: "The Trajectory Engine",
+                    tag: "Milestone Roadmaps",
+                    desc: "Compare your current coursework and projects against real industry milestones. Identify your distributed systems and system design skill gaps early.",
+                  },
+                  {
+                    act: "03",
+                    title: "The Direct Advisory Loop",
+                    tag: "1-on-1 Guidance",
+                    desc: "Schedule private 1-on-1 guidance sessions, mock whiteboards, and resume teardowns directly with senior engineering and product leads.",
+                  },
+                ].map((stage, idx) => {
+                  const isActive = activeStoryStage === idx;
+                  return (
+                    <div
+                      key={stage.act}
+                      onClick={() => setActiveStoryStage(idx)}
+                      className={`p-5 rounded-2xl border transition-all cursor-pointer ${
+                        isActive
+                          ? "bg-[#090909] text-white border-[#090909] shadow-sm"
+                          : "bg-white border-[#E7E7E7] hover:border-[#A8A8A8]"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span
+                          className={`text-xs font-bold uppercase tracking-wider ${
+                            isActive ? "text-[#A8A8A8]" : "text-[#737373]"
+                          }`}
+                        >
+                          Phase {stage.act}
+                        </span>
+                        <span
+                          className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
+                            isActive
+                              ? "bg-white/10 text-white border-white/20"
+                              : "bg-[#F4F4F4] text-[#242424] border-[#E7E7E7]"
+                          }`}
+                        >
+                          {stage.tag}
+                        </span>
+                      </div>
+                      <h3
+                        className={`text-base font-bold mb-1 ${
+                          isActive ? "text-white" : "text-[#090909]"
+                        }`}
                       >
-                        <CheckCircle
-                          size={16}
-                          className="text-[#057642] mt-0.5 shrink-0"
-                        />
-                        <span>{pt}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button variant="secondary" asChild>
-                    <Link href="/career-roadmap">Explore Career Roadmaps →</Link>
-                  </Button>
+                        {stage.title}
+                      </h3>
+                      <p
+                        className={`text-xs leading-relaxed ${
+                          isActive ? "text-[#E7E7E7]" : "text-[#555555]"
+                        }`}
+                      >
+                        {stage.desc}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Right Column: Visual Stage Canvas */}
+              <div className="lg:col-span-7">
+                <div className="bg-[#FAFAFA] rounded-3xl p-6 sm:p-8 border border-[#E7E7E7] shadow-xs min-h-[400px] flex flex-col justify-between">
+                  {activeStoryStage === 0 && (
+                    <div className="space-y-5 animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between pb-3.5 border-b border-[#E7E7E7]">
+                        <div className="flex items-center gap-2">
+                          <ShieldCheck size={18} className="text-[#090909]" />
+                          <span className="text-sm font-bold text-[#090909]">
+                            Collegiate Verification Layer
+                          </span>
+                        </div>
+                        <Badge variant="dark" size="sm">
+                          Academic Cryptography
+                        </Badge>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="p-4 rounded-xl bg-white border border-[#E7E7E7] flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-[#090909] text-white flex items-center justify-center font-bold text-xs">
+                              ✓
+                            </div>
+                            <div>
+                              <p className="text-xs font-bold text-[#090909]">Institutional Email Validation</p>
+                              <p className="text-[11px] text-[#737373]">Matches verified @university.edu registrar records</p>
+                            </div>
+                          </div>
+                          <span className="text-xs font-semibold text-[#090909]">Active</span>
+                        </div>
+
+                        <div className="p-4 rounded-xl bg-white border border-[#E7E7E7] flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-[#090909] text-white flex items-center justify-center font-bold text-xs">
+                              ✓
+                            </div>
+                            <div>
+                              <p className="text-xs font-bold text-[#090909]">Current Employer Affiliation</p>
+                              <p className="text-[11px] text-[#737373]">Validated through corporate domain verification</p>
+                            </div>
+                          </div>
+                          <span className="text-xs font-semibold text-[#090909]">Verified</span>
+                        </div>
+
+                        <div className="p-4 rounded-xl bg-white border border-[#E7E7E7]">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-bold text-[#090909]">Average Advisory Response Rate</span>
+                            <span className="text-sm font-bold text-[#090909]">96.4%</span>
+                          </div>
+                          <p className="text-[11px] text-[#555555]">
+                            Graduates commit to reviewing collegiate inquiries without recruiter filters or paywalls.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeStoryStage === 1 && (
+                    <div className="space-y-5 animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between pb-3.5 border-b border-[#E7E7E7]">
+                        <span className="text-sm font-bold text-[#090909]">
+                          Career Roadmap: Full-Stack &amp; Distributed Systems
+                        </span>
+                        <Badge variant="default" size="sm">
+                          Milestone 2 of 4
+                        </Badge>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="p-3.5 rounded-xl bg-white border-l-4 border-l-[#090909] border border-[#E7E7E7]">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#737373]">
+                            Phase 1 · Mastered (100%)
+                          </span>
+                          <p className="text-xs font-bold text-[#090909] mt-0.5">Web Foundations &amp; Relational Schema Design</p>
+                          <p className="text-[11px] text-[#555555]">PostgreSQL indices, React 19 architecture, REST contracts</p>
+                        </div>
+
+                        <div className="p-3.5 rounded-xl bg-white border-l-4 border-l-[#454545] border border-[#E7E7E7]">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#090909]">
+                            Phase 2 · In Progress (Mentored by Marcus Vance)
+                          </span>
+                          <p className="text-xs font-bold text-[#090909] mt-0.5">Distributed Systems &amp; Concurrency</p>
+                          <p className="text-[11px] text-[#555555]">Redis caching layers, Docker containerization, Kafka queues</p>
+                        </div>
+
+                        <div className="p-3.5 rounded-xl bg-white border-l-4 border-l-[#E7E7E7] border border-[#E7E7E7]">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#737373]">
+                            Phase 3 · Target Milestone
+                          </span>
+                          <p className="text-xs font-bold text-[#555555] mt-0.5">High-Scale Architectural Whiteboards</p>
+                          <p className="text-[11px] text-[#737373]">Mock system design loops with senior mentors</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeStoryStage === 2 && (
+                    <div className="space-y-5 animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between pb-3.5 border-b border-[#E7E7E7]">
+                        <span className="text-sm font-bold text-[#090909]">
+                          Direct Mentorship Advisory Session
+                        </span>
+                        <Badge variant="dark" size="sm">
+                          Confirmed Session
+                        </Badge>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-white border border-[#E7E7E7] space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <Avatar name="Sarah Chen" size="md" />
+                            <div>
+                              <p className="text-xs font-bold text-[#090909]">Sarah Chen</p>
+                              <p className="text-[11px] text-[#737373]">Senior Frontend Architect · Vercel</p>
+                            </div>
+                          </div>
+                          <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#090909] text-white">
+                            45 Min Advisory
+                          </span>
+                        </div>
+
+                        <div className="pt-2 border-t border-[#E7E7E7] space-y-2">
+                          <p className="text-xs font-semibold text-[#090909]">Session Agenda:</p>
+                          <ul className="space-y-1.5 text-[11px] text-[#555555]">
+                            <li className="flex items-center gap-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#090909]" />
+                              Portfolio &amp; GitHub repository code teardown
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#090909]" />
+                              Vercel internship technical screening preview
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#090909]" />
+                              Internal referral recommendations &amp; next steps
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="pt-4 border-t border-[#E7E7E7] flex items-center justify-between text-xs text-[#737373]">
+                    <span>Step {activeStoryStage + 1} of 3</span>
+                    <button
+                      type="button"
+                      onClick={() => setActiveStoryStage((p) => (p + 1) % 3)}
+                      className="font-semibold text-[#090909] hover:underline flex items-center gap-1"
+                    >
+                      Next Phase <ArrowRight size={12} />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -549,88 +1038,155 @@ export default function LandingPage() {
         </section>
 
         {/* ══════════════════════════════════════════════════════════════════════
-            STEP 3: DISCOVER ALUMNI DIRECTORY SHOWCASE
+            ALUMNI DIRECTORY SPOTLIGHT (MATCHING REFERENCE 4 CARDS)
            ══════════════════════════════════════════════════════════════════════ */}
-        <section
-          id="alumni"
-          className="py-20 md:py-28 bg-white border-t border-[#E5E7EB]"
-        >
-          <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-              <div>
-                <p className="text-xs font-semibold text-[#2166A5] uppercase tracking-wider mb-2.5">
-                  Verified Alumni Directory
+        <section id="directory" className="py-20 border-t border-[#E7E7E7] bg-[#FAFAFA] scroll-mt-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+              <div data-vx-observe="true">
+                <p className="font-mono text-xs font-bold uppercase tracking-wider text-[#737373] mb-1.5">
+                  VERIFIED DIRECTORY
                 </p>
-                <h2 className="text-3xl sm:text-4xl font-bold text-[#191919] tracking-tight">
-                  Experienced graduates ready to share their insights.
+                <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#090909]">
+                  <span className="vx-word mr-3" style={{ "--o": -0.85 } as React.CSSProperties}>Explore</span>
+                  <span className="vx-word mr-3" style={{ "--o": 0.5 } as React.CSSProperties}>mentors</span>
+                  <span className="vx-word mr-3" style={{ "--o": -0.4 } as React.CSSProperties}>actively</span>
+                  <span className="vx-word mr-3" style={{ "--o": 0.7 } as React.CSSProperties}>advising</span>
+                  <span className="vx-word" style={{ "--o": 1 } as React.CSSProperties}>students.</span>
                 </h2>
-                <p className="text-base text-[#626262] mt-2">
-                  Search across engineering, product management, and design alumni
-                  who are actively open to connecting.
+                <p className="text-sm text-[#555555] mt-2 max-w-xl">
+                  Filter by role, technical domain, or target company. Every mentor is verified through academic records.
                 </p>
               </div>
-              <Button variant="primary" asChild className="shrink-0">
-                <Link href="/alumni" className="inline-flex items-center !text-white text-white">
-                  <Search size={14} className="mr-2 !text-white text-white" />
-                  View Full Directory
+
+              <Button variant="primary" asChild className="rounded-full shrink-0">
+                <Link href="/alumni" className="flex items-center gap-2">
+                  <Search size={14} />
+                  <span>View Full Directory (540+)</span>
                 </Link>
               </Button>
             </div>
 
-            {/* Clean Directory Table / List Layout */}
-            <div className="border border-[#E5E7EB] rounded-xl overflow-hidden divide-y divide-[#E5E7EB] bg-white">
-              {DIRECTORY_ALUMNI.map((alumnus) => (
+            {/* Filter Bar */}
+            <div className="bg-white rounded-2xl p-3 sm:p-4 mb-8 border border-[#E7E7E7] shadow-xs flex flex-col sm:flex-row gap-3 items-center justify-between">
+              <div className="relative w-full sm:w-80">
+                <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#737373]" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search name, company, or skill..."
+                  className="w-full bg-[#F4F4F4] rounded-full pl-9 pr-3.5 py-2 text-xs border border-transparent focus:border-[#090909] focus:bg-white focus:outline-none transition-all placeholder:text-[#737373] text-[#090909]"
+                />
+              </div>
+
+              <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+                {["All", "Cloud & Infra", "Frontend & Design", "Product Strategy", "AI & ML"].map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`text-xs px-3.5 py-1.5 rounded-full transition-all shrink-0 ${
+                      selectedCategory === cat
+                        ? "bg-[#090909] text-white font-semibold"
+                        : "text-[#555555] hover:text-[#090909] hover:bg-[#F4F4F4]"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Directory Cards Grid (Matching Reference 4: Architectural Cover + Overlapping Avatar) */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredAlumni.slice(0, 6).map((alumnus, idx) => (
                 <div
                   key={alumnus.id}
-                  className="p-5 sm:p-6 hover:bg-[#F7F9FC] transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                  className="bg-white rounded-2xl border border-[#E7E7E7] shadow-xs hover:shadow-md hover:border-[#D1D1D1] transition-all duration-200 overflow-hidden flex flex-col justify-between group"
                 >
-                  <div className="flex items-start gap-3.5">
-                    <Avatar name={alumnus.name} size="lg" />
-                    <div>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <Link
-                          href={`/alumni/${alumnus.id}`}
-                          className="text-base font-semibold text-[#191919] hover:text-[#2166A5] transition-colors"
-                        >
-                          {alumnus.name}
-                        </Link>
-                        <span className="text-[11px] font-semibold text-[#2166A5] bg-[#F0F5FA] border border-[#D0E0EF] px-2 py-0.5 rounded">
-                          Class of {alumnus.graduationYear}
-                        </span>
+                  <div>
+                    {/* Grayscale Architectural Panoramic Cover */}
+                    <div className="h-28 w-full bg-[#E7E7E7] relative overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={ARCH_COVERS[idx % ARCH_COVERS.length]}
+                        alt="Architectural Cover"
+                        className="w-full h-full object-cover grayscale contrast-110 group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <span className="absolute top-2.5 right-2.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-xs text-[#090909] border border-[#E7E7E7]">
+                        Class of &apos;{String(alumnus.graduationYear).slice(-2)}
+                      </span>
+                    </div>
+
+                    {/* Overlapping Avatar & Details */}
+                    <div className="px-5 pt-0 pb-4 relative">
+                      <div className="-mt-8 mb-3 flex items-end justify-between">
+                        <div className="relative">
+                          <Avatar
+                            name={alumnus.name}
+                            size="lg"
+                            className="ring-4 ring-white"
+                          />
+                          {alumnus.isVerified && (
+                            <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#090909] text-white flex items-center justify-center text-[9px] font-bold ring-2 ring-white">
+                              ✓
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <p className="text-sm text-[#191919] mt-0.5 font-medium flex items-center gap-1.5">
-                        <Building2 size={13} className="text-gray-400" />
-                        {alumnus.role} · {alumnus.company}{" "}
-                        <span className="text-xs text-gray-400 font-normal">
-                          ({alumnus.former})
-                        </span>
+
+                      <Link
+                        href={`/alumni/${alumnus.id}`}
+                        className="text-base font-bold text-[#090909] group-hover:text-[#454545] transition-colors block"
+                      >
+                        {alumnus.name}
+                      </Link>
+
+                      <p className="text-xs text-[#454545] font-medium mt-0.5">
+                        {alumnus.role} · <strong className="text-[#090909]">{alumnus.company}</strong>
                       </p>
-                      <p className="text-xs text-[#626262] flex items-center gap-1 mt-0.5">
-                        <MapPin size={12} className="text-gray-400" />
+
+                      <p className="text-[11px] text-[#737373] mt-0.5">
                         {alumnus.location} · {alumnus.department}
                       </p>
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {alumnus.skills.map((skill) => (
+
+                      <p className="text-xs text-[#555555] leading-relaxed mt-3 line-clamp-2 italic">
+                        &ldquo;{alumnus.bio}&rdquo;
+                      </p>
+
+                      {/* Skills Chips */}
+                      <div className="flex flex-wrap gap-1 mt-3.5">
+                        {alumnus.skills.slice(0, 3).map((s) => (
                           <span
-                            key={skill}
-                            className="text-[11px] font-normal text-[#4A4A4A] bg-[#F3F5F7] px-2 py-0.5 rounded"
+                            key={s.id}
+                            className="text-[10px] text-[#454545] bg-[#F4F4F4] px-2 py-0.5 rounded-full border border-[#E7E7E7]"
                           >
-                            {skill}
+                            {s.name}
                           </span>
                         ))}
+                        {alumnus.skills.length > 3 && (
+                          <span className="text-[10px] text-[#737373] px-1 py-0.5">
+                            +{alumnus.skills.length - 3}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex sm:flex-col items-center sm:items-end justify-between shrink-0 gap-2 sm:gap-1.5 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100">
-                    <span className="text-[11px] font-medium text-[#057642] bg-[#EEF8F1] border border-[#BFE3C9] px-2 py-0.5 rounded-full">
-                      Verified Graduate
+                  {/* Card Footer with Circular Arrow Button */}
+                  <div className="px-5 py-3.5 border-t border-[#E7E7E7] bg-[#FAFAFA] flex items-center justify-between">
+                    <span className="text-xs text-[#242424] font-medium flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#090909]" />
+                      {alumnus.responseRate || 96}% Response
                     </span>
+
                     <Link
                       href={`/alumni/${alumnus.id}`}
-                      className="text-xs font-semibold text-[#2166A5] hover:text-[#194F82] hover:underline flex items-center gap-1"
+                      className="w-8 h-8 rounded-full bg-[#090909] text-white flex items-center justify-center hover:bg-[#242424] transition-colors"
+                      aria-label={`View ${alumnus.name}'s profile`}
                     >
-                      View Profile <ArrowRight size={12} />
+                      <ArrowRight size={13} />
                     </Link>
                   </div>
                 </div>
@@ -640,140 +1196,270 @@ export default function LandingPage() {
         </section>
 
         {/* ══════════════════════════════════════════════════════════════════════
-            FINAL CALL TO ACTION
+            EMPIRICAL TRUST & IMPACT METRICS STRIP (ANIMATED SCROLL TELEMETRY)
            ══════════════════════════════════════════════════════════════════════ */}
-        <section className="py-20 md:py-28 bg-white border-t border-[#E5E7EB]">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#191919] mb-4 tracking-tight leading-tight">
-              Your next career step starts with
-              <br />
-              the right conversation.
-            </h2>
-            <p className="text-base text-[#626262] mb-8 leading-relaxed max-w-xl mx-auto">
-              Join students and alumni building purposeful careers through shared
-              university roots.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-3">
-              <Button variant="primary" size="lg" asChild>
-                <Link
-                  href="/signup"
-                  className="inline-flex items-center px-6 !text-white text-white font-medium"
+        <section id="metrics" className="py-16 border-t border-[#E7E7E7] bg-white scroll-mt-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 divide-y sm:divide-y-0 sm:divide-x divide-[#E7E7E7]" data-vx-observe="true">
+              <div className="pt-4 sm:pt-0 sm:px-6 first:pl-0">
+                <span
+                  className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#090909] block tabular-nums"
+                  data-counter="true"
+                  data-target="540"
+                  data-suffix="+"
                 >
-                  <span>Create Your Account</span>
-                  <ArrowRight size={15} className="ml-2 !text-white text-white shrink-0" />
+                  540+
+                </span>
+                <p className="font-mono text-xs font-semibold uppercase tracking-wider text-[#737373] mt-1.5">
+                  Verified Alumni Mentors
+                </p>
+                <p className="text-xs text-[#555555] mt-1 leading-relaxed">
+                  Graduates from top programs active in advising current students.
+                </p>
+              </div>
+
+              <div className="pt-4 sm:pt-0 sm:px-6">
+                <span
+                  className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#090909] block tabular-nums"
+                  data-counter="true"
+                  data-target="96.4"
+                  data-suffix="%"
+                >
+                  96.4%
+                </span>
+                <p className="font-mono text-xs font-semibold uppercase tracking-wider text-[#737373] mt-1.5">
+                  Advisory Response Rate
+                </p>
+                <p className="text-xs text-[#555555] mt-1 leading-relaxed">
+                  Versus 8% on cold LinkedIn messaging. Verified collegiate trust.
+                </p>
+              </div>
+
+              <div className="pt-4 sm:pt-0 sm:px-6">
+                <span
+                  className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#090909] block tabular-nums"
+                  data-counter="true"
+                  data-target="24"
+                  data-prefix="< "
+                  data-suffix="h"
+                >
+                  &lt; 24h
+                </span>
+                <p className="font-mono text-xs font-semibold uppercase tracking-wider text-[#737373] mt-1.5">
+                  Mean Response Time
+                </p>
+                <p className="text-xs text-[#555555] mt-1 leading-relaxed">
+                  Average time for an active alumni mentor to confirm an inquiry.
+                </p>
+              </div>
+
+              <div className="pt-4 sm:pt-0 sm:px-6">
+                <span
+                  className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#090909] block tabular-nums"
+                  data-counter="true"
+                  data-target="100"
+                  data-suffix="%"
+                >
+                  100%
+                </span>
+                <p className="font-mono text-xs font-semibold uppercase tracking-wider text-[#737373] mt-1.5">
+                  Collegiate Verification
+                </p>
+                <p className="text-xs text-[#555555] mt-1 leading-relaxed">
+                  Requires confirmed university affiliation and academic credentials.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════════════════════════════════════════════
+            JOIN CALL-TO-ACTION SECTION
+           ══════════════════════════════════════════════════════════════════════ */}
+        <section className="py-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-3xl p-8 sm:p-14 border border-[#E7E7E7] shadow-[0_8px_32px_-8px_rgba(0,0,0,0.06)] text-center relative">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F4F4F4] border border-[#E7E7E7] text-[#090909] text-xs font-semibold mb-6">
+              <Sparkles size={13} />
+              <span>Join the 2026 Academic Cohort</span>
+            </div>
+
+            <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#090909] leading-tight max-w-2xl mx-auto">
+              Your next career breakthrough starts with one collegiate conversation.
+            </h2>
+
+            {/* Role Toggle */}
+            <div className="inline-flex items-center p-1 rounded-full bg-[#F4F4F4] border border-[#E7E7E7] my-8 select-none">
+              <button
+                type="button"
+                onClick={() => setConversionRole("student")}
+                className={`text-xs font-semibold px-4 py-2 rounded-full transition-all ${
+                  conversionRole === "student"
+                    ? "bg-[#090909] text-white shadow-xs"
+                    : "text-[#737373] hover:text-[#090909]"
+                }`}
+              >
+                I am a Student
+              </button>
+              <button
+                type="button"
+                onClick={() => setConversionRole("alumni")}
+                className={`text-xs font-semibold px-4 py-2 rounded-full transition-all ${
+                  conversionRole === "alumni"
+                    ? "bg-[#090909] text-white shadow-xs"
+                    : "text-[#737373] hover:text-[#090909]"
+                }`}
+              >
+                I am an Alumnus Mentor
+              </button>
+            </div>
+
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-lg mx-auto">
+              <Button
+                variant="primary"
+                size="lg"
+                asChild
+                className="rounded-full w-full sm:w-auto px-8 min-w-[210px] shadow-xs"
+              >
+                <Link href={conversionRole === "student" ? "/signup" : "/signup?role=alumni"}>
+                  {conversionRole === "student" ? "Create Student Account" : "Register as Mentor"}
                 </Link>
               </Button>
-              <Button variant="secondary" size="lg" asChild>
-                <Link href="/alumni" className="px-6 font-medium">
-                  Browse Directory
-                </Link>
+              <Button
+                variant="secondary"
+                size="lg"
+                asChild
+                className="rounded-full w-full sm:w-auto px-8 min-w-[190px] shadow-xs"
+              >
+                <Link href="/alumni">Browse Directory</Link>
               </Button>
             </div>
-            <p className="text-xs text-[#626262] mt-5">
-              Already have an account?{" "}
-              <Link
-                href="/login"
-                className="text-[#2166A5] font-medium hover:underline"
-              >
-                Log In
-              </Link>
-            </p>
+
+            {/* Account Sign In Anchor with explicit vertical clearance */}
+            <div className="pt-8 pb-1 flex items-center justify-center">
+              <p className="text-xs text-[#737373] text-center">
+                Already have an account?{" "}
+                <Link
+                  href="/login"
+                  className="text-[#090909] font-semibold hover:underline ml-1 inline-block"
+                >
+                  Sign In
+                </Link>
+              </p>
+            </div>
           </div>
         </section>
       </main>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          FOOTER
+          EDITORIAL MONOCHROME FOOTER
          ══════════════════════════════════════════════════════════════════════ */}
-      <footer className="border-t border-[#E5E7EB] bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
-            {/* Brand */}
-            <div>
+      <footer className="border-t border-[#E7E7E7] bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+            <div className="lg:col-span-2">
               <Link href="/" className="flex items-center gap-2.5 mb-3">
-                <div className="h-7 w-7 rounded-[8px] bg-[#2166A5] flex items-center justify-center shrink-0">
-                  <span className="text-white text-xs font-bold">A</span>
+                <div className="h-7 w-7 rounded-lg bg-[#090909] text-white flex items-center justify-center shrink-0 font-bold text-xs">
+                  <span>A</span>
                 </div>
                 <Wordmark />
               </Link>
-              <p className="text-sm text-[#626262] leading-relaxed">
-                Alumni networking and career mentorship for university students.
+              <p className="text-xs text-[#555555] leading-relaxed max-w-sm mb-4">
+                The verified collegiate alumni mentorship platform connecting undergraduate and graduate students directly with alumni leaders across tech, product, and design.
               </p>
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#F4F4F4] border border-[#E7E7E7] text-[11px] font-medium text-[#242424]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#090909]" />
+                <span>All Systems Operational · Spring 2026 Ready</span>
+              </div>
             </div>
 
-            {/* Product */}
             <div>
-              <p className="text-sm font-semibold text-[#191919] mb-3">Product</p>
-              <ul className="space-y-2">
-                {[
-                  ["Discover Alumni", "/alumni"],
-                  ["Direct Messages", "/messages"],
-                  ["AI Career Assistant", "/career-assistant"],
-                  ["Career Roadmap", "/career-roadmap"],
-                  ["Resume Review", "/resume-review"],
-                ].map(([label, href]) => (
-                  <li key={label}>
-                    <Link
-                      href={href}
-                      className="text-sm text-[#626262] hover:text-[#191919] transition-colors"
-                    >
-                      {label}
-                    </Link>
-                  </li>
-                ))}
+              <p className="text-xs font-bold uppercase tracking-wider text-[#090909] mb-3">Product</p>
+              <ul className="space-y-2 text-xs text-[#555555]">
+                <li>
+                  <Link href="/alumni" className="hover:text-[#090909] transition-colors">
+                    Discover Alumni
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/messages" className="hover:text-[#090909] transition-colors">
+                    Direct Advisory
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/career-roadmap" className="hover:text-[#090909] transition-colors">
+                    Career Roadmap
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/career-assistant" className="hover:text-[#090909] transition-colors">
+                    AI Career Assistant
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/resume-review" className="hover:text-[#090909] transition-colors">
+                    Resume Review
+                  </Link>
+                </li>
               </ul>
             </div>
 
-            {/* Support */}
             <div>
-              <p className="text-sm font-semibold text-[#191919] mb-3">Support</p>
-              <ul className="space-y-2">
-                {[
-                  ["Help Center", "#"],
-                  ["Contact Us", "#"],
-                  ["For Universities", "#"],
-                ].map(([label, href]) => (
-                  <li key={label}>
-                    <Link
-                      href={href}
-                      className="text-sm text-[#626262] hover:text-[#191919] transition-colors"
-                    >
-                      {label}
-                    </Link>
-                  </li>
-                ))}
+              <p className="text-xs font-bold uppercase tracking-wider text-[#090909] mb-3">Portals</p>
+              <ul className="space-y-2 text-xs text-[#555555]">
+                <li>
+                  <Link href="/dashboard" className="hover:text-[#090909] transition-colors">
+                    Student Dashboard
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/alumni-dashboard" className="hover:text-[#090909] transition-colors">
+                    Alumni Portal
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/alumni-dashboard/opportunities" className="hover:text-[#090909] transition-colors">
+                    Alumni Opportunities
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/alumni-dashboard/community" className="hover:text-[#090909] transition-colors">
+                    Community Board
+                  </Link>
+                </li>
               </ul>
             </div>
 
-            {/* Legal */}
             <div>
-              <p className="text-sm font-semibold text-[#191919] mb-3">Legal</p>
-              <ul className="space-y-2">
-                {[
-                  ["Privacy Policy", "#"],
-                  ["Terms of Service", "#"],
-                  ["Cookie Policy", "#"],
-                ].map(([label, href]) => (
-                  <li key={label}>
-                    <Link
-                      href={href}
-                      className="text-sm text-[#626262] hover:text-[#191919] transition-colors"
-                    >
-                      {label}
-                    </Link>
-                  </li>
-                ))}
+              <p className="text-xs font-bold uppercase tracking-wider text-[#090909] mb-3">Institutional</p>
+              <ul className="space-y-2 text-xs text-[#555555]">
+                <li>
+                  <a href="#" className="hover:text-[#090909] transition-colors">
+                    University Registrar API
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-[#090909] transition-colors">
+                    Privacy Charter
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-[#090909] transition-colors">
+                    Terms of Advisory
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-[#090909] transition-colors">
+                    Security &amp; FERPA
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-[#E5E7EB] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-xs text-[#626262]">
-              © 2026 AlumniPath. All rights reserved.
-            </p>
-            <p className="text-xs text-[#626262]">
-              Built for students, by people who were once students.
-            </p>
+          <div className="pt-8 border-t border-[#E7E7E7] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#737373]">
+            <p>© 2026 AlumniPath Inc. Meticulously crafted for collegiate excellence.</p>
+            <p>San Francisco · Seattle · New York · Boston</p>
           </div>
         </div>
       </footer>

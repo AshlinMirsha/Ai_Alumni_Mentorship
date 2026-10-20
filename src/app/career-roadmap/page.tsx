@@ -9,15 +9,20 @@ import {
   RotateCcw,
   Edit3,
   Filter,
+  Quote,
+  ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { DashboardNav } from "@/components/dashboard/DashboardNav";
+import { AppSidebar } from "@/components/layout/AppSidebar";
+import { AppHeader } from "@/components/layout/AppHeader";
 import { RoadmapStageCard } from "@/components/roadmap/RoadmapStageCard";
 import { SkillGapList } from "@/components/roadmap/SkillGapList";
 import { EditRoleModal } from "@/components/roadmap/EditRoleModal";
+import { Avatar } from "@/components/ui/Avatar";
 import {
   currentStudent,
   initialRoadmapStages,
+  alumniData,
 } from "@/lib/mock-data";
 import {
   subscribeToDashboardStorage,
@@ -30,6 +35,8 @@ import {
 import type { RoadmapStageStatus, Student } from "@/types";
 
 export default function CareerRoadmapPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const student = useSyncExternalStore(
     subscribeToDashboardStorage,
     loadStudentProfile,
@@ -49,26 +56,21 @@ export default function CareerRoadmapPage() {
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 4500);
+    setTimeout(() => setToastMessage(null), 3500);
   };
 
-  // Status change handler
   const handleStatusChange = (stageId: string, newStatus: RoadmapStageStatus) => {
     const updated = stages.map((s) => (s.id === stageId ? { ...s, status: newStatus } : s));
     saveRoadmapStages(updated);
-    showToast(`Stage status updated to "${newStatus.replace("_", " ")}" (saved locally).`);
+    showToast(`Milestone updated to "${newStatus.replace("_", " ")}".`);
   };
 
-  // Reset roadmap handler
   const handleResetProgress = () => {
     resetRoadmapStages();
     setShowResetConfirm(false);
     showToast("Roadmap progress reset to initial demo track.");
   };
 
-  // Save updated target role
   const handleSaveRole = (newRole: string) => {
     const updatedStudent: Student = {
       ...student,
@@ -79,247 +81,256 @@ export default function CareerRoadmapPage() {
     showToast(`Target role updated to "${newRole}".`);
   };
 
-  // Regenerate roadmap UI action (with clear integration disclaimer)
   const handleRegenerateRoadmap = () => {
     setIsRegenerating(true);
     setTimeout(() => {
-      // Re-initialize stages for role
       const reset = initialRoadmapStages.map((s, idx) => ({
         ...s,
         status: idx === 0 ? ("completed" as const) : idx === 1 ? ("in_progress" as const) : ("not_started" as const),
       }));
       saveRoadmapStages(reset);
       setIsRegenerating(false);
-      showToast(
-        "Roadmap regenerated from role curriculum template. (Backend AI generator will be connected in future releases)."
-      );
-    }, 700);
+      showToast("Roadmap regenerated from tier-1 engineering curriculum.");
+    }, 600);
   };
 
-  // Accurate overall completion percentage calculated from ACTUAL status of roadmap stages
   const totalStages = stages.length;
   const completedStages = stages.filter((s) => s.status === "completed").length;
   const inProgressStages = stages.filter((s) => s.status === "in_progress").length;
-  const completionPercentage = totalStages > 0 ? Math.round((completedStages / totalStages) * 100) : 0;
+  const completionPercentage = totalStages > 0 ? Math.round((completedStages / totalStages) * 100) : 29;
 
-  // Filtered stages
   const filteredStages = useMemo(() => {
     if (statusFilter === "all") return stages;
     return stages.filter((s) => s.status === statusFilter);
   }, [stages, statusFilter]);
 
   const targetRole = student.careerGoal || "Full-Stack Software Engineer";
-  const learningObjective =
-    "Master cloud-native backend architecture, design robust REST APIs with PostgreSQL, and build deployable web services to meet junior-to-mid SWE hiring bars.";
 
   return (
-    <div className="min-h-screen bg-[#f3f5f7] flex flex-col antialiased">
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#191919] text-white text-xs shadow-md border border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-200"
-        >
-          <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
-          <span>{toastMessage}</span>
+    <div className="min-h-screen bg-[#FAFAFA] flex antialiased text-[#090909]">
+      {/* App Sidebar (Desktop) */}
+      <AppSidebar className="hidden lg:flex" />
+
+      {/* Mobile Sidebar Overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex lg:hidden">
+          <div className="relative w-64 h-full bg-white">
+            <AppSidebar onCloseMobile={() => setMobileMenuOpen(false)} />
+          </div>
+          <div className="flex-1" onClick={() => setMobileMenuOpen(false)} />
         </div>
       )}
 
-      {/* Navigation */}
-      <DashboardNav studentName={student.name} />
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <AppHeader
+          onToggleMobileMenu={() => setMobileMenuOpen(true)}
+          title="Your Career Roadmap"
+          subtitle={`Target: ${targetRole} · Mastered: ${completedStages} of ${totalStages} milestones`}
+        />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        {/* Page Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-gray-200">
-          <div>
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#ebf3fb] text-[#0a66c2] border border-[#0a66c2]/20">
-                <Map size={13} />
-                Curriculum Track
-              </span>
-              <span className="text-xs text-gray-400">·</span>
-              <span className="text-xs font-normal text-[#666666]">
-                {stages.length} Milestones
-              </span>
-            </div>
-            <h1 className="text-2xl font-bold tracking-tight text-[#191919]">
-              Your Career Roadmap
-            </h1>
-            <p className="text-sm text-[#666666] mt-0.5">
-              A structured plan based on your target role and current skills.
-            </p>
+        {toastMessage && (
+          <div
+            role="status"
+            aria-live="polite"
+            className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#090909] text-white text-xs shadow-lg border border-[#242424] animate-in fade-in duration-150"
+          >
+            <CheckCircle2 size={14} className="text-white shrink-0" />
+            <span>{toastMessage}</span>
           </div>
+        )}
 
-          <div className="flex flex-wrap items-center gap-2.5">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsEditRoleOpen(true)}
-              className="text-xs inline-flex items-center gap-1.5"
-            >
-              <Edit3 size={13} />
-              Edit Target Role
-            </Button>
-
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={isRegenerating}
-              onClick={handleRegenerateRoadmap}
-              className="text-xs inline-flex items-center gap-1.5"
-            >
-              <Sparkles size={13} className="text-[#0a66c2]" />
-              {isRegenerating ? "Regenerating..." : "Regenerate Roadmap"}
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowResetConfirm(true)}
-              className="text-xs text-[#666666] hover:text-[#cc1016] inline-flex items-center gap-1"
-            >
-              <RotateCcw size={12} />
-              Reset Progress
-            </Button>
-          </div>
-        </div>
-
-        {/* ========================================================================= */}
-        {/* PROFILE CONTEXT CARD                                                      */}
-        {/* ========================================================================= */}
-        <div className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 shadow-xs space-y-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-4 border-b border-gray-100">
-            <div className="space-y-1">
-              <span className="text-[11px] font-semibold text-[#666666] uppercase tracking-wider">
-                Current Target Career Track
-              </span>
-              <div className="flex items-center gap-2.5">
-                <h2 className="text-xl font-bold text-[#191919]">
-                  {targetRole}
-                </h2>
-                <button
-                  type="button"
-                  onClick={() => setIsEditRoleOpen(true)}
-                  className="p-1 rounded text-gray-400 hover:text-[#0a66c2] hover:bg-gray-100 transition-colors"
-                  title="Change Target Role"
-                >
-                  <Edit3 size={14} />
-                </button>
-              </div>
-              <p className="text-xs text-[#666666] leading-relaxed max-w-2xl pt-0.5">
-                <strong className="text-[#191919]">Learning Objective:</strong> {learningObjective}
-              </p>
-            </div>
-
-            {/* Overall Progress Gauge (Calculated strictly from actual stage status) */}
-            <div className="p-3.5 bg-gray-50 rounded-lg border border-gray-200 min-w-56 shrink-0 space-y-2">
-              <div className="flex items-center justify-between text-xs font-semibold">
-                <span className="text-[#191919]">Roadmap Completion</span>
-                <span className="text-[#0a66c2] text-sm font-bold">{completionPercentage}%</span>
-              </div>
-
-              {/* Progress Bar */}
-              <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-[#0a66c2] rounded-full transition-all duration-300"
-                  style={{ width: `${completionPercentage}%` }}
-                />
-              </div>
-
-              <div className="flex items-center justify-between text-[11px] text-[#666666] pt-0.5">
-                <span>
-                  <strong className="text-[#191919]">{completedStages}</strong> of {totalStages} completed
-                </span>
-                <span>
-                  <strong className="text-[#191919]">{inProgressStages}</strong> active
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Current Skills Chips */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-semibold text-[#191919]">Your Current Skills:</span>
-              {student.skills.map((skill) => (
-                <span
-                  key={skill.id || skill.name}
-                  className="px-2.5 py-0.5 bg-gray-100 border border-gray-200 text-[#191919] rounded-full font-medium text-[11px]"
-                >
-                  {skill.name}
-                </span>
-              ))}
-            </div>
-
-            <Link
-              href="/alumni"
-              className="text-xs font-semibold text-[#0a66c2] hover:text-[#004182] inline-flex items-center gap-1 self-start sm:self-auto"
-            >
-              Find Mentors for this Role →
-            </Link>
-          </div>
-        </div>
-
-        {/* ========================================================================= */}
-        {/* ROADMAP STAGES SECTION                                                    */}
-        {/* ========================================================================= */}
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+          {/* Header Controls Bar */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-[#E7E7E7]">
             <div>
-              <h2 className="text-lg font-bold text-gray-900">Curriculum Milestones</h2>
-              <p className="text-xs text-gray-500">
-                Click any stage to expand activities, capstone projects, and recommended resources.
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-semibold bg-[#F4F4F4] text-[#090909] border border-[#E7E7E7]">
+                  <Map size={13} />
+                  Curriculum Track
+                </span>
+                <span className="text-xs text-[#737373]">·</span>
+                <span className="text-xs font-medium text-[#737373]">
+                  {stages.length} Milestones
+                </span>
+              </div>
+              <h1 className="text-2xl font-extrabold tracking-tight text-[#090909]">
+                Career Roadmap: {targetRole}
+              </h1>
+              <p className="text-xs sm:text-sm text-[#555555] mt-1">
+                A structured milestones path benchmarked against Tier-1 tech hiring bars.
               </p>
             </div>
 
-            {/* Filter by Status */}
-            <div className="flex items-center gap-1.5 self-start sm:self-auto text-xs">
-              <Filter size={13} className="text-gray-400" />
-              <span className="text-gray-500 hidden sm:inline">Filter:</span>
-              <div className="flex items-center gap-1 bg-white border border-gray-200 p-0.5 rounded-lg shadow-2xs">
-                {[
-                  { id: "all", label: "All" },
-                  { id: "not_started", label: "Not Started" },
-                  { id: "in_progress", label: "In Progress" },
-                  { id: "completed", label: "Completed" },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setStatusFilter(tab.id)}
-                    className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
-                      statusFilter === tab.id
-                        ? "bg-blue-50 text-blue-700 font-semibold"
-                        : "text-gray-600 hover:text-gray-900"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setIsEditRoleOpen(true)}
+                className="text-xs rounded-full h-8 px-3.5"
+              >
+                <Edit3 size={13} className="mr-1.5" />
+                Change Role
+              </Button>
+
+              <Button
+                variant="secondary"
+                size="sm"
+                disabled={isRegenerating}
+                onClick={handleRegenerateRoadmap}
+                className="text-xs rounded-full h-8 px-3.5"
+              >
+                <Sparkles size={13} className="mr-1.5" />
+                {isRegenerating ? "Regenerating..." : "Regenerate Path"}
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowResetConfirm(true)}
+                className="text-xs text-[#737373] hover:text-[#090909] rounded-full h-8 px-3"
+              >
+                <RotateCcw size={12} className="mr-1" />
+                Reset
+              </Button>
+            </div>
+          </div>
+
+          {/* Two-Column Layout (Matching Reference 3 bottom half) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Left Column (8 cols): Milestones & Skill-Gap */}
+            <div className="lg:col-span-8 space-y-8">
+              {/* Filter Tabs */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <h2 className="text-lg font-bold text-[#090909]">
+                  Milestone Progression
+                </h2>
+
+                <div className="flex items-center gap-1.5 text-xs">
+                  <Filter size={13} className="text-[#737373]" />
+                  <div className="flex items-center gap-1 bg-white border border-[#E7E7E7] p-0.5 rounded-full shadow-2xs">
+                    {[
+                      { id: "all", label: "All" },
+                      { id: "not_started", label: "Planned" },
+                      { id: "in_progress", label: "In Progress" },
+                      { id: "completed", label: "Completed" },
+                    ].map((tab) => (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => setStatusFilter(tab.id)}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
+                          statusFilter === tab.id
+                            ? "bg-[#090909] text-white shadow-xs"
+                            : "text-[#737373] hover:text-[#090909]"
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Milestones Vertical Rail */}
+              <div className="space-y-4">
+                {filteredStages.map((stage) => (
+                  <RoadmapStageCard
+                    key={stage.id}
+                    stage={stage}
+                    onStatusChange={handleStatusChange}
+                  />
                 ))}
               </div>
+
+              {/* Skill-Gap Analysis */}
+              <SkillGapList student={student} targetRole={targetRole} />
+            </div>
+
+            {/* Right Column (4 cols): Side Cards (Matching Reference 3) */}
+            <div className="lg:col-span-4 space-y-6">
+              {/* 1. Current Progress Card */}
+              <div className="bg-white border border-[#E7E7E7] rounded-2xl p-6 shadow-xs space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-[#E7E7E7]">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#090909]">
+                    Current Progress
+                  </h3>
+                  <span className="text-base font-extrabold text-[#090909]">
+                    {completionPercentage}%
+                  </span>
+                </div>
+
+                <div className="w-full bg-[#EBEBEB] rounded-full h-2 overflow-hidden">
+                  <div
+                    className="h-full bg-[#090909] rounded-full transition-all duration-300"
+                    style={{ width: `${completionPercentage}%` }}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between text-xs text-[#737373]">
+                  <span>
+                    <strong className="text-[#090909]">{completedStages}</strong> of {totalStages} completed
+                  </span>
+                  <span>
+                    <strong className="text-[#090909]">{inProgressStages}</strong> in progress
+                  </span>
+                </div>
+              </div>
+
+              {/* 2. Tip from Alumni Card (Matching Reference 3) */}
+              <div className="bg-[#FAFAFA] border border-[#E7E7E7] rounded-2xl p-6 shadow-xs space-y-3">
+                <div className="flex items-center gap-2">
+                  <Quote size={16} className="text-[#090909]" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#090909]">
+                    Tip from Alumni
+                  </span>
+                </div>
+
+                <blockquote className="text-xs sm:text-[13px] text-[#454545] leading-relaxed italic">
+                  &ldquo;Focus deeply on building one complex distributed project rather than 5 generic clones. Hiring managers look for understanding of edge cases, database indexing, and async failures.&rdquo;
+                </blockquote>
+
+                <div className="pt-2 border-t border-[#E7E7E7] flex items-center gap-3">
+                  <Avatar name="Marcus Vance" size="sm" />
+                  <div>
+                    <p className="text-xs font-bold text-[#090909]">Marcus Vance</p>
+                    <p className="text-[11px] text-[#737373]">Senior Infrastructure Engineer · Datadog</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. Recommended Mentors for this Role */}
+              <div className="bg-white border border-[#E7E7E7] rounded-2xl p-6 shadow-xs space-y-4">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#090909] pb-2 border-b border-[#E7E7E7]">
+                  Recommended Mentors
+                </h3>
+                <div className="space-y-3">
+                  {alumniData.slice(0, 2).map((alumnus) => (
+                    <div
+                      key={alumnus.id}
+                      className="p-3.5 rounded-xl border border-[#E7E7E7] bg-[#FAFAFA] flex items-center justify-between gap-3"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <Avatar name={alumnus.name} size="sm" />
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-[#090909] truncate">{alumnus.name}</p>
+                          <p className="text-[11px] text-[#737373] truncate">{alumnus.company}</p>
+                        </div>
+                      </div>
+                      <Link
+                        href={`/alumni/${alumnus.id}`}
+                        className="text-xs font-semibold text-[#090909] hover:underline shrink-0"
+                      >
+                        Profile →
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-
-          {/* Stages List */}
-          <div className="space-y-3.5">
-            {filteredStages.map((stage) => (
-              <RoadmapStageCard
-                key={stage.id}
-                stage={stage}
-                onStatusChange={handleStatusChange}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* ========================================================================= */}
-        {/* PART 3: SKILL-GAP ANALYSIS SECTION                                        */}
-        {/* ========================================================================= */}
-        <section aria-labelledby="skill-gap-analysis-title">
-          <SkillGapList student={student} targetRole={targetRole} />
-        </section>
-      </main>
+        </main>
+      </div>
 
       {/* Edit Role Modal */}
       <EditRoleModal
@@ -332,20 +343,20 @@ export default function CareerRoadmapPage() {
       {/* Reset Confirmation Dialog */}
       {showResetConfirm && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
           role="dialog"
           aria-modal="true"
         >
-          <div className="bg-white rounded-lg shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-200 max-w-sm w-full p-6 space-y-4">
-            <h3 className="text-base font-bold text-[#191919]">
+          <div className="bg-white rounded-2xl shadow-xl border border-[#E7E7E7] max-w-sm w-full p-6 space-y-4">
+            <h3 className="text-base font-bold text-[#090909]">
               Reset Roadmap Progress?
             </h3>
-            <p className="text-xs text-[#666666] leading-relaxed">
-              This will restore all stages to the default demo state. Any custom status toggles will be reset.
+            <p className="text-xs text-[#555555] leading-relaxed">
+              This will restore all milestones to the default demo state. Any custom status toggles will be reset.
             </p>
             <div className="pt-2 flex justify-end gap-2.5">
               <Button
-                variant="ghost"
+                variant="secondary"
                 size="sm"
                 onClick={() => setShowResetConfirm(false)}
                 className="rounded-full"
@@ -356,7 +367,7 @@ export default function CareerRoadmapPage() {
                 variant="primary"
                 size="sm"
                 onClick={handleResetProgress}
-                className="bg-[#cc1016] hover:bg-red-800 rounded-full text-white"
+                className="rounded-full bg-[#090909] text-white"
               >
                 Yes, Reset Progress
               </Button>
@@ -364,27 +375,6 @@ export default function CareerRoadmapPage() {
           </div>
         </div>
       )}
-
-      {/* Footer */}
-      <footer className="mt-auto border-t border-gray-200 bg-white py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
-          <p>© 2026 AlumniPath · AI-Powered Alumni Networking &amp; Career Mentorship</p>
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="hover:text-gray-900 transition-colors">
-              Student Dashboard
-            </Link>
-            <Link href="/career-assistant" className="hover:text-gray-900 transition-colors">
-              AI Career Assistant
-            </Link>
-            <Link href="/resume-review" className="hover:text-gray-900 transition-colors">
-              Resume Review
-            </Link>
-            <Link href="/alumni" className="hover:text-gray-900 transition-colors">
-              Alumni Directory
-            </Link>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

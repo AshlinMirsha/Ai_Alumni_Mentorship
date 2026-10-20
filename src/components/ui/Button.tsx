@@ -3,7 +3,7 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactElement, Children, cloneElement } from "react";
 import { cn } from "@/lib/utils";
 
-type Variant = "primary" | "secondary" | "ghost" | "outline" | "danger";
+type Variant = "primary" | "secondary" | "ghost" | "outline" | "danger" | "glass" | "circle";
 type Size = "sm" | "md" | "lg";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -16,29 +16,33 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-[#2166A5] !text-white text-white border-0 hover:bg-[#194F82] active:bg-[#143F68] transition-colors duration-150 shadow-none [&_*]:!text-white [&_*]:text-white",
+    "bg-[#090909] text-white border border-[#090909] hover:bg-[#242424] active:bg-black shadow-[0_1px_2px_rgba(0,0,0,0.12)] font-medium tracking-tight [&_*]:!text-white",
   secondary:
-    "bg-white text-[#252525] border border-[#D5D9DE] hover:bg-[#F5F7FA] hover:border-[#C5C9CE] hover:text-[#252525] active:bg-[#ECEFF3] transition-colors duration-150 shadow-none",
+    "bg-white text-[#090909] border border-[#E7E7E7] hover:bg-[#F4F4F4] hover:border-[#D1D1D1] active:bg-[#EBEBEB] font-medium tracking-tight shadow-[0_1px_2px_rgba(0,0,0,0.03)]",
+  glass:
+    "bg-white/90 backdrop-blur-md text-[#090909] border border-[#E7E7E7] hover:bg-white font-medium tracking-tight shadow-xs",
   ghost:
-    "bg-transparent text-gray-600 border-0 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200 transition-colors duration-150 shadow-none",
+    "bg-transparent text-[#454545] border-0 hover:bg-black/[0.04] hover:text-[#090909] active:bg-black/[0.08] font-medium tracking-tight",
   outline:
-    "bg-transparent text-[#2166A5] border border-[#2166A5] hover:bg-[#F0F5FA] hover:border-[#194F82] active:bg-[#D0E0EF] transition-colors duration-150 shadow-none",
+    "bg-transparent text-[#090909] border border-[#E7E7E7] hover:bg-[#F4F4F4] hover:border-[#090909] active:bg-[#EBEBEB] font-medium tracking-tight",
   danger:
-    "bg-red-600 !text-white text-white border-0 hover:bg-red-700 active:bg-red-800 transition-colors duration-150 shadow-none",
+    "bg-[#242424] text-white border border-[#242424] hover:bg-black active:bg-[#000000] font-medium tracking-tight [&_*]:!text-white",
+  circle:
+    "w-9 h-9 p-0 rounded-full bg-[#090909] text-white border border-[#090909] hover:bg-[#242424] active:bg-black flex items-center justify-center shrink-0 [&_*]:!text-white shadow-xs",
 };
 
 const sizeClasses: Record<Size, string> = {
-  sm: "h-[38px] px-4 text-xs sm:text-sm gap-1.5 rounded-[8px] font-medium",
-  md: "h-[40px] px-5 text-sm gap-2 rounded-[8px] font-medium",
-  lg: "h-[44px] px-6 sm:px-7 text-sm gap-2 rounded-[8px] font-medium",
+  sm: "h-[34px] px-3.5 text-xs gap-1.5 rounded-full font-medium",
+  md: "h-[40px] px-4 sm:px-5 text-sm gap-2 rounded-full font-medium",
+  lg: "h-[46px] px-6 sm:px-7 text-sm sm:text-base gap-2.5 rounded-full font-medium",
 };
 
 const baseClass = (variant: Variant, size: Size, fullWidth: boolean, className?: string) =>
   cn(
-    "inline-flex items-center justify-center transition-colors duration-150 cursor-pointer select-none",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2166A5] focus-visible:ring-offset-2",
+    "inline-flex items-center justify-center cursor-pointer select-none transition-all duration-150",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#090909] focus-visible:ring-offset-2",
     variantClasses[variant],
-    sizeClasses[size],
+    variant !== "circle" && sizeClasses[size],
     fullWidth && "w-full",
     className
   );
@@ -73,7 +77,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled || loading}
         className={cn(
           classes,
-          "disabled:opacity-45 disabled:cursor-not-allowed disabled:pointer-events-none"
+          "disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
         )}
         {...props}
       >

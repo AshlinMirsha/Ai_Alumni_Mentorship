@@ -31,23 +31,23 @@ export function ConversationList({
   });
 
   return (
-    <div className="flex flex-col h-full bg-white border-r border-gray-200">
+    <div className="flex flex-col h-full bg-white border-r border-[#E7E7E7]">
       {/* Search Bar */}
-      <div className="p-3 border-b border-gray-200">
+      <div className="p-3 border-b border-[#E7E7E7]">
         <div className="relative">
-          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#737373]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search messages..."
-            className="w-full pl-8 pr-3 py-1.5 bg-gray-50 border border-gray-300 rounded-md text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all"
+            className="w-full pl-8 pr-3 py-1.5 bg-[#F4F4F4] border border-transparent rounded-full text-xs text-[#090909] placeholder-[#737373] focus:outline-none focus:bg-white focus:border-[#090909] transition-all"
           />
         </div>
       </div>
 
       {/* Conversations Scrollable List */}
-      <div className="flex-1 overflow-y-auto divide-y divide-gray-100">
+      <div className="flex-1 overflow-y-auto divide-y divide-[#E7E7E7]">
         {filtered.length > 0 ? (
           filtered.map((conv) => {
             const isSelected = conv.id === selectedId;
@@ -64,16 +64,16 @@ export function ConversationList({
                 key={conv.id}
                 type="button"
                 onClick={() => onSelect(conv.id)}
-                className={`w-full text-left p-3 flex items-start gap-2.5 transition-colors cursor-pointer ${
+                className={`w-full text-left p-3.5 flex items-start gap-3 transition-colors cursor-pointer ${
                   isSelected
-                    ? "bg-[#ebf3fb] border-l-3 border-l-[#0a66c2]"
-                    : "hover:bg-gray-50"
+                    ? "bg-[#F4F4F4] border-l-4 border-l-[#090909]"
+                    : "hover:bg-[#FAFAFA]"
                 }`}
               >
                 <div className="relative shrink-0">
                   <Avatar name={conv.participantName} size="md" />
                   {hasUnread && (
-                    <span className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-[#0a66c2] rounded-full ring-2 ring-white" />
+                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#090909] rounded-full ring-2 ring-white" />
                   )}
                 </div>
 
@@ -81,21 +81,21 @@ export function ConversationList({
                   <div className="flex items-center justify-between gap-1 mb-0.5">
                     <p
                       className={`text-xs truncate ${
-                        hasUnread ? "font-bold text-gray-900" : "font-semibold text-gray-800"
+                        hasUnread ? "font-bold text-[#090909]" : "font-semibold text-[#242424]"
                       }`}
                     >
                       {conv.participantName}
                     </p>
-                    <span className="text-[10px] text-gray-400 shrink-0">{dateStr}</span>
+                    <span className="text-[10px] text-[#737373] shrink-0">{dateStr}</span>
                   </div>
 
-                  <p className="text-[11px] text-gray-500 truncate mb-0.5">
+                  <p className="text-[11px] text-[#737373] truncate mb-0.5">
                     {conv.participantRole} · {conv.participantCompany}
                   </p>
 
                   <p
                     className={`text-xs truncate leading-snug ${
-                      hasUnread ? "font-semibold text-gray-900" : "text-gray-500"
+                      hasUnread ? "font-semibold text-[#090909]" : "text-[#555555]"
                     }`}
                   >
                     {conv.lastMessage || "No messages yet."}
@@ -105,8 +105,8 @@ export function ConversationList({
             );
           })
         ) : (
-          <div className="p-8 text-center text-xs text-gray-400 space-y-1">
-            <p className="font-semibold text-gray-700">No conversations found</p>
+          <div className="p-8 text-center text-xs text-[#737373] space-y-1">
+            <p className="font-semibold text-[#090909]">No conversations found</p>
             <p className="text-[11px]">
               {searchQuery ? "Try a different search query" : "Active mentorships will appear here."}
             </p>

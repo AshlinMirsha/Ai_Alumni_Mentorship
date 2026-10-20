@@ -15,15 +15,13 @@ const sizeClasses = {
   xl: "h-14 w-14 text-base",
 };
 
-// Professional palette for avatars without images
+// Strict monochrome palette for avatars
 const COLORS = [
-  "bg-[#ebf3fb] text-[#0a66c2] border border-[#b2d5f8]",
-  "bg-[#eef8f1] text-[#057642] border border-[#bfe3c9]",
-  "bg-[#f0f2fe] text-[#4338ca] border border-[#d3d8fd]",
-  "bg-[#fff8ea] text-[#915907] border border-[#fde5b2]",
-  "bg-[#f5f3ff] text-[#6d28d9] border border-[#ddd6fe]",
-  "bg-[#f0fdfa] text-[#0f766e] border border-[#99f6e4]",
-  "bg-[#f3f4f6] text-[#374151] border border-[#e5e7eb]",
+  "bg-[#090909] text-white border-[#090909]",
+  "bg-[#242424] text-white border-[#242424]",
+  "bg-[#454545] text-white border-[#454545]",
+  "bg-[#F4F4F4] text-[#090909] border-[#E7E7E7]",
+  "bg-[#EBEBEB] text-[#242424] border-[#D1D1D1]",
 ];
 
 function getColor(name: string): string {
@@ -42,7 +40,7 @@ export function Avatar({ name, src, size = "md", className, ...props }: AvatarPr
     return (
       <div
         className={cn(
-          "rounded-full overflow-hidden shrink-0 border border-gray-200 bg-gray-100",
+          "rounded-full overflow-hidden shrink-0 border border-[#E7E7E7] bg-[#F4F4F4]",
           sizeClasses[size],
           className
         )}
@@ -52,7 +50,7 @@ export function Avatar({ name, src, size = "md", className, ...props }: AvatarPr
         <img
           src={src}
           alt={name}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover grayscale contrast-105"
         />
       </div>
     );
@@ -61,7 +59,7 @@ export function Avatar({ name, src, size = "md", className, ...props }: AvatarPr
   return (
     <div
       className={cn(
-        "rounded-full shrink-0 flex items-center justify-center font-semibold select-none",
+        "rounded-full shrink-0 flex items-center justify-center font-semibold select-none border",
         sizeClasses[size],
         colorClass,
         className

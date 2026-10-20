@@ -23,7 +23,7 @@ export function SuggestionPrompt({
       <button
         type="button"
         onClick={onClick}
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#191919] hover:text-[#0a66c2] bg-white hover:bg-[#ebf3fb] border border-gray-200 hover:border-[#0a66c2]/40 rounded-full transition-colors text-left shadow-xs"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#090909] hover:text-white bg-white hover:bg-[#090909] border border-[#E7E7E7] hover:border-[#090909] rounded-full transition-all text-left shadow-xs"
       >
         {icon}
         <span>{title}</span>
@@ -35,20 +35,20 @@ export function SuggestionPrompt({
     <button
       type="button"
       onClick={onClick}
-      className="group p-3.5 bg-white hover:bg-[#ebf3fb]/20 border border-gray-200 hover:border-[#0a66c2] rounded-lg transition-all duration-150 text-left flex items-start justify-between gap-3 shadow-xs w-full"
+      className="group p-3.5 bg-white hover:bg-[#FAFAFA] border border-[#E7E7E7] hover:border-[#090909] rounded-xl transition-all duration-150 text-left flex items-start justify-between gap-3 shadow-xs w-full"
     >
       <div className="flex items-start gap-3">
         {icon && (
-          <div className="p-2 rounded-lg bg-[#ebf3fb] text-[#0a66c2] border border-[#0a66c2]/20 shrink-0 group-hover:bg-[#0a66c2] group-hover:text-white transition-colors">
+          <div className="p-2 rounded-lg bg-[#F4F4F4] text-[#090909] border border-[#E7E7E7] shrink-0 group-hover:bg-[#090909] group-hover:text-white transition-colors">
             {icon}
           </div>
         )}
         <div className="space-y-0.5">
-          <p className="text-xs font-semibold text-[#191919] group-hover:text-[#0a66c2] transition-colors">
+          <p className="text-xs font-semibold text-[#090909] transition-colors">
             {title}
           </p>
           {description && (
-            <p className="text-[11px] text-[#666666] leading-normal line-clamp-2">
+            <p className="text-[11px] text-[#737373] leading-normal line-clamp-2">
               {description}
             </p>
           )}
@@ -56,7 +56,7 @@ export function SuggestionPrompt({
       </div>
       <ArrowRight
         size={14}
-        className="text-[#8c8c8c] group-hover:text-[#0a66c2] group-hover:translate-x-0.5 transition-all shrink-0 mt-1"
+        className="text-[#737373] group-hover:text-[#090909] group-hover:translate-x-0.5 transition-all shrink-0 mt-1"
       />
     </button>
   );

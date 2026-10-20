@@ -9,6 +9,7 @@ export function QuickActions() {
       title: "Messages",
       href: "/messages",
       icon: MessageSquare,
+      badge: "1",
     },
     {
       title: "AI Career Assistant",
@@ -28,8 +29,8 @@ export function QuickActions() {
   ];
 
   return (
-    <div className="bg-white border border-[#E5E7EB] rounded-xl p-5 shadow-xs">
-      <h3 className="text-sm font-bold text-[#111827] pb-3 border-b border-[#F3F4F6] mb-2">
+    <div className="bg-white border border-[#E7E7E7] rounded-2xl p-5 shadow-xs">
+      <h3 className="text-sm font-bold text-[#090909] pb-3 border-b border-[#E7E7E7] mb-2">
         Quick Access
       </h3>
 
@@ -40,21 +41,28 @@ export function QuickActions() {
             <Link
               key={item.href}
               href={item.href}
-              className="group flex items-center justify-between p-2.5 -mx-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+              className="group flex items-center justify-between p-2.5 -mx-1.5 rounded-xl hover:bg-[#F4F4F4] transition-colors"
             >
               <div className="flex items-center gap-3">
                 <Icon
                   size={15}
-                  className="text-[#6B7280] group-hover:text-[#1E40AF] transition-colors shrink-0"
+                  className="text-[#737373] group-hover:text-[#090909] transition-colors shrink-0"
                 />
-                <span className="text-xs font-medium text-[#374151] group-hover:text-[#111827] transition-colors">
+                <span className="text-xs font-medium text-[#242424] group-hover:text-[#090909] transition-colors">
                   {item.title}
                 </span>
               </div>
-              <ChevronRight
-                size={14}
-                className="text-gray-400 group-hover:text-[#111827] group-hover:translate-x-0.5 transition-all shrink-0"
-              />
+              <div className="flex items-center gap-2">
+                {item.badge && (
+                  <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-[#090909] text-white">
+                    {item.badge}
+                  </span>
+                )}
+                <ChevronRight
+                  size={14}
+                  className="text-[#A8A8A8] group-hover:text-[#090909] group-hover:translate-x-0.5 transition-all shrink-0"
+                />
+              </div>
             </Link>
           );
         })}

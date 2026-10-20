@@ -117,22 +117,22 @@ export function AlumniNav({ onMobileToggle, mobileOpen }: AlumniNavProps) {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-[#D9D9D9]">
+    <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-2xl border-b border-black/[0.06] shadow-[0_1px_2px_rgba(0,0,0,0.02),0_4px_16px_rgba(0,0,0,0.02)]">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14 gap-3 xl:gap-4">
+        <div className="flex items-center justify-between h-[56px] gap-3 xl:gap-4">
           {/* Left: Brand & Portal Badge */}
           <div className="flex items-center gap-4 lg:gap-6 xl:gap-7 h-full shrink-0">
             <Link href="/alumni-dashboard" className="flex items-center gap-2.5 group shrink-0">
-              <div className="h-7 w-7 rounded bg-[#0A66C2] flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#004182]">
+              <div className="h-7 w-7 rounded-lg bg-[#0a66c2] flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_2px_4px_rgba(10,102,194,0.3)] transition-transform group-hover:scale-105">
                 <span className="text-white text-xs font-bold tracking-tight">A</span>
               </div>
-              <span className="text-base font-bold tracking-tight text-[#191919] hidden sm:inline-block whitespace-nowrap">
-                Alumni<span className="text-[#0A66C2]">Path</span>
+              <span className="text-base font-bold tracking-tight text-[#1d1d1f] hidden sm:inline-block whitespace-nowrap">
+                Alumni<span className="text-[#0a66c2]">Path</span>
               </span>
             </Link>
 
             {/* Desktop Navigation Links */}
-            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 h-full">
+            <nav className="hidden lg:flex items-center gap-1 h-full">
               {navItems.map((item) => {
                 const isActive =
                   item.href === "/alumni-dashboard"
@@ -144,16 +144,16 @@ export function AlumniNav({ onMobileToggle, mobileOpen }: AlumniNavProps) {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "inline-flex items-center gap-1.5 h-14 px-2 xl:px-2.5 text-xs font-medium border-b-2 transition-colors whitespace-nowrap shrink-0",
+                      "inline-flex items-center gap-1.5 h-[34px] px-2.5 xl:px-3 text-xs font-medium rounded-lg transition-all duration-200 whitespace-nowrap shrink-0",
                       isActive
-                        ? "border-[#0A66C2] text-[#0A66C2] font-semibold"
-                        : "border-transparent text-[#666666] hover:text-[#191919] hover:border-gray-300"
+                        ? "bg-[#0a66c2]/[0.08] text-[#0a66c2] font-semibold shadow-[inset_0_0_0_1px_rgba(10,102,194,0.18)]"
+                        : "text-[#515154] hover:text-[#1d1d1f] hover:bg-black/[0.04]"
                     )}
                   >
-                    <Icon size={14} className={isActive ? "text-[#0A66C2]" : "text-[#666666]"} />
+                    <Icon size={14} className={isActive ? "text-[#0a66c2]" : "text-[#86868b]"} />
                     <span>{item.label}</span>
                     {item.badge && (
-                      <span className="text-[10px] font-bold bg-[#EBF3FB] text-[#0A66C2] px-1.5 py-0.2 rounded-full leading-none">
+                      <span className="text-[10px] font-bold bg-[#0a66c2]/10 text-[#0a66c2] px-1.5 py-0.2 rounded-full leading-none">
                         {item.badge}
                       </span>
                     )}
@@ -211,8 +211,8 @@ export function AlumniNav({ onMobileToggle, mobileOpen }: AlumniNavProps) {
               </button>
 
               {showNotifications && (
-                <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-lg bg-white border border-gray-200 shadow-[0_4px_16px_rgba(0,0,0,0.12)] py-2 z-50 animate-in fade-in">
-                  <div className="flex items-center justify-between px-4 py-2 border-b border-gray-100">
+                <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl liquid-glass-elevated border border-white/80 shadow-[0_20px_48px_-12px_rgba(10,22,40,0.14)] py-2 z-50 overflow-hidden animate-in fade-in">
+                  <div className="flex items-center justify-between px-4 py-2.5 border-b border-black/[0.06]">
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-semibold text-gray-900">Notifications</span>
                       {unreadCount > 0 && (
@@ -310,12 +310,12 @@ export function AlumniNav({ onMobileToggle, mobileOpen }: AlumniNavProps) {
               </button>
 
               {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-64 rounded-lg bg-white border border-gray-200 shadow-[0_4px_16px_rgba(0,0,0,0.12)] py-1.5 z-50">
-                  <div className="px-3.5 py-2.5 border-b border-gray-100">
-                    <p className="text-xs font-semibold text-gray-900">{alumni.name}</p>
-                    <p className="text-[11px] text-gray-500 truncate">{alumni.headline}</p>
+                <div className="absolute right-0 mt-2 w-64 rounded-2xl liquid-glass-elevated border border-white/80 shadow-[0_20px_48px_-12px_rgba(10,22,40,0.14)] py-2 z-50 overflow-hidden">
+                  <div className="px-3.5 py-2.5 border-b border-black/[0.06]">
+                    <p className="text-xs font-semibold text-[#1d1d1f]">{alumni.name}</p>
+                    <p className="text-[11px] text-[#6e6e73] truncate">{alumni.headline}</p>
                     <div className="flex items-center gap-1.5 mt-1.5">
-                      <span className="inline-flex items-center gap-1 text-[10px] text-[#057642] bg-[#eef8f1] px-1.5 py-0.5 rounded font-medium border border-[#bfe3c9]">
+                      <span className="inline-flex items-center gap-1 text-[10px] text-[#057642] bg-[#057642]/10 px-2 py-0.5 rounded-full font-medium border border-[#057642]/20">
                         <ShieldCheck size={10} /> Verified Mentor
                       </span>
                       <span className="text-[10px] text-gray-400">@ {alumni.company}</span>

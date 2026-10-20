@@ -9,27 +9,17 @@ import {
   Mail,
   Lock,
   AlertCircle,
-  CheckCircle,
-  X,
+  CheckCircle2,
+  ArrowLeft,
+  ArrowRight,
+  Sparkles,
 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { cn } from "@/lib/utils";
 import type { UserRole } from "@/types";
 import {
   saveAuthSession,
   defaultStudentSession,
   defaultAlumniSession,
 } from "@/lib/dashboard-storage";
-
-// ─── Shared Brand Wordmark ───────────────────────────────────────────────────
-function Wordmark() {
-  return (
-    <span className="text-xl font-bold tracking-tight text-[#191919]">
-      Alumni<span className="text-[#2166A5]">Path</span>
-    </span>
-  );
-}
 
 interface FormErrors {
   email?: string;
@@ -58,14 +48,14 @@ export default function LoginPage() {
     if (!submitted) return;
     const timer = setTimeout(() => {
       router.push(role === "alumni" ? "/alumni-dashboard" : "/dashboard");
-    }, 1800);
+    }, 1500);
     return () => clearTimeout(timer);
   }, [submitted, role, router]);
 
   function validate(): FormErrors {
     const errs: FormErrors = {};
-    if (!email) errs.email = "Email address is required.";
-    else if (!validateEmail(email)) errs.email = "Enter a valid email address.";
+    if (!email) errs.email = "Institutional or work email is required.";
+    else if (!validateEmail(email)) errs.email = "Please enter a valid email address.";
     if (!password) errs.password = "Password is required.";
     else if (password.length < 8)
       errs.password = "Password must be at least 8 characters.";
@@ -85,6 +75,7 @@ export default function LoginPage() {
     const isAlumni =
       role === "alumni" ||
       email.toLowerCase().includes("datadog") ||
+      email.toLowerCase().includes("airbnb") ||
       email.toLowerCase().includes("stripe") ||
       email.toLowerCase().includes("alumni");
     const activeRole: UserRole = isAlumni ? "alumni" : "student";
@@ -95,23 +86,27 @@ export default function LoginPage() {
         ? {
             ...defaultAlumniSession,
             email: email || defaultAlumniSession.email,
-            name: email.toLowerCase().includes("arjun")
-              ? "Arjun Mehta"
+            name: email.toLowerCase().includes("elena")
+              ? "Elena Rostova"
+              : email.toLowerCase().includes("marcus")
+              ? "Marcus Vance"
               : defaultAlumniSession.name,
             isAuthenticated: true,
           }
         : {
             ...defaultStudentSession,
             email: email || defaultStudentSession.email,
-            name: email.toLowerCase().includes("priya")
+            name: email.toLowerCase().includes("ashlin")
+              ? "Ashlin Mirsha"
+              : email.toLowerCase().includes("priya")
               ? "Priya Sharma"
               : defaultStudentSession.name,
             isAuthenticated: true,
           }
     );
 
-    // Simulate network authentication request (demo mode)
-    await new Promise((r) => setTimeout(r, 900));
+    // Simulate authentication latency
+    await new Promise((r) => setTimeout(r, 800));
     setLoading(false);
     setSubmitted(true);
   }
@@ -119,80 +114,92 @@ export default function LoginPage() {
   // ─── Post-Login Success Screen ──────────────────────────────────────────────
   if (submitted) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#F5F7FA] px-4 py-12">
-        <div className="w-full max-w-[420px]">
-          <div className="text-center mb-6 sm:mb-7">
-            <Link href="/" className="inline-flex items-center gap-2.5 group">
-              <div className="h-8 w-8 rounded-[8px] bg-[#2166A5] flex items-center justify-center shrink-0 shadow-xs">
-                <span className="text-white text-sm font-bold">A</span>
-              </div>
-              <Wordmark />
-            </Link>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAFAFA] text-[#090909] px-4 py-12 antialiased">
+        <div className="w-full max-w-[420px] text-center space-y-6">
+          <div className="h-14 w-14 rounded-2xl bg-[#090909] text-white flex items-center justify-center mx-auto shadow-md">
+            <CheckCircle2 size={28} />
           </div>
-          <div className="bg-white border border-[#E5E7EB] rounded-[12px] p-8 shadow-xs text-center">
-            <div className="h-12 w-12 rounded-full bg-[#EEF8F1] border border-[#BFE3C9] flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="h-6 w-6 text-[#057642]" />
-            </div>
-            <h2 className="text-lg font-bold text-[#191919] mb-1.5 tracking-tight">
-              {role === "alumni"
-                ? "Signed in as Alumni Mentor"
-                : "Signed in as Student"}
-            </h2>
-            <p className="text-xs sm:text-sm text-[#626262] mb-6 leading-relaxed">
-              {role === "alumni"
-                ? "Welcome back to the Alumni Mentor Portal! Directing to your workspace…"
-                : "Welcome back! Redirecting to your student dashboard…"}
-            </p>
-            <Button
-              variant="primary"
-              size="lg"
-              fullWidth
-              asChild
-              className="h-[46px] rounded-[8px] font-semibold bg-[#2166A5] hover:bg-[#194F82] !text-white text-white border-0 shadow-none"
-            >
-              <Link href={role === "alumni" ? "/alumni-dashboard" : "/dashboard"}>
+
+          <div className="bg-white border border-[#E7E7E7] rounded-3xl p-8 sm:p-10 shadow-sm space-y-4">
+            <div className="space-y-1">
+              <span className="text-[11px] font-semibold text-[#737373] uppercase tracking-wider">
+                Session Authenticated
+              </span>
+              <h2 className="text-xl sm:text-2xl font-bold text-[#090909] tracking-tight">
                 {role === "alumni"
-                  ? "Go to Alumni Dashboard"
-                  : "Go to Student Dashboard"}
+                  ? "Welcome, Alumni Mentor"
+                  : "Welcome, Student"}
+              </h2>
+            </div>
+            <p className="text-xs sm:text-sm text-[#737373] leading-relaxed">
+              {role === "alumni"
+                ? "Connecting to your collegiate mentor workspace and incoming student guidance requests…"
+                : "Synchronizing your roadmap milestones, recommended alumni, and mentor conversations…"}
+            </p>
+
+            <div className="pt-2">
+              <Link
+                href={role === "alumni" ? "/alumni-dashboard" : "/dashboard"}
+                className="w-full h-11 rounded-full bg-[#090909] hover:bg-[#242424] text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-xs transition-colors"
+              >
+                <span>Continue to Workspace</span>
+                <ArrowRight size={14} />
               </Link>
-            </Button>
+            </div>
           </div>
         </div>
       </div>
     );
   }
 
-  // ─── Perfectly Centered Single-Column Login Page ────────────────────────────
   return (
-    <div className="min-h-screen bg-[#F5F7FA] flex flex-col items-center justify-center py-12 px-4 sm:px-6">
-      {/* 1. AlumniPath Logo Centered Above the Authentication Card */}
-      <div className="mb-6 sm:mb-7 text-center">
-        <Link href="/" className="inline-flex items-center gap-2.5 group">
-          <div className="h-8 w-8 rounded-[8px] bg-[#2166A5] flex items-center justify-center shrink-0 shadow-xs">
-            <span className="text-white text-sm font-bold">A</span>
-          </div>
-          <Wordmark />
+    <div className="min-h-screen bg-[#FAFAFA] text-[#090909] flex flex-col justify-between antialiased selection:bg-[#090909] selection:text-white py-8 px-4 sm:px-6">
+      {/* Top Header Row */}
+      <div className="max-w-5xl w-full mx-auto flex items-center justify-between pb-6">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
+        >
+          <ArrowLeft size={14} />
+          <span>Return to AlumniPath</span>
         </Link>
+
+        <span className="text-[11px] font-medium text-[#737373] hidden sm:inline">
+          Verified University Network · Spring 2026
+        </span>
       </div>
 
-      {/* 2. White Centered Login Container (max-w 420px, 32px padding, rounded-12px) */}
-      <div className="w-full max-w-[420px] bg-white border border-[#E5E7EB] rounded-[12px] shadow-xs p-6 sm:p-8">
-        {/* Form Header: Left-aligned for optimal scanning */}
-        <div className="mb-6 text-left">
-          <h1 className="text-2xl sm:text-[28px] font-semibold text-[#191919] tracking-tight mb-1">
-            Welcome back
-          </h1>
-          <p className="text-sm text-[#6B7280]">
-            Sign in to continue to your AlumniPath network.
-          </p>
+      {/* Centered Auth Card Container */}
+      <div className="w-full max-w-[440px] mx-auto my-auto py-4">
+        {/* Brand Icon Header */}
+        <div className="mb-6 text-center space-y-2">
+          <Link href="/" className="inline-flex items-center gap-2.5 group">
+            <div className="h-9 w-9 rounded-xl bg-[#090909] text-white flex items-center justify-center font-bold text-sm shadow-sm transition-transform group-hover:scale-105">
+              A
+            </div>
+            <span className="text-lg font-bold tracking-tight text-[#090909]">
+              AlumniPath
+            </span>
+          </Link>
         </div>
 
-        {/* 3. Role Selector Segmented Control */}
-        <div className="mb-4">
+        {/* White Centered Card */}
+        <div className="bg-white border border-[#E7E7E7] rounded-3xl shadow-sm p-7 sm:p-9 space-y-6">
+          {/* Card Title */}
+          <div className="space-y-1">
+            <h1 className="text-2xl sm:text-[26px] font-bold tracking-tight text-[#090909]">
+              Welcome back
+            </h1>
+            <p className="text-xs sm:text-sm text-[#737373]">
+              Sign in to access your verified collegiate network.
+            </p>
+          </div>
+
+          {/* Role Segmented Control */}
           <div
             role="tablist"
             aria-label="User portal role"
-            className="p-1 bg-[#F3F4F6] rounded-[8px] border border-[#E5E7EB] grid grid-cols-2 gap-1"
+            className="p-1 bg-[#F4F4F4] rounded-full border border-[#E7E7E7] grid grid-cols-2 gap-1"
           >
             <button
               type="button"
@@ -200,21 +207,17 @@ export default function LoginPage() {
               aria-selected={role === "student"}
               onClick={() => {
                 setRole("student");
-                if (email.includes("datadog") || email.includes("stripe")) {
-                  setEmail("priya@umich.edu");
+                if (email.includes("datadog") || email.includes("airbnb")) {
+                  setEmail("ashlin@stanford.edu");
                 }
               }}
-              className={cn(
-                "py-2 px-3 text-xs sm:text-sm font-medium rounded-[6px] transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer",
+              className={`py-2 px-3 text-xs rounded-full transition-all flex items-center justify-center gap-1.5 cursor-pointer font-medium ${
                 role === "student"
-                  ? "bg-white text-[#2166A5] font-semibold shadow-xs border border-[#E2E8F0]"
-                  : "text-[#626262] hover:text-[#191919]"
-              )}
+                  ? "bg-[#090909] text-white font-semibold shadow-xs"
+                  : "text-[#737373] hover:text-[#090909]"
+              }`}
             >
-              {role === "student" && (
-                <span className="h-1.5 w-1.5 rounded-full bg-[#2166A5]" />
-              )}
-              Student Portal
+              <span>Student Portal</span>
             </button>
 
             <button
@@ -223,302 +226,233 @@ export default function LoginPage() {
               aria-selected={role === "alumni"}
               onClick={() => {
                 setRole("alumni");
-                if (email.includes("umich") || email === "") {
+                if (email.includes("stanford") || email === "") {
                   setEmail("marcus.vance@datadog.com");
                 }
               }}
-              className={cn(
-                "py-2 px-3 text-xs sm:text-sm font-medium rounded-[6px] transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer",
+              className={`py-2 px-3 text-xs rounded-full transition-all flex items-center justify-center gap-1.5 cursor-pointer font-medium ${
                 role === "alumni"
-                  ? "bg-white text-[#2166A5] font-semibold shadow-xs border border-[#E2E8F0]"
-                  : "text-[#626262] hover:text-[#191919]"
-              )}
+                  ? "bg-[#090909] text-white font-semibold shadow-xs"
+                  : "text-[#737373] hover:text-[#090909]"
+              }`}
             >
-              {role === "alumni" && (
-                <span className="h-1.5 w-1.5 rounded-full bg-[#2166A5]" />
-              )}
-              Alumni Mentor Portal
+              <span>Alumni Mentor</span>
             </button>
           </div>
-        </div>
 
-        {/* 4. Compact Demo Accounts Section */}
-        <div className="mb-5 bg-[#F8FAFC] border border-[#E5E7EB] rounded-[8px] p-3 text-xs">
-          <div className="flex items-center justify-between mb-2">
-            <span className="font-medium text-[#374151] flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#2166A5]" />
-              Demo accounts:
-            </span>
-            <span className="text-[10px] text-[#626262] bg-[#E5E7EB]/70 px-1.5 py-0.5 rounded font-medium">
-              Demo Mode
-            </span>
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            <button
-              type="button"
-              onClick={() => {
-                setRole("student");
-                setEmail("priya@umich.edu");
-                setPassword("password123");
-                setErrors({});
-                setForgotNotice(false);
-              }}
-              className={cn(
-                "px-2.5 py-1 rounded-[6px] text-xs font-medium border transition-colors cursor-pointer",
-                role === "student" && email === "priya@umich.edu"
-                  ? "bg-[#F0F5FA] border-[#2166A5] text-[#2166A5]"
-                  : "bg-white border-[#D1D5DB] text-[#4B5563] hover:bg-[#F3F4F6] hover:text-[#191919]"
-              )}
-            >
-              Student (Priya)
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setRole("alumni");
-                setEmail("marcus.vance@datadog.com");
-                setPassword("password123");
-                setErrors({});
-                setForgotNotice(false);
-              }}
-              className={cn(
-                "px-2.5 py-1 rounded-[6px] text-xs font-medium border transition-colors cursor-pointer",
-                role === "alumni" && email === "marcus.vance@datadog.com"
-                  ? "bg-[#F0F5FA] border-[#2166A5] text-[#2166A5]"
-                  : "bg-white border-[#D1D5DB] text-[#4B5563] hover:bg-[#F3F4F6] hover:text-[#191919]"
-              )}
-            >
-              Alumni (Marcus Vance)
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setRole("alumni");
-                setEmail("arjun@stripe.com");
-                setPassword("password123");
-                setErrors({});
-                setForgotNotice(false);
-              }}
-              className={cn(
-                "px-2.5 py-1 rounded-[6px] text-xs font-medium border transition-colors cursor-pointer",
-                role === "alumni" && email === "arjun@stripe.com"
-                  ? "bg-[#F0F5FA] border-[#2166A5] text-[#2166A5]"
-                  : "bg-white border-[#D1D5DB] text-[#4B5563] hover:bg-[#F3F4F6] hover:text-[#191919]"
-              )}
-            >
-              Alumni (Arjun)
-            </button>
-          </div>
-        </div>
+          {/* Quick Demo Accounts Helper */}
+          <div className="bg-[#FAFAFA] border border-[#E7E7E7] rounded-2xl p-3.5 space-y-2.5">
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="font-semibold text-[#090909] flex items-center gap-1.5">
+                <Sparkles size={12} className="text-[#090909]" />
+                Demo Credentials:
+              </span>
+              <span className="text-[#737373] text-[10px]">Instant Fill</span>
+            </div>
 
-        {/* 5. Google Sign-In Secondary Action Button */}
-        <button
-          type="button"
-          onClick={() => {
-            setErrors({
-              general:
-                "Google sign-in is not yet configured for demo mode. Please select a demo account above or use email and password.",
-            });
-          }}
-          className="w-full flex items-center justify-center gap-3 h-[44px] rounded-[8px] border border-[#D1D5DB] bg-white text-sm font-medium text-[#374151] hover:bg-[#F9FAFB] hover:border-[#9CA3AF] active:bg-[#F3F4F6] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2166A5] cursor-pointer"
-        >
-          <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-              fill="#4285F4"
-            />
-            <path
-              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-              fill="#34A853"
-            />
-            <path
-              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-              fill="#FBBC05"
-            />
-            <path
-              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-              fill="#EA4335"
-            />
-          </svg>
-          <span>Continue with Google</span>
-        </button>
-
-        {/* 6. Subtle Divider */}
-        <div className="relative flex items-center my-5">
-          <div className="flex-1 border-t border-[#E5E7EB]" />
-          <span className="px-3 text-xs text-[#8C8C8C] uppercase tracking-wider font-medium bg-white">
-            or
-          </span>
-          <div className="flex-1 border-t border-[#E5E7EB]" />
-        </div>
-
-        {/* Notices & Error Banners */}
-        {errors.general && (
-          <div className="mb-4 flex items-start gap-2.5 rounded-[8px] border border-[#F9D2D5] bg-[#FEEFF0] p-3 text-xs text-[#CC1016]">
-            <AlertCircle size={15} className="mt-0.5 shrink-0 text-[#CC1016]" />
-            <span className="flex-1 leading-relaxed">{errors.general}</span>
-            <button
-              type="button"
-              onClick={() => setErrors((p) => ({ ...p, general: undefined }))}
-              className="text-[#CC1016] hover:opacity-80 cursor-pointer"
-              aria-label="Dismiss notice"
-            >
-              <X size={14} />
-            </button>
-          </div>
-        )}
-
-        {forgotNotice && (
-          <div className="mb-4 flex items-start gap-2.5 rounded-[8px] border border-[#B2D5F8] bg-[#EBF3FB] p-3 text-xs text-[#004182]">
-            <AlertCircle size={15} className="mt-0.5 shrink-0 text-[#2166A5]" />
-            <span className="flex-1 leading-relaxed">
-              In demo mode, you can sign in using password{" "}
-              <strong className="font-semibold underline">password123</strong> or
-              click any quick-fill persona above.
-            </span>
-            <button
-              type="button"
-              onClick={() => setForgotNotice(false)}
-              className="text-[#004182] hover:opacity-80 cursor-pointer"
-              aria-label="Dismiss notice"
-            >
-              <X size={14} />
-            </button>
-          </div>
-        )}
-
-        {/* 7. Input Fields Form */}
-        <form onSubmit={handleSubmit} noValidate className="space-y-4">
-          {/* Email Address */}
-          <Input
-            id="login-email"
-            label="Email address"
-            type="email"
-            placeholder="you@university.edu"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              if (errors.email) setErrors((p) => ({ ...p, email: undefined }));
-            }}
-            error={errors.email}
-            leadingIcon={<Mail size={16} />}
-            required
-          />
-
-          {/* Password with Aligned Forgot Password Link */}
-          <div className="flex flex-col gap-1.5">
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="login-password"
-                className="text-xs sm:text-sm font-medium text-[#374151] tracking-tight"
-              >
-                Password
-              </label>
+            <div className="flex flex-wrap gap-1.5">
               <button
                 type="button"
-                onClick={() => setForgotNotice(true)}
-                className="text-xs sm:text-sm text-[#2166A5] hover:text-[#194F82] font-medium hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2166A5] rounded cursor-pointer"
+                onClick={() => {
+                  setRole("student");
+                  setEmail("ashlin@stanford.edu");
+                  setPassword("password123");
+                  setErrors({});
+                  setForgotNotice(false);
+                }}
+                className={`px-3 py-1 rounded-full text-xs transition-colors cursor-pointer border ${
+                  role === "student" && email === "ashlin@stanford.edu"
+                    ? "bg-[#090909] text-white border-[#090909] font-medium"
+                    : "bg-white text-[#737373] hover:text-[#090909] border-[#E7E7E7] hover:border-[#090909]"
+                }`}
               >
-                Forgot password?
+                Student (Ashlin)
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setRole("alumni");
+                  setEmail("marcus.vance@datadog.com");
+                  setPassword("password123");
+                  setErrors({});
+                  setForgotNotice(false);
+                }}
+                className={`px-3 py-1 rounded-full text-xs transition-colors cursor-pointer border ${
+                  role === "alumni" && email === "marcus.vance@datadog.com"
+                    ? "bg-[#090909] text-white border-[#090909] font-medium"
+                    : "bg-white text-[#737373] hover:text-[#090909] border-[#E7E7E7] hover:border-[#090909]"
+                }`}
+              >
+                Marcus (Datadog)
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setRole("alumni");
+                  setEmail("elena.rostova@airbnb.com");
+                  setPassword("password123");
+                  setErrors({});
+                  setForgotNotice(false);
+                }}
+                className={`px-3 py-1 rounded-full text-xs transition-colors cursor-pointer border ${
+                  role === "alumni" && email === "elena.rostova@airbnb.com"
+                    ? "bg-[#090909] text-white border-[#090909] font-medium"
+                    : "bg-white text-[#737373] hover:text-[#090909] border-[#E7E7E7] hover:border-[#090909]"
+                }`}
+              >
+                Elena (Airbnb)
               </button>
             </div>
-            <Input
-              id="login-password"
-              type={showPassword ? "text" : "password"}
-              placeholder="••••••••"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                if (errors.password)
-                  setErrors((p) => ({ ...p, password: undefined }));
-              }}
-              error={errors.password}
-              leadingIcon={<Lock size={16} />}
-              trailingElement={
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((p) => !p)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              }
-              required
-            />
           </div>
 
-          {/* Remember Me */}
-          <div className="flex items-center justify-between pt-0.5">
-            <label className="flex items-center gap-2.5 cursor-pointer select-none">
+          {/* Form */}
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
+            {/* Email Field */}
+            <div className="space-y-1.5">
+              <label htmlFor="login-email" className="text-xs font-semibold text-[#090909] block">
+                {role === "alumni" ? "Work or Alumni Email" : "Institutional (.edu) Email"}
+              </label>
+              <div className="relative">
+                <input
+                  id="login-email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder={role === "alumni" ? "marcus.vance@datadog.com" : "ashlin@stanford.edu"}
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+                  }}
+                  className={`w-full h-11 pl-10 pr-3.5 rounded-xl border bg-white text-xs text-[#090909] placeholder-[#A8A8A8] focus:outline-none transition-all ${
+                    errors.email
+                      ? "border-[#090909] ring-1 ring-[#090909]"
+                      : "border-[#E7E7E7] focus:border-[#090909] focus:ring-1 focus:ring-[#090909]"
+                  }`}
+                />
+                <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#737373]" />
+              </div>
+              {errors.email && (
+                <p className="text-[11px] text-[#090909] font-medium flex items-center gap-1 pt-0.5">
+                  <AlertCircle size={12} />
+                  <span>{errors.email}</span>
+                </p>
+              )}
+            </div>
+
+            {/* Password Field */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label htmlFor="login-password" className="text-xs font-semibold text-[#090909]">
+                  Password
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setForgotNotice(true)}
+                  className="text-[11px] text-[#737373] hover:text-[#090909] hover:underline cursor-pointer"
+                >
+                  Forgot password?
+                </button>
+              </div>
+              <div className="relative">
+                <input
+                  id="login-password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+                  }}
+                  className={`w-full h-11 pl-10 pr-10 rounded-xl border bg-white text-xs text-[#090909] placeholder-[#A8A8A8] focus:outline-none transition-all ${
+                    errors.password
+                      ? "border-[#090909] ring-1 ring-[#090909]"
+                      : "border-[#E7E7E7] focus:border-[#090909] focus:ring-1 focus:ring-[#090909]"
+                  }`}
+                />
+                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#737373]" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#737373] hover:text-[#090909] transition-colors cursor-pointer"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="text-[11px] text-[#090909] font-medium flex items-center gap-1 pt-0.5">
+                  <AlertCircle size={12} />
+                  <span>{errors.password}</span>
+                </p>
+              )}
+            </div>
+
+            {/* Forgot Password Notice */}
+            {forgotNotice && (
+              <div className="p-3 bg-[#F4F4F4] border border-[#E7E7E7] rounded-xl text-xs text-[#090909] space-y-1">
+                <span className="font-semibold block text-[11px]">Demo Mode Password Reset</span>
+                <p className="text-[11px] text-[#737373]">
+                  Use password <code className="text-[#090909] font-bold">password123</code> with any sample account above to sign in immediately.
+                </p>
+              </div>
+            )}
+
+            {/* Remember Me */}
+            <div className="flex items-center gap-2 pt-1">
               <input
+                id="login-remember"
                 type="checkbox"
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}
-                className="h-4 w-4 rounded border-[#D1D5DB] text-[#2166A5] focus:ring-2 focus:ring-[#2166A5]/20 focus:outline-none cursor-pointer"
+                className="h-4 w-4 rounded border-[#E7E7E7] accent-[#090909] focus:ring-[#090909]"
               />
-              <span className="text-xs sm:text-sm text-[#4B5563]">
-                Remember me for 30 days
-              </span>
-            </label>
+              <label htmlFor="login-remember" className="text-xs text-[#737373] cursor-pointer">
+                Keep me signed in on this device
+              </label>
+            </div>
+
+            {/* Submit Button */}
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full h-11 rounded-full bg-[#090909] hover:bg-[#242424] text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                {loading ? (
+                  <>
+                    <span className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Authenticating...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Sign in to Platform</span>
+                    <ArrowRight size={14} />
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+
+          {/* Switch to Signup */}
+          <div className="pt-2 border-t border-[#E7E7E7] text-center text-xs text-[#737373]">
+            <span>Don&apos;t have an account? </span>
+            <Link
+              href="/signup"
+              className="text-[#090909] font-semibold hover:underline"
+            >
+              Apply to join cohort →
+            </Link>
           </div>
-
-          {/* 8. Primary Sign In Button (height 46px, radius 8px, #2166A5) */}
-          <Button
-            type="submit"
-            variant="primary"
-            disabled={loading}
-            fullWidth
-            className="h-[46px] rounded-[8px] font-semibold text-sm sm:text-base bg-[#2166A5] hover:bg-[#194F82] active:bg-[#143F68] !text-white text-white border-0 transition-colors shadow-none mt-2"
-          >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg
-                  className="animate-spin h-4 w-4 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                <span>Signing in…</span>
-              </span>
-            ) : (
-              "Sign In"
-            )}
-          </Button>
-        </form>
-
-        {/* 9. Centered Signup Link beneath the form */}
-        <p className="mt-6 text-center text-sm text-[#626262]">
-          New to AlumniPath?{" "}
-          <Link
-            href="/signup"
-            className="text-[#2166A5] font-semibold hover:text-[#194F82] hover:underline"
-          >
-            Join now
-          </Link>
-        </p>
+        </div>
       </div>
 
-      {/* Subtle Copyright Footer */}
-      <p className="mt-8 text-center text-xs text-[#8C8C8C]">
-        &copy; 2026 AlumniPath · University Alumni & Mentorship Platform
-      </p>
+      {/* Footer copyright */}
+      <div className="text-center text-[11px] text-[#737373] py-4">
+        © 2026 AlumniPath · Collegiate Alumni Network &amp; Mentorship
+      </div>
     </div>
   );
 }

@@ -21,23 +21,23 @@ export function StudentProfileCard({
   const displayName = student.name && student.name.trim().length > 0 ? student.name : "Mirsha";
 
   return (
-    <div className="bg-white border border-[#E5E7EB] rounded-xl p-5 shadow-xs">
+    <div className="bg-white border border-[#E7E7E7] rounded-2xl p-5 shadow-xs">
       {/* Header: Avatar, Name, Department & Year + Edit Profile Link */}
-      <div className="flex items-start justify-between gap-3 pb-3 border-b border-[#F3F4F6]">
+      <div className="flex items-start justify-between gap-3 pb-3 border-b border-[#E7E7E7]">
         <div className="flex items-center gap-3 min-w-0">
           <Avatar
             name={displayName}
             size="lg"
-            className="ring-1 ring-gray-100 bg-white shrink-0"
+            className="ring-2 ring-[#E7E7E7] bg-white shrink-0"
           />
           <div className="min-w-0">
-            <h3 className="text-base font-bold text-[#111827] truncate">
+            <h3 className="text-base font-bold text-[#090909] truncate">
               {displayName}
             </h3>
-            <p className="text-xs text-[#4B5563] truncate mt-0.5">
+            <p className="text-xs text-[#555555] truncate mt-0.5">
               {student.department}
             </p>
-            <p className="text-[11px] text-[#6B7280] mt-0.5">
+            <p className="text-[11px] text-[#737373] mt-0.5">
               {academicYear}
             </p>
           </div>
@@ -46,43 +46,39 @@ export function StudentProfileCard({
         <button
           type="button"
           onClick={onOpenEditProfile}
-          className="text-xs font-semibold text-[#1E40AF] hover:underline shrink-0 cursor-pointer"
+          className="text-xs font-semibold text-[#090909] hover:underline shrink-0 cursor-pointer"
         >
           Edit Profile
         </button>
       </div>
 
       {/* Target Career Role */}
-      <div className="py-3 border-b border-[#F3F4F6]">
-        <span className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider block">
+      <div className="py-3 border-b border-[#E7E7E7]">
+        <span className="text-[10px] font-semibold text-[#737373] uppercase tracking-wider block">
           Target Career Role
         </span>
-        <div className="flex items-center gap-1.5 text-xs font-bold text-[#111827] mt-1">
-          <Target size={13} className="text-[#1E40AF] shrink-0" />
+        <div className="flex items-center gap-1.5 text-xs font-bold text-[#090909] mt-1">
+          <Target size={13} className="text-[#090909] shrink-0" />
           <span className="truncate">{careerGoal}</span>
         </div>
       </div>
 
-      {/* Small Profile Completion Indicator */}
+      {/* Profile Strength Indicator */}
       <div className="pt-3">
         <div className="flex items-center justify-between text-xs mb-1.5">
-          <span className="font-medium text-[#4B5563]">Profile Strength</span>
-          <span className="font-bold text-[#111827]">{completion.percent}%</span>
+          <span className="font-semibold text-[#555555]">Profile Strength</span>
+          <span className="font-bold text-[#090909]">{completion.percent}%</span>
         </div>
-        <div className="w-full bg-[#F3F4F6] rounded-full h-1.5 overflow-hidden">
+        <div className="w-full bg-[#EBEBEB] rounded-full h-1.5 overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all duration-300 ${
-              completion.percent >= 80 ? "bg-[#057642]" : "bg-[#1E40AF]"
-            }`}
+            className="h-full rounded-full bg-[#090909] transition-all duration-300"
             style={{ width: `${completion.percent}%` }}
           />
         </div>
-        <p className="text-[11px] text-[#6B7280] mt-1.5">
+        <p className="text-[11px] text-[#737373] mt-1.5 font-medium">
           {completion.percent === 100
-            ? "Profile fully completed"
-            : `${completion.missingCount} recommended field${
-                completion.missingCount > 1 ? "s" : ""
-              } remaining`}
+            ? "All essentials completed"
+            : `${completion.missingCount} recommended fields remaining`}
         </p>
       </div>
     </div>
