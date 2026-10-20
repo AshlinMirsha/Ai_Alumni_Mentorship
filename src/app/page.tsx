@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import {
   ArrowRight,
   CheckCircle2,
   Menu,
   X,
-  Search,
   Check,
   ChevronRight,
   ShieldCheck,
@@ -19,7 +18,6 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Avatar } from "@/components/ui/Avatar";
-import { alumniData } from "@/lib/mock-data";
 import { ScrollMotionDirector } from "@/components/landing/ScrollMotionDirector";
 
 // ─── Pure Monochrome Wordmark ──────────────────────────────────────────────────
@@ -66,12 +64,12 @@ function FloatingHeader() {
           >
             The Continuum
           </a>
-          <a
-            href="#directory"
+          <Link
+            href="/alumni"
             className="text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
           >
             Directory
-          </a>
+          </Link>
           <a
             href="#metrics"
             className="text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
@@ -129,13 +127,13 @@ function FloatingHeader() {
           >
             The Continuum
           </a>
-          <a
-            href="#directory"
+          <Link
+            href="/alumni"
             className="text-xs font-medium py-2 text-[#090909] border-b border-[#E7E7E7]"
             onClick={() => setMobileOpen(false)}
           >
             Directory
-          </a>
+          </Link>
           <a
             href="#metrics"
             className="text-xs font-medium py-2 text-[#090909] border-b border-[#E7E7E7]"
@@ -245,44 +243,12 @@ const TRAJECTORY_NODES: TrajectoryNode[] = [
   },
 ];
 
-// Architectural Grayscale Covers for Directory Spotlight
-const ARCH_COVERS = [
-  "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80",
-];
-
 export default function LandingPage() {
   const [selectedNode, setSelectedNode] = useState<TrajectoryNode>(TRAJECTORY_NODES[0]);
   const [activeHubFilter, setActiveHubFilter] = useState<string>("All");
   const [pingSent, setPingSent] = useState(false);
   const [activeStoryStage, setActiveStoryStage] = useState<number>(0);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
   const [conversionRole, setConversionRole] = useState<"student" | "alumni">("student");
-
-  const filteredAlumni = useMemo(() => {
-    return alumniData.filter((a) => {
-      const matchSearch =
-        !searchQuery.trim() ||
-        a.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-        a.company.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-        a.role.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-        a.skills.some((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase().trim()));
-
-      const matchCategory =
-        selectedCategory === "All" ||
-        (selectedCategory === "Cloud & Infra" && (a.role.includes("Backend") || a.role.includes("Infrastructure") || a.role.includes("DevOps"))) ||
-        (selectedCategory === "Frontend & Design" && (a.role.includes("Frontend") || a.role.includes("Design") || a.role.includes("Full-Stack"))) ||
-        (selectedCategory === "Product Strategy" && (a.role.includes("Product") || a.role.includes("Manager"))) ||
-        (selectedCategory === "AI & ML" && (a.role.includes("AI") || a.role.includes("Machine") || a.role.includes("Data")));
-
-      return matchSearch && matchCategory;
-    });
-  }, [searchQuery, selectedCategory]);
 
   const handlePing = () => {
     setPingSent(true);
@@ -1012,159 +978,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ══════════════════════════════════════════════════════════════════════
-            ALUMNI DIRECTORY SPOTLIGHT (MATCHING REFERENCE 4 CARDS)
-           ══════════════════════════════════════════════════════════════════════ */}
-        <section id="directory" className="py-20 border-t border-[#E7E7E7] bg-[#FAFAFA] scroll-mt-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
-              <div data-vx-observe="true">
-                <p className="font-mono text-xs font-bold uppercase tracking-wider text-[#737373] mb-1.5">
-                  VERIFIED DIRECTORY
-                </p>
-                <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#090909]">
-                  Explore mentors actively advising students.
-                </h2>
-                <p className="text-sm text-[#555555] mt-2 max-w-xl">
-                  Filter by role, technical domain, or target company. Every mentor is verified through academic records.
-                </p>
-              </div>
 
-              <Button variant="primary" asChild className="rounded-full shrink-0">
-                <Link href="/alumni" className="flex items-center gap-2">
-                  <Search size={14} />
-                  <span>View Full Directory (540+)</span>
-                </Link>
-              </Button>
-            </div>
-
-            {/* Filter Bar */}
-            <div className="bg-white rounded-2xl p-3 sm:p-4 mb-8 border border-[#E7E7E7] shadow-xs flex flex-col sm:flex-row gap-3 items-center justify-between">
-              <div className="relative w-full sm:w-80">
-                <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#737373]" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search name, company, or skill..."
-                  className="w-full bg-[#F4F4F4] rounded-full pl-9 pr-3.5 py-2 text-xs border border-transparent focus:border-[#090909] focus:bg-white focus:outline-none transition-all placeholder:text-[#737373] text-[#090909]"
-                />
-              </div>
-
-              <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
-                {["All", "Cloud & Infra", "Frontend & Design", "Product Strategy", "AI & ML"].map((cat) => (
-                  <button
-                    key={cat}
-                    type="button"
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`text-xs px-3.5 py-1.5 rounded-full transition-all shrink-0 ${
-                      selectedCategory === cat
-                        ? "bg-[#090909] text-white font-semibold"
-                        : "text-[#555555] hover:text-[#090909] hover:bg-[#F4F4F4]"
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Directory Cards Grid (Matching Reference 4: Architectural Cover + Overlapping Avatar) */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredAlumni.slice(0, 6).map((alumnus, idx) => (
-                <div
-                  key={alumnus.id}
-                  className="bg-white rounded-2xl border border-[#E7E7E7] shadow-xs hover:shadow-md hover:border-[#D1D1D1] transition-all duration-200 overflow-hidden flex flex-col justify-between group"
-                >
-                  <div>
-                    {/* Grayscale Architectural Panoramic Cover */}
-                    <div className="h-28 w-full bg-[#E7E7E7] relative overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={ARCH_COVERS[idx % ARCH_COVERS.length]}
-                        alt="Architectural Cover"
-                        className="w-full h-full object-cover grayscale contrast-110 group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <span className="absolute top-2.5 right-2.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-xs text-[#090909] border border-[#E7E7E7]">
-                        Class of &apos;{String(alumnus.graduationYear).slice(-2)}
-                      </span>
-                    </div>
-
-                    {/* Overlapping Avatar & Details */}
-                    <div className="px-5 pt-0 pb-4 relative">
-                      <div className="-mt-8 mb-3 flex items-end justify-between">
-                        <div className="relative">
-                          <Avatar
-                            name={alumnus.name}
-                            size="lg"
-                            className="ring-4 ring-white"
-                          />
-                          {alumnus.isVerified && (
-                            <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#090909] text-white flex items-center justify-center text-[9px] font-bold ring-2 ring-white">
-                              ✓
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <Link
-                        href={`/alumni/${alumnus.id}`}
-                        className="text-base font-bold text-[#090909] group-hover:text-[#454545] transition-colors block"
-                      >
-                        {alumnus.name}
-                      </Link>
-
-                      <p className="text-xs text-[#454545] font-medium mt-0.5">
-                        {alumnus.role} · <strong className="text-[#090909]">{alumnus.company}</strong>
-                      </p>
-
-                      <p className="text-[11px] text-[#737373] mt-0.5">
-                        {alumnus.location} · {alumnus.department}
-                      </p>
-
-                      <p className="text-xs text-[#555555] leading-relaxed mt-3 line-clamp-2 italic">
-                        &ldquo;{alumnus.bio}&rdquo;
-                      </p>
-
-                      {/* Skills Chips */}
-                      <div className="flex flex-wrap gap-1 mt-3.5">
-                        {alumnus.skills.slice(0, 3).map((s) => (
-                          <span
-                            key={s.id}
-                            className="text-[10px] text-[#454545] bg-[#F4F4F4] px-2 py-0.5 rounded-full border border-[#E7E7E7]"
-                          >
-                            {s.name}
-                          </span>
-                        ))}
-                        {alumnus.skills.length > 3 && (
-                          <span className="text-[10px] text-[#737373] px-1 py-0.5">
-                            +{alumnus.skills.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Card Footer with Circular Arrow Button */}
-                  <div className="px-5 py-3.5 border-t border-[#E7E7E7] bg-[#FAFAFA] flex items-center justify-between">
-                    <span className="text-xs text-[#242424] font-medium flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#090909]" />
-                      {alumnus.responseRate || 96}% Response
-                    </span>
-
-                    <Link
-                      href={`/alumni/${alumnus.id}`}
-                      className="w-8 h-8 rounded-full bg-[#090909] text-white flex items-center justify-center hover:bg-[#242424] transition-colors"
-                      aria-label={`View ${alumnus.name}'s profile`}
-                    >
-                      <ArrowRight size={13} />
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
 
         {/* ══════════════════════════════════════════════════════════════════════
             EMPIRICAL TRUST & IMPACT METRICS STRIP (ANIMATED SCROLL TELEMETRY)
