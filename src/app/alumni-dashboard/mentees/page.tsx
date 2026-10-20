@@ -51,6 +51,19 @@ import type { Mentorship, DiscoverStudent, MentorshipSession } from "@/types";
 type PageTab = "active" | "sessions" | "completed";
 type SessionFilter = "all" | "upcoming" | "completed" | "cancelled";
 
+function formatDisplayDate(dateStr?: string) {
+  if (!dateStr) return "";
+  try {
+    const d = new Date(dateStr);
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    }
+  } catch {
+    // fallback
+  }
+  return dateStr;
+}
+
 export default function MyMenteesPage() {
   const mentorshipActivity = useSyncExternalStore(
     subscribeToDashboardStorage,
@@ -332,61 +345,89 @@ export default function MyMenteesPage() {
         </div>
 
         {/* Capacity & Stats Strip */}
-        <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-            <span className="text-[11px] text-gray-500 font-medium block">Active Roster</span>
-            <div className="text-base font-bold text-gray-900 mt-0.5">
-              {activeMentees.length} / 5 Students
+        <div className="mt-5 pt-5 border-t border-gray-100 grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="p-4 bg-[#F8FAFC] rounded-xl border border-gray-200/80 shadow-2xs hover:border-gray-300 transition-colors">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-gray-500 font-medium">Active Roster</span>
+              <UserCheck size={14} className="text-[#057642]" />
             </div>
-            <span className="text-[10px] text-[#057642] font-semibold">
-              {5 - activeMentees.length > 0
-                ? `${5 - activeMentees.length} available slots`
-                : "At full capacity"}
-            </span>
+            <div className="text-xl font-bold text-gray-900 mt-1">
+              {activeMentees.length} <span className="text-xs font-normal text-gray-500">/ 5 Capacity</span>
+            </div>
+            <div className="mt-1 flex items-center gap-1.5">
+              <span className={cn(
+                "h-1.5 w-1.5 rounded-full",
+                5 - activeMentees.length > 0 ? "bg-[#057642]" : "bg-amber-500"
+              )} />
+              <span className={cn(
+                "text-[11px] font-semibold",
+                5 - activeMentees.length > 0 ? "text-[#057642]" : "text-amber-700"
+              )}>
+                {5 - activeMentees.length > 0
+                  ? `${5 - activeMentees.length} available slots`
+                  : "At full capacity"}
+              </span>
+            </div>
           </div>
 
-          <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-            <span className="text-[11px] text-gray-500 font-medium block">Upcoming Sessions</span>
-            <div className="text-base font-bold text-gray-900 mt-0.5">
-              {allSessions.filter((s) => s.status === "scheduled" || s.status === "confirmed" || s.status === "rescheduled").length} Booked
+          <div className="p-4 bg-[#F8FAFC] rounded-xl border border-gray-200/80 shadow-2xs hover:border-gray-300 transition-colors">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-gray-500 font-medium">Upcoming Sessions</span>
+              <Calendar size={14} className="text-[#0a66c2]" />
             </div>
-            <span className="text-[10px] text-gray-500 font-medium">Conflict-checked</span>
+            <div className="text-xl font-bold text-gray-900 mt-1">
+              {allSessions.filter((s) => s.status === "scheduled" || s.status === "confirmed" || s.status === "rescheduled").length}{" "}
+              <span className="text-xs font-normal text-gray-500">Booked</span>
+            </div>
+            <p className="text-[11px] text-gray-500 font-medium mt-1">
+              Calendar synchronized
+            </p>
           </div>
 
-          <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-            <span className="text-[11px] text-gray-500 font-medium block">Total Sessions</span>
-            <div className="text-base font-bold text-gray-900 mt-0.5">
-              {totalSessionsCount} Sessions
+          <div className="p-4 bg-[#F8FAFC] rounded-xl border border-gray-200/80 shadow-2xs hover:border-gray-300 transition-colors">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-gray-500 font-medium">Total Sessions</span>
+              <Clock size={14} className="text-purple-600" />
             </div>
-            <span className="text-[10px] text-gray-500 font-medium">Logged across all tracks</span>
+            <div className="text-xl font-bold text-gray-900 mt-1">
+              {totalSessionsCount}{" "}
+              <span className="text-xs font-normal text-gray-500">Delivered</span>
+            </div>
+            <p className="text-[11px] text-gray-500 font-medium mt-1">
+              Across all mentees
+            </p>
           </div>
 
-          <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-            <span className="text-[11px] text-gray-500 font-medium block">Completed Tracks</span>
-            <div className="text-base font-bold text-gray-900 mt-0.5">
-              {completedMentees.length} Students
+          <div className="p-4 bg-[#F8FAFC] rounded-xl border border-gray-200/80 shadow-2xs hover:border-gray-300 transition-colors">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-gray-500 font-medium">Completed Tracks</span>
+              <Award size={14} className="text-[#0a66c2]" />
             </div>
-            <span className="text-[10px] text-[#0a66c2] font-semibold">
-              Graduated mentees
-            </span>
+            <div className="text-xl font-bold text-gray-900 mt-1">
+              {completedMentees.length}{" "}
+              <span className="text-xs font-normal text-gray-500">Graduates</span>
+            </div>
+            <p className="text-[11px] text-[#0a66c2] font-semibold mt-1">
+              Successful alumni transitions
+            </p>
           </div>
         </div>
 
         {/* Tab & Filter Bar */}
-        <div className="mt-5 border-b border-gray-200 flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex gap-2">
+        <div className="mt-6 border-b border-gray-200 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex gap-1 sm:gap-2">
             <button
               type="button"
               onClick={() => setActiveTab("active")}
               className={cn(
-                "pb-2.5 px-3 font-semibold border-b-2 transition-colors flex items-center gap-1.5",
+                "pb-3 px-3 font-semibold border-b-2 transition-colors flex items-center gap-2",
                 activeTab === "active"
                   ? "border-[#0a66c2] text-[#0a66c2]"
                   : "border-transparent text-gray-500 hover:text-gray-900"
               )}
             >
               <span>Active Mentees</span>
-              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-emerald-50 text-[#057642]">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-[#057642] border border-[#bfe3c9]">
                 {activeMentees.length}
               </span>
             </button>
@@ -395,7 +436,7 @@ export default function MyMenteesPage() {
               type="button"
               onClick={() => setActiveTab("sessions")}
               className={cn(
-                "pb-2.5 px-3 font-semibold border-b-2 transition-colors flex items-center gap-1.5",
+                "pb-3 px-3 font-semibold border-b-2 transition-colors flex items-center gap-2",
                 activeTab === "sessions"
                   ? "border-[#0a66c2] text-[#0a66c2]"
                   : "border-transparent text-gray-500 hover:text-gray-900"
@@ -403,7 +444,7 @@ export default function MyMenteesPage() {
             >
               <Calendar size={13} />
               <span>Mentorship Sessions</span>
-              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-blue-50 text-[#0a66c2]">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#0a66c2] border border-[#b2d5f8]">
                 {allSessions.length}
               </span>
             </button>
@@ -412,28 +453,28 @@ export default function MyMenteesPage() {
               type="button"
               onClick={() => setActiveTab("completed")}
               className={cn(
-                "pb-2.5 px-3 font-semibold border-b-2 transition-colors flex items-center gap-1.5",
+                "pb-3 px-3 font-semibold border-b-2 transition-colors flex items-center gap-2",
                 activeTab === "completed"
                   ? "border-[#0a66c2] text-[#0a66c2]"
                   : "border-transparent text-gray-500 hover:text-gray-900"
               )}
             >
               <span>Completed Tracks</span>
-              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-gray-100 text-gray-700">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-700 border border-gray-200">
                 {completedMentees.length}
               </span>
             </button>
           </div>
 
           {/* Search Field */}
-          <div className="relative pb-2">
-            <Search size={14} className="absolute left-2.5 top-2 text-gray-400 pointer-events-none" />
+          <div className="relative pb-2.5">
+            <Search size={14} className="absolute left-3 top-2.5 text-gray-400 pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Filter by name, topic, skills..."
-              className="pl-8 pr-3 py-1 bg-gray-50 border border-gray-200 rounded-md text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-[#0a66c2] w-56 sm:w-64"
+              placeholder="Filter by student name, career track, skills..."
+              className="pl-9 pr-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-[#0a66c2] w-64 sm:w-72 transition-colors"
             />
           </div>
         </div>
@@ -504,19 +545,19 @@ export default function MyMenteesPage() {
                 return (
                   <div
                     key={sess.id}
-                    className="bg-white border border-gray-200 rounded-lg p-4 shadow-xs hover:border-[#b2d5f8] transition-colors space-y-3"
+                    className="bg-white border border-gray-200/90 rounded-xl p-5 shadow-xs hover:border-[#b2d5f8] transition-all space-y-4"
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                      <div className="flex items-start gap-3 min-w-0">
+                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                      <div className="flex items-start gap-3.5 min-w-0">
                         <Avatar name={sess.studentName} size="md" />
                         <div className="min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
+                          <div className="flex items-center gap-2.5 flex-wrap">
                             <h3 className="text-sm font-bold text-gray-900 leading-snug">
                               {sess.topic}
                             </h3>
                             <span
                               className={cn(
-                                "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border",
+                                "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
                                 sess.status === "confirmed" && "bg-[#eef8f1] text-[#057642] border-[#bfe3c9]",
                                 sess.status === "scheduled" && "bg-blue-50 text-[#0a66c2] border-[#b2d5f8]",
                                 sess.status === "rescheduled" && "bg-amber-50 text-amber-700 border-amber-200",
@@ -529,29 +570,18 @@ export default function MyMenteesPage() {
                           </div>
 
                           <p className="text-xs text-gray-600 mt-1">
-                            With <strong>{sess.studentName}</strong> · {sess.studentAcademicYear} ({sess.studentDepartment})
+                            With <strong className="text-gray-900">{sess.studentName}</strong> · {sess.studentAcademicYear} ({sess.studentDepartment})
                           </p>
 
-                          <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500">
-                            <span className="flex items-center gap-1 font-medium text-gray-700">
-                              <Calendar size={13} className="text-[#0a66c2]" />
-                              {sess.date}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Clock size={13} className="text-gray-400" />
-                              {sess.time}
-                            </span>
-                          </div>
-
                           {isSessRescheduled && sess.previousDate && (
-                            <p className="text-[11px] text-amber-700 mt-1 flex items-center gap-1">
+                            <p className="text-[11px] text-amber-700 mt-1.5 flex items-center gap-1 font-medium">
                               <RefreshCw size={11} />
-                              <span>Rescheduled from {sess.previousDate} at {sess.previousTime}</span>
+                              <span>Rescheduled from {formatDisplayDate(sess.previousDate)} at {sess.previousTime}</span>
                             </p>
                           )}
 
                           {isSessCancelled && sess.cancellationReason && (
-                            <p className="text-[11px] text-red-600 mt-1 flex items-center gap-1">
+                            <p className="text-[11px] text-red-600 mt-1.5 flex items-center gap-1 font-medium">
                               <Ban size={11} />
                               <span>Cancelled: {sess.cancellationReason}</span>
                             </p>
@@ -559,46 +589,60 @@ export default function MyMenteesPage() {
                         </div>
                       </div>
 
-                      {/* Video Link */}
-                      {sess.meetUrl && !isSessCancelled && (
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          asChild
-                          className="bg-[#0a66c2] hover:bg-[#004182] text-xs shrink-0 self-start"
-                        >
-                          <a
-                            href={sess.meetUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-1.5"
+                      {/* Right Date/Time Badge & Action */}
+                      <div className="flex items-center gap-4 shrink-0 flex-wrap lg:justify-end">
+                        <div className="px-3.5 py-2 bg-gray-50 rounded-lg border border-gray-200/80 text-left sm:text-right">
+                          <div className="flex items-center gap-1.5 font-semibold text-gray-900 text-xs">
+                            <Calendar size={13} className="text-[#0a66c2]" />
+                            <span>{formatDisplayDate(sess.date)}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-gray-500 text-[11px] mt-0.5">
+                            <Clock size={11} className="text-gray-400" />
+                            <span>{sess.time}</span>
+                          </div>
+                        </div>
+
+                        {/* Video Link */}
+                        {sess.meetUrl && !isSessCancelled && (
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            asChild
+                            className="bg-[#0a66c2] hover:bg-[#004182] text-xs shrink-0"
                           >
-                            <Video size={13} />
-                            <span>Join Call</span>
-                            <ExternalLink size={11} />
-                          </a>
-                        </Button>
-                      )}
+                            <a
+                              href={sess.meetUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1.5"
+                            >
+                              <Video size={13} />
+                              <span>Join Call</span>
+                              <ExternalLink size={11} />
+                            </a>
+                          </Button>
+                        )}
+                      </div>
                     </div>
 
                     {/* Agenda Snippet */}
                     {sess.agenda && (
-                      <div className="p-2.5 bg-gray-50/70 border border-gray-100 rounded-md text-xs text-gray-700 leading-relaxed">
-                        <span className="font-semibold text-gray-900 block mb-0.5">Discussion Agenda:</span>
+                      <div className="p-3 bg-gray-50/80 border border-gray-100 rounded-lg text-xs text-gray-700 leading-relaxed">
+                        <span className="font-semibold text-gray-900 block mb-1">Discussion Agenda:</span>
                         <span>{sess.agenda}</span>
                       </div>
                     )}
 
                     {/* Notes Snippet if Completed */}
                     {sess.notes && (
-                      <div className="p-2.5 bg-purple-50/40 border border-purple-100 rounded-md text-xs text-purple-900 leading-relaxed">
-                        <span className="font-semibold block mb-0.5">Mentor Notes &amp; Progress:</span>
+                      <div className="p-3 bg-purple-50/50 border border-purple-100 rounded-lg text-xs text-purple-900 leading-relaxed">
+                        <span className="font-semibold block mb-1">Mentor Notes &amp; Progress:</span>
                         <span>{sess.notes}</span>
                       </div>
                     )}
 
                     {/* Actions Toolbar */}
-                    <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-xs flex-wrap gap-2">
+                    <div className="pt-3 border-t border-gray-100 flex items-center justify-between text-xs flex-wrap gap-2">
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
@@ -714,121 +758,118 @@ export default function MyMenteesPage() {
             return (
               <div
                 key={m.id}
-                className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs hover:border-[#b2d5f8] transition-colors"
+                className="bg-white border border-gray-200/90 rounded-xl p-5 sm:p-6 shadow-xs hover:border-[#b2d5f8] transition-all space-y-4"
               >
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                  {/* Student Identity */}
-                  <div className="flex items-start gap-3.5 min-w-0">
+                {/* Top Row: Student Identity & Mentorship Key Metrics */}
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                  <div className="flex items-start gap-4 min-w-0">
                     <Avatar name={studentName} size="md" />
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
+                      <div className="flex items-center gap-2.5 flex-wrap">
                         <button
                           type="button"
                           onClick={() => handleOpenProfile(studentId, m)}
-                          className="text-sm font-bold text-gray-900 hover:text-[#0a66c2] hover:underline text-left"
+                          className="text-base font-bold text-gray-900 hover:text-[#0a66c2] hover:underline text-left transition-colors"
                         >
                           {studentName}
                         </button>
                         <span
                           className={cn(
-                            "px-2 py-0.5 rounded-full text-[10px] font-semibold",
-                            isActive && "bg-[#eef8f1] text-[#057642] border border-[#bfe3c9]",
-                            isCompleted && "bg-blue-50 text-[#0a66c2] border border-blue-200"
+                            "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
+                            isActive && "bg-[#eef8f1] text-[#057642] border-[#bfe3c9]",
+                            isCompleted && "bg-blue-50 text-[#0a66c2] border-blue-200"
                           )}
                         >
                           {isActive ? "Active Mentee" : "Completed Track"}
                         </span>
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-[#0a66c2] border border-blue-100 flex items-center gap-1">
+                          <Target size={12} className="shrink-0" />
+                          <span>Track: {m.focus}</span>
+                        </span>
                       </div>
 
-                      <p className="text-xs text-gray-500 mt-0.5">
-                        {m.student?.academicYear || "Undergraduate"} · {m.student?.department || "Computer Science"}
+                      <p className="text-xs text-gray-500 mt-1">
+                        {m.student?.academicYear || "Undergraduate"} · {m.student?.department || "Computer Science"} · University of Technology
                       </p>
-
-                      <div className="mt-2 flex items-center gap-1.5 text-xs text-[#0a66c2] font-medium">
-                        <Target size={13} className="shrink-0" />
-                        <span>Mentorship Track: {m.focus}</span>
-                      </div>
-
-                      {/* Student Goals & Skills */}
-                      {m.student?.careerGoal && (
-                        <p className="text-xs text-gray-600 mt-1">
-                          <span className="font-semibold text-gray-700">Career Goal:</span>{" "}
-                          {m.student.careerGoal}
-                        </p>
-                      )}
-
-                      {m.student?.skills && m.student.skills.length > 0 && (
-                        <div className="mt-2 flex flex-wrap gap-1.5">
-                          {m.student.skills.map((skill, idx) => (
-                            <span
-                              key={idx}
-                              className="px-2 py-0.5 bg-gray-50 text-gray-700 border border-gray-200 rounded text-[10px]"
-                            >
-                              {skill}
-                            </span>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   </div>
 
-                  {/* Mentorship Metadata Strip */}
-                  <div className="shrink-0 sm:text-right text-xs text-gray-500 space-y-1 sm:min-w-[180px]">
+                  {/* Highlights Strip */}
+                  <div className="flex items-center gap-2.5 shrink-0 flex-wrap lg:justify-end">
                     {m.startDate && (
-                      <p>
-                        Started: <strong className="text-gray-800">{m.startDate}</strong>
-                      </p>
+                      <div className="px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-200/70 text-left sm:text-right">
+                        <span className="text-[10px] text-gray-400 font-medium block uppercase tracking-wider">Started</span>
+                        <span className="text-xs font-semibold text-gray-800">{formatDisplayDate(m.startDate)}</span>
+                      </div>
                     )}
-                    <p>
-                      Completed sessions:{" "}
-                      <strong className="text-gray-900">{m.sessionCount || 0}</strong>
-                    </p>
+                    <div className="px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-200/70 text-left sm:text-right">
+                      <span className="text-[10px] text-gray-400 font-medium block uppercase tracking-wider">Sessions</span>
+                      <span className="text-xs font-bold text-gray-900">{m.sessionCount || 0} completed</span>
+                    </div>
                     {m.nextSession ? (
-                      <div className="p-2 bg-blue-50/60 rounded border border-blue-100 text-left sm:text-right mt-1">
-                        <span className="text-[10px] text-[#0a66c2] font-semibold block uppercase tracking-wider">
-                          Next Session
-                        </span>
-                        <span className="font-bold text-gray-900 text-xs block">
-                          {m.nextSession}
-                        </span>
+                      <div className="px-3 py-1.5 bg-blue-50/70 rounded-lg border border-blue-200/70 text-left sm:text-right">
+                        <span className="text-[10px] text-[#0a66c2] font-semibold block uppercase tracking-wider">Next Session</span>
+                        <span className="text-xs font-bold text-gray-900">{m.nextSession}</span>
                       </div>
                     ) : (
-                      <div className="p-2 bg-gray-50 rounded border border-gray-100 text-left sm:text-right mt-1">
-                        <span className="text-[10px] text-gray-400 font-semibold block uppercase tracking-wider">
-                          Next Session
-                        </span>
-                        <span className="text-gray-500 text-xs">Not currently booked</span>
+                      <div className="px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-200/70 text-left sm:text-right">
+                        <span className="text-[10px] text-gray-400 font-medium block uppercase tracking-wider">Next Session</span>
+                        <span className="text-xs text-gray-500 font-medium">Not booked</span>
                       </div>
                     )}
                   </div>
                 </div>
 
-                {/* Progress bar */}
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <div className="flex items-center justify-between text-xs text-gray-600 mb-1.5">
-                    <span className="font-semibold text-gray-900 flex items-center gap-1.5">
-                      <Award size={13} className="text-[#0a66c2]" />
-                      <span>Roadmap &amp; Milestones</span>
-                    </span>
-                    <span className="font-bold text-[#0a66c2]">
-                      {completedMilestonesCount} of {totalMilestonesCount} completed ({progressPercent}%)
-                    </span>
+                {/* Middle Row: Two-column split for Career Goals/Skills and Milestones Roadmap */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 pt-3.5 border-t border-gray-100 items-center">
+                  <div className="lg:col-span-7 space-y-2">
+                    {m.student?.careerGoal && (
+                      <p className="text-xs text-gray-700 leading-relaxed">
+                        <strong className="text-gray-900">Career Goal:</strong> {m.student.careerGoal}
+                      </p>
+                    )}
+
+                    {m.student?.skills && m.student.skills.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                        <span className="text-[11px] font-medium text-gray-400 mr-1">Skills:</span>
+                        {m.student.skills.map((skill, idx) => (
+                          <span
+                            key={idx}
+                            className="px-2.5 py-0.5 bg-gray-50 text-gray-700 border border-gray-200/80 rounded-md text-[11px] font-medium"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
-                    <div
-                      className="h-full bg-[#0a66c2] rounded-full transition-all duration-300"
-                      style={{ width: `${progressPercent}%` }}
-                    />
+
+                  <div className="lg:col-span-5 bg-gray-50/80 rounded-xl p-3.5 border border-gray-200/70">
+                    <div className="flex items-center justify-between text-xs text-gray-600 mb-1.5">
+                      <span className="font-semibold text-gray-900 flex items-center gap-1.5">
+                        <Award size={13} className="text-[#0a66c2]" />
+                        <span>Milestone Progress</span>
+                      </span>
+                      <span className="font-bold text-[#0a66c2]">
+                        {completedMilestonesCount} of {totalMilestonesCount} ({progressPercent}%)
+                      </span>
+                    </div>
+                    <div className="h-2 rounded-full bg-gray-200 overflow-hidden">
+                      <div
+                        className="h-full bg-[#0a66c2] rounded-full transition-all duration-300"
+                        style={{ width: `${progressPercent}%` }}
+                      />
+                    </div>
                   </div>
                 </div>
 
                 {/* Actions Toolbar */}
-                <div className="mt-4 pt-3 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
+                <div className="pt-3 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2.5">
+                  <div className="flex items-center gap-2.5 text-xs">
                     <button
                       type="button"
                       onClick={() => handleOpenProfile(studentId, m)}
-                      className="text-xs font-semibold text-[#0a66c2] hover:underline flex items-center gap-1"
+                      className="font-semibold text-[#0a66c2] hover:underline flex items-center gap-1"
                     >
                       <User size={12} />
                       <span>View Profile</span>
@@ -838,7 +879,7 @@ export default function MyMenteesPage() {
 
                     <Link
                       href={`/messages?participantId=${studentId}`}
-                      className="text-xs font-semibold text-gray-600 hover:text-[#0a66c2] hover:underline flex items-center gap-1"
+                      className="font-semibold text-gray-600 hover:text-[#0a66c2] hover:underline flex items-center gap-1"
                     >
                       <MessageSquare size={12} />
                       <span>Message Mentee</span>
@@ -853,7 +894,7 @@ export default function MyMenteesPage() {
                         setAiAssistantMentee(m);
                         setIsAIAssistantOpen(true);
                       }}
-                      className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 hover:underline flex items-center gap-1"
+                      className="font-semibold text-emerald-700 hover:text-emerald-800 hover:underline flex items-center gap-1"
                     >
                       <Sparkles size={11} />
                       <span>Prepare with AI</span>

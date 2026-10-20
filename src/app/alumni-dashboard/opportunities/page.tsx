@@ -149,15 +149,15 @@ export default function AlumniOpportunitiesPage() {
       )}
 
       {/* Header Banner */}
-      <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs">
+      <div className="bg-white border border-gray-200/90 rounded-xl p-5 sm:p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-lg font-bold text-gray-900 tracking-tight flex items-center gap-2">
-              <Briefcase size={20} className="text-[#0a66c2]" />
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+              <Briefcase size={22} className="text-[#0a66c2]" />
               <span>Career Opportunities, Referrals &amp; Events</span>
             </h1>
-            <p className="text-xs text-gray-500 mt-0.5">
-              Share internships, full-time openings, referral channels, workshops, and hackathons with verified students.
+            <p className="text-xs text-gray-500 mt-1 max-w-2xl">
+              Post internships, full-time openings, referral channels, workshops, and technical hackathons directly to verified campus talent.
             </p>
           </div>
 
@@ -168,11 +168,39 @@ export default function AlumniOpportunitiesPage() {
               setEditingOpportunity(null);
               setIsPostModalOpen(true);
             }}
-            className="bg-[#0a66c2] hover:bg-[#004182] text-xs shrink-0 flex items-center gap-1.5"
+            className="bg-[#0a66c2] hover:bg-[#004182] text-xs shrink-0 flex items-center gap-1.5 shadow-xs"
           >
             <Plus size={14} />
             <span>Post Opportunity</span>
           </Button>
+        </div>
+
+        {/* Quick Metrics Strip */}
+        <div className="mt-5 pt-4 border-t border-gray-100 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="p-3 bg-[#F8FAFC] rounded-lg border border-gray-200/80">
+            <span className="text-[11px] text-gray-500 font-medium block">All Opportunities</span>
+            <div className="text-lg font-bold text-gray-900 mt-0.5">{opportunities.length}</div>
+            <span className="text-[10px] text-gray-500 font-medium">Published listings</span>
+          </div>
+          <div className="p-3 bg-[#F8FAFC] rounded-lg border border-gray-200/80">
+            <span className="text-[11px] text-gray-500 font-medium block">Active Openings</span>
+            <div className="text-lg font-bold text-[#057642] mt-0.5">
+              {opportunities.filter((o) => o.status !== "closed").length}
+            </div>
+            <span className="text-[10px] text-[#057642] font-semibold">Accepting applications</span>
+          </div>
+          <div className="p-3 bg-[#F8FAFC] rounded-lg border border-gray-200/80">
+            <span className="text-[11px] text-gray-500 font-medium block">My Listings</span>
+            <div className="text-lg font-bold text-[#0a66c2] mt-0.5">{myPostsCount}</div>
+            <span className="text-[10px] text-[#0a66c2] font-semibold">Managed by you</span>
+          </div>
+          <div className="p-3 bg-[#F8FAFC] rounded-lg border border-gray-200/80">
+            <span className="text-[11px] text-gray-500 font-medium block">Total Student Applicants</span>
+            <div className="text-lg font-bold text-gray-900 mt-0.5">
+              {opportunities.reduce((acc, o) => acc + (o.applicantsCount || 0), 0)}
+            </div>
+            <span className="text-[10px] text-gray-500 font-medium">Applied candidates</span>
+          </div>
         </div>
 
         {/* Filters Strip */}
@@ -192,7 +220,7 @@ export default function AlumniOpportunitiesPage() {
                 type="button"
                 onClick={() => setActiveType(tab.id)}
                 className={cn(
-                  "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
+                  "px-3 py-1.5 rounded-full text-xs font-semibold transition-colors",
                   activeType === tab.id
                     ? "bg-[#0a66c2] text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -203,7 +231,7 @@ export default function AlumniOpportunitiesPage() {
             ))}
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0 flex-wrap">
             <label className="flex items-center gap-1.5 text-xs text-gray-700 cursor-pointer select-none">
               <input
                 type="checkbox"
@@ -216,14 +244,14 @@ export default function AlumniOpportunitiesPage() {
               </span>
             </label>
 
-            <div className="relative w-48">
+            <div className="relative w-52">
               <Search size={13} className="absolute left-2.5 top-2.5 text-gray-400" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search listings..."
-                className="w-full pl-7 pr-3 py-1 text-xs bg-gray-50 border border-gray-200 rounded-md text-gray-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                placeholder="Search title, company, skills..."
+                className="w-full pl-7 pr-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0a66c2] transition-colors"
               />
             </div>
           </div>
@@ -255,7 +283,7 @@ export default function AlumniOpportunitiesPage() {
           </Button>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {filteredOpportunities.map((opp) => {
             const isMine =
               opp.postedByAlumniId === currentAlumni.id ||
@@ -265,100 +293,107 @@ export default function AlumniOpportunitiesPage() {
             return (
               <div
                 key={opp.id}
-                className={`bg-white border rounded-lg p-5 shadow-xs transition-colors hover:border-[#b2d5f8] ${
-                  isClosed ? "border-gray-200 bg-gray-50/50 opacity-80" : "border-gray-200"
+                className={`bg-white border rounded-xl p-5 shadow-xs transition-all hover:border-[#b2d5f8] hover:shadow-2xs flex flex-col justify-between ${
+                  isClosed ? "border-gray-200 bg-gray-50/50 opacity-80" : "border-gray-200/90"
                 }`}
               >
-                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-sm font-bold text-gray-900">{opp.title}</h3>
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getBadgeColor(
-                          opp.type
-                        )}`}
-                      >
-                        {opp.type.replace("_", " ")}
-                      </span>
+                <div>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="text-sm sm:text-base font-bold text-gray-900 leading-snug">
+                          {opp.title}
+                        </h3>
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getBadgeColor(
+                            opp.type
+                          )}`}
+                        >
+                          {opp.type.replace("_", " ")}
+                        </span>
 
-                      {opp.workArrangement && (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 text-gray-700 border border-gray-200 flex items-center gap-1">
-                          <Laptop size={10} />
-                          <span>
-                            {opp.workArrangement === "remote"
-                              ? "Remote"
-                              : opp.workArrangement === "hybrid"
-                              ? "Hybrid"
-                              : "On-Site"}
+                        {opp.workArrangement && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 text-gray-700 border border-gray-200 flex items-center gap-1">
+                            <Laptop size={10} />
+                            <span>
+                              {opp.workArrangement === "remote"
+                                ? "Remote"
+                                : opp.workArrangement === "hybrid"
+                                ? "Hybrid"
+                                : "On-Site"}
+                            </span>
                           </span>
-                        </span>
-                      )}
+                        )}
 
-                      {isClosed && (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-200 text-gray-700">
-                          Closed
-                        </span>
-                      )}
+                        {isClosed && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-200 text-gray-700">
+                            Closed
+                          </span>
+                        )}
 
-                      {isMine && (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#ebf3fb] text-[#0a66c2] border border-[#b2d5f8]">
-                          Posted by You
+                        {isMine && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#ebf3fb] text-[#0a66c2] border border-[#b2d5f8]">
+                            Posted by You
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="mt-1.5 flex flex-wrap items-center gap-3 text-xs text-gray-600">
+                        <span className="font-semibold text-gray-900 flex items-center gap-1">
+                          <Building2 size={13} className="text-gray-400" />
+                          {opp.company}
                         </span>
-                      )}
+                        <span className="flex items-center gap-1 text-gray-500">
+                          <MapPin size={13} className="text-gray-400" />
+                          {opp.location}
+                        </span>
+                        {opp.deadline && (
+                          <span className="flex items-center gap-1 text-gray-400">
+                            <Calendar size={13} />
+                            Deadline: {opp.deadline}
+                          </span>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-gray-600">
-                      <span className="font-semibold text-gray-900 flex items-center gap-1">
-                        <Building2 size={13} className="text-gray-400" />
-                        {opp.company}
+                    <div className="text-right shrink-0">
+                      <span className="text-xs font-semibold text-[#057642] bg-[#eef8f1] px-2.5 py-1 rounded-full border border-[#bfe3c9] inline-flex items-center gap-1">
+                        <Users size={12} />
+                        {opp.applicantsCount} applicants
                       </span>
-                      <span className="flex items-center gap-1 text-gray-500">
-                        <MapPin size={13} className="text-gray-400" />
-                        {opp.location}
+                      <span className="text-[10px] text-gray-400 block mt-1">
+                        {opp.postedDate}
                       </span>
-                      {opp.deadline && (
-                        <span className="flex items-center gap-1 text-gray-400">
-                          <Calendar size={13} />
-                          Deadline: {opp.deadline}
-                        </span>
-                      )}
                     </div>
                   </div>
 
-                  <div className="text-left sm:text-right shrink-0">
-                    <span className="text-xs font-semibold text-[#057642] bg-[#eef8f1] px-2.5 py-1 rounded-full border border-[#bfe3c9] inline-flex items-center gap-1">
-                      <Users size={12} />
-                      {opp.applicantsCount} applicants
-                    </span>
-                    <span className="text-[10px] text-gray-400 block mt-1">
-                      Posted: {opp.postedDate}
-                    </span>
-                  </div>
+                  <p className="mt-3 text-xs text-gray-700 leading-relaxed line-clamp-2">
+                    {opp.description}
+                  </p>
+
+                  {/* Eligibility Tag if available */}
+                  {opp.eligibility && (
+                    <p className="mt-2 text-[11px] text-blue-900 bg-blue-50/60 px-2.5 py-1 rounded-md border border-blue-100">
+                      <strong>Eligibility:</strong> {opp.eligibility}
+                    </p>
+                  )}
+
+                  {/* Skills */}
+                  {opp.skills && opp.skills.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-1">
+                      {opp.skills.map((skill) => (
+                        <span
+                          key={skill}
+                          className="px-2 py-0.5 text-[10px] rounded-md bg-gray-100 text-gray-700 font-medium"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                <p className="mt-3 text-xs text-gray-700 leading-relaxed line-clamp-2">
-                  {opp.description}
-                </p>
-
-                {/* Eligibility Tag if available */}
-                {opp.eligibility && (
-                  <p className="mt-2 text-[11px] text-blue-900 bg-blue-50/60 px-2.5 py-1 rounded border border-blue-100">
-                    <strong>Eligibility:</strong> {opp.eligibility}
-                  </p>
-                )}
-
-                <div className="mt-3 flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-gray-100">
-                  <div className="flex flex-wrap gap-1">
-                    {opp.skills.map((skill) => (
-                      <span
-                        key={skill}
-                        className="px-2 py-0.5 text-[10px] rounded bg-gray-100 text-gray-700 font-medium"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-gray-100">
                   <div className="flex items-center gap-2 flex-wrap">
                     {/* Author management buttons */}
                     {isMine && (
@@ -394,18 +429,18 @@ export default function AlumniOpportunitiesPage() {
                         </button>
                       </>
                     )}
-
-                    {/* View Details Button */}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setDetailOpportunity(opp)}
-                      className="text-xs text-[#0a66c2] border-[#b2d5f8] hover:bg-blue-50"
-                    >
-                      <span>View Details &rarr;</span>
-                    </Button>
                   </div>
+
+                  {/* View Details Button */}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setDetailOpportunity(opp)}
+                    className="text-xs text-[#0a66c2] border-[#b2d5f8] hover:bg-blue-50"
+                  >
+                    <span>View Details &rarr;</span>
+                  </Button>
                 </div>
               </div>
             );

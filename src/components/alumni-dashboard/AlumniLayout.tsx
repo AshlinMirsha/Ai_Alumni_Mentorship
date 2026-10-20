@@ -16,12 +16,23 @@ export function AlumniLayout({ children }: AlumniLayoutProps) {
   const isDashboard = pathname === "/alumni-dashboard";
   const isStudentsPage = pathname?.startsWith("/alumni-dashboard/students");
   const isRequestsPage = pathname?.startsWith("/alumni-dashboard/requests");
-  const hideSidebar = isDashboard || isStudentsPage || isRequestsPage;
+  const isMenteesPage = pathname?.startsWith("/alumni-dashboard/mentees");
+  const isOpportunitiesPage = pathname?.startsWith("/alumni-dashboard/opportunities");
+  const isCommunityPage = pathname?.startsWith("/alumni-dashboard/community");
+  const hideSidebar =
+    isDashboard ||
+    isStudentsPage ||
+    isRequestsPage ||
+    isMenteesPage ||
+    isOpportunitiesPage ||
+    isCommunityPage;
 
   const containerMaxWidth = isStudentsPage
     ? "max-w-[1400px]"
     : isRequestsPage
     ? "max-w-[1200px]"
+    : isMenteesPage || isOpportunitiesPage || isCommunityPage
+    ? "max-w-[1300px]"
     : "max-w-7xl";
 
   return (
