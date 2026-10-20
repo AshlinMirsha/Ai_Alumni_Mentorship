@@ -48,7 +48,7 @@ export function ChatComposer({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative bg-white border border-gray-300 rounded-lg shadow-xs focus-within:ring-1 focus-within:ring-[#0a66c2] focus-within:border-[#0a66c2] transition-all p-2 sm:p-2.5">
+    <form onSubmit={handleSubmit} className="relative bg-white border border-[#E7E7E7] rounded-xl shadow-xs focus-within:ring-1 focus-within:ring-[#090909] focus-within:border-[#090909] transition-all p-2 sm:p-2.5">
       <div className="flex items-end gap-2">
         <textarea
           ref={textareaRef}
@@ -59,7 +59,7 @@ export function ChatComposer({
           onInput={handleInput}
           placeholder={placeholder}
           disabled={isLoading}
-          className="w-full resize-none bg-transparent text-xs text-[#191919] placeholder-[#8c8c8c] p-2 focus:outline-none max-h-36 overflow-y-auto leading-relaxed"
+          className="w-full resize-none bg-transparent text-xs text-[#090909] placeholder-[#737373] p-2 focus:outline-none max-h-36 overflow-y-auto leading-relaxed"
         />
 
         <div className="flex items-center gap-1.5 shrink-0 pb-0.5">
@@ -85,16 +85,16 @@ export function ChatComposer({
         </div>
       </div>
 
-      <div className="flex items-center justify-between px-2 pt-1.5 border-t border-gray-100 text-[10px] text-[#8c8c8c]">
+      <div className="flex items-center justify-between px-2 pt-1.5 border-t border-[#E7E7E7] text-[10px] text-[#737373]">
         <span className="hidden sm:inline">
           Press <strong>Enter ↵</strong> to send, <strong>Shift + Enter</strong> for a new line
         </span>
         <span className="sm:hidden">
           Tap Send to submit
         </span>
-        <span className="flex items-center gap-1 text-[#666666]">
-          <Sparkles size={11} className="text-[#0a66c2]" />
-          Demo Career Provider
+        <span className="flex items-center gap-1 text-[#737373]">
+          <Sparkles size={11} className="text-[#090909]" />
+          Alumni Intelligence Engine
         </span>
       </div>
     </form>

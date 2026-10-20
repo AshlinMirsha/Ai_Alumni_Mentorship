@@ -139,14 +139,14 @@ export function ResumeUploader({
       />
 
       {uploadProgress > 0 && uploadProgress < 100 ? (
-        <div className="p-5 bg-white border border-gray-200 rounded-lg shadow-xs space-y-3">
-          <div className="flex justify-between text-xs font-semibold text-[#191919]">
+        <div className="p-5 bg-white border border-[#E7E7E7] rounded-2xl shadow-xs space-y-3">
+          <div className="flex justify-between text-xs font-semibold text-[#090909]">
             <span>Processing document...</span>
-            <span className="text-[#0a66c2] font-bold">{uploadProgress}%</span>
+            <span className="text-[#090909] font-bold">{uploadProgress}%</span>
           </div>
-          <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-2 w-full bg-[#E7E7E7] rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#0a66c2] rounded-full transition-all duration-150"
+              className="h-full bg-[#090909] rounded-full transition-all duration-150"
               style={{ width: `${uploadProgress}%` }}
             />
           </div>
@@ -158,50 +158,50 @@ export function ResumeUploader({
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
-          className={`border-2 border-dashed rounded-lg p-8 sm:p-10 text-center cursor-pointer transition-all duration-150 ${
+          className={`border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center cursor-pointer transition-all duration-150 ${
             isDragOver
-              ? "border-[#0a66c2] bg-[#ebf3fb]/40 scale-[1.005]"
-              : "border-gray-300 hover:border-[#0a66c2] bg-gray-50/50 hover:bg-white"
+              ? "border-[#090909] bg-[#F4F4F4] scale-[1.005]"
+              : "border-[#E7E7E7] hover:border-[#090909] bg-white hover:bg-[#FAFAFA]"
           }`}
         >
-          <div className="h-12 w-12 rounded-lg bg-[#ebf3fb] border border-[#0a66c2]/20 text-[#0a66c2] flex items-center justify-center mx-auto mb-3 shadow-xs">
+          <div className="h-12 w-12 rounded-2xl bg-[#090909] text-white flex items-center justify-center mx-auto mb-3 shadow-xs">
             <UploadCloud size={24} />
           </div>
 
-          <h3 className="text-sm font-bold text-[#191919] mb-1">
+          <h3 className="text-sm font-bold text-[#090909] mb-1">
             Upload your resume for critique
           </h3>
-          <p className="text-xs text-[#666666] max-w-sm mx-auto mb-4 leading-relaxed">
+          <p className="text-xs text-[#737373] max-w-sm mx-auto mb-4 leading-relaxed">
             Drag and drop your file here, or click to browse from your device.
           </p>
 
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#0a66c2] text-xs font-semibold text-[#0a66c2] hover:bg-[#ebf3fb] shadow-xs transition-colors">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#090909] text-white text-xs font-medium hover:bg-[#242424] shadow-xs transition-colors">
             <span>Choose File</span>
           </div>
 
-          <div className="pt-4 flex flex-wrap items-center justify-center gap-3 text-[11px] text-[#8c8c8c]">
-            <span>Accepted formats: <strong className="text-[#666666]">PDF, DOCX, DOC</strong></span>
+          <div className="pt-4 flex flex-wrap items-center justify-center gap-3 text-[11px] text-[#737373]">
+            <span>Accepted formats: <strong className="text-[#090909]">PDF, DOCX, DOC</strong></span>
             <span>·</span>
-            <span>Max file size: <strong className="text-[#666666]">5 MB</strong></span>
+            <span>Max file size: <strong className="text-[#090909]">5 MB</strong></span>
           </div>
         </div>
       ) : (
         /* Selected File Card & Progress */
-        <div className="p-4 sm:p-5 bg-white border border-gray-200 rounded-lg shadow-xs space-y-3.5">
+        <div className="p-4 sm:p-5 bg-white border border-[#E7E7E7] rounded-2xl shadow-xs space-y-3.5">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-[#ebf3fb] border border-[#0a66c2]/20 flex items-center justify-center text-[#0a66c2] shrink-0">
+              <div className="h-10 w-10 rounded-xl bg-[#090909] text-white flex items-center justify-center shrink-0">
                 <FileCheck size={20} />
               </div>
 
               <div className="space-y-0.5">
-                <p className="text-xs font-bold text-[#191919] truncate max-w-xs sm:max-w-md">
+                <p className="text-xs font-bold text-[#090909] truncate max-w-xs sm:max-w-md">
                   {selectedFile.name}
                 </p>
-                <div className="flex items-center gap-2 text-[11px] text-[#666666]">
+                <div className="flex items-center gap-2 text-[11px] text-[#737373]">
                   <span>{selectedFile.formattedSize}</span>
                   <span>·</span>
-                  <span className="text-[#057642] font-semibold inline-flex items-center gap-1">
+                  <span className="text-[#090909] font-semibold inline-flex items-center gap-1">
                     <CheckCircle2 size={11} />
                     Ready for Review
                   </span>
@@ -213,7 +213,7 @@ export function ResumeUploader({
               type="button"
               onClick={handleClear}
               disabled={isAnalyzing}
-              className="p-1 rounded-md text-gray-400 hover:text-[#191919] hover:bg-gray-100 transition-colors"
+              className="p-1 rounded-md text-[#737373] hover:text-[#090909] hover:bg-[#F4F4F4] transition-colors"
               title="Remove file"
               aria-label="Remove uploaded resume"
             >
@@ -222,10 +222,10 @@ export function ResumeUploader({
           </div>
 
           {/* Local Browser File Notice */}
-          <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-start gap-2.5 text-xs text-[#666666]">
-            <Info size={15} className="text-[#0a66c2] shrink-0 mt-0.5" />
+          <div className="p-3 bg-[#F4F4F4] border border-[#E7E7E7] rounded-xl flex items-start gap-2.5 text-xs text-[#737373]">
+            <Info size={15} className="text-[#090909] shrink-0 mt-0.5" />
             <div className="text-[11px] leading-relaxed">
-              <strong className="text-[#191919]">Local Privacy Guarantee:</strong> In demo mode, your file is read locally by your browser. No files are uploaded to external servers or transmitted to third-party AI APIs without authorization.
+              <strong className="text-[#090909]">Local Privacy Guarantee:</strong> In demo mode, your file is read locally by your browser. No files are uploaded to external servers or transmitted to third-party AI APIs without authorization.
             </div>
           </div>
         </div>
@@ -233,8 +233,8 @@ export function ResumeUploader({
 
       {/* Validation Error Message */}
       {errorMessage && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-xs text-red-700">
-          <AlertCircle size={15} className="shrink-0" />
+        <div className="p-3 bg-[#F4F4F4] border border-[#E7E7E7] rounded-xl flex items-center gap-2 text-xs text-[#090909]">
+          <AlertCircle size={15} className="shrink-0 text-[#090909]" />
           <span>{errorMessage}</span>
         </div>
       )}

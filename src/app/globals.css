@@ -1,64 +1,62 @@
 @import "tailwindcss";
 
-/* ─── Design Tokens (Professional Networking / LinkedIn-Inspired Theme) ────────── */
+/* ─── AlumniPath — Strict Monochrome Art Direction ────────────────────────── */
 :root {
-  /* Brand */
-  --brand-primary: #0a66c2;
-  --brand-hover: #004182;
-  --brand-light: #ebf3fb;
-  --brand-border: #b2d5f8;
+  --ink: #090909;
+  --charcoal: #242424;
+  --body: #454545;
+  --muted: #737373;
+  --subtle: #a8a8a8;
+  --stroke: #e7e7e7;
+  --canvas: #fafafa;
+  --surface: #ffffff;
+  --soft-surface: #f4f4f4;
+  --inverse: #090909;
 
-  /* Neutrals */
-  --canvas-bg: #f3f5f7;
-  --card-bg: #ffffff;
-  --text-main: #191919;
-  --text-secondary: #666666;
-  --text-muted: #8c8c8c;
-  --border-subtle: #e0e0e0;
-  --border-strong: #c7c7c7;
-
-  /* Status Colors */
-  --green-main: #057642;
-  --green-light: #eef8f1;
-  --green-border: #bfe3c9;
-  --amber-main: #915907;
-  --amber-light: #fff8ea;
-  --amber-border: #fde5b2;
-  --red-main: #cc1016;
-  --red-light: #feeff0;
-  --red-border: #f9c2c5;
+  /* Aliases */
+  --canvas-bg: var(--canvas);
+  --card-bg: var(--surface);
+  --text-main: var(--ink);
+  --text-secondary: var(--body);
+  --text-muted: var(--muted);
+  --border-subtle: var(--stroke);
 
   /* Shadows */
-  --shadow-subtle: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
-  --shadow-elevated: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 0 0 1px var(--stroke);
+  --shadow-hover: 0 8px 24px -4px rgba(0, 0, 0, 0.06), 0 0 0 1px var(--stroke);
+  --shadow-elevated: 0 20px 40px -12px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--stroke);
+
+  /* Spring curves */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @theme {
-  /* Overwrite blue palette with crisp LinkedIn/professional blues */
-  --color-blue-50: #f0f7fe;
-  --color-blue-100: #dceaf8;
-  --color-blue-200: #b2d5f8;
-  --color-blue-500: #0a66c2;
-  --color-blue-600: #0a66c2;
-  --color-blue-700: #004182;
-  --color-blue-800: #002e5c;
-  --color-blue-900: #001f3f;
+  --color-ink: #090909;
+  --color-charcoal: #242424;
+  --color-body: #454545;
+  --color-muted: #737373;
+  --color-subtle: #a8a8a8;
+  --color-stroke: #e7e7e7;
+  --color-canvas: #fafafa;
+  --color-surface: #ffffff;
+  --color-soft-surface: #f4f4f4;
 
-  /* Overwrite gray palette with professional neutrals */
-  --color-gray-50: #f3f5f7;
-  --color-gray-100: #eef1f4;
-  --color-gray-200: #e0e0e0;
-  --color-gray-300: #c7c7c7;
-  --color-gray-400: #8c8c8c;
-  --color-gray-500: #666666;
-  --color-gray-600: #4a4a4a;
-  --color-gray-700: #333333;
-  --color-gray-800: #222222;
-  --color-gray-900: #191919;
-  --color-gray-950: #0f0f0f;
+  /* Neutral palette */
+  --color-gray-50: #fafafa;
+  --color-gray-100: #f4f4f4;
+  --color-gray-200: #e7e7e7;
+  --color-gray-300: #d4d4d4;
+  --color-gray-400: #a8a8a8;
+  --color-gray-500: #737373;
+  --color-gray-600: #525252;
+  --color-gray-700: #454545;
+  --color-gray-800: #242424;
+  /* Typography */
+  --font-sans: var(--font-sans), -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
 }
 
-/* ─── Base Reset ─────────────────────────────────────────────────────────────── */
+/* ─── Base Reset & Strict Typography ────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -67,81 +65,295 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-body {
-  background: var(--canvas-bg);
-  color: var(--text-main);
-  font-family: var(--font-inter, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif);
-  font-size: 14px;
-  line-height: 1.5;
-  margin: 0;
-  padding: 0;
+@layer base {
+  body {
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    letter-spacing: -0.018em;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.035em;
+    line-height: 1.15;
+    margin: 0;
+  }
+
+  code, kbd, samp, pre, .font-mono {
+    font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  p {
+    margin: 0;
+    color: inherit;
+  }
+
+  .tabular-nums {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
 }
 
-/* ─── Professional Typography ────────────────────────────────────────────────── */
-h1, h2, h3, h4, h5, h6 {
-  font-family: inherit;
-  font-weight: 600;
-  line-height: 1.3;
-  color: var(--text-main);
-  letter-spacing: -0.015em;
-  margin: 0;
+/* ─── Monochrome Buttons ─────────────────────────────────────────────────── */
+.button-primary-mono {
+  background-color: var(--ink);
+  color: #ffffff;
+  border: 1px solid var(--ink);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  transition: all 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.button-primary-mono:hover {
+  background-color: var(--charcoal);
+  border-color: var(--charcoal);
+  transform: translateY(-0.5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+.button-primary-mono:active {
+  transform: translateY(0.5px) scale(0.99);
 }
 
-p {
-  margin: 0;
-  color: var(--text-secondary);
+.button-secondary-mono {
+  background-color: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--stroke);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.button-secondary-mono:hover {
+  background-color: var(--soft-surface);
+  border-color: #d4d4d4;
+  transform: translateY(-0.5px);
+}
+.button-secondary-mono:active {
+  transform: translateY(0.5px) scale(0.99);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* Circular Black Arrow Button (Image 4) */
+.circle-arrow-btn {
+  height: 36px;
+  width: 36px;
+  border-radius: 9999px;
+  background-color: var(--ink);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.circle-arrow-btn:hover {
+  background-color: var(--charcoal);
+  transform: scale(1.04);
 }
 
-button {
-  font-family: inherit;
-  cursor: pointer;
+/* ─── Cards & Surfaces ─────────────────────────────────────────────────── */
+.card-mono {
+  background-color: var(--surface);
+  border: 1px solid var(--stroke);
+  border-radius: 18px;
+  box-shadow: var(--shadow-card);
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-mono-hover:hover {
+  border-color: #d4d4d4;
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1.5px);
 }
 
-input, textarea, select {
-  font-family: inherit;
-}
-
-/* ─── Browser Autofill Reset ─────────────────────────────────────────────────── */
-/* Prevents Chrome, Safari, and Edge from forcing an inconsistent yellow background */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
-  -webkit-text-fill-color: #191919 !important;
-  caret-color: #191919 !important;
-  transition: background-color 5000s ease-in-out 0s;
-}
-
-/* ─── Focus States ───────────────────────────────────────────────────────────── */
+/* ─── Focus States & Accessibility ──────────────────────────────────────── */
 :focus-visible {
-  outline: 2px solid var(--brand-primary);
-  outline-offset: 1px;
-  border-radius: 4px;
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
 
-/* ─── Clean Scrollbar ────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Monochrome Scrollbar ─────────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #c7c7c7;
+  background: var(--stroke);
   border-radius: 99px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #8c8c8c;
+  background: var(--subtle);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   VARAXIS-INSPIRED SCROLL MOTION SYSTEM (https://varaxisgroup.com/)
+   Kinetic Word Settle · Scroll-Scrubbed Progress Rail · Parallax Drift · Rule Draw
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* 1. Kinetic Word Typography - Crisp, 100% Sharp with Zero Fading */
+.vx-word {
+  display: inline-block;
+  opacity: 1 !important;
+  filter: none !important;
+  color: inherit;
+}
+
+@keyframes vx-settle-word {
+  0% {
+    translate: calc(var(--o, 0) * 0.2em) calc(var(--o, 0) * 0.25em);
+    opacity: 0.85;
+  }
+  100% {
+    translate: 0 0;
+    opacity: 1;
+  }
+}
+
+@keyframes vx-settle-body {
+  0% {
+    opacity: 0;
+    translate: 0 16px;
+  }
+  100% {
+    opacity: 1;
+    translate: 0;
+  }
+}
+
+@keyframes vx-resolve-rule {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes vx-drift {
+  to {
+    translate: calc(var(--dx, 0) * 1px) calc(var(--dy, 0) * 1px);
+  }
+}
+
+/* 2. Scroll-Scrubbed Rail Track & Station Nodes */
+.vx-track {
+  position: relative;
+}
+
+.vx-rail {
+  position: absolute;
+  background-color: var(--stroke);
+  border-radius: 9999px;
+}
+
+.vx-fill {
+  position: absolute;
+  background-color: var(--ink);
+  border-radius: 9999px;
+  transition: height 0.08s linear, width 0.08s linear;
+}
+
+/* Station node status states */
+.vx-station-node {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  background-color: #ffffff;
+  border: 2px solid var(--stroke);
+  color: var(--muted);
+  position: relative;
+  z-index: 2;
+}
+
+.vx-station-node[data-step="ahead"] {
+  border-color: var(--stroke);
+  background-color: #ffffff;
+  color: var(--muted);
+}
+
+.vx-station-node[data-step="head"] {
+  border-color: var(--ink);
+  background-color: var(--ink);
+  color: #ffffff;
+  transform: scale(1.18);
+  box-shadow: 0 0 0 6px rgba(9, 9, 9, 0.12), 0 4px 12px rgba(0, 0, 0, 0.16);
+}
+
+.vx-station-node[data-step="past"] {
+  border-color: var(--ink);
+  background-color: var(--ink);
+  color: #ffffff;
+}
+
+.vx-station-card {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vx-station-card[data-step="head"] {
+  border-color: var(--ink);
+  background-color: #ffffff;
+  box-shadow: 0 8px 30px -6px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.vx-station-card[data-step="ahead"] {
+  opacity: 1;
+  border-color: var(--stroke);
+  background-color: #FAFAFA;
+}
+
+/* 3. Parallax Tilted Asset & Constellation Drift */
+.vx-parallax-asset {
+  will-change: transform;
+  transform: translate3d(
+    calc(var(--shift-x, 0) * 1px),
+    calc(var(--shift-y, 0) * 1px),
+    0
+  ) perspective(1000px) rotateX(calc(var(--tilt-x, 0) * 1deg)) rotateY(calc(var(--tilt-y, 0) * 1deg));
+  transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 4. Architectural Self-Drawing Rule */
+.vx-rule {
+  height: 1px;
+  width: 100%;
+  background: var(--stroke);
+  position: relative;
+  overflow: hidden;
+}
+
+.vx-rule-solid {
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform-origin: 0;
+  transform: scaleX(var(--rule-scale, 0));
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-vx-inview="true"] .vx-rule-solid {
+  --rule-scale: 1;
 }

@@ -8,21 +8,29 @@ type BadgeVariant =
   | "amber"
   | "red"
   | "indigo"
-  | "gray";
+  | "gray"
+  | "glass"
+  | "dark"
+  | "pill";
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant;
   size?: "sm" | "md";
 }
 
+// Strict monochrome palette for badges - no chromatic colors
 const variantClasses: Record<BadgeVariant, string> = {
-  default: "bg-gray-100 text-gray-700 border-gray-200",
-  blue: "bg-[#ebf3fb] text-[#0a66c2] border-[#b2d5f8]",
-  green: "bg-[#eef8f1] text-[#057642] border-[#bfe3c9]",
-  amber: "bg-[#fff8ea] text-[#915907] border-[#fde5b2]",
-  red: "bg-[#feeff0] text-[#cc1016] border-[#f9c2c5]",
-  indigo: "bg-[#f0f2fe] text-[#4f46e5] border-[#d3d8fd]",
-  gray: "bg-gray-100 text-gray-600 border-gray-200",
+  default: "bg-[#F4F4F4] text-[#242424] border-[#E7E7E7]",
+  gray: "bg-[#F4F4F4] text-[#454545] border-[#E7E7E7]",
+  glass: "bg-white/80 text-[#242424] border-[#E7E7E7] backdrop-blur-xs",
+  dark: "bg-[#090909] text-white border-[#090909]",
+  pill: "bg-white text-[#242424] border-[#E7E7E7] shadow-[0_1px_2px_rgba(0,0,0,0.03)]",
+  // Map former chromatic variants to neutral tones to guarantee strict monochrome across the codebase
+  blue: "bg-[#F4F4F4] text-[#090909] border-[#E7E7E7] font-medium",
+  green: "bg-[#F4F4F4] text-[#090909] border-[#E7E7E7] font-medium",
+  amber: "bg-[#F4F4F4] text-[#242424] border-[#E7E7E7]",
+  red: "bg-[#F4F4F4] text-[#242424] border-[#242424]",
+  indigo: "bg-[#090909] text-white border-[#090909]",
 };
 
 export function Badge({
@@ -35,8 +43,8 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center border rounded font-medium tracking-tight",
-        size === "sm" ? "text-[11px] px-1.5 py-0.5" : "text-xs px-2 py-0.5",
+        "inline-flex items-center border rounded-full font-medium tracking-tight select-none",
+        size === "sm" ? "text-[10px] sm:text-[11px] px-2 py-0.5" : "text-xs px-2.5 py-0.5",
         variantClasses[variant],
         className
       )}

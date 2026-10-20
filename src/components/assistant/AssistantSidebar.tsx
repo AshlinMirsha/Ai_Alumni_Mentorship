@@ -61,14 +61,14 @@ export function AssistantSidebar({
   return (
     <div className="space-y-4">
       {/* Student Profile Context Card */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-xs space-y-3">
-        <div className="flex items-center justify-between pb-2 border-b border-gray-100">
-          <span className="text-[11px] font-semibold text-[#666666] uppercase tracking-wider">
+      <div className="bg-white rounded-xl border border-[#E7E7E7] p-4 shadow-xs space-y-3">
+        <div className="flex items-center justify-between pb-2 border-b border-[#E7E7E7]">
+          <span className="text-[11px] font-semibold text-[#737373] uppercase tracking-wider">
             Your Career Context
           </span>
           <Link
             href="/dashboard"
-            className="text-[11px] font-semibold text-[#0a66c2] hover:text-[#004182] transition-colors inline-flex items-center gap-0.5"
+            className="text-[11px] font-semibold text-[#090909] hover:underline transition-colors inline-flex items-center gap-0.5"
           >
             Edit
             <ChevronRight size={12} />
@@ -77,22 +77,22 @@ export function AssistantSidebar({
 
         <div className="space-y-2 text-xs">
           <div>
-            <span className="text-[#8c8c8c] block text-[10px] font-medium">Target Role</span>
-            <span className="font-semibold text-[#191919]">{student.careerGoal || "Full-Stack Software Engineer"}</span>
+            <span className="text-[#737373] block text-[10px] font-medium">Target Role</span>
+            <span className="font-semibold text-[#090909]">{student.careerGoal || "Full-Stack Software Engineer"}</span>
           </div>
 
           <div>
-            <span className="text-[#8c8c8c] block text-[10px] font-medium">Academic Year</span>
-            <span className="text-[#666666] font-normal">{student.academicYear || "Second Year"} · {student.department}</span>
+            <span className="text-[#737373] block text-[10px] font-medium">Academic Year</span>
+            <span className="text-[#737373] font-normal">{student.academicYear || "Second Year"} · {student.department}</span>
           </div>
 
           <div>
-            <span className="text-[#8c8c8c] block text-[10px] font-medium mb-1">Current Skills</span>
+            <span className="text-[#737373] block text-[10px] font-medium mb-1">Current Skills</span>
             <div className="flex flex-wrap gap-1">
               {student.skills.slice(0, 5).map((s) => (
                 <span
                   key={s.id || s.name}
-                  className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-[#191919] border border-gray-200"
+                  className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#F4F4F4] text-[#090909] border border-[#E7E7E7]"
                 >
                   {s.name}
                 </span>
@@ -103,8 +103,8 @@ export function AssistantSidebar({
       </div>
 
       {/* Suggested Topics / Prompts */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-xs space-y-3.5">
-        <p className="text-[11px] font-semibold text-[#666666] uppercase tracking-wider">
+      <div className="bg-white rounded-xl border border-[#E7E7E7] p-4 shadow-xs space-y-3.5">
+        <p className="text-[11px] font-semibold text-[#737373] uppercase tracking-wider">
           Suggested Topics
         </p>
 
@@ -113,8 +113,8 @@ export function AssistantSidebar({
             const Icon = cat.icon;
             return (
               <div key={idx} className="space-y-1.5">
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-[#191919]">
-                  <Icon size={13} className="text-[#0a66c2]" />
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-[#090909]">
+                  <Icon size={13} className="text-[#090909]" />
                   <span>{cat.label}</span>
                 </div>
                 <div className="space-y-1 pl-4">
@@ -123,7 +123,7 @@ export function AssistantSidebar({
                       key={pIdx}
                       type="button"
                       onClick={() => onSelectPrompt(p)}
-                      className="w-full text-left text-[11px] text-[#666666] hover:text-[#0a66c2] hover:underline transition-colors truncate block"
+                      className="w-full text-left text-[11px] text-[#737373] hover:text-[#090909] hover:underline transition-colors truncate block"
                     >
                       • {p}
                     </button>
@@ -136,12 +136,12 @@ export function AssistantSidebar({
       </div>
 
       {/* Demo Notice */}
-      <div className="p-3.5 bg-white border border-gray-200 rounded-lg text-xs space-y-1.5 shadow-xs">
-        <div className="flex items-center gap-1.5 text-[#191919] font-semibold text-[11px]">
-          <Info size={13} className="text-[#0a66c2] shrink-0" />
-          <span>Demo Response Engine</span>
+      <div className="p-3.5 bg-white border border-[#E7E7E7] rounded-xl text-xs space-y-1.5 shadow-xs">
+        <div className="flex items-center gap-1.5 text-[#090909] font-semibold text-[11px]">
+          <Info size={13} className="text-[#090909] shrink-0" />
+          <span>Curated Response Engine</span>
         </div>
-        <p className="text-[11px] text-[#666666] leading-relaxed">
+        <p className="text-[11px] text-[#737373] leading-relaxed">
           The Career Assistant uses structured advisory templates tailored to student profile data. No external AI keys or private data are sent over public APIs.
         </p>
       </div>
@@ -150,8 +150,8 @@ export function AssistantSidebar({
       {messageCount > 0 && (
         <div className="pt-1">
           {showClearConfirm ? (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg space-y-2">
-              <p className="text-[11px] font-semibold text-red-800">
+            <div className="p-3 bg-[#F4F4F4] border border-[#E7E7E7] rounded-xl space-y-2">
+              <p className="text-[11px] font-semibold text-[#090909]">
                 Clear all conversation history?
               </p>
               <div className="flex gap-2">
@@ -162,7 +162,7 @@ export function AssistantSidebar({
                     onClearConversation();
                     setShowClearConfirm(false);
                   }}
-                  className="bg-[#cc1016] hover:bg-red-800 text-[11px] py-1 h-7 rounded-full"
+                  className="bg-[#090909] text-white text-[11px] py-1 h-7 rounded-full"
                 >
                   Yes, Clear
                 </Button>
@@ -180,7 +180,7 @@ export function AssistantSidebar({
             <button
               type="button"
               onClick={() => setShowClearConfirm(true)}
-              className="w-full text-center py-2 text-xs font-semibold text-[#666666] hover:text-[#cc1016] transition-colors inline-flex items-center justify-center gap-1.5"
+              className="w-full text-center py-2 text-xs font-semibold text-[#737373] hover:text-[#090909] transition-colors inline-flex items-center justify-center gap-1.5"
             >
               <RotateCcw size={12} />
               Reset Conversation

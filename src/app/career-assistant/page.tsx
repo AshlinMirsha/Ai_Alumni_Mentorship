@@ -13,7 +13,8 @@ import {
   AlertCircle,
   HelpCircle,
 } from "lucide-react";
-import { DashboardNav } from "@/components/dashboard/DashboardNav";
+import { AppSidebar } from "@/components/layout/AppSidebar";
+import { AppHeader } from "@/components/layout/AppHeader";
 import { ChatMessage } from "@/components/assistant/ChatMessage";
 import { ChatComposer } from "@/components/assistant/ChatComposer";
 import { SuggestionPrompt } from "@/components/assistant/SuggestionPrompt";
@@ -46,6 +47,7 @@ function QueryPrefillHandler({
 }
 
 export default function CareerAssistantPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const student = useSyncExternalStore(
     subscribeToDashboardStorage,
     loadStudentProfile,
@@ -137,182 +139,174 @@ export default function CareerAssistantPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f3f5f7] flex flex-col antialiased">
-      <DashboardNav studentName={student.name} />
+    <div className="min-h-screen bg-[#FAFAFA] flex antialiased text-[#090909]">
+      {/* App Sidebar (Desktop) */}
+      <AppSidebar className="hidden lg:flex" />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col">
-        {/* Compact Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-gray-200">
-          <div>
+      {/* Mobile Sidebar Overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex lg:hidden">
+          <div className="relative w-64 h-full bg-white">
+            <AppSidebar onCloseMobile={() => setMobileMenuOpen(false)} />
+          </div>
+          <div className="flex-1" onClick={() => setMobileMenuOpen(false)} />
+        </div>
+      )}
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <AppHeader
+          onToggleMobileMenu={() => setMobileMenuOpen(true)}
+          title="AI Career Assistant"
+          subtitle={`Advisory Intelligence · Personalized for ${student.careerGoal || "Full-Stack Software Engineer"}`}
+        />
+
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col space-y-6">
+          {/* Header Controls Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#E7E7E7]">
             <div className="flex items-center gap-2.5">
-              <div className="h-8 w-8 rounded-lg bg-[#ebf3fb] border border-[#0a66c2]/20 flex items-center justify-center text-[#0a66c2] shrink-0">
-                <Sparkles size={16} />
-              </div>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#191919]">
-                AI Career Assistant
-              </h1>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#eef8f1] text-[#057642] border border-[#057642]/20">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#057642] animate-pulse" />
-                Demo Engine Active
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#F4F4F4] text-[#090909] border border-[#E7E7E7]">
+                <Sparkles size={13} />
+                Network Intelligence Model
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-white text-[#737373] border border-[#E7E7E7]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#090909] animate-pulse" />
+                Active Session
               </span>
             </div>
-            <p className="text-xs text-[#666666] mt-1">
-              Personalized guidance for your next career step.
-            </p>
-          </div>
 
-          <div className="flex items-center gap-2 text-xs">
-            {messages.length > 0 && (
-              <button
-                type="button"
-                onClick={handleClearConversation}
-                className="px-3 py-1.5 rounded-full border border-gray-200 bg-white text-[#666666] hover:text-[#191919] hover:bg-gray-50 transition-colors inline-flex items-center gap-1.5 font-medium shadow-xs"
+            <div className="flex items-center gap-2 text-xs">
+              {messages.length > 0 && (
+                <button
+                  type="button"
+                  onClick={handleClearConversation}
+                  className="px-4 py-1.5 rounded-full border border-[#E7E7E7] bg-white text-[#737373] hover:text-[#090909] hover:bg-[#F4F4F4] transition-colors inline-flex items-center gap-1.5 font-medium shadow-xs"
+                >
+                  <RotateCcw size={12} />
+                  <span>Clear Chat</span>
+                </button>
+              )}
+              <Link
+                href="/career-roadmap"
+                className="px-4 py-1.5 rounded-full bg-[#090909] text-white hover:bg-[#242424] font-medium transition-colors inline-flex items-center gap-1.5 shadow-xs"
               >
-                <RotateCcw size={12} />
-                <span>Clear Chat</span>
-              </button>
-            )}
-            <Link
-              href="/career-roadmap"
-              className="px-3.5 py-1.5 rounded-full bg-white border border-[#0a66c2] hover:bg-[#ebf3fb] text-[#0a66c2] font-semibold transition-colors inline-flex items-center gap-1.5 shadow-xs"
-            >
-              <Map size={13} />
-              <span>Career Roadmap</span>
-            </Link>
+                <Map size={13} />
+                <span>Roadmap View</span>
+              </Link>
+            </div>
           </div>
-        </div>
 
-        {/* Main Grid: Chat Area + Contextual Sidebar */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 flex-1 items-start">
-          {/* Conversation Main Container (3 Cols) */}
-          <div className="lg:col-span-3 flex flex-col bg-white rounded-lg border border-gray-200 shadow-xs min-h-[580px] max-h-[780px] overflow-hidden">
-            {/* Messages Scroll Area */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
-              {messages.length === 0 ? (
-                /* WELCOME STATE */
-                <div className="py-6 sm:py-10 max-w-xl mx-auto space-y-5 text-center animate-in fade-in duration-200">
-                  <div className="h-12 w-12 rounded-lg bg-[#ebf3fb] border border-[#0a66c2]/20 flex items-center justify-center text-[#0a66c2] mx-auto shadow-xs">
-                    <Sparkles size={24} />
+          {/* Main Grid: Chat Area + Contextual Sidebar */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-1 items-start">
+            {/* Conversation Main Container (3 Cols) */}
+            <div className="lg:col-span-3 flex flex-col bg-white rounded-2xl border border-[#E7E7E7] shadow-xs min-h-[580px] max-h-[780px] overflow-hidden">
+              {/* Messages Scroll Area */}
+              <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+                {messages.length === 0 ? (
+                  /* WELCOME STATE */
+                  <div className="py-8 sm:py-12 max-w-xl mx-auto space-y-6 text-center animate-in fade-in duration-200">
+                    <div className="h-12 w-12 rounded-2xl bg-[#090909] text-white flex items-center justify-center mx-auto shadow-sm">
+                      <Sparkles size={22} />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <h2 className="text-xl font-bold text-[#090909] tracking-tight">
+                        Where would you like to take your career?
+                      </h2>
+                      <p className="text-xs text-[#737373] max-w-md mx-auto leading-relaxed">
+                        Inquire about high-leverage skills, benchmark projects, alumni hiring standards, or interview strategies.
+                      </p>
+                    </div>
+
+                    {/* 4 Required Suggestion Buttons */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-left">
+                      {welcomePrompts.map((item, idx) => (
+                        <SuggestionPrompt
+                          key={idx}
+                          icon={item.icon}
+                          title={item.title}
+                          description={item.description}
+                          onClick={() => handleSendMessage(item.prompt)}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="pt-4 border-t border-[#E7E7E7] flex items-center justify-center gap-2 text-[11px] text-[#737373]">
+                      <HelpCircle size={13} className="text-[#090909]" />
+                      <span>
+                        Guidance is tailored to your target milestone:{" "}
+                        <strong className="text-[#090909]">
+                          {student.careerGoal || "Full-Stack Software Engineer"}
+                        </strong>
+                      </span>
+                    </div>
                   </div>
-
-                  <div className="space-y-1">
-                    <h2 className="text-lg font-bold text-[#191919] tracking-tight">
-                      Where would you like to take your career?
-                    </h2>
-                    <p className="text-xs text-[#666666] max-w-md mx-auto leading-relaxed">
-                      Ask about skills, projects, internships, interview preparation, or your career roadmap.
-                    </p>
-                  </div>
-
-                  {/* 4 Required Suggestion Buttons */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-left">
-                    {welcomePrompts.map((item, idx) => (
-                      <SuggestionPrompt
-                        key={idx}
-                        icon={item.icon}
-                        title={item.title}
-                        description={item.description}
-                        onClick={() => handleSendMessage(item.prompt)}
+                ) : (
+                  /* Conversation Stream */
+                  <div className="space-y-4">
+                    {messages.map((msg) => (
+                      <ChatMessage
+                        key={msg.id}
+                        message={msg}
+                        studentName={student.name}
+                        onSelectSuggestion={(sug) => handleSendMessage(sug)}
                       />
                     ))}
-                  </div>
 
-                  <div className="pt-3 border-t border-gray-100 flex items-center justify-center gap-2 text-[11px] text-[#666666]">
-                    <HelpCircle size={13} className="text-[#0a66c2]" />
-                    <span>
-                      Guidance is tailored to your target role:{" "}
-                      <strong className="text-[#191919]">
-                        {student.careerGoal || "Full-Stack Software Engineer"}
-                      </strong>
-                    </span>
-                  </div>
-                </div>
-              ) : (
-                /* Conversation Stream */
-                <div className="space-y-4">
-                  {messages.map((msg) => (
-                    <ChatMessage
-                      key={msg.id}
-                      message={msg}
-                      studentName={student.name}
-                      onSelectSuggestion={(sug) => handleSendMessage(sug)}
-                    />
-                  ))}
-
-                  {/* Loading Typing Indicator */}
-                  {isLoading && (
-                    <div className="flex items-center gap-3 text-xs text-gray-400 pl-2">
-                      <div className="h-7 w-7 rounded-lg bg-[#ebf3fb] border border-[#0a66c2]/20 flex items-center justify-center text-[#0a66c2] shrink-0">
-                        <Sparkles size={13} />
+                    {/* Loading Typing Indicator */}
+                    {isLoading && (
+                      <div className="flex items-center gap-3 text-xs text-[#737373] pl-2">
+                        <div className="h-7 w-7 rounded-lg bg-[#090909] text-white flex items-center justify-center shrink-0">
+                          <Sparkles size={13} />
+                        </div>
+                        <div className="flex items-center gap-1.5 bg-[#F4F4F4] border border-[#E7E7E7] rounded-full px-3 py-1.5">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#090909] animate-bounce" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#090909] animate-bounce [animation-delay:0.2s]" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#090909] animate-bounce [animation-delay:0.4s]" />
+                          <span className="text-[11px] font-medium text-[#737373] ml-1">
+                            Analyzing career trajectory...
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#0a66c2] animate-bounce" />
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#0a66c2] animate-bounce [animation-delay:0.2s]" />
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#0a66c2] animate-bounce [animation-delay:0.4s]" />
-                        <span className="text-[11px] font-medium text-[#666666] ml-1">
-                          Analyzing career options...
-                        </span>
+                    )}
+
+                    {/* Error State */}
+                    {errorMessage && (
+                      <div className="p-3 bg-[#F4F4F4] border border-[#E7E7E7] rounded-xl flex items-center gap-2 text-xs text-[#090909]">
+                        <AlertCircle size={15} className="shrink-0" />
+                        <span>{errorMessage}</span>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {/* Error State */}
-                  {errorMessage && (
-                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-xs text-red-700">
-                      <AlertCircle size={15} className="shrink-0" />
-                      <span>{errorMessage}</span>
-                    </div>
-                  )}
+                    <div ref={messagesEndRef} />
+                  </div>
+                )}
+              </div>
 
-                  <div ref={messagesEndRef} />
-                </div>
-              )}
+              {/* Composer Footer */}
+              <div className="p-3 sm:p-4 bg-[#FAFAFA] border-t border-[#E7E7E7]">
+                <ChatComposer
+                  onSendMessage={handleSendMessage}
+                  isLoading={isLoading}
+                />
+              </div>
             </div>
 
-            {/* Composer Footer */}
-            <div className="p-3 sm:p-4 bg-gray-50/70 border-t border-gray-200">
-              <ChatComposer
-                onSendMessage={handleSendMessage}
-                isLoading={isLoading}
+            {/* Contextual Sidebar (Desktop) */}
+            <div className="hidden lg:block">
+              <AssistantSidebar
+                student={student}
+                onSelectPrompt={(prompt) => handleSendMessage(prompt)}
+                onClearConversation={handleClearConversation}
+                messageCount={messages.length}
               />
             </div>
+            <Suspense fallback={null}>
+              <QueryPrefillHandler onPrefill={handleSendMessage} />
+            </Suspense>
           </div>
-
-          {/* Contextual Sidebar (Desktop) */}
-          <div className="hidden lg:block">
-            <AssistantSidebar
-              student={student}
-              onSelectPrompt={(prompt) => handleSendMessage(prompt)}
-              onClearConversation={handleClearConversation}
-              messageCount={messages.length}
-            />
-          </div>
-          <Suspense fallback={null}>
-            <QueryPrefillHandler onPrefill={handleSendMessage} />
-          </Suspense>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="mt-auto border-t border-gray-200 bg-white py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
-          <p>© 2026 AlumniPath · AI-Powered Alumni Networking &amp; Career Mentorship</p>
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="hover:text-gray-900 transition-colors">
-              Student Dashboard
-            </Link>
-            <Link href="/career-roadmap" className="hover:text-gray-900 transition-colors">
-              Career Roadmap
-            </Link>
-            <Link href="/resume-review" className="hover:text-gray-900 transition-colors">
-              Resume Review
-            </Link>
-            <Link href="/alumni" className="hover:text-gray-900 transition-colors">
-              Alumni Directory
-            </Link>
-          </div>
-        </div>
-      </footer>
+        </main>
+      </div>
     </div>
   );
 }
