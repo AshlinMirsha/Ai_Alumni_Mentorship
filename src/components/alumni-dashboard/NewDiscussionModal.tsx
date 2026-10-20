@@ -116,11 +116,11 @@ export function NewDiscussionModal({
       />
 
       {/* Modal Dialog */}
-      <div className="relative bg-white rounded-lg border border-gray-200 shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 z-10 animate-in fade-in zoom-in-95">
+      <div className="relative bg-white rounded-2xl border border-[#E7E7E7] shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 z-10 animate-in fade-in zoom-in-95">
         <div className="flex items-start justify-between pb-4 border-b border-gray-100">
           <div>
             <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-              <MessagesSquare size={16} className="text-[#0a66c2]" />
+              <MessagesSquare size={16} className="text-neutral-900" />
               <span>Create Community Discussion Post</span>
             </h3>
             <p className="text-xs text-gray-500 mt-0.5">
@@ -130,7 +130,7 @@ export function NewDiscussionModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+            className="p-1.5 rounded-full text-gray-400 hover:text-black hover:bg-neutral-100 transition-colors"
           >
             <X size={18} />
           </button>
@@ -138,7 +138,7 @@ export function NewDiscussionModal({
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4 text-xs">
           {validationError && (
-            <div className="p-2.5 bg-red-50 border border-red-200 rounded-md text-xs text-red-700 flex items-center gap-2">
+            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center gap-2">
               <AlertCircle size={14} className="shrink-0" />
               <span>{validationError}</span>
             </div>
@@ -154,7 +154,7 @@ export function NewDiscussionModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. 3 things engineers look for when reviewing campus project portfolios"
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
 
@@ -165,7 +165,7 @@ export function NewDiscussionModal({
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value as CommunityCategory)}
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             >
               <option value="career_advice">Career Advice &amp; Professional Progression</option>
               <option value="technical">Technical Knowledge &amp; Systems Architecture</option>
@@ -186,9 +186,9 @@ export function NewDiscussionModal({
                 type="button"
                 disabled={isEnhancing}
                 onClick={handleEnhanceWithAI}
-                className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#0a66c2] hover:text-[#004182] hover:underline"
+                className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-neutral-900 hover:text-black hover:underline"
               >
-                <Sparkles size={12} className="text-amber-500" />
+                <Sparkles size={12} className="text-neutral-900" />
                 <span>{isEnhancing ? "Enhancing draft..." : "Enhance with AI Assistant"}</span>
               </button>
             </div>
@@ -198,15 +198,15 @@ export function NewDiscussionModal({
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Provide thoughtful advice, context, or questions for students..."
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
 
             {/* AI Review Panel */}
             {enhancedPreview && (
-              <div className="mt-2.5 p-3.5 bg-blue-50/70 border border-blue-200 rounded-md animate-in fade-in">
+              <div className="mt-2.5 p-3.5 bg-neutral-50 border border-neutral-200 rounded-xl animate-in fade-in">
                 <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-blue-900">
-                    <Sparkles size={13} className="text-amber-500 shrink-0" />
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-neutral-900">
+                    <Sparkles size={13} className="text-neutral-900 shrink-0" />
                     <span>AI Writing Assistant Suggestion (Review Required)</span>
                   </div>
                   <button
@@ -218,11 +218,11 @@ export function NewDiscussionModal({
                   </button>
                 </div>
 
-                <div className="mt-2 p-2.5 bg-white border border-blue-100 rounded text-xs text-gray-800 whitespace-pre-line leading-relaxed max-h-48 overflow-y-auto">
+                <div className="mt-2 p-2.5 bg-white border border-neutral-200 rounded-lg text-xs text-gray-800 whitespace-pre-line leading-relaxed max-h-48 overflow-y-auto">
                   {enhancedPreview.text}
                 </div>
 
-                <div className="mt-2 text-[11px] text-blue-800">
+                <div className="mt-2 text-[11px] text-neutral-800">
                   <span className="font-semibold block mb-0.5">Improvements Applied:</span>
                   <ul className="list-disc list-inside space-y-0.5">
                     {enhancedPreview.improvements.map((imp, idx) => (
@@ -231,13 +231,13 @@ export function NewDiscussionModal({
                   </ul>
                 </div>
 
-                <div className="mt-3 flex items-center justify-end gap-2 pt-2 border-t border-blue-200">
+                <div className="mt-3 flex items-center justify-end gap-2 pt-2 border-t border-neutral-200">
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
                     onClick={() => setEnhancedPreview(null)}
-                    className="text-xs text-gray-600"
+                    className="text-xs text-gray-600 rounded-full"
                   >
                     Keep Original
                   </Button>
@@ -246,7 +246,7 @@ export function NewDiscussionModal({
                     variant="primary"
                     size="sm"
                     onClick={handleApplyAIEnhancement}
-                    className="text-xs bg-[#0a66c2] hover:bg-[#004182]"
+                    className="text-xs bg-[#090909] hover:bg-[#242424] text-white rounded-full px-4"
                   >
                     <Check size={12} className="mr-1" />
                     <span>Apply to Post</span>
@@ -265,7 +265,7 @@ export function NewDiscussionModal({
               value={tagsText}
               onChange={(e) => setTagsText(e.target.value)}
               placeholder="Backend, Interviews, Hiring, SystemDesign"
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
 
@@ -276,7 +276,7 @@ export function NewDiscussionModal({
               size="sm"
               onClick={onClose}
               disabled={submitting}
-              className="text-xs"
+              className="text-xs rounded-full border-neutral-300"
             >
               Cancel
             </Button>
@@ -285,7 +285,7 @@ export function NewDiscussionModal({
               variant="primary"
               size="sm"
               disabled={submitting || !title.trim() || !content.trim()}
-              className="text-xs bg-[#0a66c2] hover:bg-[#004182] flex items-center gap-1.5"
+              className="text-xs bg-[#090909] hover:bg-[#242424] text-white rounded-full px-4 flex items-center gap-1.5"
             >
               <Send size={12} />
               <span>{submitting ? "Publishing..." : "Publish Post"}</span>

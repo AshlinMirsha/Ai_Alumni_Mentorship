@@ -101,7 +101,7 @@ function AlumniProfileInnerForm({
             variant="primary"
             size="sm"
             disabled={isSaving}
-            className="bg-[#0a66c2] hover:bg-[#004182] text-xs flex items-center gap-1.5"
+            className="bg-[#090909] hover:bg-[#242424] text-white text-xs flex items-center gap-1.5 rounded-full border-0 shadow-none"
           >
             <Save size={13} />
             <span>{isSaving ? "Saving..." : "Save Changes"}</span>
@@ -116,7 +116,7 @@ function AlumniProfileInnerForm({
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
 
@@ -126,7 +126,7 @@ function AlumniProfileInnerForm({
               type="text"
               value={formData.headline || ""}
               onChange={(e) => setFormData({ ...formData, headline: e.target.value })}
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
 
@@ -137,7 +137,7 @@ function AlumniProfileInnerForm({
               value={formData.role}
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
               required
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
 
@@ -148,7 +148,7 @@ function AlumniProfileInnerForm({
               value={formData.company}
               onChange={(e) => setFormData({ ...formData, company: e.target.value })}
               required
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
 
@@ -158,7 +158,7 @@ function AlumniProfileInnerForm({
               type="text"
               value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
 
@@ -169,7 +169,7 @@ function AlumniProfileInnerForm({
               value={formData.linkedinUrl || "https://linkedin.com/in/marcus-vance"}
               onChange={(e) => setFormData({ ...formData, linkedinUrl: e.target.value })}
               placeholder="https://linkedin.com/in/..."
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
         </div>
@@ -183,16 +183,16 @@ function AlumniProfileInnerForm({
             value={formData.bio || ""}
             onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
             placeholder="Tell students about your career path, technical domain, and what you enjoy discussing in mentorship sessions..."
-            className="w-full text-xs bg-white border border-gray-200 rounded-md p-3 text-gray-900 leading-relaxed focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+            className="w-full text-xs bg-white border border-gray-200 rounded-lg p-3 text-gray-900 leading-relaxed focus:outline-none focus:ring-1 focus:ring-black"
           />
         </div>
       </div>
 
       {/* 2. Education Credentials */}
-      <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs space-y-4">
+      <div className="bg-white border border-[#E7E7E7] rounded-xl p-5 shadow-xs space-y-4">
         <div className="border-b border-gray-100 pb-3">
           <h2 className="text-sm font-bold text-gray-900 flex items-center gap-1.5">
-            <GraduationCap size={16} className="text-[#0a66c2]" />
+            <GraduationCap size={16} className="text-[#090909]" />
             <span>2. Education &amp; University Affiliation</span>
           </h2>
           <p className="text-xs text-gray-500 mt-0.5">
@@ -207,7 +207,7 @@ function AlumniProfileInnerForm({
               type="text"
               value={formData.university || "University of Technology"}
               onChange={(e) => setFormData({ ...formData, university: e.target.value })}
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
 
@@ -217,7 +217,7 @@ function AlumniProfileInnerForm({
               type="text"
               value={formData.degree || "B.S. in Computer Science"}
               onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
 
@@ -227,7 +227,7 @@ function AlumniProfileInnerForm({
               type="text"
               value={formData.department}
               onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
 
@@ -237,17 +237,17 @@ function AlumniProfileInnerForm({
               type="number"
               value={formData.graduationYear}
               onChange={(e) => setFormData({ ...formData, graduationYear: Number(e.target.value) })}
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
         </div>
       </div>
 
       {/* 3. Skills & Technical Expertise */}
-      <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs space-y-4">
+      <div className="bg-white border border-[#E7E7E7] rounded-xl p-5 shadow-xs space-y-4">
         <div className="border-b border-gray-100 pb-3">
           <h2 className="text-sm font-bold text-gray-900 flex items-center gap-1.5">
-            <Layers size={16} className="text-[#0a66c2]" />
+            <Layers size={16} className="text-[#090909]" />
             <span>3. Technical Skills &amp; Domain Expertise</span>
           </h2>
           <p className="text-xs text-gray-500 mt-0.5">
@@ -260,13 +260,13 @@ function AlumniProfileInnerForm({
             {formData.skills.map((skill) => (
               <span
                 key={skill.id}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ebf3fb] border border-[#b2d5f8] text-xs font-medium text-[#0a66c2]"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-100 border border-neutral-200 text-xs font-medium text-neutral-900"
               >
                 <span>{skill.name}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveSkill(skill.id)}
-                  className="text-[#0a66c2] hover:text-red-600 ml-0.5"
+                  className="text-neutral-500 hover:text-black ml-0.5"
                   title="Remove skill"
                 >
                   ×
@@ -287,14 +287,14 @@ function AlumniProfileInnerForm({
                 }
               }}
               placeholder="Add skill (e.g. Kubernetes, Go, Kafka)..."
-              className="flex-1 text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="flex-1 text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={handleAddSkill}
-              className="text-xs"
+              className="text-xs rounded-full border-neutral-300"
             >
               <Plus size={13} className="mr-1" />
               <span>Add</span>
@@ -304,10 +304,10 @@ function AlumniProfileInnerForm({
       </div>
 
       {/* 4. Mentorship Interests & Focus Areas */}
-      <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs space-y-4">
+      <div className="bg-white border border-[#E7E7E7] rounded-xl p-5 shadow-xs space-y-4">
         <div className="border-b border-gray-100 pb-3">
           <h2 className="text-sm font-bold text-gray-900 flex items-center gap-1.5">
-            <Briefcase size={16} className="text-[#0a66c2]" />
+            <Briefcase size={16} className="text-[#090909]" />
             <span>4. Mentorship Focus Areas</span>
           </h2>
           <p className="text-xs text-gray-500 mt-0.5">
@@ -320,13 +320,13 @@ function AlumniProfileInnerForm({
             {formData.mentorshipAreas.map((area) => (
               <span
                 key={area}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-medium text-[#057642]"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-100 border border-neutral-200 text-xs font-medium text-neutral-900"
               >
                 <span>{area}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveArea(area)}
-                  className="text-[#057642] hover:text-red-600 ml-0.5"
+                  className="text-neutral-500 hover:text-black ml-0.5"
                   title="Remove area"
                 >
                   ×
@@ -347,14 +347,14 @@ function AlumniProfileInnerForm({
                 }
               }}
               placeholder="Add focus (e.g. System Design, Mock Coding)..."
-              className="flex-1 text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="flex-1 text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={handleAddArea}
-              className="text-xs"
+              className="text-xs rounded-full border-neutral-300"
             >
               <Plus size={13} className="mr-1" />
               <span>Add</span>
@@ -364,7 +364,7 @@ function AlumniProfileInnerForm({
       </div>
 
       {/* 5. Mentorship Availability & Capacity */}
-      <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs space-y-4">
+      <div className="bg-white border border-[#E7E7E7] rounded-xl p-5 shadow-xs space-y-4">
         <div className="border-b border-gray-100 pb-3">
           <h2 className="text-sm font-bold text-gray-900">5. Mentorship Availability &amp; Capacity</h2>
           <p className="text-xs text-gray-500 mt-0.5">
@@ -385,7 +385,7 @@ function AlumniProfileInnerForm({
                   mentorshipAvailability: e.target.value as Alumni["mentorshipAvailability"],
                 })
               }
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             >
               <option value="available">Accepting New Mentees (Open)</option>
               <option value="limited">Limited Availability (1 slot)</option>
@@ -405,7 +405,7 @@ function AlumniProfileInnerForm({
               onChange={(e) =>
                 setFormData({ ...formData, maxMentees: Number(e.target.value) || 5 })
               }
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
 
@@ -420,17 +420,17 @@ function AlumniProfileInnerForm({
                 setFormData({ ...formData, averageResponseTime: e.target.value })
               }
               placeholder="e.g. within 24 hours"
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
         </div>
       </div>
 
       {/* 6. Profile Visibility Preferences */}
-      <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs space-y-4">
+      <div className="bg-white border border-[#E7E7E7] rounded-xl p-5 shadow-xs space-y-4">
         <div className="border-b border-gray-100 pb-3">
           <h2 className="text-sm font-bold text-gray-900 flex items-center gap-1.5">
-            <Eye size={16} className="text-[#0a66c2]" />
+            <Eye size={16} className="text-[#090909]" />
             <span>6. Profile Visibility &amp; Privacy Preferences</span>
           </h2>
           <p className="text-xs text-gray-500 mt-0.5">
@@ -464,9 +464,9 @@ function AlumniProfileInnerForm({
             return (
               <label
                 key={opt.id}
-                className={`p-3.5 rounded-lg border cursor-pointer transition-all flex flex-col justify-between ${
+                className={`p-3.5 rounded-xl border cursor-pointer transition-all flex flex-col justify-between ${
                   isSelected
-                    ? "border-[#0a66c2] bg-[#ebf3fb]/40 ring-1 ring-[#0a66c2]"
+                    ? "border-black bg-neutral-100 ring-1 ring-black"
                     : "border-gray-200 hover:bg-gray-50"
                 }`}
               >
@@ -483,9 +483,9 @@ function AlumniProfileInnerForm({
                           visibilityPreference: opt.id,
                         })
                       }
-                      className="text-[#0a66c2] focus:ring-[#0a66c2]"
+                      className="text-black focus:ring-black accent-black"
                     />
-                    <Icon size={14} className={isSelected ? "text-[#0a66c2]" : "text-gray-400"} />
+                    <Icon size={14} className={isSelected ? "text-black" : "text-gray-400"} />
                     <span className="text-xs font-bold text-gray-900">{opt.title}</span>
                   </div>
                   <p className="text-[11px] text-gray-500 leading-relaxed">{opt.description}</p>
@@ -497,7 +497,7 @@ function AlumniProfileInnerForm({
       </div>
 
       {/* Save Button Bar */}
-      <div className="p-4 bg-white border border-gray-200 rounded-lg flex items-center justify-between shadow-xs">
+      <div className="p-4 bg-white border border-[#E7E7E7] rounded-xl flex items-center justify-between shadow-xs">
         <span className="text-[11px] text-gray-500">
           Preferences persist across student matching algorithms and dashboard sessions.
         </span>
@@ -506,7 +506,7 @@ function AlumniProfileInnerForm({
           variant="primary"
           size="md"
           disabled={isSaving}
-          className="bg-[#0a66c2] hover:bg-[#004182] text-xs flex items-center gap-2 px-5 py-2 font-semibold shadow-xs"
+          className="bg-[#090909] hover:bg-[#242424] text-white text-xs flex items-center gap-2 px-5 py-2.5 font-semibold shadow-xs rounded-full"
         >
           <Save size={14} />
           <span>{isSaving ? "Saving..." : "Save All Profile &amp; Mentorship Settings"}</span>
@@ -536,16 +536,16 @@ export default function AlumniProfilePage() {
     <div className="space-y-5">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-5 right-5 z-50 bg-gray-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
-          <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
+        <div className="fixed bottom-5 right-5 z-50 bg-[#090909] text-white text-xs px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 border border-neutral-800">
+          <CheckCircle2 size={15} className="text-white shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* Profile Overview Card */}
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-xs">
+      <div className="bg-white border border-[#E7E7E7] rounded-xl overflow-hidden shadow-xs">
         {/* Banner */}
-        <div className="h-28 bg-linear-to-r from-blue-700 via-blue-800 to-indigo-900 relative" />
+        <div className="h-28 bg-[#171717] border-b border-[#262626] relative" />
 
         <div className="px-6 pb-6 pt-0 relative">
           <div className="-mt-12 mb-3 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -554,7 +554,7 @@ export default function AlumniProfilePage() {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 text-xs text-[#057642] bg-[#eef8f1] px-2.5 py-1 rounded-full font-semibold border border-[#bfe3c9]">
+              <span className="inline-flex items-center gap-1 text-xs text-neutral-900 bg-neutral-100 px-3 py-1 rounded-full font-semibold border border-neutral-200">
                 <ShieldCheck size={13} /> Verified Alumni Mentor
               </span>
             </div>

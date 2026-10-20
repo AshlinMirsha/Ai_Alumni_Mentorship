@@ -55,9 +55,9 @@ export function StudentDetailModal({
       />
 
       {/* Modal Dialog */}
-      <div className="relative bg-white rounded-lg border border-gray-200 shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto z-10 animate-in fade-in zoom-in-95">
+      <div className="relative bg-white rounded-2xl border border-[#E7E7E7] shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto z-10 animate-in fade-in zoom-in-95">
         {/* Banner Header */}
-        <div className="h-24 bg-linear-to-r from-[#0a66c2] via-[#004182] to-slate-900 relative p-4 flex items-start justify-between">
+        <div className="h-24 bg-[#111111] border-b border-[#242424] relative p-4 flex items-start justify-between">
           <div className="flex items-center gap-1.5 text-white/90 text-xs font-medium">
             <Globe size={13} />
             <span>Verified Student Profile</span>
@@ -67,7 +67,7 @@ export function StudentDetailModal({
             <Link
               href={`/alumni-dashboard/students/${student.id}`}
               onClick={onClose}
-              className="text-[11px] font-semibold text-white bg-white/20 hover:bg-white/30 px-2.5 py-1 rounded transition-colors flex items-center gap-1"
+              className="text-[11px] font-medium text-white/90 bg-white/10 hover:bg-white/20 border border-white/10 px-2.5 py-1 rounded-full transition-colors flex items-center gap-1"
             >
               <span>Full Page</span>
               <ExternalLink size={11} />
@@ -75,7 +75,7 @@ export function StudentDetailModal({
             <button
               type="button"
               onClick={onClose}
-              className="p-1 rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors"
+              className="p-1 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
             >
               <X size={16} />
             </button>
@@ -94,7 +94,7 @@ export function StudentDetailModal({
                 variant="outline"
                 size="sm"
                 asChild
-                className="text-xs text-gray-700"
+                className="text-xs text-neutral-800 border-neutral-200 rounded-full hover:bg-neutral-50"
               >
                 <Link href={`/alumni-dashboard/students/${student.id}`} onClick={onClose}>
                   <span>Full Profile &rarr;</span>
@@ -108,7 +108,7 @@ export function StudentDetailModal({
                   onOfferMentorship(student);
                 }}
                 disabled={student.hasPendingRequest}
-                className="bg-[#0a66c2] hover:bg-[#004182] text-xs flex items-center gap-1.5"
+                className="bg-[#090909] hover:bg-[#242424] text-white rounded-full text-xs flex items-center gap-1.5"
               >
                 <Send size={12} />
                 <span>{student.hasPendingRequest ? "Invitation Pending" : "Invite to Mentorship"}</span>
@@ -119,11 +119,11 @@ export function StudentDetailModal({
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-base font-bold text-gray-900">{student.name}</h2>
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#057642] bg-[#eef8f1] px-2 py-0.5 rounded-full border border-[#bfe3c9]">
+              <span className="inline-flex items-center gap-1 text-[10px] font-medium text-neutral-700 bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200">
                 <CheckCircle2 size={10} /> Enrolled Student
               </span>
               {student.matchScore && (
-                <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#ebf3fb] text-[#0a66c2] border border-[#b2d5f8]">
+                <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-neutral-100 text-neutral-900 border border-neutral-200">
                   {student.matchScore}% Domain Match
                 </span>
               )}
@@ -135,7 +135,7 @@ export function StudentDetailModal({
 
             <div className="mt-1 flex items-center gap-3 text-[11px] text-gray-500 flex-wrap">
               <span className="flex items-center gap-1">
-                <GraduationCap size={13} className="text-[#0a66c2]" />
+                <GraduationCap size={13} className="text-neutral-700" />
                 <strong>{student.university}</strong>
               </span>
               <span>·</span>
@@ -165,10 +165,10 @@ export function StudentDetailModal({
           {/* Education Details */}
           <div className="mt-4 pt-3.5 border-t border-gray-100">
             <h4 className="text-xs font-bold text-gray-900 mb-2 flex items-center gap-1.5">
-              <GraduationCap size={14} className="text-[#0a66c2]" />
+              <GraduationCap size={14} className="text-neutral-700" />
               <span>Education</span>
             </h4>
-            <div className="bg-white border border-gray-200 rounded-md p-3 text-xs space-y-1.5">
+            <div className="bg-white border border-[#E7E7E7] rounded-xl p-3 text-xs space-y-1.5">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="font-bold text-gray-900">
@@ -203,7 +203,7 @@ export function StudentDetailModal({
                     {student.education.coursework.map((course) => (
                       <span
                         key={course}
-                        className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-700"
+                        className="text-[10px] bg-neutral-100 px-1.5 py-0.5 rounded text-neutral-800"
                       >
                         {course}
                       </span>
@@ -217,18 +217,18 @@ export function StudentDetailModal({
           {/* Career Goals & Preferred Industry */}
           <div className="mt-4 pt-3.5 border-t border-gray-100">
             <h4 className="text-xs font-bold text-gray-900 mb-2 flex items-center gap-1.5">
-              <Target size={14} className="text-[#0a66c2]" />
+              <Target size={14} className="text-neutral-700" />
               <span>Career Interests &amp; Professional Goals</span>
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
-              <div className="bg-gray-50 border border-gray-200 rounded-md p-2.5">
+              <div className="bg-[#FAFAFA] border border-[#E7E7E7] rounded-xl p-2.5">
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">
                   Desired Job Role
                 </span>
                 <p className="font-semibold text-gray-900 mt-0.5">{student.careerGoal}</p>
               </div>
 
-              <div className="bg-gray-50 border border-gray-200 rounded-md p-2.5">
+              <div className="bg-[#FAFAFA] border border-[#E7E7E7] rounded-xl p-2.5">
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">
                   Preferred Industry
                 </span>
@@ -243,7 +243,7 @@ export function StudentDetailModal({
           {student.skills && student.skills.length > 0 && (
             <div className="mt-4 pt-3.5 border-t border-gray-100">
               <h4 className="text-xs font-bold text-gray-900 mb-2 flex items-center gap-1.5">
-                <Code size={14} className="text-[#0a66c2]" />
+                <Code size={14} className="text-neutral-700" />
                 <span>Technical Skills &amp; Stack</span>
               </h4>
               <div className="flex flex-wrap gap-1.5">
@@ -253,7 +253,7 @@ export function StudentDetailModal({
                   return (
                     <span
                       key={skillName}
-                      className="px-2 py-0.5 text-xs rounded bg-gray-100 text-gray-800 font-medium flex items-center gap-1"
+                      className="px-2.5 py-1 text-xs rounded-full bg-neutral-100 text-neutral-800 border border-neutral-200 font-medium flex items-center gap-1"
                     >
                       <span>{skillName}</span>
                       {level && (
@@ -269,7 +269,7 @@ export function StudentDetailModal({
           {/* Featured Projects */}
           <div className="mt-4 pt-3.5 border-t border-gray-100">
             <h4 className="text-xs font-bold text-gray-900 mb-2 flex items-center gap-1.5">
-              <FolderGit2 size={14} className="text-[#0a66c2]" />
+              <FolderGit2 size={14} className="text-neutral-700" />
               <span>Projects &amp; Portfolio</span>
             </h4>
             <div className="space-y-2">
@@ -277,12 +277,12 @@ export function StudentDetailModal({
                 student.detailedProjects.map((p) => (
                   <div
                     key={p.id}
-                    className="p-3 rounded-md border border-gray-200 bg-gray-50/40 text-xs"
+                    className="p-3 rounded-xl border border-[#E7E7E7] bg-[#FAFAFA] text-xs"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <h5 className="font-bold text-gray-900">{p.title}</h5>
                       {p.role && (
-                        <span className="text-[10px] text-gray-500 bg-white border border-gray-200 px-1.5 py-0.2 rounded">
+                        <span className="text-[10px] text-gray-500 bg-white border border-[#E7E7E7] px-1.5 py-0.2 rounded-full">
                           {p.role}
                         </span>
                       )}
@@ -295,7 +295,7 @@ export function StudentDetailModal({
                         {p.techStack.map((tech) => (
                           <span
                             key={tech}
-                            className="text-[10px] bg-white border border-gray-200 px-1.5 py-0.2 rounded text-gray-600 font-mono"
+                            className="text-[10px] bg-white border border-[#E7E7E7] px-1.5 py-0.2 rounded text-gray-600 font-mono"
                           >
                             {tech}
                           </span>
@@ -306,7 +306,7 @@ export function StudentDetailModal({
                           href={p.githubUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[11px] text-[#0a66c2] hover:underline flex items-center gap-1"
+                          className="text-[11px] text-neutral-900 hover:underline flex items-center gap-1 font-medium"
                         >
                           <span>Repository</span>
                           <ExternalLink size={10} />
@@ -319,7 +319,7 @@ export function StudentDetailModal({
                 student.projects.map((projTitle, idx) => (
                   <div
                     key={idx}
-                    className="p-2.5 rounded-md border border-gray-200 bg-gray-50/50 flex items-center justify-between text-xs"
+                    className="p-2.5 rounded-xl border border-[#E7E7E7] bg-[#FAFAFA] flex items-center justify-between text-xs"
                   >
                     <span className="font-semibold text-gray-900">{projTitle}</span>
                     <span className="text-[10px] text-gray-400">Portfolio Project</span>
@@ -333,13 +333,13 @@ export function StudentDetailModal({
           {student.achievements && student.achievements.length > 0 && privacy.showAchievements && (
             <div className="mt-4 pt-3.5 border-t border-gray-100">
               <h4 className="text-xs font-bold text-gray-900 mb-2 flex items-center gap-1.5">
-                <Award size={14} className="text-amber-600" />
+                <Award size={14} className="text-neutral-800" />
                 <span>Honors &amp; Achievements</span>
               </h4>
               <ul className="space-y-1.5 text-xs text-gray-700">
                 {student.achievements.map((item, i) => (
                   <li key={i} className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-amber-500 shrink-0" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-neutral-800 shrink-0" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -350,20 +350,20 @@ export function StudentDetailModal({
           {/* Mentorship Information */}
           <div className="mt-4 pt-3.5 border-t border-gray-100">
             <h4 className="text-xs font-bold text-gray-900 mb-2 flex items-center gap-1.5">
-              <Sparkles size={14} className="text-[#0a66c2]" />
+              <Sparkles size={14} className="text-neutral-700" />
               <span>Mentorship Information &amp; Preferences</span>
             </h4>
-            <div className="bg-blue-50/50 border border-blue-100 rounded-md p-3 text-xs space-y-2">
+            <div className="bg-[#FAFAFA] border border-[#E7E7E7] rounded-xl p-3 text-xs space-y-2">
               {student.seekingMentorshipIn && student.seekingMentorshipIn.length > 0 && (
                 <div>
-                  <span className="text-[10px] uppercase font-bold text-[#0a66c2] block mb-1">
+                  <span className="text-[10px] uppercase font-bold text-neutral-700 block mb-1">
                     Topics Seeking Guidance In
                   </span>
                   <div className="flex flex-wrap gap-1">
                     {student.seekingMentorshipIn.map((topic) => (
                       <span
                         key={topic}
-                        className="px-2 py-0.5 text-[11px] rounded bg-white text-[#0a66c2] border border-blue-200 font-medium"
+                        className="px-2 py-0.5 text-[11px] rounded-full bg-white text-neutral-900 border border-neutral-200 font-medium"
                       >
                         {topic}
                       </span>
@@ -380,7 +380,7 @@ export function StudentDetailModal({
               )}
 
               {student.mentorshipStatement && (
-                <p className="text-[11px] text-gray-600 italic border-t border-blue-100 pt-1.5">
+                <p className="text-[11px] text-gray-600 italic border-t border-neutral-200 pt-1.5">
                   &ldquo;{student.mentorshipStatement}&rdquo;
                 </p>
               )}
@@ -390,13 +390,13 @@ export function StudentDetailModal({
           {/* Privacy & Permissions Footer */}
           <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-400">
             <div className="flex items-center gap-1">
-              <Shield size={12} className="text-[#057642]" />
+              <Shield size={12} className="text-neutral-700" />
               <span>Displaying student-permitted directory records</span>
             </div>
             <Link
               href={`/alumni-dashboard/students/${student.id}`}
               onClick={onClose}
-              className="font-semibold text-[#0a66c2] hover:underline"
+              className="font-semibold text-neutral-900 hover:underline"
             >
               Open Full Profile Page &rarr;
             </Link>

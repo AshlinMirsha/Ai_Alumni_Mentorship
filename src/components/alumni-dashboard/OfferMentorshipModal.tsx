@@ -113,27 +113,27 @@ export function OfferMentorshipModal({
         </div>
 
         {/* Student Mini Preview */}
-        <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-between gap-3">
+        <div className="mt-4 p-3.5 bg-neutral-50 border border-[#E7E7E7] rounded-xl flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <Avatar name={student.name} size="md" className="shrink-0" />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <h4 className="text-xs font-bold text-gray-900 truncate">{student.name}</h4>
-                <span className="text-[10px] text-gray-500 bg-white border border-gray-200 px-1.5 py-0.2 rounded shrink-0">
+                <span className="text-[10px] text-neutral-800 bg-white border border-neutral-200 px-2 py-0.5 rounded-full shrink-0">
                   {student.academicYear}
                 </span>
               </div>
               <p className="text-[11px] text-gray-600 truncate mt-0.5">
                 {student.department} · {student.university}
               </p>
-              <p className="text-[11px] text-[#0a66c2] font-medium mt-0.5 truncate">
+              <p className="text-[11px] text-neutral-700 font-medium mt-0.5 truncate">
                 Target Role: {student.careerGoal}
               </p>
             </div>
           </div>
 
           {student.matchScore && (
-            <span className="text-[10px] font-bold text-[#057642] bg-[#eef8f1] border border-[#bfe3c9] px-2 py-0.5 rounded shrink-0">
+            <span className="text-[10px] font-bold text-neutral-900 bg-neutral-100 border border-neutral-200 px-2.5 py-0.5 rounded-full shrink-0">
               {student.matchScore}% Match
             </span>
           )}
@@ -141,13 +141,13 @@ export function OfferMentorshipModal({
 
         {/* Duplicate Warning */}
         {isDuplicate && (
-          <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2.5 text-xs text-amber-800">
-            <AlertCircle size={15} className="shrink-0 mt-0.5 text-amber-600" />
+          <div className="mt-3 p-3 bg-neutral-100 border border-neutral-200 rounded-xl flex items-start gap-2.5 text-xs text-neutral-800">
+            <AlertCircle size={15} className="shrink-0 mt-0.5 text-neutral-900" />
             <div>
               <p className="font-semibold">Mentorship Invitation Already Sent</p>
-              <p className="text-[11px] text-amber-700 mt-0.5">
+              <p className="text-[11px] text-neutral-700 mt-0.5">
                 You already have an active pending invitation with {student.name}. You can review pending statuses in your{" "}
-                <a href="/alumni-dashboard/requests" className="underline font-semibold">
+                <a href="/alumni-dashboard/requests" className="underline font-semibold text-black">
                   Mentorship Requests
                 </a>{" "}
                 dashboard.
@@ -157,7 +157,7 @@ export function OfferMentorshipModal({
         )}
 
         {errorMessage && (
-          <div className="mt-3 p-2.5 bg-red-50 border border-red-200 rounded text-xs text-red-700 flex items-center gap-2">
+          <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center gap-2">
             <AlertCircle size={14} className="shrink-0 text-red-500" />
             <span>{errorMessage}</span>
           </div>
@@ -174,7 +174,7 @@ export function OfferMentorshipModal({
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               disabled={isDuplicate || submitting}
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2] disabled:bg-gray-100 disabled:text-gray-400"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black disabled:bg-gray-100 disabled:text-gray-400"
             >
               {COMMON_TOPICS.map((t) => (
                 <option key={t} value={t}>
@@ -197,7 +197,7 @@ export function OfferMentorshipModal({
                 placeholder="e.g. Profiling Go Services & Distributed Telemetry"
                 required
                 disabled={isDuplicate || submitting}
-                className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
               />
             </div>
           )}
@@ -212,7 +212,7 @@ export function OfferMentorshipModal({
               value={expertise}
               onChange={(e) => setExpertise(e.target.value)}
               disabled={isDuplicate || submitting}
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2] disabled:bg-gray-100 disabled:text-gray-400"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black disabled:bg-gray-100 disabled:text-gray-400"
             >
               {EXPERTISE_OPTIONS.map((exp) => (
                 <option key={exp} value={exp}>
@@ -235,7 +235,7 @@ export function OfferMentorshipModal({
                 placeholder="e.g. 6+ years building microservices and cloud telemetry"
                 required
                 disabled={isDuplicate || submitting}
-                className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
               />
             </div>
           )}
@@ -252,7 +252,7 @@ export function OfferMentorshipModal({
               onChange={(e) => setPersonalNote(e.target.value)}
               disabled={isDuplicate || submitting}
               placeholder={`Hi ${student.name}! I noticed your interest in ${student.careerGoal} and your projects at ${student.university}. I'd be glad to share feedback on ${finalFocus} and help you prepare for technical interviews.`}
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#0a66c2] disabled:bg-gray-100 disabled:text-gray-400"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-black disabled:bg-gray-100 disabled:text-gray-400"
             />
             <p className="text-[11px] text-gray-400 mt-1">
               The student will receive your mentorship offer with your proposed topic and can schedule an introductory session.
@@ -271,7 +271,7 @@ export function OfferMentorshipModal({
                 size="sm"
                 onClick={onClose}
                 disabled={submitting}
-                className="text-xs"
+                className="text-xs rounded-full border-neutral-300"
               >
                 Cancel
               </Button>
@@ -285,7 +285,7 @@ export function OfferMentorshipModal({
                   (topic === "custom" && !customTopic.trim()) ||
                   (expertise === "custom" && !customExpertise.trim())
                 }
-                className="text-xs bg-[#0a66c2] hover:bg-[#004182] flex items-center gap-1.5"
+                className="text-xs bg-[#090909] hover:bg-[#242424] text-white rounded-full px-4 flex items-center gap-1.5"
               >
                 <Send size={12} />
                 <span>

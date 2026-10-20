@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
@@ -13,6 +13,7 @@ import {
   CheckCircle2,
   ArrowRightLeft,
   LogOut,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSyncExternalStore } from "react";
@@ -30,6 +31,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ className, onCloseMobile }: AppSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
 
   const session = useSyncExternalStore(
     subscribeToDashboardStorage,
@@ -76,7 +78,7 @@ export function AppSidebar({ className, onCloseMobile }: AppSidebarProps) {
       )}
     >
       {/* Top Branding */}
-      <div className="p-5 pb-4">
+      <div className="p-5 pb-4 flex items-center justify-between">
         <Link
           href="/"
           className="flex items-center gap-3 group"
@@ -94,6 +96,16 @@ export function AppSidebar({ className, onCloseMobile }: AppSidebarProps) {
             </span>
           </div>
         </Link>
+        {onCloseMobile && (
+          <button
+            type="button"
+            onClick={onCloseMobile}
+            className="lg:hidden p-1.5 rounded-full text-[#737373] hover:text-[#090909] hover:bg-[#F4F4F4] transition-colors"
+            aria-label="Close menu"
+          >
+            <X size={18} />
+          </button>
+        )}
       </div>
 
       {/* Main Navigation List */}
@@ -180,7 +192,10 @@ export function AppSidebar({ className, onCloseMobile }: AppSidebarProps) {
           <button
             type="button"
             onClick={() => {
+              const target = isAlumni ? "/dashboard" : "/alumni-dashboard";
               setSessionRole(isAlumni ? "student" : "alumni");
+              router.push(target);
+              onCloseMobile?.();
             }}
             title={isAlumni ? "Switch to Student View" : "Switch to Alumni View"}
             className="p-1.5 rounded-lg text-[#737373] hover:text-[#090909] hover:bg-[#EBEBEB] transition-colors"

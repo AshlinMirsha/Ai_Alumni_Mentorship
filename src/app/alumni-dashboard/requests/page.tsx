@@ -181,11 +181,11 @@ export default function AlumniRequestsPage() {
       )}
 
       {/* Header & Controls Surface */}
-      <div className="bg-white border border-[#D9D9D9] rounded-lg p-5 sm:p-6 shadow-xs space-y-5">
+      <div className="bg-white border border-[#E7E7E7] rounded-xl p-5 sm:p-6 shadow-xs space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-[#191919] tracking-tight flex items-center gap-2.5">
-              <Inbox size={22} className="text-[#0A66C2]" />
+              <Inbox size={22} className="text-[#090909]" />
               <span>Mentorship Requests</span>
             </h1>
             <p className="text-xs sm:text-sm text-[#666666] mt-1 max-w-2xl leading-relaxed">
@@ -195,7 +195,7 @@ export default function AlumniRequestsPage() {
 
           <Link
             href="/alumni-dashboard/students"
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-[#0A66C2] bg-white hover:bg-blue-50/60 border border-[#B2D5F8] rounded-md transition-colors whitespace-nowrap shrink-0 self-start sm:self-center"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-[#090909] bg-white hover:bg-neutral-100 border border-[#E7E7E7] rounded-full transition-colors whitespace-nowrap shrink-0 self-start sm:self-center"
           >
             <span>Discover Students</span>
             <span>&rarr;</span>
@@ -207,11 +207,11 @@ export default function AlumniRequestsPage() {
           {/* Status Tabs */}
           <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar pb-1 md:pb-0" role="tablist">
             {[
-              { key: "pending", label: "Pending", count: pendingIncoming.length, badgeColor: "bg-[#FEF3C7] text-[#B45309]" },
-              { key: "accepted", label: "Accepted", count: acceptedList.length, badgeColor: "bg-[#EEF8F1] text-[#057642]" },
+              { key: "pending", label: "Pending", count: pendingIncoming.length, badgeColor: "bg-neutral-100 text-neutral-800" },
+              { key: "accepted", label: "Accepted", count: acceptedList.length, badgeColor: "bg-neutral-900 text-white" },
               { key: "declined", label: "Declined", count: declinedList.length, badgeColor: "bg-[#F3F2EF] text-[#666666]" },
-              { key: "completed", label: "Completed", count: completedList.length, badgeColor: "bg-[#EBF3FB] text-[#0A66C2]" },
-              { key: "outgoing", label: "Sent Invitations", count: pendingOutgoing.length, badgeColor: "bg-[#FAF5FF] text-[#7E22CE]" },
+              { key: "completed", label: "Completed", count: completedList.length, badgeColor: "bg-neutral-100 text-neutral-800" },
+              { key: "outgoing", label: "Sent Invitations", count: pendingOutgoing.length, badgeColor: "bg-neutral-100 text-neutral-800" },
               { key: "all", label: "All", count: allRequests.length, badgeColor: "bg-[#F3F2EF] text-[#666666]" },
             ].map((t) => {
               const isSelected = activeTab === t.key;
@@ -223,10 +223,10 @@ export default function AlumniRequestsPage() {
                   aria-selected={isSelected}
                   onClick={() => setActiveTab(t.key as RequestTab)}
                   className={cn(
-                    "px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 whitespace-nowrap shrink-0",
+                    "px-3 py-1.5 rounded-full text-xs font-semibold transition-colors flex items-center gap-1.5 whitespace-nowrap shrink-0",
                     isSelected
-                      ? "bg-[#0A66C2] text-white shadow-2xs"
-                      : "text-[#666666] hover:text-[#191919] hover:bg-[#F3F2EF]"
+                      ? "bg-[#090909] text-white shadow-2xs"
+                      : "text-[#666666] hover:text-[#191919] hover:bg-neutral-100"
                   )}
                 >
                   <span>{t.label}</span>
@@ -251,7 +251,7 @@ export default function AlumniRequestsPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by student, topic, department..."
-              className="w-full pl-8 pr-8 py-2 text-xs bg-[#F8FAFC] border border-[#D9D9D9] rounded-md text-[#191919] placeholder-[#888888] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0A66C2] focus:border-[#0A66C2] transition-colors"
+              className="w-full pl-8 pr-8 py-2 text-xs bg-[#F8FAFC] border border-[#D9D9D9] rounded-lg text-[#191919] placeholder-[#888888] focus:bg-white focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-colors"
             />
             {searchQuery && (
               <button
@@ -293,7 +293,7 @@ export default function AlumniRequestsPage() {
           </p>
           <Link
             href="/alumni-dashboard/students"
-            className="inline-flex items-center gap-1.5 mt-5 px-4 py-2 text-xs font-semibold text-[#0A66C2] bg-white hover:bg-blue-50/60 border border-[#B2D5F8] rounded-md transition-colors"
+            className="inline-flex items-center gap-1.5 mt-5 px-4 py-2 text-xs font-semibold text-[#090909] bg-white hover:bg-neutral-100 border border-[#E7E7E7] rounded-full transition-colors"
           >
             <span>Browse Students</span>
             <span>&rarr;</span>
@@ -313,7 +313,7 @@ export default function AlumniRequestsPage() {
             return (
               <div
                 key={req.id}
-                className="bg-white border border-[#D9D9D9] hover:border-[#0A66C2]/40 rounded-lg p-5 sm:p-6 shadow-xs hover:shadow-sm transition-all space-y-4"
+                className="bg-white border border-[#E7E7E7] hover:border-black rounded-xl p-5 sm:p-6 shadow-xs hover:shadow-sm transition-all space-y-4"
               >
                 {/* Header Row: Student Information & Status */}
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
@@ -324,13 +324,13 @@ export default function AlumniRequestsPage() {
                         <button
                           type="button"
                           onClick={() => handleViewProfile(req)}
-                          className="text-sm font-bold text-[#191919] hover:text-[#0A66C2] hover:underline truncate text-left"
+                          className="text-sm font-bold text-[#191919] hover:text-black hover:underline truncate text-left"
                         >
                           {studentName}
                         </button>
 
                         {isOutgoing ? (
-                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FAF5FF] text-[#7E22CE] border border-[#E9D5FF]">
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-neutral-100 text-neutral-800 border border-neutral-200">
                             Sent Invitation
                           </span>
                         ) : isPending ? (
@@ -338,11 +338,11 @@ export default function AlumniRequestsPage() {
                             Pending Review
                           </span>
                         ) : isAccepted ? (
-                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EEF8F1] text-[#057642] border border-[#BFE3C9]">
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-neutral-900 text-white">
                             Active Mentee
                           </span>
                         ) : isCompleted ? (
-                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EBF3FB] text-[#0A66C2] border border-[#B2D5F8]">
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-neutral-100 text-neutral-800 border border-neutral-200">
                             Completed Track
                           </span>
                         ) : (
@@ -362,7 +362,7 @@ export default function AlumniRequestsPage() {
                         </p>
                       )}
 
-                      <div className="mt-2 flex items-center gap-1.5 text-xs text-[#0A66C2] font-semibold">
+                      <div className="mt-2 flex items-center gap-1.5 text-xs text-neutral-900 font-semibold">
                         <Target size={13} className="shrink-0" />
                         <span>Requested Focus: {req.focus}</span>
                       </div>
@@ -375,7 +375,7 @@ export default function AlumniRequestsPage() {
                       <span>Requested: {req.requestDate || "Recent"}</span>
                     </span>
                     {req.sessionCount > 0 && (
-                      <span className="text-xs text-[#057642] font-semibold block mt-1">
+                      <span className="text-xs text-neutral-800 font-semibold block mt-1">
                         {req.sessionCount} session{req.sessionCount === 1 ? "" : "s"} conducted
                       </span>
                     )}
@@ -391,7 +391,7 @@ export default function AlumniRequestsPage() {
 
                 {/* Decline reason note if declined */}
                 {isDeclined && req.declinedReason && (
-                  <div className="p-3 bg-rose-50 border border-rose-200 rounded-md text-xs text-rose-800">
+                  <div className="p-3 bg-neutral-100 border border-neutral-300 rounded-md text-xs text-neutral-800">
                     <span className="font-semibold block text-[11px] mb-0.5">Decline Reason Provided:</span>
                     <span>{req.declinedReason}</span>
                   </div>
@@ -404,7 +404,7 @@ export default function AlumniRequestsPage() {
                     {req.student.interests.map((interest, idx) => (
                       <span
                         key={idx}
-                        className="px-2 py-0.5 rounded text-[11px] bg-[#F3F2EF] text-[#191919] border border-[#E0E0E0] font-medium"
+                        className="px-2 py-0.5 rounded-full text-[11px] bg-neutral-100 text-neutral-900 border border-neutral-200 font-medium"
                       >
                         {interest}
                       </span>
@@ -418,7 +418,7 @@ export default function AlumniRequestsPage() {
                     <button
                       type="button"
                       onClick={() => handleViewProfile(req)}
-                      className="text-xs font-semibold text-[#0A66C2] hover:underline flex items-center gap-1.5 py-1"
+                      className="text-xs font-semibold text-neutral-900 hover:underline flex items-center gap-1.5 py-1"
                     >
                       <User size={13} />
                       <span>View Student Profile</span>
@@ -428,7 +428,7 @@ export default function AlumniRequestsPage() {
 
                     <Link
                       href={`/messages?participantId=${studentId}`}
-                      className="text-xs font-semibold text-[#666666] hover:text-[#0A66C2] hover:underline flex items-center gap-1.5 py-1"
+                      className="text-xs font-semibold text-[#666666] hover:text-black hover:underline flex items-center gap-1.5 py-1"
                     >
                       <MessageSquare size={13} />
                       <span>Message Student</span>
@@ -442,7 +442,7 @@ export default function AlumniRequestsPage() {
                         type="button"
                         disabled={processingId === req.id}
                         onClick={() => setDeclineTargetRequest(req)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold text-[#666666] hover:text-red-600 hover:bg-red-50 border border-[#D9D9D9] hover:border-red-200 transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#666666] hover:text-black hover:bg-neutral-100 border border-[#D9D9D9] transition-colors"
                       >
                         <X size={13} />
                         <span>Decline</span>
@@ -451,7 +451,7 @@ export default function AlumniRequestsPage() {
                         type="button"
                         disabled={processingId === req.id}
                         onClick={() => handleAccept(req)}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold bg-[#0A66C2] hover:bg-[#004182] text-white shadow-2xs transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#090909] hover:bg-[#242424] text-white shadow-2xs transition-colors"
                       >
                         <Check size={13} />
                         <span>{processingId === req.id ? "Accepting..." : "Accept Request"}</span>
@@ -463,7 +463,7 @@ export default function AlumniRequestsPage() {
                     <div className="flex items-center gap-2">
                       <Link
                         href="/alumni-dashboard/mentees"
-                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-semibold text-[#0A66C2] bg-white hover:bg-blue-50/60 border border-[#B2D5F8] transition-colors"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold text-neutral-900 bg-white hover:bg-neutral-100 border border-[#E7E7E7] transition-colors"
                       >
                         <span>View Mentee Profile</span>
                         <span>&rarr;</span>
@@ -472,7 +472,7 @@ export default function AlumniRequestsPage() {
                   )}
 
                   {isCompleted && (
-                    <div className="flex items-center gap-1.5 text-xs text-[#057642] font-semibold bg-[#EEF8F1] border border-[#BFE3C9] px-2.5 py-1 rounded-md">
+                    <div className="flex items-center gap-1.5 text-xs text-neutral-900 font-semibold bg-neutral-100 border border-neutral-200 px-2.5 py-1 rounded-full">
                       <Award size={14} />
                       <span>Track Successfully Concluded</span>
                     </div>

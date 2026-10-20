@@ -1062,22 +1062,34 @@ export default function LandingPage() {
             JOIN CALL-TO-ACTION SECTION
            ══════════════════════════════════════════════════════════════════════ */}
         <section className="py-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-3xl p-8 sm:p-14 border border-[#E7E7E7] shadow-[0_8px_32px_-8px_rgba(0,0,0,0.06)] text-center relative">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F4F4F4] border border-[#E7E7E7] text-[#090909] text-xs font-semibold mb-6">
+          <div className="bg-white rounded-3xl p-8 sm:p-14 border border-[#E7E7E7] shadow-[0_8px_32px_-8px_rgba(0,0,0,0.06)] text-center relative transition-all duration-300">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F4F4F4] border border-[#E7E7E7] text-[#090909] text-xs font-semibold mb-6 transition-all duration-200">
               <Sparkles size={13} />
-              <span>Join the 2026 Academic Cohort</span>
+              <span>
+                {conversionRole === "student"
+                  ? "Join the 2026 Academic Cohort"
+                  : "Verified Alumni Advisory Network"}
+              </span>
             </div>
 
-            <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#090909] leading-tight max-w-2xl mx-auto">
-              Your next career breakthrough starts with one collegiate conversation.
+            <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#090909] leading-tight max-w-2xl mx-auto transition-all duration-200">
+              {conversionRole === "student"
+                ? "Your next career breakthrough starts with one collegiate conversation."
+                : "Empower the next generation of engineers from your alma mater."}
             </h2>
 
-            {/* Role Toggle */}
+            <p className="text-sm sm:text-base text-[#555555] max-w-xl mx-auto mt-4 leading-relaxed transition-all duration-200">
+              {conversionRole === "student"
+                ? "Direct, asynchronous mentorship connecting university students with alumni leaders across tech, product, and design."
+                : "Guide ambitious students, conduct mock technical reviews, critique portfolios, and refer top collegiate talent."}
+            </p>
+
+            {/* Interactive Role Toggle */}
             <div className="inline-flex items-center p-1 rounded-full bg-[#F4F4F4] border border-[#E7E7E7] my-8 select-none">
               <button
                 type="button"
                 onClick={() => setConversionRole("student")}
-                className={`text-xs font-semibold px-4 py-2 rounded-full transition-all ${
+                className={`text-xs font-semibold px-5 py-2.5 rounded-full transition-all duration-200 cursor-pointer ${
                   conversionRole === "student"
                     ? "bg-[#090909] text-white shadow-xs"
                     : "text-[#737373] hover:text-[#090909]"
@@ -1088,7 +1100,7 @@ export default function LandingPage() {
               <button
                 type="button"
                 onClick={() => setConversionRole("alumni")}
-                className={`text-xs font-semibold px-4 py-2 rounded-full transition-all ${
+                className={`text-xs font-semibold px-5 py-2.5 rounded-full transition-all duration-200 cursor-pointer ${
                   conversionRole === "alumni"
                     ? "bg-[#090909] text-white shadow-xs"
                     : "text-[#737373] hover:text-[#090909]"
@@ -1098,7 +1110,7 @@ export default function LandingPage() {
               </button>
             </div>
 
-            {/* CTAs */}
+            {/* Dynamic CTAs */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-lg mx-auto">
               <Button
                 variant="primary"
@@ -1106,8 +1118,20 @@ export default function LandingPage() {
                 asChild
                 className="rounded-full w-full sm:w-auto px-8 min-w-[210px] shadow-xs"
               >
-                <Link href={conversionRole === "student" ? "/signup" : "/signup?role=alumni"}>
-                  {conversionRole === "student" ? "Create Student Account" : "Register as Mentor"}
+                <Link
+                  href={
+                    conversionRole === "student"
+                      ? "/signup?role=student"
+                      : "/signup?role=alumni"
+                  }
+                  className="flex items-center justify-center gap-2"
+                >
+                  <span>
+                    {conversionRole === "student"
+                      ? "Create Student Account"
+                      : "Register as Alumnus Mentor"}
+                  </span>
+                  <ArrowRight size={14} />
                 </Link>
               </Button>
               <Button
@@ -1116,7 +1140,13 @@ export default function LandingPage() {
                 asChild
                 className="rounded-full w-full sm:w-auto px-8 min-w-[190px] shadow-xs"
               >
-                <Link href="/alumni">Browse Directory</Link>
+                <Link
+                  href={conversionRole === "student" ? "/alumni" : "/alumni-dashboard"}
+                >
+                  {conversionRole === "student"
+                    ? "Browse Directory"
+                    : "Access Mentor Portal"}
+                </Link>
               </Button>
             </div>
 

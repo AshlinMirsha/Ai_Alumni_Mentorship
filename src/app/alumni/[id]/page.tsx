@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { UserX } from "lucide-react";
 import { alumniData, getAlumniById } from "@/lib/mock-data";
-import { DashboardNav } from "@/components/dashboard/DashboardNav";
+import { AppHeader } from "@/components/layout/AppHeader";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { AlumniProfileClient } from "@/components/alumni/AlumniProfileClient";
 
@@ -38,8 +38,8 @@ export default async function AlumniDetailPage({ params }: PageProps) {
 
   if (!alumnus) {
     return (
-      <div className="min-h-screen bg-[#f3f5f7] flex flex-col antialiased">
-        <DashboardNav />
+      <div className="min-h-screen bg-[#FAFAFA] flex flex-col antialiased">
+        <AppHeader />
         <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-20 flex items-center justify-center">
           <EmptyState
             icon={<UserX size={26} />}
@@ -47,7 +47,7 @@ export default async function AlumniDetailPage({ params }: PageProps) {
             description={`We couldn't locate an alumni record matching profile identifier "${id}". The profile may have been removed or the link is invalid.`}
             actionLabel="Return to Alumni Directory"
             actionHref="/alumni"
-            className="w-full max-w-lg bg-white p-10 border border-gray-200 shadow-sm"
+            className="w-full max-w-lg bg-white p-10 border border-[#E7E7E7] rounded-2xl shadow-xs"
           />
         </main>
       </div>

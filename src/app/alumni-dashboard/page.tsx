@@ -303,8 +303,8 @@ export default function AlumniDashboardPage() {
                       <ShieldCheck size={12} />
                       <span>Verified Mentor</span>
                     </span>
-                    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#057642] bg-emerald-50/50 px-2 py-0.5 rounded-full border border-emerald-100 shrink-0">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#057642] animate-pulse" />
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-neutral-800 bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200 shrink-0">
+                      <span className="h-1.5 w-1.5 rounded-full bg-neutral-900 animate-pulse" />
                       <span>Accepting Mentees ({activeMentees.length}/5 slots)</span>
                     </span>
                   </div>
@@ -313,7 +313,7 @@ export default function AlumniDashboardPage() {
                   <p className="text-xs sm:text-[13px] font-semibold text-[#191919] mt-1 flex items-center gap-1.5 flex-wrap">
                     <span>{alumni.role}</span>
                     <span className="text-[#666666] font-normal">at</span>
-                    <span className="text-[#0A66C2] font-semibold">{alumni.company}</span>
+                    <span className="text-[#090909] font-bold">{alumni.company}</span>
                     <span className="text-gray-300 hidden sm:inline">·</span>
                     <span className="text-[#666666] font-normal text-xs">Ex-Google</span>
                   </p>
@@ -340,7 +340,7 @@ export default function AlumniDashboardPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setIsAIAssistantOpen(true)}
-                  className="h-8 px-3 text-xs font-semibold text-[#0A66C2] border-[#B2D5F8] hover:bg-blue-50 flex items-center gap-1.5 cursor-pointer shadow-none"
+                  className="h-8 px-3 text-xs font-semibold text-[#090909] border-[#E7E7E7] hover:bg-[#F4F4F4] flex items-center gap-1.5 cursor-pointer shadow-none rounded-full"
                 >
                   <Sparkles size={13} />
                   <span>AI Assistant</span>
@@ -350,10 +350,10 @@ export default function AlumniDashboardPage() {
                   variant="outline"
                   size="sm"
                   asChild
-                  className="h-8 px-3 text-xs font-semibold text-[#191919] border-[#D9D9D9] hover:bg-gray-50 flex items-center gap-1.5 cursor-pointer shadow-none"
+                  className="h-8 px-3 text-xs font-semibold text-[#090909] border-[#E7E7E7] hover:bg-[#F4F4F4] flex items-center gap-1.5 cursor-pointer shadow-none rounded-full"
                 >
                   <Link href="/alumni-dashboard/profile">
-                    <Edit3 size={13} className="text-[#666666]" />
+                    <Edit3 size={13} className="text-[#737373]" />
                     <span>Edit Profile</span>
                   </Link>
                 </Button>
@@ -362,7 +362,7 @@ export default function AlumniDashboardPage() {
                   variant="primary"
                   size="sm"
                   asChild
-                  className="h-8 px-3 text-xs font-semibold bg-[#0A66C2] hover:bg-[#004182] !text-white text-white flex items-center gap-1.5 cursor-pointer border-0 shadow-none"
+                  className="h-8 px-3 text-xs font-semibold bg-[#090909] hover:bg-[#242424] !text-white text-white flex items-center gap-1.5 cursor-pointer border-0 shadow-none rounded-full"
                 >
                   <Link href="/alumni-dashboard/students">
                     <Users size={13} className="!text-white text-white" />
@@ -405,19 +405,19 @@ export default function AlumniDashboardPage() {
                 >
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-xs font-medium text-[#666666]">Pending Requests</span>
-                    <Inbox size={15} className="text-[#0A66C2] group-hover:scale-105 transition-transform" />
+                    <Inbox size={15} className="text-[#090909] group-hover:scale-105 transition-transform" />
                   </div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-bold tracking-tight text-[#191919]">
                       {pendingRequests.length}
                     </span>
-                    <span className="text-xs text-[#0A66C2] font-semibold">
+                    <span className="text-xs text-neutral-900 font-semibold">
                       {pendingRequests.length === 1 ? "Review" : "Reviews"}
                     </span>
                   </div>
                   <p className="text-[11px] text-[#666666] mt-2 truncate flex items-center justify-between">
                     <span>Awaiting your decision</span>
-                    <ChevronRight size={12} className="text-gray-400 group-hover:text-[#0A66C2]" />
+                    <ChevronRight size={12} className="text-gray-400 group-hover:text-black" />
                   </p>
                 </Link>
 
@@ -428,7 +428,7 @@ export default function AlumniDashboardPage() {
                 >
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-xs font-medium text-[#666666]">Active Mentees</span>
-                    <UserCheck size={15} className="text-[#057642] group-hover:scale-105 transition-transform" />
+                    <UserCheck size={15} className="text-[#090909] group-hover:scale-105 transition-transform" />
                   </div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-bold tracking-tight text-[#191919]">
@@ -505,7 +505,7 @@ export default function AlumniDashboardPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setIsScheduleModalOpen(true)}
-                  className="h-8 px-3 text-xs font-semibold text-[#0A66C2] border-[#B2D5F8] hover:bg-blue-50 flex items-center gap-1.5 cursor-pointer shadow-none"
+                  className="h-8 px-3 text-xs font-semibold text-[#090909] border-[#E7E7E7] hover:bg-[#F4F4F4] flex items-center gap-1.5 cursor-pointer shadow-none rounded-full"
                 >
                   <Plus size={13} />
                   <span>Schedule Session</span>
@@ -513,7 +513,7 @@ export default function AlumniDashboardPage() {
 
                 <Link
                   href="/alumni-dashboard/mentees"
-                  className="text-xs font-semibold text-[#0A66C2] hover:underline inline-flex items-center gap-1"
+                  className="text-xs font-semibold text-[#090909] hover:underline inline-flex items-center gap-1"
                 >
                   <span>View All Sessions</span>
                   <ArrowRight size={12} />
@@ -537,7 +537,7 @@ export default function AlumniDashboardPage() {
                     variant="outline"
                     size="sm"
                     onClick={() => setIsScheduleModalOpen(true)}
-                    className="mt-3 text-xs font-medium text-[#0A66C2] border-[#B2D5F8]"
+                    className="mt-3 text-xs font-medium text-neutral-900 border-[#E7E7E7] hover:bg-neutral-100 rounded-full"
                   >
                     + Schedule New Session
                   </Button>
@@ -546,7 +546,7 @@ export default function AlumniDashboardPage() {
                 activeUpcomingSessions.map((session) => (
                   <div
                     key={session.id}
-                    className="p-4 rounded-lg border border-[#D9D9D9] bg-white hover:border-[#0A66C2] transition-colors"
+                    className="p-4 rounded-xl border border-[#E7E7E7] bg-white hover:border-black transition-colors"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       {/* Left: Mentee Avatar, Name, Topic, Date/Time */}
@@ -563,8 +563,8 @@ export default function AlumniDashboardPage() {
                             <span
                               className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                                 session.status === "confirmed"
-                                  ? "bg-[#EEF8F1] text-[#057642] border border-[#BFE3C9]"
-                                  : "bg-[#EFF6FF] text-[#0A66C2] border border-[#BFDBFE]"
+                                  ? "bg-neutral-900 text-white"
+                                  : "bg-neutral-100 text-neutral-800 border border-neutral-200"
                               }`}
                             >
                               {session.status}
@@ -579,7 +579,7 @@ export default function AlumniDashboardPage() {
                           {/* Date and Time */}
                           <div className="mt-1.5 flex items-center gap-3 text-xs text-[#666666] flex-wrap">
                             <span className="flex items-center gap-1 font-medium text-[#191919]">
-                              <Calendar size={13} className="text-[#0A66C2] shrink-0" />
+                              <Calendar size={13} className="text-neutral-900 shrink-0" />
                               <span>{session.date}</span>
                             </span>
                             <span className="text-gray-300">·</span>
@@ -647,14 +647,14 @@ export default function AlumniDashboardPage() {
                   Recent Mentorship Requests
                 </h2>
                 {pendingRequests.length > 0 && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EBF3FB] text-[#0A66C2]">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-neutral-100 text-neutral-900 border border-neutral-200">
                     {pendingRequests.length} pending
                   </span>
                 )}
               </div>
               <Link
                 href="/alumni-dashboard/requests"
-                className="text-xs font-semibold text-[#0A66C2] hover:underline flex items-center gap-1"
+                className="text-xs font-semibold text-neutral-900 hover:text-neutral-600 flex items-center gap-1"
               >
                 <span>View all requests</span>
                 <ArrowRight size={12} />
@@ -673,7 +673,7 @@ export default function AlumniDashboardPage() {
                     variant="outline"
                     size="sm"
                     asChild
-                    className="mt-3 text-xs font-medium text-[#0A66C2] border-[#B2D5F8]"
+                    className="mt-3 text-xs font-medium text-neutral-900 border-[#E7E7E7] hover:bg-neutral-100 rounded-full"
                   >
                     <Link href="/alumni-dashboard/students">Discover Students &rarr;</Link>
                   </Button>
@@ -702,7 +702,7 @@ export default function AlumniDashboardPage() {
                             <p className="text-xs text-[#666666] truncate mt-0.5">
                               {studentDept} · University of Technology
                             </p>
-                            <div className="mt-1 flex items-center gap-1.5 text-xs text-[#0A66C2]">
+                            <div className="mt-1 flex items-center gap-1.5 text-xs text-neutral-700">
                               <Target size={12} className="shrink-0" />
                               <span className="font-semibold truncate">
                                 Career Goal: {careerInterest}
@@ -745,7 +745,7 @@ export default function AlumniDashboardPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => openStudentProfileForRequest(req)}
-                          className="text-xs text-[#666666] hover:text-[#0A66C2] hover:bg-blue-50 px-2.5 h-8 font-semibold cursor-pointer"
+                          className="text-xs text-[#555555] hover:text-[#090909] hover:bg-[#F4F4F4] px-3 h-8 font-semibold cursor-pointer rounded-full"
                         >
                           <Users size={12} className="mr-1.5" />
                           <span>View Profile</span>
@@ -757,7 +757,7 @@ export default function AlumniDashboardPage() {
                             variant="outline"
                             size="sm"
                             onClick={() => handleDecline(req.id, studentName)}
-                            className="text-xs text-[#666666] hover:text-red-600 hover:border-red-200 h-8 px-3 font-medium cursor-pointer"
+                            className="text-xs text-[#555555] hover:text-[#090909] hover:border-[#090909] h-8 px-3 font-medium cursor-pointer rounded-full"
                           >
                             <X size={12} className="mr-1" />
                             <span>Decline</span>
@@ -767,7 +767,7 @@ export default function AlumniDashboardPage() {
                             variant="primary"
                             size="sm"
                             onClick={() => handleAccept(req.id, studentName)}
-                            className="text-xs bg-[#0A66C2] hover:bg-[#004182] !text-white text-white h-8 px-3.5 font-semibold cursor-pointer border-0 shadow-none"
+                            className="text-xs bg-[#090909] hover:bg-[#242424] !text-white text-white h-8 px-4 font-semibold cursor-pointer border-0 shadow-xs rounded-full"
                           >
                             <Check size={12} className="mr-1 !text-white text-white" />
                             <span>Accept</span>
@@ -784,29 +784,29 @@ export default function AlumniDashboardPage() {
           {/* ─── 5. RECOMMENDED STUDENTS TO MENTOR ─── */}
           <section
             aria-labelledby="recommended-students-title"
-            className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs"
+            className="bg-white border border-[#E7E7E7] rounded-2xl p-5 sm:p-6 shadow-xs"
           >
-            <div className="flex items-center justify-between pb-3.5 border-b border-gray-100">
+            <div className="flex items-center justify-between pb-3.5 border-b border-[#E7E7E7]">
               <div>
                 <div className="flex items-center gap-2">
                   <h2
                     id="recommended-students-title"
-                    className="text-base sm:text-lg font-bold text-[#191919] tracking-tight"
+                    className="text-base sm:text-lg font-bold text-[#090909] tracking-tight"
                   >
                     Recommended Students
                   </h2>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#0A66C2] bg-blue-50 px-2 py-0.5 rounded border border-[#B2D5F8]">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#090909] bg-[#F4F4F4] px-2.5 py-0.5 rounded-full border border-[#E7E7E7]">
                     <Sparkles size={11} /> Skills Match
                   </span>
                 </div>
-                <p className="text-xs text-[#666666] mt-0.5">
+                <p className="text-xs text-[#555555] mt-0.5">
                   Students whose career interests align with your systems, Go, and backend expertise
                 </p>
               </div>
 
               <Link
                 href="/alumni-dashboard/students"
-                className="text-xs font-semibold text-[#0A66C2] hover:underline flex items-center gap-1 shrink-0"
+                className="text-xs font-semibold text-neutral-900 hover:text-neutral-600 flex items-center gap-1 shrink-0"
               >
                 <span>Browse all</span>
                 <ArrowRight size={12} />
@@ -817,13 +817,13 @@ export default function AlumniDashboardPage() {
               {recommendedStudents.map((st) => (
                 <div
                   key={st.id}
-                  className="p-3.5 rounded-lg border border-[#D9D9D9] bg-white flex flex-col justify-between hover:border-[#0A66C2] transition-colors"
+                  className="p-3.5 rounded-xl border border-[#E7E7E7] bg-white flex flex-col justify-between hover:border-black transition-colors"
                 >
                   <div>
                     <div className="flex items-start justify-between gap-2">
                       <Avatar name={st.name} size="md" className="ring-1 ring-gray-100" />
                       {st.matchScore && (
-                        <span className="text-[10px] font-bold text-[#057642] bg-[#EEF8F1] border border-[#BFE3C9] px-2 py-0.5 rounded-full shrink-0">
+                        <span className="text-[10px] font-bold text-neutral-900 bg-neutral-100 border border-neutral-200 px-2 py-0.5 rounded-full shrink-0">
                           {st.matchScore}% Match
                         </span>
                       )}
@@ -837,7 +837,7 @@ export default function AlumniDashboardPage() {
                     </p>
 
                     <p className="text-xs text-[#191919] mt-1.5 line-clamp-2">
-                      Goal: <strong className="font-semibold text-[#0A66C2]">{st.careerGoal}</strong>
+                      Goal: <strong className="font-semibold text-neutral-900">{st.careerGoal}</strong>
                     </p>
 
                     <div className="mt-2.5 flex gap-1 flex-wrap">
@@ -859,7 +859,7 @@ export default function AlumniDashboardPage() {
                     <button
                       type="button"
                       onClick={() => setSelectedStudentForDetail(st)}
-                      className="text-xs font-semibold text-[#666666] hover:text-[#0A66C2] hover:underline cursor-pointer"
+                      className="text-xs font-semibold text-[#555555] hover:text-[#090909] hover:underline cursor-pointer"
                     >
                       View Profile
                     </button>
@@ -868,7 +868,7 @@ export default function AlumniDashboardPage() {
                       size="sm"
                       onClick={() => setSelectedStudentForOffer(st)}
                       disabled={st.hasPendingRequest}
-                      className="text-xs py-1 px-2.5 h-auto font-semibold text-[#0A66C2] border-[#B2D5F8] hover:bg-blue-50 cursor-pointer"
+                      className="text-xs py-1 px-3 h-auto font-semibold text-[#090909] border-[#E7E7E7] hover:bg-[#F4F4F4] cursor-pointer rounded-full"
                     >
                       {st.hasPendingRequest ? "Pending" : "Offer Mentorship"}
                     </Button>
@@ -885,28 +885,28 @@ export default function AlumniDashboardPage() {
         ───────────────────────────────────────────────────────────── */}
         <aside aria-label="Alumni Supporting Sidebar" className="space-y-6 min-w-0">
           {/* ─── A. PROFILE COMPLETION ─── */}
-          <div className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs">
-            <div className="flex items-center justify-between pb-2.5 border-b border-gray-100">
-              <h3 className="text-sm font-bold text-[#191919]">Profile Completion</h3>
-              <span className="text-xs font-bold text-[#057642]">{profileCompletion}% Complete</span>
+          <div className="bg-white border border-[#E7E7E7] rounded-2xl p-5 shadow-xs">
+            <div className="flex items-center justify-between pb-2.5 border-b border-[#E7E7E7]">
+              <h3 className="text-sm font-bold text-[#090909]">Profile Completion</h3>
+              <span className="text-xs font-bold text-[#090909]">{profileCompletion}% Complete</span>
             </div>
 
             <div className="mt-3">
-              <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+              <div className="h-2 rounded-full bg-[#F4F4F4] overflow-hidden">
                 <div
-                  className="h-full bg-[#057642] rounded-full transition-all duration-300"
+                  className="h-full bg-[#090909] rounded-full transition-all duration-300"
                   style={{ width: `${profileCompletion}%` }}
                 />
               </div>
-              <p className="text-xs text-[#666666] mt-2 leading-relaxed">
+              <p className="text-xs text-[#555555] mt-2 leading-relaxed">
                 Complete the remaining 8% to maximize your visibility and student match accuracy.
               </p>
             </div>
 
-            <div className="mt-3 pt-3 border-t border-gray-100">
+            <div className="mt-3 pt-3 border-t border-[#E7E7E7]">
               <Link
                 href="/alumni-dashboard/profile"
-                className="text-xs font-semibold text-[#0A66C2] hover:underline flex items-center justify-between"
+                className="text-xs font-semibold text-[#090909] hover:underline flex items-center justify-between"
               >
                 <span>Edit Full Profile Details</span>
                 <ChevronRight size={13} />
@@ -915,35 +915,35 @@ export default function AlumniDashboardPage() {
           </div>
 
           {/* ─── B. PROFILE REMINDERS ─── */}
-          <div className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs">
-            <div className="flex items-center gap-2 pb-2.5 border-b border-gray-100">
-              <AlertCircle size={15} className="text-[#0A66C2]" />
-              <h3 className="text-sm font-bold text-[#191919]">Profile Reminders</h3>
+          <div className="bg-white border border-[#E7E7E7] rounded-2xl p-5 shadow-xs">
+            <div className="flex items-center gap-2 pb-2.5 border-b border-[#E7E7E7]">
+              <AlertCircle size={15} className="text-[#090909]" />
+              <h3 className="text-sm font-bold text-[#090909]">Profile Reminders</h3>
             </div>
 
             <ul className="mt-3 space-y-2.5 text-xs">
-              <li className="flex items-start gap-2.5 text-[#191919]">
-                <span className="h-4 w-4 rounded-full bg-blue-50 text-[#0A66C2] flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+              <li className="flex items-start gap-2.5 text-[#090909]">
+                <span className="h-4 w-4 rounded-full bg-[#F4F4F4] text-[#090909] border border-[#E7E7E7] flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
                   +4%
                 </span>
-                <span className="text-xs text-[#666666] leading-snug">
+                <span className="text-xs text-[#555555] leading-snug">
                   Add your personal LinkedIn URL to verified contacts
                 </span>
               </li>
-              <li className="flex items-start gap-2.5 text-[#191919]">
-                <span className="h-4 w-4 rounded-full bg-blue-50 text-[#0A66C2] flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+              <li className="flex items-start gap-2.5 text-[#090909]">
+                <span className="h-4 w-4 rounded-full bg-[#F4F4F4] text-[#090909] border border-[#E7E7E7] flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
                   +4%
                 </span>
-                <span className="text-xs text-[#666666] leading-snug">
+                <span className="text-xs text-[#555555] leading-snug">
                   Set 2 preferred weekly office hours time windows
                 </span>
               </li>
             </ul>
 
-            <div className="mt-3.5 pt-3 border-t border-gray-100">
+            <div className="mt-3.5 pt-3 border-t border-[#E7E7E7]">
               <Link
                 href="/alumni-dashboard/profile"
-                className="text-xs font-semibold text-[#0A66C2] hover:underline flex items-center justify-between"
+                className="text-xs font-semibold text-[#090909] hover:underline flex items-center justify-between"
               >
                 <span>Complete Reminders Now</span>
                 <ArrowRight size={12} />
@@ -952,23 +952,23 @@ export default function AlumniDashboardPage() {
           </div>
 
           {/* ─── C. CAMPUS EVENTS ─── */}
-          <div className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs">
-            <div className="flex items-center justify-between pb-2.5 border-b border-gray-100">
+          <div className="bg-white border border-[#E7E7E7] rounded-2xl p-5 shadow-xs">
+            <div className="flex items-center justify-between pb-2.5 border-b border-[#E7E7E7]">
               <div className="flex items-center gap-1.5">
-                <Calendar size={15} className="text-[#0A66C2]" />
-                <h3 className="text-sm font-bold text-[#191919]">Campus Events</h3>
+                <Calendar size={15} className="text-[#090909]" />
+                <h3 className="text-sm font-bold text-[#090909]">Campus Events</h3>
               </div>
-              <span className="text-[11px] font-medium text-[#666666]">Fall 2026</span>
+              <span className="text-[11px] font-medium text-[#737373]">Fall 2026</span>
             </div>
 
-            <div className="mt-3 divide-y divide-gray-100">
+            <div className="mt-3 divide-y divide-[#E7E7E7]">
               {universityEvents.slice(0, 3).map((event) => (
                 <div key={event.id} className="py-3 first:pt-0 last:pb-0">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#0A66C2] bg-blue-50 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#090909] bg-[#F4F4F4] px-2 py-0.5 rounded-full border border-[#E7E7E7]">
                       {event.category}
                     </span>
-                    <span className="text-[11px] text-[#666666]">
+                    <span className="text-[11px] text-[#737373]">
                       {event.rsvpCount} RSVPs
                     </span>
                   </div>
@@ -993,10 +993,10 @@ export default function AlumniDashboardPage() {
                       variant={event.isRegistered ? "outline" : "primary"}
                       size="sm"
                       onClick={() => handleToggleRsvp(event.id, event.title)}
-                      className={`text-xs h-7 px-2.5 shrink-0 font-medium cursor-pointer ${
+                      className={`text-xs h-7 px-2.5 shrink-0 font-medium cursor-pointer rounded-full ${
                         event.isRegistered
-                          ? "text-[#057642] border-[#BFE3C9] bg-[#EEF8F1] hover:bg-[#E4F4E8]"
-                          : "bg-[#0A66C2] hover:bg-[#004182] !text-white text-white border-0 shadow-none"
+                          ? "text-neutral-900 border-neutral-300 bg-neutral-100 hover:bg-neutral-200"
+                          : "bg-[#090909] hover:bg-[#242424] !text-white text-white border-0 shadow-none"
                       }`}
                     >
                       {event.isRegistered ? (
@@ -1017,13 +1017,13 @@ export default function AlumniDashboardPage() {
           <div className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs">
             <div className="flex items-center justify-between pb-2.5 border-b border-gray-100">
               <div className="flex items-center gap-1.5">
-                <Briefcase size={15} className="text-[#0A66C2]" />
+                <Briefcase size={15} className="text-neutral-900" />
                 <h3 className="text-sm font-bold text-[#191919]">Career Opportunities</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsPostOpportunityOpen(true)}
-                className="text-xs font-semibold text-[#0A66C2] hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs font-semibold text-neutral-900 hover:text-neutral-600 flex items-center gap-1 cursor-pointer"
               >
                 <Plus size={12} />
                 <span>Post Opportunity</span>
@@ -1045,7 +1045,7 @@ export default function AlumniDashboardPage() {
                       <span className="text-xs font-bold text-[#191919] truncate">
                         {opp.title}
                       </span>
-                      <span className="text-[10px] uppercase font-bold text-[#0A66C2] bg-blue-50 px-1.5 py-0.5 rounded shrink-0">
+                      <span className="text-[10px] uppercase font-bold text-neutral-800 bg-neutral-100 px-1.5 py-0.5 rounded shrink-0">
                         {opp.type}
                       </span>
                     </div>
@@ -1053,12 +1053,12 @@ export default function AlumniDashboardPage() {
                       {opp.company} · {opp.location}
                     </p>
                     <div className="mt-2 flex items-center justify-between text-xs pt-1 border-t border-gray-100">
-                      <span className="text-[#057642] font-semibold">
+                      <span className="text-neutral-700 font-semibold">
                         {opp.applicantsCount} applicants
                       </span>
                       <Link
                         href="/alumni-dashboard/opportunities"
-                        className="text-[#0A66C2] hover:underline font-semibold"
+                        className="text-neutral-900 hover:underline font-semibold"
                       >
                         View &rarr;
                       </Link>

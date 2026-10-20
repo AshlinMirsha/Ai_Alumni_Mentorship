@@ -27,10 +27,10 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div
-      className={`flex flex-col items-center justify-center text-center p-8 border border-dashed border-gray-300 rounded-lg bg-white shadow-xs ${className}`}
+      className={`flex flex-col items-center justify-center text-center p-8 border border-dashed border-[#E7E7E7] rounded-2xl bg-white shadow-xs ${className}`}
     >
       {icon && (
-        <div className="h-12 w-12 rounded-full bg-[#ebf3fb] border border-[#d0e2f5] flex items-center justify-center text-[#0a66c2] mb-3.5 shadow-xs">
+        <div className="h-12 w-12 rounded-full bg-neutral-100 border border-neutral-200 flex items-center justify-center text-neutral-900 mb-3.5 shadow-xs">
           {icon}
         </div>
       )}
@@ -39,17 +39,17 @@ export function EmptyState({
 
       <div className="flex flex-wrap items-center justify-center gap-2.5">
         {actionLabel && actionHref && (
-          <Button variant="primary" size="sm" asChild className="rounded-full font-semibold bg-[#0a66c2] hover:bg-[#004182]">
+          <Button variant="primary" size="sm" asChild className="rounded-full font-medium bg-[#090909] hover:bg-[#242424] text-white">
             <Link href={actionHref}>{actionLabel}</Link>
           </Button>
         )}
         {actionLabel && onAction && !actionHref && (
-          <Button variant="primary" size="sm" onClick={onAction} className="rounded-full font-semibold bg-[#0a66c2] hover:bg-[#004182]">
+          <Button variant="primary" size="sm" onClick={onAction} className="rounded-full font-medium bg-[#090909] hover:bg-[#242424] text-white">
             {actionLabel}
           </Button>
         )}
         {secondaryActionLabel && onSecondaryAction && (
-          <Button variant="secondary" size="sm" onClick={onSecondaryAction} className="rounded-full font-semibold border-gray-300 text-gray-700">
+          <Button variant="secondary" size="sm" onClick={onSecondaryAction} className="rounded-full font-medium border-neutral-200 text-neutral-800 hover:bg-neutral-50">
             {secondaryActionLabel}
           </Button>
         )}

@@ -155,37 +155,37 @@ export default function AlumniCommunityPage() {
       case "career_advice":
         return {
           label: "Career Advice",
-          style: "bg-blue-50 text-[#0a66c2] border-blue-200",
+          style: "bg-neutral-100 text-neutral-800 border-neutral-200",
           icon: BookOpen,
         };
       case "technical":
         return {
           label: "Technical Knowledge",
-          style: "bg-purple-50 text-purple-700 border-purple-200",
+          style: "bg-neutral-100 text-neutral-800 border-neutral-200",
           icon: Sparkles,
         };
       case "achievement":
         return {
           label: "Mentee Achievement",
-          style: "bg-emerald-50 text-[#057642] border-emerald-200",
+          style: "bg-neutral-900 text-white border-black",
           icon: Award,
         };
       case "event":
         return {
           label: "Event Announcement",
-          style: "bg-amber-50 text-amber-800 border-amber-200",
+          style: "bg-neutral-100 text-neutral-800 border-neutral-200",
           icon: Calendar,
         };
       case "opportunity":
         return {
           label: "Verified Opportunity",
-          style: "bg-indigo-50 text-indigo-700 border-indigo-200",
+          style: "bg-neutral-100 text-neutral-800 border-neutral-200",
           icon: Briefcase,
         };
       case "interview_prep":
         return {
           label: "Interview Prep",
-          style: "bg-teal-50 text-teal-700 border-teal-200",
+          style: "bg-neutral-100 text-neutral-800 border-neutral-200",
           icon: MessagesSquare,
         };
       default:
@@ -208,11 +208,11 @@ export default function AlumniCommunityPage() {
       )}
 
       {/* Header Banner */}
-      <div className="bg-white border border-gray-200/90 rounded-xl p-5 sm:p-6 shadow-xs">
+      <div className="bg-white border border-[#E7E7E7] rounded-xl p-5 sm:p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-              <MessagesSquare size={22} className="text-[#0a66c2]" />
+              <MessagesSquare size={22} className="text-[#090909]" />
               <span>Campus &amp; Alumni Community Feed</span>
             </h1>
             <p className="text-xs text-gray-500 mt-1 max-w-2xl">
@@ -224,7 +224,7 @@ export default function AlumniCommunityPage() {
             variant="primary"
             size="sm"
             onClick={() => setIsNewDiscussionOpen(true)}
-            className="bg-[#0a66c2] hover:bg-[#004182] text-xs shrink-0 flex items-center gap-1.5 shadow-xs"
+            className="bg-[#090909] hover:bg-[#242424] text-white text-xs shrink-0 flex items-center gap-1.5 shadow-none rounded-full border-0"
           >
             <Plus size={14} />
             <span>Create Post</span>
@@ -250,7 +250,7 @@ export default function AlumniCommunityPage() {
                 className={cn(
                   "px-3 py-1.5 rounded-full text-xs font-semibold transition-colors",
                   activeCategory === tab.id
-                    ? "bg-[#0a66c2] text-white"
+                    ? "bg-[#090909] text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 )}
               >
@@ -266,7 +266,7 @@ export default function AlumniCommunityPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search feed, authors, tags..."
-              className="w-full pl-7 pr-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0a66c2] transition-colors"
+              className="w-full pl-7 pr-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-black transition-colors"
             />
           </div>
         </div>
@@ -289,7 +289,7 @@ export default function AlumniCommunityPage() {
                 variant="primary"
                 size="sm"
                 onClick={() => setIsNewDiscussionOpen(true)}
-                className="mt-4 text-xs bg-[#0a66c2]"
+                className="mt-4 text-xs bg-[#090909] hover:bg-[#242424] text-white rounded-full border-0 shadow-none"
               >
                 + Create Post
               </Button>
@@ -363,7 +363,7 @@ export default function AlumniCommunityPage() {
                           key={t}
                           type="button"
                           onClick={() => setSearchQuery(t)}
-                          className="text-[11px] font-medium text-gray-600 bg-gray-50 hover:bg-blue-50 hover:text-[#0a66c2] px-2.5 py-0.5 rounded-md border border-gray-200/80 transition-colors"
+                          className="text-[11px] font-medium text-gray-600 bg-gray-50 hover:bg-neutral-100 hover:text-black px-2.5 py-0.5 rounded-full border border-gray-200/80 transition-colors"
                         >
                           #{t}
                         </button>
@@ -381,13 +381,13 @@ export default function AlumniCommunityPage() {
                         className={cn(
                           "flex items-center gap-1.5 font-medium transition-colors",
                           post.likedByMe
-                            ? "text-[#0a66c2] font-semibold"
-                            : "text-gray-600 hover:text-[#0a66c2]"
+                            ? "text-neutral-900 font-semibold"
+                            : "text-gray-600 hover:text-black"
                         )}
                       >
                         <ThumbsUp
                           size={14}
-                          className={post.likedByMe ? "fill-current text-[#0a66c2]" : ""}
+                          className={post.likedByMe ? "fill-current text-neutral-900" : ""}
                         />
                         <span>{post.likes} Helpful</span>
                       </button>
@@ -406,7 +406,7 @@ export default function AlumniCommunityPage() {
                       <button
                         type="button"
                         onClick={() => handleCopyLink(post.title, post.id)}
-                        className="flex items-center gap-1.5 text-gray-500 hover:text-[#0a66c2] font-medium transition-colors"
+                        className="flex items-center gap-1.5 text-gray-500 hover:text-black font-medium transition-colors"
                         title="Copy link to post"
                       >
                         <Share2 size={13} />
@@ -490,7 +490,7 @@ export default function AlumniCommunityPage() {
                               }
                             }}
                             placeholder="Write an encouraging response, answer, or mentor tip..."
-                            className="flex-1 text-xs bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0a66c2] transition-colors"
+                            className="flex-1 text-xs bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-black transition-colors"
                           />
                           <Button
                             type="button"
@@ -498,7 +498,7 @@ export default function AlumniCommunityPage() {
                             size="sm"
                             disabled={!replyValue.trim()}
                             onClick={() => handlePostReply(post.id)}
-                            className="text-xs bg-[#0a66c2] hover:bg-[#004182]"
+                            className="text-xs bg-[#090909] hover:bg-[#242424] text-white rounded-full border-0 shadow-none"
                           >
                             <Send size={11} className="mr-1" />
                             <span>Reply</span>
@@ -516,9 +516,9 @@ export default function AlumniCommunityPage() {
         {/* Right Side Supporting Panel */}
         <div className="lg:col-span-4 space-y-4">
           {/* Community Highlights Card */}
-          <div className="bg-white border border-gray-200/90 rounded-xl p-5 shadow-xs">
+          <div className="bg-white border border-[#E7E7E7] rounded-xl p-5 shadow-xs">
             <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
-              <TrendingUp size={14} className="text-[#0a66c2]" />
+              <TrendingUp size={14} className="text-neutral-900" />
               <span>Community Highlights</span>
             </h3>
             <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-gray-100 text-center">
@@ -527,11 +527,11 @@ export default function AlumniCommunityPage() {
                 <span className="text-[10px] text-gray-500 font-medium">Threads</span>
               </div>
               <div className="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
-                <span className="text-base font-bold text-[#0a66c2] block">{totalLikes}</span>
+                <span className="text-base font-bold text-neutral-900 block">{totalLikes}</span>
                 <span className="text-[10px] text-gray-500 font-medium">Helpful</span>
               </div>
               <div className="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
-                <span className="text-base font-bold text-[#057642] block">{totalComments}</span>
+                <span className="text-base font-bold text-neutral-700 block">{totalComments}</span>
                 <span className="text-[10px] text-gray-500 font-medium">Replies</span>
               </div>
             </div>
@@ -540,7 +540,7 @@ export default function AlumniCommunityPage() {
               variant="outline"
               size="sm"
               onClick={() => setIsNewDiscussionOpen(true)}
-              className="w-full mt-3 text-xs text-[#0a66c2] border-[#b2d5f8] hover:bg-blue-50"
+              className="w-full mt-3 text-xs text-neutral-900 border-[#E7E7E7] hover:bg-neutral-100 rounded-full"
             >
               <Plus size={12} className="mr-1" />
               <span>Start a Discussion</span>
@@ -548,9 +548,9 @@ export default function AlumniCommunityPage() {
           </div>
 
           {/* Trending Topics & Tags */}
-          <div className="bg-white border border-gray-200/90 rounded-xl p-5 shadow-xs">
+          <div className="bg-white border border-[#E7E7E7] rounded-xl p-5 shadow-xs">
             <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
-              <Hash size={14} className="text-[#0a66c2]" />
+              <Hash size={14} className="text-neutral-900" />
               <span>Trending Topics</span>
             </h3>
             <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap gap-1.5">
@@ -559,7 +559,7 @@ export default function AlumniCommunityPage() {
                   key={tag}
                   type="button"
                   onClick={() => setSearchQuery(tag)}
-                  className="px-2.5 py-1 text-xs font-medium text-gray-700 bg-gray-50 hover:bg-blue-50 hover:text-[#0a66c2] border border-gray-200/80 rounded-lg transition-colors flex items-center gap-1"
+                  className="px-2.5 py-1 text-xs font-medium text-gray-700 bg-gray-50 hover:bg-neutral-100 hover:text-black border border-gray-200/80 rounded-full transition-colors flex items-center gap-1"
                 >
                   <Hash size={11} className="text-gray-400" />
                   <span>{tag}</span>
@@ -570,7 +570,7 @@ export default function AlumniCommunityPage() {
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="mt-2 text-[11px] text-[#0a66c2] hover:underline font-semibold block"
+                className="mt-2 text-[11px] text-neutral-900 hover:underline font-semibold block"
               >
                 Clear tag filter &times;
               </button>
@@ -578,22 +578,22 @@ export default function AlumniCommunityPage() {
           </div>
 
           {/* Mentorship Guidelines */}
-          <div className="bg-white border border-gray-200/90 rounded-xl p-5 shadow-xs">
+          <div className="bg-white border border-[#E7E7E7] rounded-xl p-5 shadow-xs">
             <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
-              <Info size={14} className="text-[#0a66c2]" />
+              <Info size={14} className="text-neutral-900" />
               <span>Community Guidelines</span>
             </h3>
             <ul className="mt-3 pt-3 border-t border-gray-100 space-y-2.5 text-xs text-gray-600 leading-relaxed">
               <li className="flex items-start gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#0a66c2] mt-1.5 shrink-0" />
+                <span className="h-1.5 w-1.5 rounded-full bg-neutral-900 mt-1.5 shrink-0" />
                 <span>Share authentic engineering lessons and career guidance.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#0a66c2] mt-1.5 shrink-0" />
+                <span className="h-1.5 w-1.5 rounded-full bg-neutral-900 mt-1.5 shrink-0" />
                 <span>Respect confidentiality regarding internal interviews and proprietary questions.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#0a66c2] mt-1.5 shrink-0" />
+                <span className="h-1.5 w-1.5 rounded-full bg-neutral-900 mt-1.5 shrink-0" />
                 <span>Provide students with constructive, actionable feedback and encouragement.</span>
               </li>
             </ul>

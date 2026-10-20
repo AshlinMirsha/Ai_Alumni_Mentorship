@@ -225,11 +225,11 @@ function PostOpportunityModalForm({
       />
 
       {/* Modal Dialog */}
-      <div className="relative bg-white rounded-lg border border-gray-200 shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 z-10 animate-in fade-in zoom-in-95">
+      <div className="relative bg-white rounded-2xl border border-[#E7E7E7] shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 z-10 animate-in fade-in zoom-in-95">
         <div className="flex items-start justify-between pb-4 border-b border-gray-100">
           <div>
             <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-              <Briefcase size={16} className="text-[#0a66c2]" />
+              <Briefcase size={16} className="text-neutral-900" />
               <span>{isEditing ? "Edit Career Opportunity" : "Post New Career Opportunity"}</span>
             </h3>
             <p className="text-xs text-gray-500 mt-0.5">
@@ -239,7 +239,7 @@ function PostOpportunityModalForm({
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+            className="p-1.5 rounded-full text-gray-400 hover:text-black hover:bg-neutral-100 transition-colors"
           >
             <X size={18} />
           </button>
@@ -257,7 +257,7 @@ function PostOpportunityModalForm({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Software Engineering Intern — Systems or Backend Engineer Referral"
-              className={`w-full text-xs bg-white border rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2] ${
+              className={`w-full text-xs bg-white border rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black ${
                 validationErrors.title ? "border-red-400" : "border-gray-200"
               }`}
             />
@@ -278,7 +278,7 @@ function PostOpportunityModalForm({
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
                 placeholder="e.g. Datadog or University Tech Hub"
-                className={`w-full text-xs bg-white border rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2] ${
+                className={`w-full text-xs bg-white border rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black ${
                   validationErrors.company ? "border-red-400" : "border-gray-200"
                 }`}
               />
@@ -294,7 +294,7 @@ function PostOpportunityModalForm({
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value as OpportunityType)}
-                className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
               >
                 <option value="internship">Internship</option>
                 <option value="full_time">Full-Time Job (Entry/Junior)</option>
@@ -317,7 +317,7 @@ function PostOpportunityModalForm({
               <select
                 value={workArrangement}
                 onChange={(e) => setWorkArrangement(e.target.value as WorkArrangement)}
-                className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
               >
                 <option value="remote">Remote</option>
                 <option value="hybrid">Hybrid</option>
@@ -335,7 +335,7 @@ function PostOpportunityModalForm({
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder="e.g. San Francisco, CA"
-                className={`w-full text-xs bg-white border rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2] ${
+                className={`w-full text-xs bg-white border rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black ${
                   validationErrors.location ? "border-red-400" : "border-gray-200"
                 }`}
               />
@@ -352,7 +352,7 @@ function PostOpportunityModalForm({
                 type="date"
                 value={deadline}
                 onChange={(e) => setDeadline(e.target.value)}
-                className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
               />
             </div>
           </div>
@@ -367,9 +367,9 @@ function PostOpportunityModalForm({
                 type="button"
                 disabled={isEnhancing}
                 onClick={handleEnhanceWithAI}
-                className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#0a66c2] hover:text-[#004182] hover:underline"
+                className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-neutral-900 hover:text-black hover:underline"
               >
-                <Sparkles size={12} className="text-amber-500" />
+                <Sparkles size={12} className="text-neutral-900" />
                 <span>{isEnhancing ? "Enhancing draft..." : "Enhance with AI Assistant"}</span>
               </button>
             </div>
@@ -379,7 +379,7 @@ function PostOpportunityModalForm({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe what the student will work on, team mission, and learning opportunities..."
-              className={`w-full text-xs bg-white border rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2] ${
+              className={`w-full text-xs bg-white border rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black ${
                 validationErrors.description ? "border-red-400" : "border-gray-200"
               }`}
             />
@@ -389,10 +389,10 @@ function PostOpportunityModalForm({
 
             {/* AI Writing Assistant Review Panel */}
             {enhancedPreview && (
-              <div className="mt-2.5 p-3.5 bg-blue-50/70 border border-blue-200 rounded-md animate-in fade-in">
+              <div className="mt-2.5 p-3.5 bg-neutral-50 border border-neutral-200 rounded-xl animate-in fade-in">
                 <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-blue-900">
-                    <Sparkles size={13} className="text-amber-500 shrink-0" />
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-neutral-900">
+                    <Sparkles size={13} className="text-neutral-900 shrink-0" />
                     <span>AI Writing Assistant Suggestion (Review Required)</span>
                   </div>
                   <button
@@ -404,11 +404,11 @@ function PostOpportunityModalForm({
                   </button>
                 </div>
 
-                <div className="mt-2 p-2.5 bg-white border border-blue-100 rounded text-xs text-gray-800 whitespace-pre-line leading-relaxed max-h-48 overflow-y-auto">
+                <div className="mt-2 p-2.5 bg-white border border-neutral-200 rounded-lg text-xs text-gray-800 whitespace-pre-line leading-relaxed max-h-48 overflow-y-auto">
                   {enhancedPreview.text}
                 </div>
 
-                <div className="mt-2 text-[11px] text-blue-800">
+                <div className="mt-2 text-[11px] text-neutral-800">
                   <span className="font-semibold block mb-0.5">Improvements Applied:</span>
                   <ul className="list-disc list-inside space-y-0.5">
                     {enhancedPreview.improvements.map((imp, idx) => (
@@ -417,13 +417,13 @@ function PostOpportunityModalForm({
                   </ul>
                 </div>
 
-                <div className="mt-3 flex items-center justify-end gap-2 pt-2 border-t border-blue-200">
+                <div className="mt-3 flex items-center justify-end gap-2 pt-2 border-t border-neutral-200">
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
                     onClick={() => setEnhancedPreview(null)}
-                    className="text-xs text-gray-600"
+                    className="text-xs text-gray-600 rounded-full"
                   >
                     Keep My Original
                   </Button>
@@ -432,7 +432,7 @@ function PostOpportunityModalForm({
                     variant="primary"
                     size="sm"
                     onClick={handleApplyAIEnhancement}
-                    className="text-xs bg-[#0a66c2] hover:bg-[#004182]"
+                    className="text-xs bg-[#090909] hover:bg-[#242424] text-white rounded-full px-4"
                   >
                     <Check size={12} className="mr-1" />
                     <span>Apply to Draft</span>
@@ -452,7 +452,7 @@ function PostOpportunityModalForm({
               value={eligibility}
               onChange={(e) => setEligibility(e.target.value)}
               placeholder="e.g. Enrolled undergraduate students graduating in 2026/2027"
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
 
@@ -466,7 +466,7 @@ function PostOpportunityModalForm({
               value={requirementsText}
               onChange={(e) => setRequirementsText(e.target.value)}
               placeholder="Pursuing BS/MS in Computer Science&#10;Proficiency in Go or Python&#10;Solid understanding of data structures"
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
 
@@ -480,7 +480,7 @@ function PostOpportunityModalForm({
               value={skillsText}
               onChange={(e) => setSkillsText(e.target.value)}
               placeholder="Go, Python, Docker, PostgreSQL, Distributed Systems"
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
 
@@ -496,7 +496,7 @@ function PostOpportunityModalForm({
                 value={applyUrl}
                 onChange={(e) => setApplyUrl(e.target.value)}
                 placeholder="https://company.com/careers/job-123"
-                className={`w-full text-xs bg-white border rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2] ${
+                className={`w-full text-xs bg-white border rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black ${
                   validationErrors.applyUrl ? "border-red-400" : "border-gray-200"
                 }`}
               />
@@ -514,7 +514,7 @@ function PostOpportunityModalForm({
                 value={contactInstructions}
                 onChange={(e) => setContactInstructions(e.target.value)}
                 placeholder="e.g. Message through AlumniPath with your resume and project link"
-                className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
               />
             </div>
           </div>
@@ -527,7 +527,7 @@ function PostOpportunityModalForm({
               size="sm"
               onClick={onClose}
               disabled={submitting}
-              className="text-xs"
+              className="text-xs rounded-full border-neutral-300"
             >
               Cancel
             </Button>
@@ -536,7 +536,7 @@ function PostOpportunityModalForm({
               variant="primary"
               size="sm"
               disabled={submitting}
-              className="text-xs bg-[#0a66c2] hover:bg-[#004182] flex items-center gap-1.5"
+              className="text-xs bg-[#090909] hover:bg-[#242424] text-white rounded-full px-4 flex items-center gap-1.5"
             >
               <Plus size={13} />
               <span>

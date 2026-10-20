@@ -48,18 +48,7 @@ export function SessionDetailModal({
   const isRescheduled = session.status === "rescheduled";
 
   const getStatusBadge = () => {
-    switch (session.status) {
-      case "confirmed":
-        return "bg-[#eef8f1] text-[#057642] border-[#bfe3c9]";
-      case "completed":
-        return "bg-purple-50 text-purple-700 border-purple-200";
-      case "rescheduled":
-        return "bg-amber-50 text-amber-700 border-amber-200";
-      case "cancelled":
-        return "bg-red-50 text-red-700 border-red-200";
-      default:
-        return "bg-blue-50 text-[#0a66c2] border-[#b2d5f8]";
-    }
+    return "bg-neutral-100 text-neutral-900 border-neutral-200";
   };
 
   const handleMarkComplete = (e: React.FormEvent) => {
@@ -80,21 +69,21 @@ export function SessionDetailModal({
       />
 
       {/* Modal Dialog */}
-      <div className="relative bg-white rounded-lg border border-gray-200 shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto z-10 animate-in fade-in zoom-in-95">
+      <div className="relative bg-white rounded-2xl border border-[#E7E7E7] shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto z-10 animate-in fade-in zoom-in-95">
         {/* Header */}
-        <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+        <div className="px-5 py-4 border-b border-[#E7E7E7] flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span
-              className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider border ${getStatusBadge()}`}
+              className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getStatusBadge()}`}
             >
               {session.status}
             </span>
-            <span className="text-xs text-gray-400">1:1 Mentorship Session</span>
+            <span className="text-xs text-neutral-500">1:1 Mentorship Session</span>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            className="p-1.5 rounded-full text-gray-400 hover:text-black hover:bg-neutral-100 transition-colors"
           >
             <X size={16} />
           </button>
@@ -107,13 +96,13 @@ export function SessionDetailModal({
               {session.topic}
             </h3>
             {isRescheduled && session.previousDate && (
-              <p className="text-[11px] text-amber-700 mt-1 flex items-center gap-1 font-medium">
+              <p className="text-[11px] text-neutral-700 mt-1 flex items-center gap-1 font-medium">
                 <RefreshCw size={11} />
                 <span>Rescheduled from {session.previousDate} at {session.previousTime}</span>
               </p>
             )}
             {isCancelled && session.cancellationReason && (
-              <p className="text-[11px] text-red-600 mt-1 flex items-center gap-1 font-medium bg-red-50 p-2 rounded border border-red-100">
+              <p className="text-[11px] text-red-600 mt-1 flex items-center gap-1 font-medium bg-red-50 p-2.5 rounded-xl border border-red-100">
                 <Ban size={12} className="shrink-0" />
                 <span>Cancelled: {session.cancellationReason}</span>
               </p>
@@ -121,7 +110,7 @@ export function SessionDetailModal({
           </div>
 
           {/* Student Profile Card */}
-          <div className="p-3.5 rounded-lg border border-gray-100 bg-gray-50/60 flex items-center justify-between">
+          <div className="p-3.5 rounded-xl border border-[#E7E7E7] bg-neutral-50 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Avatar name={session.studentName} size="md" />
               <div>
@@ -138,7 +127,7 @@ export function SessionDetailModal({
               variant="outline"
               size="sm"
               asChild
-              className="text-xs text-[#0a66c2] border-[#b2d5f8] hover:bg-blue-50"
+              className="text-xs text-neutral-900 border-neutral-300 hover:bg-neutral-100 rounded-full"
             >
               <Link
                 href={`/messages?participantId=${session.studentId}`}
@@ -152,16 +141,16 @@ export function SessionDetailModal({
 
           {/* Date & Time */}
           <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="p-3 rounded-lg border border-gray-100 bg-white">
+            <div className="p-3.5 rounded-xl border border-[#E7E7E7] bg-white">
               <div className="flex items-center gap-1.5 text-gray-400 mb-1">
-                <Calendar size={13} className="text-[#0a66c2]" />
+                <Calendar size={13} className="text-neutral-900" />
                 <span className="font-medium text-[11px]">Date</span>
               </div>
               <p className="font-semibold text-gray-900">{session.date}</p>
             </div>
-            <div className="p-3 rounded-lg border border-gray-100 bg-white">
+            <div className="p-3.5 rounded-xl border border-[#E7E7E7] bg-white">
               <div className="flex items-center gap-1.5 text-gray-400 mb-1">
-                <Clock size={13} className="text-[#0a66c2]" />
+                <Clock size={13} className="text-neutral-900" />
                 <span className="font-medium text-[11px]">Time</span>
               </div>
               <p className="font-semibold text-gray-900">{session.time}</p>
@@ -169,18 +158,18 @@ export function SessionDetailModal({
           </div>
 
           {/* Video Meeting Link Section */}
-          <div className="rounded-lg border border-gray-100 overflow-hidden">
-            <div className="px-3.5 py-2.5 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+          <div className="rounded-xl border border-[#E7E7E7] overflow-hidden">
+            <div className="px-3.5 py-2.5 bg-neutral-50 border-b border-[#E7E7E7] flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Video size={14} className="text-[#0a66c2]" />
+                <Video size={14} className="text-neutral-900" />
                 <span className="text-xs font-bold text-gray-900">Video Conference</span>
               </div>
               {session.meetUrl ? (
-                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#057642] bg-[#eef8f1] px-1.5 py-0.5 rounded">
+                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-neutral-900 bg-neutral-100 border border-neutral-200 px-2 py-0.5 rounded-full">
                   <CheckCircle2 size={10} /> Link Ready
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">
+                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-neutral-600 bg-neutral-100 border border-neutral-200 px-2 py-0.5 rounded-full">
                   <AlertCircle size={10} /> Pending Link
                 </span>
               )}
@@ -202,7 +191,7 @@ export function SessionDetailModal({
                       variant="primary"
                       size="sm"
                       asChild
-                      className="bg-[#0a66c2] hover:bg-[#004182] text-xs shrink-0"
+                      className="bg-[#090909] hover:bg-[#242424] text-white text-xs shrink-0 rounded-full px-4"
                     >
                       <a
                         href={session.meetUrl}
@@ -232,7 +221,7 @@ export function SessionDetailModal({
                 <FileText size={13} className="text-gray-500" />
                 <span>Session Agenda / Discussion Plan</span>
               </div>
-              <p className="text-xs text-gray-700 leading-relaxed bg-gray-50/50 p-3 rounded-lg border border-gray-100">
+              <p className="text-xs text-gray-700 leading-relaxed bg-neutral-50 p-3 rounded-xl border border-neutral-200">
                 {session.agenda}
               </p>
             </div>
@@ -240,8 +229,8 @@ export function SessionDetailModal({
 
           {/* Notes */}
           {session.notes && (
-            <div className="text-[11px] text-gray-600 bg-blue-50/40 p-3 rounded-lg border border-blue-100 flex items-start gap-2">
-              <User size={13} className="text-[#0a66c2] shrink-0 mt-0.5" />
+            <div className="text-[11px] text-neutral-800 bg-neutral-50 p-3 rounded-xl border border-neutral-200 flex items-start gap-2">
+              <User size={13} className="text-neutral-900 shrink-0 mt-0.5" />
               <div>
                 <span className="font-semibold text-gray-900 block mb-0.5">Mentor Notes:</span>
                 <span>{session.notes}</span>
@@ -251,8 +240,8 @@ export function SessionDetailModal({
 
           {/* Complete Session Form Area (collapsible) */}
           {isCompleting && (
-            <form onSubmit={handleMarkComplete} className="p-3.5 bg-emerald-50/50 rounded-lg border border-emerald-200 space-y-3">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-[#057642]">
+            <form onSubmit={handleMarkComplete} className="p-3.5 bg-neutral-50 rounded-xl border border-neutral-200 space-y-3">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-neutral-900">
                 <CheckCircle size={14} />
                 <span>Mark Session as Completed</span>
               </div>
@@ -264,7 +253,7 @@ export function SessionDetailModal({
                 value={completeNotes}
                 onChange={(e) => setCompleteNotes(e.target.value)}
                 placeholder="e.g. Reviewed architecture trade-offs. Ashlin will implement Redis caching by next milestone."
-                className="w-full text-xs bg-white border border-gray-200 rounded p-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                className="w-full text-xs bg-white border border-gray-200 rounded-lg p-2.5 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
               />
               <div className="flex items-center justify-end gap-2">
                 <Button
@@ -272,7 +261,7 @@ export function SessionDetailModal({
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsCompleting(false)}
-                  className="text-xs"
+                  className="text-xs rounded-full"
                 >
                   Cancel
                 </Button>
@@ -280,7 +269,7 @@ export function SessionDetailModal({
                   type="submit"
                   variant="primary"
                   size="sm"
-                  className="text-xs bg-[#057642] hover:bg-[#046335]"
+                  className="text-xs bg-[#090909] hover:bg-[#242424] text-white rounded-full px-4"
                 >
                   Save &amp; Complete Session
                 </Button>
@@ -290,7 +279,7 @@ export function SessionDetailModal({
         </div>
 
         {/* Action Controls Footer */}
-        <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2">
+        <div className="px-5 py-3 bg-neutral-50 border-t border-[#E7E7E7] flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             {!isCancelled && !isCompleted && onCancel && (
               <Button
@@ -298,7 +287,7 @@ export function SessionDetailModal({
                 variant="outline"
                 size="sm"
                 onClick={() => onCancel(session)}
-                className="text-xs text-[#cc1016] border-red-200 hover:bg-red-50 hover:text-red-700"
+                className="text-xs text-neutral-700 border-neutral-300 hover:bg-neutral-100 rounded-full"
               >
                 <Ban size={12} className="mr-1" />
                 <span>Cancel Session</span>
@@ -311,7 +300,7 @@ export function SessionDetailModal({
                 variant="outline"
                 size="sm"
                 onClick={() => onReschedule(session)}
-                className="text-xs text-amber-700 border-amber-200 hover:bg-amber-50"
+                className="text-xs text-neutral-900 border-neutral-300 hover:bg-neutral-100 rounded-full"
               >
                 <RefreshCw size={12} className="mr-1" />
                 <span>Reschedule</span>
@@ -324,7 +313,7 @@ export function SessionDetailModal({
                 variant="outline"
                 size="sm"
                 onClick={() => setIsCompleting(true)}
-                className="text-xs text-[#057642] border-emerald-200 hover:bg-emerald-50"
+                className="text-xs text-neutral-900 border-neutral-300 hover:bg-neutral-100 rounded-full"
               >
                 <CheckCircle size={12} className="mr-1" />
                 <span>Mark Completed</span>
@@ -332,7 +321,7 @@ export function SessionDetailModal({
             )}
           </div>
 
-          <Button variant="outline" size="sm" onClick={onClose} className="text-xs">
+          <Button variant="outline" size="sm" onClick={onClose} className="text-xs rounded-full border-neutral-300">
             Close
           </Button>
         </div>

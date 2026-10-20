@@ -89,11 +89,11 @@ export function SendMessageModal({
       aria-modal="true"
       aria-labelledby="message-modal-title"
     >
-      <div className="relative w-full max-w-md bg-white rounded-lg shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-200 overflow-hidden my-8">
+      <div className="relative w-full max-w-md bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-[#E7E7E7] overflow-hidden my-8">
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-white">
           <div className="flex items-center gap-2">
-            <MessageSquare size={16} className="text-[#0a66c2]" />
+            <MessageSquare size={16} className="text-neutral-900" />
             <h2 id="message-modal-title" className="text-base font-bold text-gray-900">
               Message {alumni.name}
             </h2>
@@ -101,7 +101,7 @@ export function SendMessageModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+            className="p-1.5 rounded-full text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 transition-colors"
             aria-label="Close dialog"
           >
             <X size={18} />
@@ -111,7 +111,7 @@ export function SendMessageModal({
         {/* Content */}
         {sentSuccess ? (
           <div className="p-8 text-center space-y-3">
-            <div className="h-12 w-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+            <div className="h-12 w-12 rounded-full bg-neutral-100 text-neutral-900 flex items-center justify-center mx-auto border border-neutral-200">
               <CheckCircle2 size={24} />
             </div>
             <h3 className="text-base font-bold text-gray-900">Message Delivered!</h3>
@@ -121,7 +121,7 @@ export function SendMessageModal({
           </div>
         ) : (
           <form onSubmit={handleSend} className="p-6 space-y-4">
-            <div className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+            <div className="flex items-center gap-3 p-3 bg-[#FAFAFA] border border-[#E7E7E7] rounded-xl">
               <Avatar name={alumni.name} size="md" />
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-bold text-gray-900">{alumni.name}</p>
@@ -142,15 +142,15 @@ export function SendMessageModal({
                 onChange={(e) => setMessageText(e.target.value)}
                 placeholder={`Introduce yourself or ask ${alumni.name.split(" ")[0]} a question about ${alumni.company}...`}
                 required
-                className="w-full rounded-md border border-gray-200 bg-white text-xs text-gray-900 p-3 focus:outline-none focus:ring-2 focus:ring-[#0a66c2]"
+                className="w-full rounded-xl border border-neutral-200 bg-white text-xs text-gray-900 p-3 focus:outline-none focus:ring-1 focus:ring-black"
               />
             </div>
 
             <div className="pt-2 border-t border-gray-100 flex items-center justify-end gap-2.5">
-              <Button type="button" variant="ghost" size="sm" onClick={onClose}>
+              <Button type="button" variant="ghost" size="sm" onClick={onClose} className="rounded-full text-xs">
                 Cancel
               </Button>
-              <Button type="submit" variant="primary" size="sm" className="inline-flex items-center gap-1.5">
+              <Button type="submit" variant="primary" size="sm" className="inline-flex items-center gap-1.5 rounded-full bg-[#090909] hover:bg-[#242424] text-white text-xs">
                 <Send size={13} />
                 Send Message
               </Button>
