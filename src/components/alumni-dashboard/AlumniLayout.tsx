@@ -15,7 +15,14 @@ export function AlumniLayout({ children }: AlumniLayoutProps) {
   const pathname = usePathname();
   const isDashboard = pathname === "/alumni-dashboard";
   const isStudentsPage = pathname?.startsWith("/alumni-dashboard/students");
-  const hideSidebar = isDashboard || isStudentsPage;
+  const isRequestsPage = pathname?.startsWith("/alumni-dashboard/requests");
+  const hideSidebar = isDashboard || isStudentsPage || isRequestsPage;
+
+  const containerMaxWidth = isStudentsPage
+    ? "max-w-[1400px]"
+    : isRequestsPage
+    ? "max-w-[1200px]"
+    : "max-w-7xl";
 
   return (
     <div className="min-h-screen bg-[#F3F2EF] flex flex-col antialiased text-[#191919]">
@@ -44,7 +51,7 @@ export function AlumniLayout({ children }: AlumniLayoutProps) {
       <div
         className={cn(
           "flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6",
-          hideSidebar ? "max-w-[1400px]" : "max-w-7xl"
+          containerMaxWidth
         )}
       >
         {hideSidebar ? (

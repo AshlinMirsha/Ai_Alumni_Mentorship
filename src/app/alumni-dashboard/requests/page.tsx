@@ -16,7 +16,6 @@ import {
 
 } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
-import { Button } from "@/components/ui/Button";
 import {
   subscribeToDashboardStorage,
   loadMentorshipActivity,
@@ -172,164 +171,109 @@ export default function AlumniRequestsPage() {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-5 right-5 z-50 bg-gray-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
-          <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
+        <div className="fixed bottom-5 right-5 z-50 bg-[#191919] text-white text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+          <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Header Banner */}
-      <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      {/* Header & Controls Surface */}
+      <div className="bg-white border border-[#D9D9D9] rounded-lg p-5 sm:p-6 shadow-xs space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-lg font-bold text-gray-900 tracking-tight flex items-center gap-2">
-              <Inbox size={20} className="text-[#0a66c2]" />
+            <h1 className="text-xl sm:text-2xl font-bold text-[#191919] tracking-tight flex items-center gap-2.5">
+              <Inbox size={22} className="text-[#0A66C2]" />
               <span>Mentorship Requests</span>
             </h1>
-            <p className="text-xs text-gray-500 mt-0.5">
-              Review and manage incoming mentorship requests from students, as well as invitations and relationship history.
+            <p className="text-xs sm:text-sm text-[#666666] mt-1 max-w-2xl leading-relaxed">
+              Review and manage incoming mentorship requests from students, track personalized invitations, and manage your mentorship pipeline.
             </p>
           </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            asChild
-            className="text-xs shrink-0"
+          <Link
+            href="/alumni-dashboard/students"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-[#0A66C2] bg-white hover:bg-blue-50/60 border border-[#B2D5F8] rounded-md transition-colors whitespace-nowrap shrink-0 self-start sm:self-center"
           >
-            <Link href="/alumni-dashboard/students">Discover Students &rarr;</Link>
-          </Button>
+            <span>Discover Students</span>
+            <span>&rarr;</span>
+          </Link>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="mt-5 border-b border-gray-200 flex flex-wrap gap-1 sm:gap-2 text-xs">
-          <button
-            type="button"
-            onClick={() => setActiveTab("pending")}
-            className={cn(
-              "pb-2.5 px-3 font-semibold border-b-2 transition-colors flex items-center gap-1.5",
-              activeTab === "pending"
-                ? "border-[#0a66c2] text-[#0a66c2]"
-                : "border-transparent text-gray-500 hover:text-gray-900"
-            )}
-          >
-            <span>Pending</span>
-            <span
-              className={cn(
-                "px-1.5 py-0.2 rounded-full text-[10px] font-bold",
-                activeTab === "pending"
-                  ? "bg-[#ebf3fb] text-[#0a66c2]"
-                  : "bg-gray-100 text-gray-600"
-              )}
-            >
-              {pendingIncoming.length}
-            </span>
-          </button>
+        {/* Tab Navigation and Search Row */}
+        <div className="pt-4 border-t border-[#EAEAEA] flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          {/* Status Tabs */}
+          <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar pb-1 md:pb-0" role="tablist">
+            {[
+              { key: "pending", label: "Pending", count: pendingIncoming.length, badgeColor: "bg-[#FEF3C7] text-[#B45309]" },
+              { key: "accepted", label: "Accepted", count: acceptedList.length, badgeColor: "bg-[#EEF8F1] text-[#057642]" },
+              { key: "declined", label: "Declined", count: declinedList.length, badgeColor: "bg-[#F3F2EF] text-[#666666]" },
+              { key: "completed", label: "Completed", count: completedList.length, badgeColor: "bg-[#EBF3FB] text-[#0A66C2]" },
+              { key: "outgoing", label: "Sent Invitations", count: pendingOutgoing.length, badgeColor: "bg-[#FAF5FF] text-[#7E22CE]" },
+              { key: "all", label: "All", count: allRequests.length, badgeColor: "bg-[#F3F2EF] text-[#666666]" },
+            ].map((t) => {
+              const isSelected = activeTab === t.key;
+              return (
+                <button
+                  key={t.key}
+                  type="button"
+                  role="tab"
+                  aria-selected={isSelected}
+                  onClick={() => setActiveTab(t.key as RequestTab)}
+                  className={cn(
+                    "px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 whitespace-nowrap shrink-0",
+                    isSelected
+                      ? "bg-[#0A66C2] text-white shadow-2xs"
+                      : "text-[#666666] hover:text-[#191919] hover:bg-[#F3F2EF]"
+                  )}
+                >
+                  <span>{t.label}</span>
+                  <span
+                    className={cn(
+                      "px-1.5 py-0.2 rounded-full text-[10px] font-bold leading-none",
+                      isSelected ? "bg-white/20 text-white" : t.badgeColor
+                    )}
+                  >
+                    {t.count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab("accepted")}
-            className={cn(
-              "pb-2.5 px-3 font-semibold border-b-2 transition-colors flex items-center gap-1.5",
-              activeTab === "accepted"
-                ? "border-[#0a66c2] text-[#0a66c2]"
-                : "border-transparent text-gray-500 hover:text-gray-900"
+          {/* Search Field */}
+          <div className="relative w-full md:w-72 shrink-0">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#666666] pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by student, topic, department..."
+              className="w-full pl-8 pr-8 py-2 text-xs bg-[#F8FAFC] border border-[#D9D9D9] rounded-md text-[#191919] placeholder-[#888888] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0A66C2] focus:border-[#0A66C2] transition-colors"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5"
+                title="Clear search"
+              >
+                <X size={13} />
+              </button>
             )}
-          >
-            <span>Accepted</span>
-            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-emerald-50 text-[#057642]">
-              {acceptedList.length}
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab("declined")}
-            className={cn(
-              "pb-2.5 px-3 font-semibold border-b-2 transition-colors flex items-center gap-1.5",
-              activeTab === "declined"
-                ? "border-[#0a66c2] text-[#0a66c2]"
-                : "border-transparent text-gray-500 hover:text-gray-900"
-            )}
-          >
-            <span>Declined</span>
-            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600">
-              {declinedList.length}
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab("completed")}
-            className={cn(
-              "pb-2.5 px-3 font-semibold border-b-2 transition-colors flex items-center gap-1.5",
-              activeTab === "completed"
-                ? "border-[#0a66c2] text-[#0a66c2]"
-                : "border-transparent text-gray-500 hover:text-gray-900"
-            )}
-          >
-            <span>Completed</span>
-            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-blue-50 text-[#0a66c2]">
-              {completedList.length}
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab("outgoing")}
-            className={cn(
-              "pb-2.5 px-3 font-semibold border-b-2 transition-colors flex items-center gap-1.5",
-              activeTab === "outgoing"
-                ? "border-[#0a66c2] text-[#0a66c2]"
-                : "border-transparent text-gray-500 hover:text-gray-900"
-            )}
-          >
-            <span>Sent Invitations</span>
-            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-purple-50 text-purple-700">
-              {pendingOutgoing.length}
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab("all")}
-            className={cn(
-              "pb-2.5 px-3 font-semibold border-b-2 transition-colors flex items-center gap-1.5",
-              activeTab === "all"
-                ? "border-[#0a66c2] text-[#0a66c2]"
-                : "border-transparent text-gray-500 hover:text-gray-900"
-            )}
-          >
-            <span>All</span>
-            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600">
-              {allRequests.length}
-            </span>
-          </button>
-        </div>
-
-        {/* Search inside requests */}
-        <div className="mt-4 relative max-w-sm">
-          <Search size={14} className="absolute left-3 top-2.5 text-gray-400" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by student, topic, department..."
-            className="w-full pl-8 pr-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-md text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
-          />
+          </div>
         </div>
       </div>
 
       {/* Requests List */}
       {filteredRequests.length === 0 ? (
-        <div className="bg-white border border-gray-200 rounded-lg p-10 text-center shadow-xs">
-          <div className="h-12 w-12 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center mx-auto mb-3">
-            <Inbox size={24} />
+        <div className="bg-white border border-[#D9D9D9] rounded-lg p-12 sm:p-16 text-center shadow-xs">
+          <div className="h-14 w-14 rounded-full bg-[#F3F2EF] text-[#666666] flex items-center justify-center mx-auto mb-4">
+            <Inbox size={26} />
           </div>
-          <h3 className="text-sm font-bold text-gray-900">
+          <h3 className="text-base font-bold text-[#191919]">
             {activeTab === "pending"
               ? "No pending requests from students"
               : activeTab === "accepted"
@@ -340,24 +284,23 @@ export default function AlumniRequestsPage() {
               ? "No completed mentorship tracks yet"
               : activeTab === "outgoing"
               ? "You haven't sent any invitations yet"
-              : "No requests found matching your filter"}
+              : "No requests found matching your search"}
           </h3>
-          <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
+          <p className="text-xs sm:text-sm text-[#666666] mt-1.5 max-w-md mx-auto leading-relaxed">
             {activeTab === "pending"
               ? "When students submit mentorship requests to you, they will appear here with their background and career goals."
-              : "Browse the student directory to discover and invite promising students."}
+              : "Browse the student directory to discover and invite promising students to connect."}
           </p>
-          <Button
-            variant="outline"
-            size="sm"
-            asChild
-            className="mt-4 text-xs"
+          <Link
+            href="/alumni-dashboard/students"
+            className="inline-flex items-center gap-1.5 mt-5 px-4 py-2 text-xs font-semibold text-[#0A66C2] bg-white hover:bg-blue-50/60 border border-[#B2D5F8] rounded-md transition-colors"
           >
-            <Link href="/alumni-dashboard/students">Browse Students &rarr;</Link>
-          </Button>
+            <span>Browse Students</span>
+            <span>&rarr;</span>
+          </Link>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {filteredRequests.map((req) => {
             const isPending = req.status === "pending";
             const isAccepted = req.status === "active";
@@ -370,93 +313,98 @@ export default function AlumniRequestsPage() {
             return (
               <div
                 key={req.id}
-                className="bg-white border border-gray-200 rounded-lg p-4 shadow-xs hover:border-[#b2d5f8] transition-colors"
+                className="bg-white border border-[#D9D9D9] hover:border-[#0A66C2]/40 rounded-lg p-5 sm:p-6 shadow-xs hover:shadow-sm transition-all space-y-4"
               >
+                {/* Header Row: Student Information & Status */}
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                   <div className="flex items-start gap-3.5 min-w-0">
-                    <Avatar name={studentName} size="md" />
+                    <Avatar name={studentName} size="md" className="shrink-0 mt-0.5" />
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="text-xs font-bold text-gray-900">
+                        <button
+                          type="button"
+                          onClick={() => handleViewProfile(req)}
+                          className="text-sm font-bold text-[#191919] hover:text-[#0A66C2] hover:underline truncate text-left"
+                        >
                           {studentName}
-                        </h3>
+                        </button>
 
                         {isOutgoing ? (
-                          <span className="px-2 py-0.2 rounded-full text-[10px] font-semibold bg-purple-50 text-purple-700 border border-purple-200">
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FAF5FF] text-[#7E22CE] border border-[#E9D5FF]">
                             Sent Invitation
                           </span>
                         ) : isPending ? (
-                          <span className="px-2 py-0.2 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A]">
                             Pending Review
                           </span>
                         ) : isAccepted ? (
-                          <span className="px-2 py-0.2 rounded-full text-[10px] font-semibold bg-[#eef8f1] text-[#057642] border border-[#bfe3c9]">
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EEF8F1] text-[#057642] border border-[#BFE3C9]">
                             Active Mentee
                           </span>
                         ) : isCompleted ? (
-                          <span className="px-2 py-0.2 rounded-full text-[10px] font-semibold bg-blue-50 text-[#0a66c2] border border-blue-200">
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EBF3FB] text-[#0A66C2] border border-[#B2D5F8]">
                             Completed Track
                           </span>
                         ) : (
-                          <span className="px-2 py-0.2 rounded-full text-[10px] font-semibold bg-gray-100 text-gray-600 border border-gray-200">
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#F3F2EF] text-[#666666] border border-[#D9D9D9]">
                             Declined
                           </span>
                         )}
                       </div>
 
-                      <p className="text-[11px] text-gray-500 mt-0.5 truncate">
+                      <p className="text-xs text-[#666666] mt-0.5 truncate">
                         {req.student?.academicYear || "Undergraduate"} · {req.student?.department || "Computer Science"}
                       </p>
 
                       {req.student?.careerGoal && (
-                        <p className="text-[11px] text-gray-600 mt-0.5">
-                          Career Goal: <strong className="text-gray-800">{req.student.careerGoal}</strong>
+                        <p className="text-xs text-[#444444] mt-1">
+                          Career Aspiration: <strong className="text-[#191919] font-semibold">{req.student.careerGoal}</strong>
                         </p>
                       )}
 
-                      <div className="mt-1.5 flex items-center gap-1.5 text-xs text-[#0a66c2] font-semibold">
-                        <Target size={12} className="shrink-0" />
+                      <div className="mt-2 flex items-center gap-1.5 text-xs text-[#0A66C2] font-semibold">
+                        <Target size={13} className="shrink-0" />
                         <span>Requested Focus: {req.focus}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="text-right shrink-0">
-                    <span className="text-[11px] text-gray-400 block flex items-center sm:justify-end gap-1">
-                      <Clock size={11} />
+                  <div className="text-left sm:text-right shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#EAEAEA]">
+                    <span className="text-xs text-[#888888] inline-flex items-center sm:justify-end gap-1.5">
+                      <Clock size={12} className="shrink-0" />
                       <span>Requested: {req.requestDate || "Recent"}</span>
                     </span>
                     {req.sessionCount > 0 && (
-                      <span className="text-[11px] text-emerald-600 font-semibold block mt-0.5">
-                        {req.sessionCount} sessions conducted
+                      <span className="text-xs text-[#057642] font-semibold block mt-1">
+                        {req.sessionCount} session{req.sessionCount === 1 ? "" : "s"} conducted
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* Student message */}
+                {/* Student message quote */}
                 {req.requestMessage && (
-                  <div className="mt-3 bg-gray-50 rounded-md p-3 border border-gray-100 text-xs text-gray-700 leading-relaxed italic">
+                  <div className="bg-[#F8FAFC] rounded-md p-3.5 border border-[#EAEAEA] text-xs text-[#444444] leading-relaxed italic">
                     &ldquo;{req.requestMessage}&rdquo;
                   </div>
                 )}
 
                 {/* Decline reason note if declined */}
                 {isDeclined && req.declinedReason && (
-                  <div className="mt-2.5 p-2.5 bg-rose-50/70 border border-rose-100 rounded-md text-xs text-rose-800">
-                    <span className="font-semibold block text-[11px]">Decline Reason Provided:</span>
+                  <div className="p-3 bg-rose-50 border border-rose-200 rounded-md text-xs text-rose-800">
+                    <span className="font-semibold block text-[11px] mb-0.5">Decline Reason Provided:</span>
                     <span>{req.declinedReason}</span>
                   </div>
                 )}
 
                 {/* Career Interests / Skills Pills */}
                 {req.student?.interests && req.student.interests.length > 0 && (
-                  <div className="mt-2.5 flex flex-wrap gap-1 items-center">
-                    <span className="text-[10px] text-gray-400 font-medium mr-1">Interests:</span>
+                  <div className="flex flex-wrap gap-1.5 items-center">
+                    <span className="text-[11px] text-[#888888] font-medium mr-1">Interests:</span>
                     {req.student.interests.map((interest, idx) => (
                       <span
                         key={idx}
-                        className="px-2 py-0.2 rounded text-[10px] bg-gray-100 text-gray-600"
+                        className="px-2 py-0.5 rounded text-[11px] bg-[#F3F2EF] text-[#191919] border border-[#E0E0E0] font-medium"
                       >
                         {interest}
                       </span>
@@ -465,24 +413,24 @@ export default function AlumniRequestsPage() {
                 )}
 
                 {/* Action Buttons */}
-                <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
+                <div className="pt-3.5 border-t border-[#EAEAEA] flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
                     <button
                       type="button"
                       onClick={() => handleViewProfile(req)}
-                      className="text-xs font-semibold text-[#0a66c2] hover:underline flex items-center gap-1"
+                      className="text-xs font-semibold text-[#0A66C2] hover:underline flex items-center gap-1.5 py-1"
                     >
-                      <User size={12} />
+                      <User size={13} />
                       <span>View Student Profile</span>
                     </button>
 
-                    <span className="text-gray-300">·</span>
+                    <span className="text-[#D9D9D9]">·</span>
 
                     <Link
                       href={`/messages?participantId=${studentId}`}
-                      className="text-xs font-semibold text-gray-600 hover:text-[#0a66c2] hover:underline flex items-center gap-1"
+                      className="text-xs font-semibold text-[#666666] hover:text-[#0A66C2] hover:underline flex items-center gap-1.5 py-1"
                     >
-                      <MessageSquare size={12} />
+                      <MessageSquare size={13} />
                       <span>Message Student</span>
                     </Link>
                   </div>
@@ -490,47 +438,42 @@ export default function AlumniRequestsPage() {
                   {/* Pending incoming request actions */}
                   {isPending && !isOutgoing && (
                     <div className="flex items-center gap-2">
-                      <Button
+                      <button
                         type="button"
-                        variant="outline"
-                        size="sm"
                         disabled={processingId === req.id}
                         onClick={() => setDeclineTargetRequest(req)}
-                        className="text-xs text-gray-600 hover:text-red-600"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold text-[#666666] hover:text-red-600 hover:bg-red-50 border border-[#D9D9D9] hover:border-red-200 transition-colors"
                       >
-                        <X size={12} className="mr-1" />
+                        <X size={13} />
                         <span>Decline</span>
-                      </Button>
-                      <Button
+                      </button>
+                      <button
                         type="button"
-                        variant="primary"
-                        size="sm"
                         disabled={processingId === req.id}
                         onClick={() => handleAccept(req)}
-                        className="text-xs bg-[#0a66c2] hover:bg-[#004182]"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold bg-[#0A66C2] hover:bg-[#004182] text-white shadow-2xs transition-colors"
                       >
-                        <Check size={12} className="mr-1" />
+                        <Check size={13} />
                         <span>{processingId === req.id ? "Accepting..." : "Accept Request"}</span>
-                      </Button>
+                      </button>
                     </div>
                   )}
 
                   {isAccepted && (
                     <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        asChild
-                        className="text-xs text-[#0a66c2] border-[#b2d5f8] hover:bg-blue-50"
+                      <Link
+                        href="/alumni-dashboard/mentees"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-semibold text-[#0A66C2] bg-white hover:bg-blue-50/60 border border-[#B2D5F8] transition-colors"
                       >
-                        <Link href="/alumni-dashboard/mentees">View Mentee Profile &rarr;</Link>
-                      </Button>
+                        <span>View Mentee Profile</span>
+                        <span>&rarr;</span>
+                      </Link>
                     </div>
                   )}
 
                   {isCompleted && (
-                    <div className="flex items-center gap-1.5 text-xs text-[#057642] font-semibold">
-                      <Award size={13} />
+                    <div className="flex items-center gap-1.5 text-xs text-[#057642] font-semibold bg-[#EEF8F1] border border-[#BFE3C9] px-2.5 py-1 rounded-md">
+                      <Award size={14} />
                       <span>Track Successfully Concluded</span>
                     </div>
                   )}
