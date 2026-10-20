@@ -36,7 +36,7 @@ export function AlumniLayout({ children }: AlumniLayoutProps) {
     : "max-w-7xl";
 
   return (
-    <div className="min-h-screen bg-[#F3F2EF] flex flex-col antialiased text-[#191919]">
+    <div className="min-h-screen bg-[#FAFAFA] flex flex-col antialiased text-[#090909]">
       {/* Top Navigation */}
       <AlumniNav
         mobileOpen={mobileMenuOpen}
@@ -50,7 +50,7 @@ export function AlumniLayout({ children }: AlumniLayoutProps) {
             className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
             onClick={() => setMobileMenuOpen(false)}
           />
-          <div className="fixed inset-y-0 left-0 w-72 max-w-full bg-[#F3F2EF] shadow-xl z-50 p-4 overflow-y-auto">
+          <div className="fixed inset-y-0 left-0 w-72 max-w-full bg-white border-r border-[#E7E7E7] shadow-xl z-50 p-4 overflow-y-auto">
             <Suspense fallback={null}>
               <AlumniSidebar onItemClick={() => setMobileMenuOpen(false)} />
             </Suspense>

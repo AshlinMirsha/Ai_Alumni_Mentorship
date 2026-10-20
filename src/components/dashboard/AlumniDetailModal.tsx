@@ -39,7 +39,7 @@ export function AlumniDetailModal({
       aria-modal="true"
       aria-labelledby="alumni-modal-title"
     >
-      <div className="relative w-full max-w-2xl bg-white rounded-lg shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-200 overflow-hidden my-8 max-h-[90vh] flex flex-col">
+      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-[#E7E7E7] overflow-hidden my-8 max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="p-5 border-b border-gray-200 flex items-start justify-between bg-white shrink-0">
           <div className="flex items-start gap-3.5">
@@ -49,7 +49,7 @@ export function AlumniDetailModal({
                 <h2 id="alumni-modal-title" className="text-base font-bold text-gray-900">
                   {alumni.name}
                 </h2>
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-[#ebf3fb] text-[#0a66c2] border border-[#b2d5f8]">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-neutral-100 text-neutral-900 border border-neutral-200">
                   {alumni.matchScore}% Match
                 </span>
               </div>
@@ -73,7 +73,7 @@ export function AlumniDetailModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+            className="p-1 rounded-full text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 transition-colors"
             aria-label="Close dialog"
           >
             <X size={18} />
@@ -83,7 +83,7 @@ export function AlumniDetailModal({
         {/* Content */}
         <div className="p-5 space-y-5 overflow-y-auto flex-1 text-xs text-gray-700">
           {/* Match Rationale Callout */}
-          <div className="p-3 bg-gray-50 border border-gray-200 rounded-md text-xs leading-relaxed text-gray-700">
+          <div className="p-3.5 bg-[#FAFAFA] border border-[#E7E7E7] rounded-xl text-xs leading-relaxed text-gray-700">
             <strong className="font-semibold text-gray-900 block mb-0.5">Why matched with your profile:</strong>
             {alumni.matchExplanation}
           </div>
@@ -118,8 +118,8 @@ export function AlumniDetailModal({
               </h4>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                 {alumni.mentorshipAreas.map((area, idx) => (
-                  <li key={idx} className="flex items-center gap-2 p-2 rounded bg-gray-50 border border-gray-200">
-                    <CheckCircle size={13} className="text-[#057642] shrink-0" />
+                  <li key={idx} className="flex items-center gap-2 p-2.5 rounded-xl bg-[#FAFAFA] border border-[#E7E7E7]">
+                    <CheckCircle size={13} className="text-neutral-900 shrink-0" />
                     <span>{area}</span>
                   </li>
                 ))}
@@ -183,13 +183,14 @@ export function AlumniDetailModal({
             {alumni.company} · {alumni.location}
           </span>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={onClose}>
+            <Button variant="ghost" size="sm" onClick={onClose} className="rounded-full text-xs">
               Close
             </Button>
             <Button
               variant="primary"
               size="sm"
               asChild
+              className="rounded-full bg-[#090909] hover:bg-[#242424] text-white text-xs"
             >
               <Link
                 href={`/alumni/${alumni.id}`}

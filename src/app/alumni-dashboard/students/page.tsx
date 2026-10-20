@@ -302,9 +302,9 @@ function DiscoverStudentsContent() {
                 onClick={() => setViewMode("grid")}
                 title="Grid view"
                 className={cn(
-                  "flex items-center gap-1.5 px-2.5 py-1 rounded text-xs transition-colors",
+                  "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-colors",
                   viewMode === "grid"
-                    ? "bg-white text-[#0A66C2] shadow-2xs font-semibold"
+                    ? "bg-[#090909] text-white shadow-2xs font-semibold"
                     : "text-[#666666] hover:text-[#191919]"
                 )}
               >
@@ -316,9 +316,9 @@ function DiscoverStudentsContent() {
                 onClick={() => setViewMode("table")}
                 title="List view"
                 className={cn(
-                  "flex items-center gap-1.5 px-2.5 py-1 rounded text-xs transition-colors",
+                  "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-colors",
                   viewMode === "table"
-                    ? "bg-white text-[#0A66C2] shadow-2xs font-semibold"
+                    ? "bg-[#090909] text-white shadow-2xs font-semibold"
                     : "text-[#666666] hover:text-[#191919]"
                 )}
               >
@@ -331,7 +331,7 @@ function DiscoverStudentsContent() {
       </div>
 
       {/* ─── 2. SEARCH & FILTERS SECTION ──────────────────────────────── */}
-      <div className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs space-y-4">
+      <div className="bg-white border border-[#E7E7E7] rounded-xl p-5 shadow-xs space-y-4">
         {/* Search Bar */}
         <div className="relative">
           <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#666666] pointer-events-none" />
@@ -340,7 +340,7 @@ function DiscoverStudentsContent() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by student name, technical skills (e.g. Go, Python, React), department, career interests, or desired role..."
-            className="w-full pl-10 pr-9 py-2.5 text-xs sm:text-sm bg-[#F8FAFC] border border-[#D9D9D9] rounded-md text-[#191919] placeholder-[#888888] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0A66C2] focus:border-[#0A66C2] transition-colors"
+            className="w-full pl-10 pr-9 py-2.5 text-xs sm:text-sm bg-[#F8FAFC] border border-[#D9D9D9] rounded-lg text-[#191919] placeholder-[#888888] focus:bg-white focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-colors"
           />
           {search && (
             <button
@@ -364,7 +364,7 @@ function DiscoverStudentsContent() {
             <select
               value={selectedDept}
               onChange={(e) => setSelectedDept(e.target.value)}
-              className="w-full h-9 px-2.5 text-xs bg-white border border-[#D9D9D9] rounded-md text-[#191919] focus:outline-none focus:ring-1 focus:ring-[#0A66C2] focus:border-[#0A66C2] transition-colors truncate cursor-pointer"
+              className="w-full h-9 px-2.5 text-xs bg-white border border-[#D9D9D9] rounded-lg text-[#191919] focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-colors truncate cursor-pointer"
             >
               <option value="all">All Departments</option>
               {DEPARTMENTS.map((dept) => (
@@ -383,7 +383,7 @@ function DiscoverStudentsContent() {
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
-              className="w-full h-9 px-2.5 text-xs bg-white border border-[#D9D9D9] rounded-md text-[#191919] focus:outline-none focus:ring-1 focus:ring-[#0A66C2] focus:border-[#0A66C2] transition-colors truncate cursor-pointer"
+              className="w-full h-9 px-2.5 text-xs bg-white border border-[#D9D9D9] rounded-lg text-[#191919] focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-colors truncate cursor-pointer"
             >
               <option value="all">All Academic Years</option>
               {ACADEMIC_YEARS.map((yr) => (
@@ -402,7 +402,7 @@ function DiscoverStudentsContent() {
             <select
               value={selectedCareer}
               onChange={(e) => setSelectedCareer(e.target.value)}
-              className="w-full h-9 px-2.5 text-xs bg-white border border-[#D9D9D9] rounded-md text-[#191919] focus:outline-none focus:ring-1 focus:ring-[#0A66C2] focus:border-[#0A66C2] transition-colors truncate cursor-pointer"
+              className="w-full h-9 px-2.5 text-xs bg-white border border-[#D9D9D9] rounded-lg text-[#191919] focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-colors truncate cursor-pointer"
             >
               <option value="all">All Career Goals</option>
               {CAREER_INTERESTS.map((goal) => (
@@ -421,7 +421,7 @@ function DiscoverStudentsContent() {
             <select
               value={selectedSkill}
               onChange={(e) => setSelectedSkill(e.target.value)}
-              className="w-full h-9 px-2.5 text-xs bg-white border border-[#D9D9D9] rounded-md text-[#191919] focus:outline-none focus:ring-1 focus:ring-[#0A66C2] focus:border-[#0A66C2] transition-colors truncate cursor-pointer"
+              className="w-full h-9 px-2.5 text-xs bg-white border border-[#D9D9D9] rounded-lg text-[#191919] focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-colors truncate cursor-pointer"
             >
               <option value="all">All Technical Skills</option>
               {TECHNICAL_SKILLS.map((sk) => (
@@ -440,7 +440,7 @@ function DiscoverStudentsContent() {
             <select
               value={selectedIndustry}
               onChange={(e) => setSelectedIndustry(e.target.value)}
-              className="w-full h-9 px-2.5 text-xs bg-white border border-[#D9D9D9] rounded-md text-[#191919] focus:outline-none focus:ring-1 focus:ring-[#0A66C2] focus:border-[#0A66C2] transition-colors truncate cursor-pointer"
+              className="w-full h-9 px-2.5 text-xs bg-white border border-[#D9D9D9] rounded-lg text-[#191919] focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-colors truncate cursor-pointer"
             >
               <option value="all">All Industries</option>
               {PREFERRED_INDUSTRIES.map((ind) => (
@@ -459,7 +459,7 @@ function DiscoverStudentsContent() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as "match" | "name" | "year" | "skills")}
-              className="w-full h-9 px-2.5 text-xs bg-white border border-[#D9D9D9] rounded-md text-[#191919] focus:outline-none focus:ring-1 focus:ring-[#0A66C2] focus:border-[#0A66C2] transition-colors cursor-pointer"
+              className="w-full h-9 px-2.5 text-xs bg-white border border-[#D9D9D9] rounded-lg text-[#191919] focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-colors cursor-pointer"
             >
               <option value="match">Domain Match %</option>
               <option value="name">Name (A–Z)</option>
@@ -478,9 +478,9 @@ function DiscoverStudentsContent() {
               </span>
 
               {search && (
-                <span className="inline-flex items-center gap-1 text-[11px] bg-[#EBF3FB] text-[#0A66C2] px-2 py-0.5 rounded border border-[#B2D5F8]">
+                <span className="inline-flex items-center gap-1 text-[11px] bg-neutral-100 text-neutral-900 px-2 py-0.5 rounded-full border border-neutral-200">
                   Search: &ldquo;{search}&rdquo;
-                  <button type="button" onClick={() => setSearch("")} className="hover:text-blue-900 ml-0.5" title="Remove search filter">
+                  <button type="button" onClick={() => setSearch("")} className="hover:text-black ml-0.5" title="Remove search filter">
                     <X size={11} />
                   </button>
                 </span>
@@ -535,7 +535,7 @@ function DiscoverStudentsContent() {
             <button
               type="button"
               onClick={resetFilters}
-              className="text-[#0A66C2] hover:underline flex items-center gap-1 font-semibold text-xs ml-auto"
+              className="text-neutral-900 hover:text-neutral-600 flex items-center gap-1 font-semibold text-xs ml-auto"
             >
               <RotateCcw size={12} />
               <span>Clear all filters</span>
@@ -581,7 +581,7 @@ function DiscoverStudentsContent() {
             return (
               <div
                 key={st.id}
-                className="bg-white border border-[#D9D9D9] hover:border-[#0A66C2]/40 rounded-lg p-5 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between"
+                className="bg-white border border-[#E7E7E7] hover:border-black rounded-xl p-5 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between"
               >
                 {/* Upper Information Area */}
                 <div className="space-y-4">
@@ -593,7 +593,7 @@ function DiscoverStudentsContent() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <Link
                             href={`/alumni-dashboard/students/${st.id}`}
-                            className="text-sm font-bold text-[#191919] hover:text-[#0A66C2] hover:underline truncate"
+                            className="text-sm font-bold text-[#191919] hover:text-black hover:underline truncate"
                           >
                             {st.name}
                           </Link>
@@ -609,7 +609,7 @@ function DiscoverStudentsContent() {
                     </div>
 
                     {st.matchScore && (
-                      <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#EEF8F1] text-[#057642] border border-[#BFE3C9] shrink-0 flex items-center gap-1 whitespace-nowrap">
+                      <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-neutral-100 text-neutral-900 border border-neutral-200 shrink-0 flex items-center gap-1 whitespace-nowrap">
                         <ShieldCheck size={11} className="shrink-0" />
                         <span>{st.matchScore}% Match</span>
                       </span>
@@ -617,9 +617,9 @@ function DiscoverStudentsContent() {
                   </div>
 
                   {/* Career Goal & Introduction */}
-                  <div className="bg-[#F8FAFC] rounded-md p-3 border border-[#EAEAEA] space-y-1.5">
+                  <div className="bg-[#F8FAFC] rounded-lg p-3 border border-[#EAEAEA] space-y-1.5">
                     <div className="flex items-center gap-1.5 text-xs text-[#191919] font-semibold">
-                      <Target size={13} className="text-[#0A66C2] shrink-0" />
+                      <Target size={13} className="text-neutral-900 shrink-0" />
                       <span className="truncate">Aspires to be: {st.careerGoal}</span>
                     </div>
 
@@ -675,14 +675,14 @@ function DiscoverStudentsContent() {
                     <button
                       type="button"
                       onClick={() => setSelectedStudentForDetail(st)}
-                      className="inline-flex items-center gap-1 text-xs font-medium text-[#191919] hover:text-[#0A66C2] hover:bg-[#F3F2EF] px-2.5 py-1.5 rounded-md transition-colors"
+                      className="inline-flex items-center gap-1 text-xs font-medium text-[#191919] hover:text-black hover:bg-neutral-100 px-2.5 py-1.5 rounded-full transition-colors"
                     >
                       <Eye size={13} className="text-[#666666]" />
                       <span>Quick View</span>
                     </button>
                     <Link
                       href={`/alumni-dashboard/students/${st.id}`}
-                      className="text-xs font-semibold text-[#0A66C2] hover:underline px-1 py-1"
+                      className="text-xs font-semibold text-neutral-900 hover:underline px-1 py-1"
                     >
                       Full Profile
                     </Link>
@@ -693,15 +693,15 @@ function DiscoverStudentsContent() {
                     disabled={hasPending || isMentee}
                     onClick={() => setSelectedStudentForOffer(st)}
                     className={cn(
-                      "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors whitespace-nowrap",
+                      "inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors whitespace-nowrap",
                       isMentee
-                        ? "bg-[#EEF8F1] text-[#057642] border border-[#BFE3C9] cursor-default"
+                        ? "bg-neutral-900 text-white cursor-default"
                         : hasPending
                         ? "bg-[#F3F2EF] text-[#666666] border border-[#D9D9D9] cursor-default"
-                        : "bg-[#0A66C2] hover:bg-[#004182] text-white shadow-2xs"
+                        : "bg-[#090909] hover:bg-[#242424] text-white shadow-2xs"
                     )}
                   >
-                    <Send size={12} className={isMentee || hasPending ? "text-current" : "text-white"} />
+                    <Send size={12} className={hasPending ? "text-current" : "text-white"} />
                     <span>
                       {isMentee
                         ? "Active Mentee"
@@ -751,7 +751,7 @@ function DiscoverStudentsContent() {
                           <div className="min-w-0">
                             <Link
                               href={`/alumni-dashboard/students/${st.id}`}
-                              className="font-bold text-[#191919] hover:text-[#0A66C2] hover:underline truncate block"
+                              className="font-bold text-[#191919] hover:text-black hover:underline truncate block"
                             >
                               {st.name}
                             </Link>
@@ -795,7 +795,7 @@ function DiscoverStudentsContent() {
 
                       <td className="py-3.5 px-4">
                         {st.matchScore ? (
-                          <span className="text-[11px] font-bold text-[#057642] bg-[#EEF8F1] border border-[#BFE3C9] px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
+                          <span className="text-[11px] font-bold text-neutral-900 bg-neutral-100 border border-neutral-200 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
                             <ShieldCheck size={11} className="shrink-0" />
                             <span>{st.matchScore}%</span>
                           </span>
@@ -809,7 +809,7 @@ function DiscoverStudentsContent() {
                           <button
                             type="button"
                             onClick={() => setSelectedStudentForDetail(st)}
-                            className="text-xs h-7 px-2.5 rounded text-[#191919] hover:text-[#0A66C2] hover:bg-[#F3F2EF] font-medium transition-colors"
+                            className="text-xs h-7 px-2.5 rounded text-[#191919] hover:text-black hover:bg-neutral-100 font-medium transition-colors"
                           >
                             View
                           </button>
@@ -818,12 +818,12 @@ function DiscoverStudentsContent() {
                             disabled={hasPending || isMentee}
                             onClick={() => setSelectedStudentForOffer(st)}
                             className={cn(
-                              "text-xs h-7 px-2.5 rounded font-semibold transition-colors whitespace-nowrap",
+                              "text-xs h-7 px-3 rounded-full font-semibold transition-colors whitespace-nowrap",
                               isMentee
-                                ? "bg-[#EEF8F1] text-[#057642] border border-[#BFE3C9] cursor-default"
+                                ? "bg-neutral-900 text-white cursor-default"
                                 : hasPending
                                 ? "bg-[#F3F2EF] text-[#666666] border border-[#D9D9D9] cursor-default"
-                                : "bg-[#0A66C2] hover:bg-[#004182] text-white shadow-2xs"
+                                : "bg-[#090909] hover:bg-[#242424] text-white shadow-2xs"
                             )}
                           >
                             {isMentee ? "Mentee" : hasPending ? "Sent" : "Invite"}

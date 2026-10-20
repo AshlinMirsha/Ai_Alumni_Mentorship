@@ -19,13 +19,13 @@ export function ProfileCompletion({
   const { percent, completedCount, totalCount, items } = completion;
 
   const getProgressColor = (pct: number) => {
-    if (pct >= 85) return "bg-[#057642]";
-    if (pct >= 60) return "bg-[#0a66c2]";
-    return "bg-[#915907]";
+    if (pct >= 85) return "bg-[#090909]";
+    if (pct >= 60) return "bg-neutral-800";
+    return "bg-neutral-500";
   };
 
   return (
-    <div className="bg-gray-50 border border-gray-200 rounded-md p-3">
+    <div className="bg-[#FAFAFA] border border-[#E7E7E7] rounded-xl p-3">
       {/* Top summary header */}
       <div className="flex items-center justify-between gap-2 mb-1.5">
         <div className="flex items-center gap-1.5">
@@ -38,7 +38,7 @@ export function ProfileCompletion({
       </div>
 
       {/* Progress Bar */}
-      <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden mb-2">
+      <div className="w-full bg-neutral-200 rounded-full h-1.5 overflow-hidden mb-2">
         <div
           className={`h-full rounded-full transition-all duration-300 ${getProgressColor(percent)}`}
           style={{ width: `${percent}%` }}
@@ -61,7 +61,7 @@ export function ProfileCompletion({
           <button
             type="button"
             onClick={() => setShowDetails((p) => !p)}
-            className="inline-flex items-center gap-0.5 text-[#0a66c2] hover:text-[#004182] font-semibold shrink-0 cursor-pointer"
+            className="inline-flex items-center gap-0.5 text-neutral-900 hover:text-black font-medium shrink-0 cursor-pointer"
           >
             <span>{showDetails ? "Hide" : "Details"}</span>
             {showDetails ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
@@ -71,7 +71,7 @@ export function ProfileCompletion({
 
       {/* Detailed checklist */}
       {showDetails && !compact && (
-        <div className="mt-2.5 pt-2.5 border-t border-gray-200 space-y-1.5">
+        <div className="mt-2.5 pt-2.5 border-t border-[#E7E7E7] space-y-1.5">
           <p className="text-[11px] font-semibold text-gray-700 mb-1">
             Required Profile Fields:
           </p>
@@ -83,7 +83,7 @@ export function ProfileCompletion({
               >
                 <div className="flex items-center gap-1.5">
                   {item.completed ? (
-                    <CheckCircle2 size={13} className="text-[#057642] shrink-0" />
+                    <CheckCircle2 size={13} className="text-neutral-900 shrink-0" />
                   ) : (
                     <Circle size={13} className="text-gray-300 shrink-0" />
                   )}
@@ -93,7 +93,7 @@ export function ProfileCompletion({
                 </div>
                 <span
                   className={`text-[10px] font-mono ${
-                    item.completed ? "text-[#057642] font-medium" : "text-gray-400"
+                    item.completed ? "text-neutral-900 font-medium" : "text-gray-400"
                   }`}
                 >
                   +{item.points}%
@@ -106,7 +106,7 @@ export function ProfileCompletion({
             <button
               type="button"
               onClick={onOpenEditProfile}
-              className="mt-1.5 text-xs text-[#0a66c2] hover:underline font-semibold block"
+              className="mt-1.5 text-xs text-neutral-900 hover:underline font-medium block"
             >
               Complete fields in Edit Profile &rarr;
             </button>

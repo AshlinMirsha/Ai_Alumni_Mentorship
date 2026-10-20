@@ -62,15 +62,15 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
 
   if (!student) {
     return (
-      <div className="bg-white border border-gray-200 rounded-lg p-10 text-center shadow-xs max-w-xl mx-auto my-12">
-        <div className="h-12 w-12 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center mx-auto mb-3">
+      <div className="bg-white border border-[#E7E7E7] rounded-2xl p-10 text-center shadow-xs max-w-xl mx-auto my-12">
+        <div className="h-12 w-12 rounded-full bg-neutral-100 text-neutral-700 flex items-center justify-center mx-auto mb-3">
           <AlertCircle size={24} />
         </div>
         <h2 className="text-base font-bold text-gray-900">Student Profile Not Found</h2>
         <p className="text-xs text-gray-500 mt-1">
           The requested student record does not exist or may have been removed from the directory.
         </p>
-        <Button variant="primary" size="sm" asChild className="mt-4 text-xs bg-[#0a66c2]">
+        <Button variant="primary" size="sm" asChild className="mt-4 text-xs bg-[#090909] hover:bg-[#242424] text-white rounded-full">
           <Link href="/alumni-dashboard/students" className="flex items-center gap-1.5">
             <ArrowLeft size={13} />
             <span>Back to Student Directory</span>
@@ -112,8 +112,8 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
     <div className="space-y-5">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-5 right-5 z-50 bg-gray-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
-          <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
+        <div className="fixed bottom-5 right-5 z-50 bg-[#090909] text-white text-xs px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 border border-neutral-800">
+          <CheckCircle2 size={15} className="text-white shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -122,7 +122,7 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
       <div>
         <Link
           href="/alumni-dashboard/students"
-          className="inline-flex items-center gap-1 text-xs font-semibold text-[#0a66c2] hover:underline"
+          className="inline-flex items-center gap-1 text-xs font-medium text-neutral-900 hover:underline"
         >
           <ArrowLeft size={13} />
           <span>Back to Discover Students Directory</span>
@@ -130,16 +130,16 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
       </div>
 
       {/* Hero Header Card */}
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-xs">
+      <div className="bg-white border border-[#E7E7E7] rounded-2xl overflow-hidden shadow-xs">
         {/* Cover Ribbon */}
-        <div className="h-28 bg-linear-to-r from-[#0a66c2] via-[#004182] to-slate-900 relative p-4 flex items-start justify-between">
-          <div className="inline-flex items-center gap-1.5 text-xs text-white/90 bg-white/10 px-2.5 py-1 rounded backdrop-blur-xs">
+        <div className="h-28 bg-[#111111] border-b border-[#242424] relative p-4 flex items-start justify-between">
+          <div className="inline-flex items-center gap-1.5 text-xs text-white/90 bg-white/10 px-2.5 py-1 rounded-full backdrop-blur-xs">
             <Globe size={13} />
             <span>Enrolled Student Profile · Verified University Directory</span>
           </div>
 
           {student.matchScore && (
-            <span className="text-xs font-bold text-white bg-white/20 border border-white/30 px-2.5 py-1 rounded">
+            <span className="text-xs font-medium text-white/90 bg-white/10 border border-white/20 px-2.5 py-1 rounded-full">
               {student.matchScore}% Domain Affinity Match
             </span>
           )}
@@ -157,13 +157,13 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
                 variant="outline"
                 size="sm"
                 asChild
-                className="text-xs text-gray-700 border-gray-300 hover:bg-gray-50"
+                className="text-xs text-neutral-800 border-neutral-200 rounded-full hover:bg-neutral-50"
               >
                 <Link
                   href={`/messages?participantId=${student.id}`}
                   className="flex items-center gap-1.5"
                 >
-                  <MessageSquare size={13} className="text-[#0a66c2]" />
+                  <MessageSquare size={13} className="text-neutral-700" />
                   <span>Send Message</span>
                 </Link>
               </Button>
@@ -173,7 +173,7 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
                 size="sm"
                 disabled={hasPendingInvitation || isMentee}
                 onClick={() => setIsOfferModalOpen(true)}
-                className="bg-[#0a66c2] hover:bg-[#004182] text-xs flex items-center gap-1.5"
+                className="bg-[#090909] hover:bg-[#242424] text-white rounded-full text-xs flex items-center gap-1.5"
               >
                 <Send size={13} />
                 <span>
@@ -190,11 +190,11 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl font-bold text-gray-900">{student.name}</h1>
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#057642] bg-[#eef8f1] px-2 py-0.5 rounded-full border border-[#bfe3c9]">
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-neutral-700 bg-neutral-100 px-2.5 py-0.5 rounded-full border border-neutral-200">
                 <ShieldCheck size={11} /> Verified Student
               </span>
               {hasPendingInvitation && (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0a66c2] bg-[#ebf3fb] px-2 py-0.5 rounded-full border border-[#b2d5f8]">
+                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-neutral-900 bg-neutral-100 px-2.5 py-0.5 rounded-full border border-neutral-200">
                   <Clock size={11} /> Invitation Awaiting Review
                 </span>
               )}
@@ -206,7 +206,7 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
 
             <div className="mt-2 flex items-center gap-3 text-xs text-gray-500 flex-wrap">
               <span className="flex items-center gap-1 font-semibold text-gray-800">
-                <GraduationCap size={14} className="text-[#0a66c2]" />
+                <GraduationCap size={14} className="text-neutral-700" />
                 {student.university}
               </span>
               <span>·</span>
@@ -235,20 +235,20 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
         <div className="lg:col-span-8 space-y-5">
           {/* Section 1: About the Student */}
           {student.bio && (
-            <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs">
+            <div className="bg-white border border-[#E7E7E7] rounded-2xl p-5 shadow-xs">
               <h2 className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">
                 About the Student
               </h2>
-              <p className="text-xs text-gray-700 leading-relaxed bg-gray-50/60 p-3.5 rounded-md border border-gray-100">
+              <p className="text-xs text-gray-700 leading-relaxed bg-[#FAFAFA] p-3.5 rounded-xl border border-[#E7E7E7]">
                 {student.bio}
               </p>
             </div>
           )}
 
           {/* Section 2: Education Details */}
-          <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs">
+          <div className="bg-white border border-[#E7E7E7] rounded-2xl p-5 shadow-xs">
             <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
-              <GraduationCap size={16} className="text-[#0a66c2]" />
+              <GraduationCap size={16} className="text-neutral-700" />
               <h2 className="text-sm font-bold text-gray-900">Education Background</h2>
             </div>
 
@@ -268,7 +268,7 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
               </div>
 
               {/* GPA Check & Privacy */}
-              <div className="p-2.5 rounded-md bg-gray-50 border border-gray-100 flex items-center justify-between text-xs">
+              <div className="p-2.5 rounded-xl bg-[#FAFAFA] border border-[#E7E7E7] flex items-center justify-between text-xs">
                 <span className="text-gray-600">Cumulative Academic Standing:</span>
                 {isGpaVisible ? (
                   <span className="font-bold text-gray-900">GPA: {student.gpa}</span>
@@ -289,7 +289,7 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
                     {student.education.coursework.map((course) => (
                       <span
                         key={course}
-                        className="text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded"
+                        className="text-xs bg-neutral-100 text-neutral-800 px-2.5 py-1 rounded-full font-medium"
                       >
                         {course}
                       </span>
@@ -302,9 +302,9 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
 
           {/* Section 3: Technical Skills & Stack */}
           {student.skills && student.skills.length > 0 && (
-            <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs">
+            <div className="bg-white border border-[#E7E7E7] rounded-2xl p-5 shadow-xs">
               <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
-                <Code size={16} className="text-[#0a66c2]" />
+                <Code size={16} className="text-neutral-700" />
                 <h2 className="text-sm font-bold text-gray-900">Technical Skills &amp; Stack</h2>
               </div>
 
@@ -316,17 +316,17 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
                   return (
                     <div
                       key={skillName}
-                      className="p-2.5 rounded-md border border-gray-200 bg-gray-50/50 flex items-center justify-between"
+                      className="p-2.5 rounded-xl border border-[#E7E7E7] bg-[#FAFAFA] flex items-center justify-between"
                     >
                       <span className="text-xs font-semibold text-gray-900">{skillName}</span>
                       {level && (
                         <span
                           className={`text-[10px] uppercase font-bold px-1.5 py-0.2 rounded ${
                             level === "expert"
-                              ? "bg-purple-50 text-purple-700"
+                              ? "bg-neutral-900 text-white"
                               : level === "advanced"
-                              ? "bg-emerald-50 text-[#057642]"
-                              : "bg-blue-50 text-[#0a66c2]"
+                              ? "bg-neutral-200 text-neutral-800"
+                              : "bg-neutral-100 text-neutral-700"
                           }`}
                         >
                           {level}
@@ -340,10 +340,10 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
           )}
 
           {/* Section 4: Featured Projects & Portfolio */}
-          <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs">
+          <div className="bg-white border border-[#E7E7E7] rounded-2xl p-5 shadow-xs">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div className="flex items-center gap-2">
-                <FolderGit2 size={16} className="text-[#0a66c2]" />
+                <FolderGit2 size={16} className="text-neutral-700" />
                 <h2 className="text-sm font-bold text-gray-900">Portfolio &amp; Featured Projects</h2>
               </div>
               <span className="text-xs text-gray-400">
@@ -356,13 +356,13 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
                 student.detailedProjects.map((proj) => (
                   <div
                     key={proj.id}
-                    className="p-3.5 rounded-lg border border-gray-200 bg-white hover:border-gray-300 transition-colors"
+                    className="p-3.5 rounded-xl border border-[#E7E7E7] bg-white hover:border-neutral-300 transition-colors"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
                       <div className="flex items-center gap-2">
                         <h3 className="text-xs font-bold text-gray-900">{proj.title}</h3>
                         {proj.role && (
-                          <span className="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.2 rounded font-medium">
+                          <span className="text-[10px] text-gray-500 bg-neutral-100 px-1.5 py-0.2 rounded font-medium">
                             {proj.role}
                           </span>
                         )}
@@ -374,7 +374,7 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
                             href={proj.githubUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[11px] font-semibold text-[#0a66c2] hover:underline flex items-center gap-1"
+                            className="text-[11px] font-medium text-neutral-900 hover:underline flex items-center gap-1"
                           >
                             <span>Code</span>
                             <ExternalLink size={10} />
@@ -385,7 +385,7 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
                             href={proj.demoUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[11px] font-semibold text-emerald-700 hover:underline flex items-center gap-1"
+                            className="text-[11px] font-medium text-neutral-900 hover:underline flex items-center gap-1"
                           >
                             <span>Live Demo</span>
                             <ExternalLink size={10} />
@@ -402,7 +402,7 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
                       {proj.techStack.map((tech) => (
                         <span
                           key={tech}
-                          className="text-[10px] font-mono bg-gray-50 border border-gray-200 px-1.5 py-0.2 rounded text-gray-600"
+                          className="text-[10px] font-mono bg-[#FAFAFA] border border-[#E7E7E7] px-1.5 py-0.2 rounded text-gray-600"
                         >
                           {tech}
                         </span>
@@ -414,7 +414,7 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
                 student.projects.map((projTitle, idx) => (
                   <div
                     key={idx}
-                    className="p-3 rounded-lg border border-gray-200 bg-gray-50/40 flex items-center justify-between text-xs"
+                    className="p-3 rounded-xl border border-[#E7E7E7] bg-[#FAFAFA] flex items-center justify-between text-xs"
                   >
                     <span className="font-semibold text-gray-900">{projTitle}</span>
                     <span className="text-[11px] text-gray-400">Portfolio Project</span>
@@ -426,15 +426,15 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
 
           {/* Section 5: Achievements & Honors */}
           {student.achievements && student.achievements.length > 0 && privacy.showAchievements && (
-            <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs">
+            <div className="bg-white border border-[#E7E7E7] rounded-2xl p-5 shadow-xs">
               <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
-                <Award size={16} className="text-amber-600" />
+                <Award size={16} className="text-neutral-800" />
                 <h2 className="text-sm font-bold text-gray-900">Academic &amp; Extracurricular Honors</h2>
               </div>
               <ul className="mt-3.5 space-y-2 text-xs text-gray-800">
                 {student.achievements.map((ach, i) => (
-                  <li key={i} className="flex items-start gap-2.5 p-2 rounded bg-amber-50/40 border border-amber-100">
-                    <span className="h-4 w-4 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+                  <li key={i} className="flex items-start gap-2.5 p-2 rounded-xl bg-[#FAFAFA] border border-[#E7E7E7]">
+                    <span className="h-4 w-4 rounded-full bg-neutral-900 text-white flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
                       ✓
                     </span>
                     <span className="leading-snug">{ach}</span>
@@ -445,9 +445,9 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
           )}
 
           {/* Section 6: Mentorship Preferences & Goals */}
-          <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs">
+          <div className="bg-white border border-[#E7E7E7] rounded-2xl p-5 shadow-xs">
             <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
-              <Sparkles size={16} className="text-[#0a66c2]" />
+              <Sparkles size={16} className="text-neutral-700" />
               <h2 className="text-sm font-bold text-gray-900">Mentorship Requirements &amp; Goals</h2>
             </div>
 
@@ -461,7 +461,7 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
                     {student.seekingMentorshipIn.map((topic) => (
                       <span
                         key={topic}
-                        className="px-2.5 py-1 text-xs rounded-full bg-blue-50 text-[#0a66c2] border border-blue-200 font-medium"
+                        className="px-2.5 py-1 text-xs rounded-full bg-neutral-100 text-neutral-800 border border-neutral-200 font-medium"
                       >
                         {topic}
                       </span>
@@ -471,14 +471,14 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
               )}
 
               {student.mentorshipCadence && (
-                <div className="p-3 rounded-md bg-gray-50 border border-gray-200">
+                <div className="p-3 rounded-xl bg-[#FAFAFA] border border-[#E7E7E7]">
                   <span className="font-bold text-gray-900">Preferred Meeting Cadence: </span>
                   <span className="text-gray-700">{student.mentorshipCadence}</span>
                 </div>
               )}
 
               {student.mentorshipStatement && (
-                <div className="p-3 rounded-md bg-blue-50/40 border border-blue-100">
+                <div className="p-3 rounded-xl bg-[#FAFAFA] border border-[#E7E7E7]">
                   <span className="font-bold text-gray-900 block mb-1">Mentee Commitment:</span>
                   <p className="text-gray-700 italic leading-relaxed">
                     &ldquo;{student.mentorshipStatement}&rdquo;
@@ -492,18 +492,18 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
         {/* Right Sidebar (4 cols) */}
         <div className="lg:col-span-4 space-y-5">
           {/* Mentorship Status Card */}
-          <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs">
+          <div className="bg-white border border-[#E7E7E7] rounded-2xl p-5 shadow-xs">
             <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">
               Mentorship Connection
             </h3>
 
-            <div className="p-3 rounded-lg bg-gray-50 border border-gray-200 text-xs">
+            <div className="p-3 rounded-xl bg-[#FAFAFA] border border-[#E7E7E7] text-xs">
               <div className="flex items-center justify-between">
                 <span className="text-gray-500">Current Status:</span>
                 {isMentee ? (
-                  <span className="font-bold text-[#057642]">Active Mentee</span>
+                  <span className="font-semibold text-neutral-900">Active Mentee</span>
                 ) : hasPendingInvitation ? (
-                  <span className="font-bold text-[#0a66c2]">Invitation Pending</span>
+                  <span className="font-semibold text-neutral-900">Invitation Pending</span>
                 ) : (
                   <span className="font-semibold text-gray-700">Open to Mentorship</span>
                 )}
@@ -516,7 +516,7 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
                 size="sm"
                 disabled={hasPendingInvitation || isMentee}
                 onClick={() => setIsOfferModalOpen(true)}
-                className="w-full bg-[#0a66c2] hover:bg-[#004182] text-xs flex items-center justify-center gap-1.5 py-2 h-auto"
+                className="w-full bg-[#090909] hover:bg-[#242424] text-white rounded-full text-xs flex items-center justify-center gap-1.5 py-2.5 h-auto"
               >
                 <Send size={13} />
                 <span>
@@ -532,7 +532,7 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
                 variant="outline"
                 size="sm"
                 asChild
-                className="w-full text-xs text-gray-700 py-2 h-auto"
+                className="w-full text-xs text-neutral-800 border-neutral-200 rounded-full hover:bg-neutral-50 py-2.5 h-auto"
               >
                 <Link
                   href={`/messages?participantId=${student.id}`}
@@ -546,9 +546,9 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
           </div>
 
           {/* Career Preferences */}
-          <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs">
+          <div className="bg-white border border-[#E7E7E7] rounded-2xl p-5 shadow-xs">
             <div className="flex items-center gap-1.5 pb-2.5 border-b border-gray-100">
-              <Target size={14} className="text-[#0a66c2]" />
+              <Target size={14} className="text-neutral-700" />
               <h3 className="text-xs font-bold text-gray-900">Career Aspirations</h3>
             </div>
 
@@ -569,7 +569,7 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
                     (ind) => (
                       <span
                         key={ind}
-                        className="text-[11px] bg-gray-100 text-gray-700 px-2 py-0.5 rounded"
+                        className="text-[11px] bg-neutral-100 text-neutral-800 px-2 py-0.5 rounded-full font-medium"
                       >
                         {ind}
                       </span>
@@ -590,9 +590,9 @@ export function StudentProfileClient({ studentId }: StudentProfileClientProps) {
           </div>
 
           {/* Privacy & Trust Notice */}
-          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-xs text-xs text-gray-600">
+          <div className="bg-white border border-[#E7E7E7] rounded-2xl p-4 shadow-xs text-xs text-gray-600">
             <div className="flex items-center gap-1.5 text-gray-900 font-bold mb-2">
-              <ShieldCheck size={14} className="text-[#057642]" />
+              <ShieldCheck size={14} className="text-neutral-700" />
               <span>Directory Privacy Standard</span>
             </div>
             <p className="text-[11px] leading-relaxed text-gray-500">

@@ -69,14 +69,12 @@ export function AlumniSidebar({ onItemClick, className }: AlumniSidebarProps) {
       href: "/alumni-dashboard/requests",
       icon: Inbox,
       badge: pendingRequestsCount > 0 ? `${pendingRequestsCount}` : null,
-      badgeColor: "bg-blue-100 text-[#0a66c2]",
     },
     {
       label: "My Mentees",
       href: "/alumni-dashboard/mentees",
       icon: UserCheck,
       badge: activeMenteesCount > 0 ? `${activeMenteesCount}` : null,
-      badgeColor: "bg-emerald-50 text-[#057642]",
     },
     {
       label: "Opportunities",
@@ -95,7 +93,6 @@ export function AlumniSidebar({ onItemClick, className }: AlumniSidebarProps) {
       href: "/messages",
       icon: MessageSquare,
       badge: "2",
-      badgeColor: "bg-gray-100 text-gray-700",
     },
     {
       label: "My Profile",
@@ -120,39 +117,39 @@ export function AlumniSidebar({ onItemClick, className }: AlumniSidebarProps) {
   return (
     <aside className={cn("w-full lg:w-64 shrink-0 flex flex-col gap-4", className)}>
       {/* Alumnus Mini Identity Card */}
-      <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-xs">
+      <div className="bg-white border border-[#E7E7E7] rounded-2xl p-4 shadow-xs">
         <div className="flex items-start gap-3">
           <Avatar name={alumni.name} size="md" />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
-              <h3 className="text-xs font-bold text-gray-900 truncate">{alumni.name}</h3>
+              <h3 className="text-xs font-bold text-[#090909] truncate">{alumni.name}</h3>
               <span title="Verified Alumni">
-                <ShieldCheck size={13} className="text-[#057642] shrink-0" />
+                <ShieldCheck size={13} className="text-[#090909] shrink-0" />
               </span>
             </div>
-            <p className="text-[11px] text-gray-600 truncate mt-0.5">{alumni.role}</p>
-            <p className="text-[11px] font-medium text-gray-500 truncate">{alumni.company}</p>
+            <p className="text-[11px] text-[#454545] truncate mt-0.5">{alumni.role}</p>
+            <p className="text-[11px] font-semibold text-[#090909] truncate">{alumni.company}</p>
           </div>
         </div>
 
-        <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px]">
-          <span className="inline-flex items-center gap-1.5 text-[#057642] font-medium">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#057642] animate-pulse" />
+        <div className="mt-3 pt-3 border-t border-[#E7E7E7] flex items-center justify-between text-[11px]">
+          <span className="inline-flex items-center gap-1.5 text-[#090909] font-medium">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#090909] animate-pulse" />
             Accepting Mentees
           </span>
-          <span className="text-gray-500 font-medium">
+          <span className="text-[#737373] font-medium">
             {activeMenteesCount}/5 active
           </span>
         </div>
       </div>
 
-      {/* Main Navigation Menu (Exactly 9 items) */}
-      <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-xs">
-        <p className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+      {/* Main Navigation Menu */}
+      <div className="bg-white border border-[#E7E7E7] rounded-2xl p-2.5 shadow-xs">
+        <p className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-[#737373]">
           Alumni Navigation
         </p>
 
-        <nav className="space-y-0.5">
+        <nav className="space-y-1">
           {navItems.map((item) => {
             const isActive =
               item.href === "/alumni-dashboard"
@@ -167,18 +164,18 @@ export function AlumniSidebar({ onItemClick, className }: AlumniSidebarProps) {
                 href={item.href}
                 onClick={onItemClick}
                 className={cn(
-                  "flex items-center justify-between px-3 py-2 rounded-md text-xs font-medium transition-colors",
+                  "flex items-center justify-between px-3.5 py-2.5 rounded-full text-xs font-medium transition-all duration-150",
                   isActive
-                    ? "bg-[#ebf3fb] text-[#0a66c2] font-semibold"
-                    : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                    ? "bg-[#090909] text-white font-semibold shadow-2xs"
+                    : "text-[#555555] hover:text-[#090909] hover:bg-[#F4F4F4]"
                 )}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <Icon
-                    size={16}
+                    size={15}
                     className={cn(
                       "shrink-0 transition-colors",
-                      isActive ? "text-[#0a66c2]" : "text-gray-400"
+                      isActive ? "text-white" : "text-[#737373]"
                     )}
                   />
                   <span className="truncate">{item.label}</span>
@@ -187,8 +184,10 @@ export function AlumniSidebar({ onItemClick, className }: AlumniSidebarProps) {
                 {item.badge && (
                   <span
                     className={cn(
-                      "px-1.5 py-0.5 text-[10px] font-semibold rounded-full",
-                      item.badgeColor || "bg-gray-100 text-gray-600"
+                      "px-1.5 py-0.2 text-[10px] font-bold rounded-full",
+                      isActive
+                        ? "bg-white text-[#090909]"
+                        : "bg-[#090909] text-white"
                     )}
                   >
                     {item.badge}
@@ -201,21 +200,21 @@ export function AlumniSidebar({ onItemClick, className }: AlumniSidebarProps) {
       </div>
 
       {/* Role Switching & Demo Badge */}
-      <div className="bg-[#f8fafc] border border-slate-200 rounded-lg p-3 text-left">
-        <div className="flex items-center gap-1.5 text-slate-700 mb-1">
-          <Sparkles size={12} className="text-[#0a66c2]" />
-          <span className="text-[11px] font-semibold">Demo Role Switcher</span>
+      <div className="bg-[#FAFAFA] border border-[#E7E7E7] rounded-2xl p-4 text-left shadow-2xs">
+        <div className="flex items-center gap-1.5 text-[#090909] mb-1">
+          <Sparkles size={13} className="text-[#090909]" />
+          <span className="text-[11px] font-bold">Interactive Platform Switcher</span>
         </div>
-        <p className="text-[10px] text-slate-500 leading-relaxed mb-2.5">
-          You are exploring as verified alumnus <strong>{alumni.name}</strong>. Switch to student view anytime to test both portals.
+        <p className="text-[11px] text-[#555555] leading-relaxed mb-3">
+          Currently previewing as alumnus mentor <strong>{alumni.name}</strong>. Switch to student view anytime to test both roles.
         </p>
         <button
           type="button"
           onClick={handleSwitchToStudent}
-          className="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 text-[11px] font-medium text-[#0a66c2] bg-white border border-[#b2d5f8] rounded-md hover:bg-blue-50 transition-colors"
+          className="w-full flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold text-white bg-[#090909] hover:bg-[#242424] rounded-full transition-colors cursor-pointer shadow-xs"
         >
-          <ArrowRightLeft size={11} />
-          <span>Switch to Student Portal</span>
+          <ArrowRightLeft size={13} />
+          <span>Switch to Student View</span>
         </button>
       </div>
     </aside>

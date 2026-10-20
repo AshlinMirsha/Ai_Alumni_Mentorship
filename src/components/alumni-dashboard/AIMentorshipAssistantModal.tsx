@@ -215,17 +215,17 @@ export function AIMentorshipAssistantModal({
       />
 
       {/* Modal Dialog */}
-      <div className="relative bg-white rounded-lg border border-gray-200 shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col z-10 animate-in fade-in zoom-in-95 overflow-hidden">
+      <div className="relative bg-white rounded-2xl border border-[#E7E7E7] shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col z-10 animate-in fade-in zoom-in-95 overflow-hidden">
         {/* Header */}
-        <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50/70 shrink-0">
+        <div className="px-5 py-4 border-b border-[#E7E7E7] flex items-center justify-between bg-neutral-50/70 shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-lg bg-[#ebf3fb] text-[#0a66c2] flex items-center justify-center shrink-0">
-              <Sparkles size={18} />
+            <div className="h-8 w-8 rounded-full bg-neutral-100 text-neutral-900 flex items-center justify-center shrink-0">
+              <Sparkles size={16} />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-sm font-bold text-gray-900">AI Mentorship Assistant</h2>
-                <span className="text-[10px] font-semibold bg-emerald-50 text-[#057642] px-2 py-0.5 rounded-full border border-emerald-200">
+                <span className="text-[10px] font-semibold bg-neutral-100 text-neutral-900 px-2 py-0.5 rounded-full border border-neutral-200">
                   Demo Service
                 </span>
               </div>
@@ -237,14 +237,14 @@ export function AIMentorshipAssistantModal({
           <button
             type="button"
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 p-1.5 rounded-md hover:bg-gray-100 transition-colors"
+            className="text-gray-400 hover:text-black p-1.5 rounded-full hover:bg-neutral-100 transition-colors"
           >
             <X size={16} />
           </button>
         </div>
 
         {/* Tab Selector */}
-        <div className="px-5 pt-3 bg-white border-b border-gray-100 flex items-center gap-1 overflow-x-auto shrink-0">
+        <div className="px-5 pt-2 bg-white border-b border-gray-100 flex items-center gap-1 overflow-x-auto shrink-0">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -255,7 +255,7 @@ export function AIMentorshipAssistantModal({
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border-b-2 whitespace-nowrap transition-colors ${
                   isActive
-                    ? "border-[#0a66c2] text-[#0a66c2]"
+                    ? "border-black text-black"
                     : "border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-200"
                 }`}
               >
@@ -270,15 +270,15 @@ export function AIMentorshipAssistantModal({
         <div className="p-5 overflow-y-auto space-y-4 flex-1">
           {/* Status Toast */}
           {statusMessage && (
-            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-md text-xs text-[#057642] flex items-center gap-2 animate-in fade-in">
+            <div className="p-3 bg-neutral-100 border border-neutral-200 rounded-xl text-xs text-neutral-900 flex items-center gap-2 animate-in fade-in">
               <CheckCircle2 size={14} className="shrink-0" />
               <span>{statusMessage}</span>
             </div>
           )}
 
           {/* Demo Disclaimer Banner */}
-          <div className="p-3 bg-blue-50/50 border border-blue-100 rounded-lg flex items-start gap-2.5 text-xs text-gray-600">
-            <Info size={15} className="text-[#0a66c2] shrink-0 mt-0.5" />
+          <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-start gap-2.5 text-xs text-gray-600">
+            <Info size={15} className="text-neutral-900 shrink-0 mt-0.5" />
             <div className="text-[11px] leading-relaxed">
               <span className="font-semibold text-gray-900">Demo Environment:</span> AI responses are generated via local domain heuristics and role templates. No external third-party API keys are exposed. Recommendations serve as structured guidance and do not guarantee specific employment outcomes.
             </div>
@@ -296,7 +296,7 @@ export function AIMentorshipAssistantModal({
                     <select
                       value={selectedMenteeId}
                       onChange={(e) => setSelectedMenteeId(e.target.value)}
-                      className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                      className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
                     >
                       {activeMentees.map((m) => (
                         <option key={m.id} value={m.id}>
@@ -315,7 +315,7 @@ export function AIMentorshipAssistantModal({
                     value={prepTopic}
                     onChange={(e) => setPrepTopic(e.target.value)}
                     placeholder="e.g. Distributed Caching & Redis Eviction"
-                    className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                    className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
                   />
                 </div>
               </div>
@@ -326,7 +326,7 @@ export function AIMentorshipAssistantModal({
                 size="sm"
                 onClick={handleGeneratePrep}
                 disabled={isLoading}
-                className="bg-[#0a66c2] hover:bg-[#004182] text-xs flex items-center gap-1.5"
+                className="bg-[#090909] hover:bg-[#242424] text-white text-xs flex items-center gap-1.5 rounded-full px-4"
               >
                 {isLoading ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
                 <span>{isLoading ? "Analyzing Profile & Generating..." : "Generate Session Discussion Points"}</span>
@@ -340,7 +340,7 @@ export function AIMentorshipAssistantModal({
                     <ul className="space-y-1 text-xs text-gray-700">
                       {prepResult.objectives.map((obj, i) => (
                         <li key={i} className="flex items-start gap-2">
-                          <span className="text-[#0a66c2] font-bold">•</span>
+                          <span className="text-black font-bold">•</span>
                           <span>{obj}</span>
                         </li>
                       ))}
@@ -352,7 +352,7 @@ export function AIMentorshipAssistantModal({
                     <h4 className="text-xs font-bold text-gray-900 mb-1.5">Tailored Discussion Prompts</h4>
                     <div className="space-y-1.5">
                       {prepResult.discussionPrompts.map((prompt, i) => (
-                        <div key={i} className="p-2.5 bg-gray-50 rounded-md border border-gray-200 text-xs text-gray-800">
+                        <div key={i} className="p-2.5 bg-neutral-50 rounded-xl border border-neutral-200 text-xs text-neutral-800">
                           {prompt}
                         </div>
                       ))}
@@ -364,7 +364,7 @@ export function AIMentorshipAssistantModal({
                     <h4 className="text-xs font-bold text-gray-900 mb-1.5">Technical Exercises &amp; Drills</h4>
                     <div className="space-y-1.5">
                       {prepResult.technicalExercises.map((drill, i) => (
-                        <div key={i} className="p-2.5 bg-blue-50/40 rounded-md border border-blue-100 text-xs text-blue-900">
+                        <div key={i} className="p-2.5 bg-neutral-100 rounded-xl border border-neutral-200 text-xs text-neutral-900">
                           {drill}
                         </div>
                       ))}
@@ -380,7 +380,7 @@ export function AIMentorshipAssistantModal({
                       <button
                         type="button"
                         onClick={() => handleCopy(editedAgenda)}
-                        className="text-[11px] text-[#0a66c2] hover:underline flex items-center gap-1"
+                        className="text-[11px] text-neutral-700 hover:text-black flex items-center gap-1"
                       >
                         {copied ? <Check size={12} /> : <Copy size={12} />}
                         <span>{copied ? "Copied" : "Copy Agenda"}</span>
@@ -390,7 +390,7 @@ export function AIMentorshipAssistantModal({
                       rows={4}
                       value={editedAgenda}
                       onChange={(e) => setEditedAgenda(e.target.value)}
-                      className="w-full text-xs bg-white border border-gray-200 rounded-md p-3 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                      className="w-full text-xs bg-white border border-gray-200 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
                     />
                   </div>
 
@@ -401,7 +401,7 @@ export function AIMentorshipAssistantModal({
                         variant="primary"
                         size="sm"
                         onClick={handleApplyAgenda}
-                        className="bg-[#0a66c2] hover:bg-[#004182] text-xs"
+                        className="bg-[#090909] hover:bg-[#242424] text-white text-xs rounded-full px-4"
                       >
                         Insert into Session Agenda
                       </Button>
@@ -425,7 +425,7 @@ export function AIMentorshipAssistantModal({
                     value={guidanceRole}
                     onChange={(e) => setGuidanceRole(e.target.value)}
                     placeholder="e.g. Distributed Systems Engineer"
-                    className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                    className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
                   />
                 </div>
                 <div>
@@ -437,7 +437,7 @@ export function AIMentorshipAssistantModal({
                     value={guidanceLevel}
                     onChange={(e) => setGuidanceLevel(e.target.value)}
                     placeholder="e.g. Undergraduate Junior / Senior"
-                    className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                    className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
                   />
                 </div>
               </div>
@@ -448,7 +448,7 @@ export function AIMentorshipAssistantModal({
                 size="sm"
                 onClick={handleGenerateGuidance}
                 disabled={isLoading}
-                className="bg-[#0a66c2] hover:bg-[#004182] text-xs flex items-center gap-1.5"
+                className="bg-[#090909] hover:bg-[#242424] text-white text-xs flex items-center gap-1.5 rounded-full px-4"
               >
                 {isLoading ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
                 <span>{isLoading ? "Compiling Competencies..." : "Generate Career Guidance Topics"}</span>
@@ -463,7 +463,7 @@ export function AIMentorshipAssistantModal({
                     </h4>
                     <div className="space-y-1.5">
                       {guidanceResult.keyCompetencies.map((comp, i) => (
-                        <div key={i} className="p-2.5 bg-gray-50 rounded-md border border-gray-200 text-xs text-gray-800">
+                        <div key={i} className="p-2.5 bg-neutral-50 rounded-xl border border-neutral-200 text-xs text-neutral-800">
                           {comp}
                         </div>
                       ))}
@@ -477,7 +477,7 @@ export function AIMentorshipAssistantModal({
                     </h4>
                     <div className="space-y-2">
                       {guidanceResult.discussionTopics.map((topic, i) => (
-                        <div key={i} className="p-3 bg-white border border-gray-200 rounded-md text-xs">
+                        <div key={i} className="p-3 bg-white border border-[#E7E7E7] rounded-xl text-xs">
                           <span className="font-bold text-gray-900 block">{topic.title}</span>
                           <p className="text-gray-600 mt-1 leading-relaxed">{topic.description}</p>
                         </div>
@@ -492,14 +492,14 @@ export function AIMentorshipAssistantModal({
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {guidanceResult.recommendedProjects.map((p, i) => (
-                        <div key={i} className="p-3 bg-gray-50 border border-gray-200 rounded-md text-xs flex flex-col justify-between">
+                        <div key={i} className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs flex flex-col justify-between">
                           <div>
                             <span className="font-bold text-gray-900 block mb-1">{p.title}</span>
                             <p className="text-gray-600 text-[11px] leading-relaxed mb-2">{p.description}</p>
                           </div>
                           <div className="flex flex-wrap gap-1">
                             {p.techStack.map((tech) => (
-                              <span key={tech} className="px-1.5 py-0.5 bg-white border border-gray-200 rounded text-[10px] text-gray-600 font-mono">
+                              <span key={tech} className="px-2 py-0.5 bg-white border border-neutral-200 rounded-full text-[10px] text-neutral-700 font-mono">
                                 {tech}
                               </span>
                             ))}
@@ -515,7 +515,7 @@ export function AIMentorshipAssistantModal({
                     <ul className="space-y-1 text-xs text-gray-700">
                       {guidanceResult.strategicAdvice.map((adv, i) => (
                         <li key={i} className="flex items-start gap-2">
-                          <span className="text-emerald-600 font-bold">✓</span>
+                          <span className="text-black font-bold">✓</span>
                           <span>{adv}</span>
                         </li>
                       ))}
@@ -538,7 +538,7 @@ export function AIMentorshipAssistantModal({
                     <select
                       value={selectedMenteeId}
                       onChange={(e) => setSelectedMenteeId(e.target.value)}
-                      className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                      className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
                     >
                       {activeMentees.map((m) => (
                         <option key={m.id} value={m.id}>
@@ -557,7 +557,7 @@ export function AIMentorshipAssistantModal({
                     value={roadmapSkills}
                     onChange={(e) => setRoadmapSkills(e.target.value)}
                     placeholder="e.g. PostgreSQL, Redis, Docker, CI/CD"
-                    className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                    className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
                   />
                 </div>
               </div>
@@ -568,7 +568,7 @@ export function AIMentorshipAssistantModal({
                 size="sm"
                 onClick={handleGenerateRoadmap}
                 disabled={isLoading}
-                className="bg-[#0a66c2] hover:bg-[#004182] text-xs flex items-center gap-1.5"
+                className="bg-[#090909] hover:bg-[#242424] text-white text-xs flex items-center gap-1.5 rounded-full px-4"
               >
                 {isLoading ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
                 <span>{isLoading ? "Synthesizing Roadmap..." : "Draft Structured 8-Week Roadmap"}</span>
@@ -576,16 +576,16 @@ export function AIMentorshipAssistantModal({
 
               {roadmapResult && (
                 <div className="space-y-4 pt-3 border-t border-gray-100">
-                  <p className="text-xs text-gray-600 bg-gray-50 p-2.5 rounded border border-gray-200 leading-relaxed">
+                  <p className="text-xs text-gray-600 bg-neutral-50 p-3 rounded-xl border border-neutral-200 leading-relaxed">
                     {roadmapResult.overview}
                   </p>
 
                   <div className="space-y-3">
                     {roadmapResult.phases.map((phase, i) => (
-                      <div key={i} className="p-3 bg-white border border-gray-200 rounded-lg text-xs space-y-2">
+                      <div key={i} className="p-3.5 bg-white border border-[#E7E7E7] rounded-xl text-xs space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-gray-900">{phase.title}</span>
-                          <span className="text-[10px] font-semibold text-[#0a66c2] bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+                          <span className="text-[10px] font-semibold text-neutral-900 bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200">
                             {phase.weeks}
                           </span>
                         </div>
@@ -609,7 +609,7 @@ export function AIMentorshipAssistantModal({
                         variant="primary"
                         size="sm"
                         onClick={handleSaveRoadmapMilestones}
-                        className="bg-[#0a66c2] hover:bg-[#004182] text-xs flex items-center gap-1.5"
+                        className="bg-[#090909] hover:bg-[#242424] text-white text-xs flex items-center gap-1.5 rounded-full px-4"
                       >
                         <Plus size={13} />
                         <span>Add Milestones to {menteeName}&apos;s Mentorship Track</span>
@@ -634,7 +634,7 @@ export function AIMentorshipAssistantModal({
                 size="sm"
                 onClick={handleGenerateMatching}
                 disabled={isLoading}
-                className="bg-[#0a66c2] hover:bg-[#004182] text-xs flex items-center gap-1.5"
+                className="bg-[#090909] hover:bg-[#242424] text-white text-xs flex items-center gap-1.5 rounded-full px-4"
               >
                 {isLoading ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
                 <span>{isLoading ? "Evaluating Student Directory..." : "Analyze Student Recommendations"}</span>
@@ -642,20 +642,20 @@ export function AIMentorshipAssistantModal({
 
               {matchingResult && (
                 <div className="space-y-4 pt-3 border-t border-gray-100">
-                  <p className="text-xs text-gray-600 bg-gray-50 p-2.5 rounded border border-gray-200">
+                  <p className="text-xs text-gray-600 bg-neutral-50 p-3 rounded-xl border border-neutral-200">
                     {matchingResult.summary}
                   </p>
 
                   <div className="space-y-3">
                     {matchingResult.recommendations.map((rec) => (
-                      <div key={rec.studentId} className="p-3.5 bg-white border border-gray-200 rounded-lg text-xs space-y-2">
+                      <div key={rec.studentId} className="p-3.5 bg-white border border-[#E7E7E7] rounded-xl text-xs space-y-2">
                         <div className="flex items-start justify-between">
                           <div>
                             <span className="font-bold text-gray-900 text-sm">{rec.studentName}</span>
                             <p className="text-[11px] text-gray-500">{rec.academicYear} · {rec.department}</p>
                             <p className="text-[11px] font-semibold text-gray-700 mt-0.5">Target: {rec.careerGoal}</p>
                           </div>
-                          <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-[#057642] border border-emerald-200">
+                          <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-neutral-100 text-neutral-900 border border-neutral-200">
                             {rec.matchScore}% Match
                           </span>
                         </div>
@@ -664,7 +664,7 @@ export function AIMentorshipAssistantModal({
                           <span className="font-semibold text-gray-700 block">Match Drivers:</span>
                           {rec.matchReasons.map((reason, i) => (
                             <div key={i} className="text-gray-600 flex items-center gap-1.5">
-                              <span className="text-[#0a66c2]">•</span>
+                              <span className="text-black font-bold">•</span>
                               <span>{reason}</span>
                             </div>
                           ))}
@@ -689,7 +689,7 @@ export function AIMentorshipAssistantModal({
                     <select
                       value={selectedMenteeId}
                       onChange={(e) => setSelectedMenteeId(e.target.value)}
-                      className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                      className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
                     >
                       {activeMentees.map((m) => (
                         <option key={m.id} value={m.id}>
@@ -707,7 +707,7 @@ export function AIMentorshipAssistantModal({
                     type="text"
                     value={prepTopic}
                     onChange={(e) => setPrepTopic(e.target.value)}
-                    className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                    className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
                   />
                 </div>
               </div>
@@ -721,7 +721,7 @@ export function AIMentorshipAssistantModal({
                   value={rawNotes}
                   onChange={(e) => setRawNotes(e.target.value)}
                   placeholder="Paste rough bullet points or feedback discussed during the meeting..."
-                  className="w-full text-xs bg-white border border-gray-200 rounded-md p-3 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                  className="w-full text-xs bg-white border border-gray-200 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
                 />
               </div>
 
@@ -731,7 +731,7 @@ export function AIMentorshipAssistantModal({
                 size="sm"
                 onClick={handleGenerateSummary}
                 disabled={isLoading}
-                className="bg-[#0a66c2] hover:bg-[#004182] text-xs flex items-center gap-1.5"
+                className="bg-[#090909] hover:bg-[#242424] text-white text-xs flex items-center gap-1.5 rounded-full px-4"
               >
                 {isLoading ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
                 <span>{isLoading ? "Summarizing Notes..." : "Synthesize Executive Summary"}</span>
@@ -739,7 +739,7 @@ export function AIMentorshipAssistantModal({
 
               {summaryResult && (
                 <div className="space-y-4 pt-3 border-t border-gray-100">
-                  <div className="p-3 bg-gray-50 border border-gray-200 rounded-md text-xs">
+                  <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs">
                     <span className="font-bold text-gray-900 block mb-1">Executive Recap</span>
                     <p className="text-gray-700 leading-relaxed">{summaryResult.executiveSummary}</p>
                   </div>
@@ -749,7 +749,7 @@ export function AIMentorshipAssistantModal({
                     <ul className="space-y-1 text-xs text-gray-700">
                       {summaryResult.studentActionItems.map((item, i) => (
                         <li key={i} className="flex items-start gap-1.5">
-                          <span className="text-[#0a66c2] font-bold">□</span>
+                          <span className="text-black font-bold">□</span>
                           <span>{item}</span>
                         </li>
                       ))}
@@ -764,7 +764,7 @@ export function AIMentorshipAssistantModal({
                       <button
                         type="button"
                         onClick={() => handleCopy(editedNotes)}
-                        className="text-[11px] text-[#0a66c2] hover:underline flex items-center gap-1"
+                        className="text-[11px] text-neutral-700 hover:text-black flex items-center gap-1"
                       >
                         {copied ? <Check size={12} /> : <Copy size={12} />}
                         <span>{copied ? "Copied" : "Copy Notes"}</span>
@@ -774,7 +774,7 @@ export function AIMentorshipAssistantModal({
                       rows={5}
                       value={editedNotes}
                       onChange={(e) => setEditedNotes(e.target.value)}
-                      className="w-full text-xs font-mono bg-white border border-gray-200 rounded-md p-3 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                      className="w-full text-xs font-mono bg-white border border-gray-200 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
                     />
                   </div>
 
@@ -785,7 +785,7 @@ export function AIMentorshipAssistantModal({
                         variant="primary"
                         size="sm"
                         onClick={handleSaveSummaryNotes}
-                        className="bg-[#0a66c2] hover:bg-[#004182] text-xs"
+                        className="bg-[#090909] hover:bg-[#242424] text-white text-xs rounded-full px-4"
                       >
                         Save to {menteeName}&apos;s Private Mentorship Notes
                       </Button>
@@ -798,11 +798,11 @@ export function AIMentorshipAssistantModal({
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-between shrink-0">
+        <div className="px-5 py-3 bg-neutral-50 border-t border-[#E7E7E7] flex items-center justify-between shrink-0">
           <span className="text-[11px] text-gray-500">
             AI responses require human review before saving.
           </span>
-          <Button variant="outline" size="sm" onClick={onClose} className="text-xs">
+          <Button variant="outline" size="sm" onClick={onClose} className="text-xs rounded-full border-neutral-300">
             Close
           </Button>
         </div>

@@ -43,22 +43,7 @@ export function OpportunityDetailModal({
   const isClosed = opportunity.status === "closed";
 
   const getBadgeColor = (type: string) => {
-    switch (type) {
-      case "internship":
-        return "bg-blue-50 text-[#0a66c2] border-blue-200";
-      case "full_time":
-        return "bg-emerald-50 text-[#057642] border-emerald-200";
-      case "referral":
-        return "bg-purple-50 text-purple-700 border-purple-200";
-      case "workshop":
-        return "bg-amber-50 text-amber-800 border-amber-200";
-      case "hackathon":
-        return "bg-rose-50 text-rose-700 border-rose-200";
-      case "event":
-        return "bg-indigo-50 text-indigo-700 border-indigo-200";
-      default:
-        return "bg-gray-100 text-gray-700 border-gray-200";
-    }
+    return "bg-neutral-100 text-neutral-900 border-neutral-200";
   };
 
   const formatWorkArrangement = (wa?: string) => {
@@ -83,9 +68,9 @@ export function OpportunityDetailModal({
       />
 
       {/* Modal Dialog */}
-      <div className="relative bg-white rounded-lg border border-gray-200 shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto z-10 animate-in fade-in zoom-in-95 flex flex-col">
+      <div className="relative bg-white rounded-2xl border border-[#E7E7E7] shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto z-10 animate-in fade-in zoom-in-95 flex flex-col">
         {/* Header */}
-        <div className="p-5 border-b border-gray-100 bg-gray-50/70 flex items-start justify-between">
+        <div className="p-5 border-b border-[#E7E7E7] bg-neutral-50/70 flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <span
@@ -97,24 +82,24 @@ export function OpportunityDetailModal({
               </span>
 
               {opportunity.workArrangement && (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 text-gray-700 border border-gray-200 flex items-center gap-1">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-white text-gray-700 border border-gray-200 flex items-center gap-1">
                   <Laptop size={10} />
                   <span>{formatWorkArrangement(opportunity.workArrangement)}</span>
                 </span>
               )}
 
               {isClosed ? (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-200 text-gray-700">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-neutral-200 text-neutral-700">
                   Closed to New Applicants
                 </span>
               ) : (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#eef8f1] text-[#057642] border border-[#bfe3c9]">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-neutral-100 text-neutral-900 border border-neutral-200">
                   Active Opportunity
                 </span>
               )}
 
               {isAuthor && (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#ebf3fb] text-[#0a66c2] border border-[#b2d5f8]">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-neutral-100 text-neutral-900 border border-neutral-200">
                   Your Listing
                 </span>
               )}
@@ -270,7 +255,7 @@ export function OpportunityDetailModal({
                       onClose();
                       onEdit(opportunity);
                     }}
-                    className="text-xs text-[#0a66c2] border-[#b2d5f8] hover:bg-blue-50"
+                    className="text-xs text-neutral-900 border-neutral-300 hover:bg-neutral-100 rounded-full"
                   >
                     <Edit3 size={12} className="mr-1" />
                     <span>Edit Listing</span>
@@ -283,7 +268,7 @@ export function OpportunityDetailModal({
                     variant="outline"
                     size="sm"
                     onClick={() => onToggleStatus(opportunity)}
-                    className="text-xs text-gray-700"
+                    className="text-xs text-neutral-900 border-neutral-300 rounded-full"
                   >
                     <Clock size={12} className="mr-1" />
                     <span>{isClosed ? "Reopen Listing" : "Mark as Closed"}</span>
@@ -299,7 +284,7 @@ export function OpportunityDetailModal({
                       onClose();
                       onDelete(opportunity);
                     }}
-                    className="text-xs text-red-600 border-red-200 hover:bg-red-50"
+                    className="text-xs text-neutral-700 border-neutral-300 hover:bg-neutral-100 rounded-full"
                   >
                     <Trash2 size={12} className="mr-1" />
                     <span>Delete</span>
@@ -319,7 +304,7 @@ export function OpportunityDetailModal({
               variant="outline"
               size="sm"
               onClick={onClose}
-              className="text-xs"
+              className="text-xs rounded-full border-neutral-300"
             >
               Close
             </Button>
@@ -329,7 +314,7 @@ export function OpportunityDetailModal({
                 href={opportunity.applyUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#0a66c2] text-white font-semibold text-xs hover:bg-[#004182] transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#090909] text-white font-semibold text-xs hover:bg-[#242424] transition-colors"
               >
                 <span>Apply on Official Portal</span>
                 <ExternalLink size={12} />

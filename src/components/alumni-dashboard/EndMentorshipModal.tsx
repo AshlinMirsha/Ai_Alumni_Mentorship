@@ -42,10 +42,10 @@ export function EndMentorshipModal({
       />
 
       {/* Modal Dialog */}
-      <div className="relative bg-white rounded-lg border border-gray-200 shadow-xl w-full max-w-lg p-6 z-10 animate-in fade-in zoom-in-95">
+      <div className="relative bg-white rounded-2xl border border-[#E7E7E7] shadow-xl w-full max-w-lg p-6 z-10 animate-in fade-in zoom-in-95">
         <div className="flex items-start justify-between pb-3 border-b border-gray-100">
           <div className="flex items-center gap-2.5 text-gray-900">
-            <div className="h-9 w-9 rounded-full bg-emerald-50 text-[#057642] flex items-center justify-center shrink-0">
+            <div className="h-9 w-9 rounded-full bg-neutral-100 text-neutral-900 flex items-center justify-center shrink-0">
               <Award size={20} />
             </div>
             <div>
@@ -58,14 +58,14 @@ export function EndMentorshipModal({
           <button
             type="button"
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 p-1 rounded-md"
+            className="text-gray-400 hover:text-black p-1.5 rounded-full hover:bg-neutral-100 transition-colors"
           >
             <X size={16} />
           </button>
         </div>
 
         {/* Mentorship Summary */}
-        <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-md">
+        <div className="mt-4 p-3.5 bg-neutral-50 border border-[#E7E7E7] rounded-xl">
           <div className="flex items-center gap-3">
             <Avatar name={studentName} size="md" />
             <div className="min-w-0">
@@ -73,13 +73,13 @@ export function EndMentorshipModal({
               <p className="text-[11px] text-gray-500 truncate">
                 {mentorship.student?.department || "Computer Science"} · {mentorship.student?.academicYear || "Undergraduate"}
               </p>
-              <p className="text-[11px] text-[#0a66c2] font-semibold mt-0.5 truncate">
+              <p className="text-[11px] text-neutral-700 font-semibold mt-0.5 truncate">
                 Focus: {mentorship.focus}
               </p>
             </div>
           </div>
 
-          <div className="mt-3 pt-2.5 border-t border-gray-200 grid grid-cols-2 gap-2 text-[11px] text-gray-600">
+          <div className="mt-3 pt-2.5 border-t border-neutral-200 grid grid-cols-2 gap-2 text-[11px] text-gray-600">
             <div>
               <span className="text-gray-400 block">Sessions Completed</span>
               <span className="font-bold text-gray-900">{mentorship.sessionCount} sessions</span>
@@ -92,8 +92,8 @@ export function EndMentorshipModal({
         </div>
 
         {/* Info Notice */}
-        <div className="mt-3 p-3 bg-blue-50/70 border border-blue-100 rounded-md text-xs text-blue-900 flex items-start gap-2">
-          <CheckCircle2 size={15} className="text-[#0a66c2] shrink-0 mt-0.5" />
+        <div className="mt-3 p-3 bg-neutral-100 border border-neutral-200 rounded-xl text-xs text-neutral-800 flex items-start gap-2">
+          <CheckCircle2 size={15} className="text-neutral-900 shrink-0 mt-0.5" />
           <span>
             Concluding this relationship will transition the record to <strong>Completed Mentees</strong>, opening 1 mentee slot on your active roster. Your private mentorship notes and milestone history will remain preserved.
           </span>
@@ -109,7 +109,7 @@ export function EndMentorshipModal({
             value={completionNotes}
             onChange={(e) => setCompletionNotes(e.target.value)}
             placeholder="e.g. Completed comprehensive full-stack and systems design preparation. Student received summer internship offer at Datadog."
-            className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+            className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-black"
           />
           <p className="text-[10px] text-gray-400 mt-1">
             🔒 These notes are strictly private to you and never shared with the student.
@@ -124,7 +124,7 @@ export function EndMentorshipModal({
             size="sm"
             onClick={onClose}
             disabled={isSubmitting}
-            className="text-xs"
+            className="text-xs rounded-full border-neutral-300"
           >
             Cancel
           </Button>
@@ -134,7 +134,7 @@ export function EndMentorshipModal({
             size="sm"
             onClick={handleConclude}
             disabled={isSubmitting}
-            className="text-xs bg-[#057642] hover:bg-[#046237]"
+            className="text-xs bg-[#090909] hover:bg-[#242424] text-white rounded-full px-4"
           >
             {isSubmitting ? "Concluding..." : "Conclude & Archive Mentorship"}
           </Button>

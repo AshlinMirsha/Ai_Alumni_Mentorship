@@ -174,13 +174,13 @@ function ScheduleSessionInnerForm({
   };
 
   return (
-    <div className="relative bg-white rounded-lg border border-gray-200 shadow-xl w-full max-w-lg p-6 z-10 animate-in fade-in zoom-in-95 max-h-[90vh] overflow-y-auto">
+    <div className="relative bg-white rounded-2xl border border-[#E7E7E7] shadow-xl w-full max-w-lg p-6 z-10 animate-in fade-in zoom-in-95 max-h-[90vh] overflow-y-auto">
       {/* Header */}
       <div className="flex items-start justify-between pb-3 border-b border-gray-100">
         <div className="flex items-center gap-2.5 text-gray-900">
           <div
             className={`h-9 w-9 rounded-full flex items-center justify-center shrink-0 ${
-              isReschedule ? "bg-amber-50 text-amber-600" : "bg-[#ebf3fb] text-[#0a66c2]"
+              isReschedule ? "bg-neutral-100 text-neutral-800" : "bg-neutral-100 text-neutral-900"
             }`}
           >
             {isReschedule ? <RefreshCw size={18} /> : <Calendar size={18} />}
@@ -199,7 +199,7 @@ function ScheduleSessionInnerForm({
         <button
           type="button"
           onClick={onClose}
-          className="text-gray-400 hover:text-gray-600 p-1 rounded-md"
+          className="text-gray-400 hover:text-black p-1.5 rounded-full hover:bg-neutral-100 transition-colors"
         >
           <X size={16} />
         </button>
@@ -208,7 +208,7 @@ function ScheduleSessionInnerForm({
       <form onSubmit={handleSubmit} className="mt-4 space-y-4">
         {/* Error Alert */}
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-md text-xs text-red-700 flex items-start gap-2">
+          <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-start gap-2">
             <AlertCircle size={15} className="shrink-0 mt-0.5" />
             <span className="leading-snug">{error}</span>
           </div>
@@ -216,8 +216,8 @@ function ScheduleSessionInnerForm({
 
         {/* Live Conflict Warning Banner */}
         {conflict.hasConflict && conflict.conflictingSession && !error && (
-          <div className="p-3 bg-amber-50 border border-amber-200 rounded-md text-xs text-amber-800 flex items-start gap-2">
-            <AlertTriangle size={15} className="shrink-0 mt-0.5 text-amber-600" />
+          <div className="p-3 bg-neutral-100 border border-neutral-300 rounded-xl text-xs text-neutral-900 flex items-start gap-2">
+            <AlertTriangle size={15} className="shrink-0 mt-0.5 text-neutral-900" />
             <div className="leading-snug">
               <span className="font-bold">Schedule Conflict Detected:</span> You already have an active session with{" "}
               <strong>{conflict.conflictingSession.studentName}</strong> on {date} at {time}. You must pick another time before confirming.
@@ -231,7 +231,7 @@ function ScheduleSessionInnerForm({
             Mentee
           </label>
           {isReschedule ? (
-            <div className="p-2.5 bg-gray-50 border border-gray-200 rounded-md flex items-center gap-2.5">
+            <div className="p-2.5 bg-neutral-50 border border-[#E7E7E7] rounded-xl flex items-center gap-2.5">
               <Avatar name={sessionToReschedule?.studentName || "Student"} size="xs" />
               <div className="min-w-0">
                 <span className="text-xs font-bold text-gray-900 block truncate">
@@ -243,7 +243,7 @@ function ScheduleSessionInnerForm({
               </div>
             </div>
           ) : mentee ? (
-            <div className="p-2.5 bg-gray-50 border border-gray-200 rounded-md flex items-center gap-2.5">
+            <div className="p-2.5 bg-neutral-50 border border-[#E7E7E7] rounded-xl flex items-center gap-2.5">
               <Avatar name={mentee.student?.name || "Student"} size="xs" />
               <div className="min-w-0">
                 <span className="text-xs font-bold text-gray-900 block truncate">
@@ -264,7 +264,7 @@ function ScheduleSessionInnerForm({
                   setTopic(`1:1 Mentorship Session: ${selected.focus}`);
                 }
               }}
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             >
               {activeMentees.map((m) => (
                 <option key={m.id} value={m.id}>
@@ -288,7 +288,7 @@ function ScheduleSessionInnerForm({
             onChange={(e) => setTopic(e.target.value)}
             placeholder="e.g. Distributed System Mock Technical Interview"
             required
-            className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+            className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
           />
         </div>
 
@@ -305,7 +305,7 @@ function ScheduleSessionInnerForm({
               onChange={(e) => setDate(e.target.value)}
               placeholder="e.g. Oct 22, 2026 or 2026-10-22"
               required
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
 
@@ -320,7 +320,7 @@ function ScheduleSessionInnerForm({
               onChange={(e) => setTime(e.target.value)}
               placeholder="e.g. 4:00 PM – 4:45 PM EDT"
               required
-              className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+              className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
         </div>
@@ -336,7 +336,7 @@ function ScheduleSessionInnerForm({
             value={meetUrl}
             onChange={(e) => setMeetUrl(e.target.value)}
             placeholder="https://meet.google.com/..."
-            className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+            className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-black"
           />
         </div>
 
@@ -351,7 +351,7 @@ function ScheduleSessionInnerForm({
               <button
                 type="button"
                 onClick={() => onOpenAIAssistant(currentSelectedMentee || null)}
-                className="text-[11px] font-medium text-[#0a66c2] hover:underline flex items-center gap-1"
+                className="text-[11px] font-medium text-neutral-900 hover:text-black hover:underline flex items-center gap-1"
               >
                 <Sparkles size={11} />
                 <span>Draft with AI Assistant</span>
@@ -363,7 +363,7 @@ function ScheduleSessionInnerForm({
             value={agenda}
             onChange={(e) => setAgenda(e.target.value)}
             placeholder="e.g. 1. Review updated GitHub repo and database indexing PR. 2. 30-minute system design practice. 3. Q&A on on-call rotations."
-            className="w-full text-xs bg-white border border-gray-200 rounded-md px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+            className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-black"
           />
         </div>
 
@@ -374,7 +374,7 @@ function ScheduleSessionInnerForm({
             variant="outline"
             size="sm"
             onClick={onClose}
-            className="text-xs"
+            className="text-xs rounded-full border-neutral-300"
           >
             Cancel
           </Button>
@@ -383,11 +383,7 @@ function ScheduleSessionInnerForm({
             variant="primary"
             size="sm"
             disabled={conflict.hasConflict}
-            className={`text-xs ${
-              isReschedule
-                ? "bg-amber-600 hover:bg-amber-700"
-                : "bg-[#0a66c2] hover:bg-[#004182]"
-            }`}
+            className="text-xs bg-[#090909] hover:bg-[#242424] text-white rounded-full px-4"
           >
             {isReschedule ? "Confirm Reschedule" : "Confirm & Schedule"}
           </Button>

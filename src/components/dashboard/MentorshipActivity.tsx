@@ -41,10 +41,10 @@ export function MentorshipActivity({
   const isEmpty = totalCount === 0;
 
   return (
-    <Card padding="md" className="border-gray-200 shadow-xs">
+    <Card padding="md" className="border-[#E7E7E7] rounded-2xl shadow-xs">
       <CardHeader className="border-b border-gray-100 pb-2.5 mb-3 flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Compass size={16} className="text-[#0a66c2]" />
+          <Compass size={16} className="text-neutral-900" />
           <div>
             <h2 className="text-sm font-bold text-gray-900">Mentorship Activity</h2>
             <p className="text-xs text-gray-500">
@@ -60,7 +60,7 @@ export function MentorshipActivity({
               variant="outline"
               size="sm"
               onClick={onResetActivity}
-              className="h-7 text-xs"
+              className="h-7 text-xs rounded-full border-neutral-200"
             >
               <RotateCcw size={11} className="mr-1" />
               Restore Demo Activity
@@ -85,10 +85,10 @@ export function MentorshipActivity({
             <button
               type="button"
               onClick={() => setActiveTab("all")}
-              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors shrink-0 ${
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors shrink-0 ${
                 activeTab === "all"
-                  ? "bg-[#ebf3fb] text-[#0a66c2] font-semibold"
-                  : "text-gray-600 hover:bg-gray-100"
+                  ? "bg-[#090909] text-white"
+                  : "text-neutral-600 hover:bg-neutral-100"
               }`}
             >
               All ({totalCount})
@@ -96,10 +96,10 @@ export function MentorshipActivity({
             <button
               type="button"
               onClick={() => setActiveTab("accepted")}
-              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors shrink-0 ${
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors shrink-0 ${
                 activeTab === "accepted"
-                  ? "bg-[#ebf3fb] text-[#0a66c2] font-semibold"
-                  : "text-gray-600 hover:bg-gray-100"
+                  ? "bg-[#090909] text-white"
+                  : "text-neutral-600 hover:bg-neutral-100"
               }`}
             >
               Accepted ({acceptedMentorships.length})
@@ -107,10 +107,10 @@ export function MentorshipActivity({
             <button
               type="button"
               onClick={() => setActiveTab("pending")}
-              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors shrink-0 ${
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors shrink-0 ${
                 activeTab === "pending"
-                  ? "bg-[#ebf3fb] text-[#0a66c2] font-semibold"
-                  : "text-gray-600 hover:bg-gray-100"
+                  ? "bg-[#090909] text-white"
+                  : "text-neutral-600 hover:bg-neutral-100"
               }`}
             >
               Pending ({pendingRequests.length})
@@ -118,10 +118,10 @@ export function MentorshipActivity({
             <button
               type="button"
               onClick={() => setActiveTab("conversations")}
-              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors shrink-0 ${
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors shrink-0 ${
                 activeTab === "conversations"
-                  ? "bg-[#ebf3fb] text-[#0a66c2] font-semibold"
-                  : "text-gray-600 hover:bg-gray-100"
+                  ? "bg-[#090909] text-white"
+                  : "text-neutral-600 hover:bg-neutral-100"
               }`}
             >
               Messages ({recentConversations.length})
@@ -267,13 +267,13 @@ export function MentorshipActivity({
               <div>
                 {activeTab === "all" && recentConversations.length > 0 && (
                   <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5 mt-2.5">
-                    <MessageCircle size={12} className="text-[#0a66c2]" />
+                    <MessageCircle size={12} className="text-neutral-700" />
                     Recent Messages ({recentConversations.length})
                   </h3>
                 )}
 
                 {recentConversations.length === 0 && activeTab === "conversations" ? (
-                  <div className="p-4 rounded-md bg-gray-50 text-center text-xs text-gray-500 border border-gray-200">
+                  <div className="p-4 rounded-xl bg-[#FAFAFA] text-center text-xs text-gray-500 border border-[#E7E7E7]">
                     No active conversation threads.
                   </div>
                 ) : (
@@ -282,7 +282,7 @@ export function MentorshipActivity({
                       <Link
                         key={conv.id}
                         href="/messages"
-                        className="p-3 rounded-md border border-gray-200 bg-white hover:border-[#0a66c2] hover:bg-[#fafcff] transition-all flex items-center justify-between gap-3 block"
+                        className="p-3 rounded-xl border border-[#E7E7E7] bg-white hover:border-neutral-400 hover:bg-[#FAFAFA] transition-all flex items-center justify-between gap-3 block"
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <Avatar name={conv.participantName} src={conv.participantAvatar} size="md" className="shrink-0" />
@@ -301,9 +301,9 @@ export function MentorshipActivity({
 
                         <div className="flex items-center gap-2 shrink-0">
                           {conv.unreadCount > 0 && (
-                            <span className="h-2 w-2 rounded-full bg-[#0a66c2]" />
+                            <span className="h-2 w-2 rounded-full bg-neutral-900" />
                           )}
-                          <span className="text-xs font-semibold text-[#0a66c2]">Reply &rarr;</span>
+                          <span className="text-xs font-medium text-neutral-900">Reply &rarr;</span>
                         </div>
                       </Link>
                     ))}

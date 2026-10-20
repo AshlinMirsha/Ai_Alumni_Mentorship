@@ -48,34 +48,34 @@ export function MentorshipCard({
   const statusBadge = {
     pending: {
       label: "Pending Response",
-      bgClass: "bg-[#fff8ea] text-[#915907] border-[#fde5b2]",
+      bgClass: "bg-neutral-100 text-neutral-800 border-neutral-200",
       icon: Clock,
     },
     active: {
       label: "Active Mentorship",
-      bgClass: "bg-[#eef8f1] text-[#057642] border-[#bfe3c9]",
+      bgClass: "bg-neutral-900 text-white border-neutral-900",
       icon: CheckCircle2,
     },
     completed: {
       label: "Completed",
-      bgClass: "bg-[#ebf3fb] text-[#0a66c2] border-[#b2d5f8]",
+      bgClass: "bg-neutral-100 text-neutral-800 border-neutral-200",
       icon: CheckCircle2,
     },
     declined: {
       label: "Declined",
-      bgClass: "bg-gray-100 text-gray-600 border-gray-200",
+      bgClass: "bg-neutral-100 text-neutral-500 border-neutral-200",
       icon: XCircle,
     },
   }[mentorship.status] || {
     label: mentorship.status,
-    bgClass: "bg-gray-100 text-gray-700 border-gray-200",
+    bgClass: "bg-neutral-100 text-neutral-700 border-neutral-200",
     icon: Clock,
   };
 
   const StatusIcon = statusBadge.icon;
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-5 shadow-xs hover:border-gray-300 transition-all space-y-3.5">
+    <div className="bg-white rounded-2xl border border-[#E7E7E7] p-4 sm:p-5 shadow-xs hover:border-neutral-300 transition-all space-y-3.5">
       {/* Top Row: User Info + Status Badge */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 pb-3 border-b border-gray-100">
         <div className="flex items-start gap-3">
@@ -84,12 +84,12 @@ export function MentorshipCard({
             <div className="flex flex-wrap items-center gap-2">
               <h3 className="text-sm font-bold text-gray-900">{displayName}</h3>
               <span
-                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold border ${statusBadge.bgClass}`}
+                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-medium border ${statusBadge.bgClass}`}
               >
                 <StatusIcon size={11} />
                 {statusBadge.label}
               </span>
-              <span className="text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 px-1.5 py-0.2 rounded">
+              <span className="text-[10px] font-medium text-neutral-600 bg-neutral-100 border border-neutral-200 px-2 py-0.5 rounded-full">
                 {isIncoming ? "Incoming Mentee Request" : "Outgoing Request"}
               </span>
             </div>
@@ -112,7 +112,7 @@ export function MentorshipCard({
             Requested: {mentorship.requestDate || mentorship.startDate || "Recent"}
           </span>
           {isAccepted && mentorship.nextSession && (
-            <span className="text-[#0a66c2] font-semibold">
+            <span className="text-neutral-900 font-medium">
               Next sync: {new Date(mentorship.nextSession).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
             </span>
           )}
@@ -198,7 +198,7 @@ export function MentorshipCard({
           {isAccepted && (
             <Link
               href="/messages"
-              className="px-3 py-1.5 rounded-full bg-[#0a66c2] hover:bg-[#004182] text-white font-semibold text-xs inline-flex items-center gap-1.5 transition-colors"
+              className="px-3 py-1.5 rounded-full bg-[#090909] hover:bg-[#242424] text-white font-medium text-xs inline-flex items-center gap-1.5 transition-colors"
             >
               <MessageSquare size={12} />
               <span>Message</span>
@@ -208,7 +208,7 @@ export function MentorshipCard({
           {profileHref ? (
             <Link
               href={profileHref}
-              className="px-3 py-1.5 rounded-full bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 font-semibold text-xs inline-flex items-center gap-1 transition-colors"
+              className="px-3 py-1.5 rounded-full bg-white hover:bg-neutral-50 border border-neutral-200 text-neutral-800 font-medium text-xs inline-flex items-center gap-1 transition-colors"
             >
               <User size={12} />
               <span>Profile</span>

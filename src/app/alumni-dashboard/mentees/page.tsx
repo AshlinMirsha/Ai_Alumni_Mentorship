@@ -298,7 +298,7 @@ export default function MyMenteesPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-lg font-bold text-gray-900 tracking-tight flex items-center gap-2">
-              <UserCheck size={20} className="text-[#0a66c2]" />
+              <UserCheck size={20} className="text-[#090909]" />
               <span>My Mentees &amp; Career Tracks</span>
             </h1>
             <p className="text-xs text-gray-500 mt-0.5">
@@ -316,7 +316,7 @@ export default function MyMenteesPage() {
                 setAiAssistantMentee(activeMentees[0] || null);
                 setIsAIAssistantOpen(true);
               }}
-              className="text-xs text-[#0a66c2] border-[#b2d5f8] hover:bg-blue-50 flex items-center gap-1.5"
+              className="text-xs text-neutral-900 border-[#E7E7E7] hover:bg-neutral-100 flex items-center gap-1.5 rounded-full"
             >
               <Sparkles size={13} />
               <span>AI Assistant</span>
@@ -327,9 +327,9 @@ export default function MyMenteesPage() {
               variant="outline"
               size="sm"
               onClick={() => setSchedulingMentee(activeMentees[0] || null)}
-              className="text-xs flex items-center gap-1.5"
+              className="text-xs flex items-center gap-1.5 rounded-full border-[#E7E7E7] text-neutral-900 hover:bg-neutral-100"
             >
-              <Calendar size={13} className="text-[#0a66c2]" />
+              <Calendar size={13} className="text-neutral-900" />
               <span>Schedule Session</span>
             </Button>
 
@@ -337,7 +337,7 @@ export default function MyMenteesPage() {
               variant="primary"
               size="sm"
               asChild
-              className="bg-[#0a66c2] hover:bg-[#004182] text-xs"
+              className="bg-[#090909] hover:bg-[#242424] text-white text-xs rounded-full shadow-none border-0"
             >
               <Link href="/alumni-dashboard/students">Discover Students &rarr;</Link>
             </Button>
@@ -373,7 +373,7 @@ export default function MyMenteesPage() {
           <div className="p-4 bg-[#F8FAFC] rounded-xl border border-gray-200/80 shadow-2xs hover:border-gray-300 transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-[11px] text-gray-500 font-medium">Upcoming Sessions</span>
-              <Calendar size={14} className="text-[#0a66c2]" />
+              <Calendar size={14} className="text-neutral-900" />
             </div>
             <div className="text-xl font-bold text-gray-900 mt-1">
               {allSessions.filter((s) => s.status === "scheduled" || s.status === "confirmed" || s.status === "rescheduled").length}{" "}
@@ -387,7 +387,7 @@ export default function MyMenteesPage() {
           <div className="p-4 bg-[#F8FAFC] rounded-xl border border-gray-200/80 shadow-2xs hover:border-gray-300 transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-[11px] text-gray-500 font-medium">Total Sessions</span>
-              <Clock size={14} className="text-purple-600" />
+              <Clock size={14} className="text-neutral-700" />
             </div>
             <div className="text-xl font-bold text-gray-900 mt-1">
               {totalSessionsCount}{" "}
@@ -401,13 +401,13 @@ export default function MyMenteesPage() {
           <div className="p-4 bg-[#F8FAFC] rounded-xl border border-gray-200/80 shadow-2xs hover:border-gray-300 transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-[11px] text-gray-500 font-medium">Completed Tracks</span>
-              <Award size={14} className="text-[#0a66c2]" />
+              <Award size={14} className="text-neutral-900" />
             </div>
             <div className="text-xl font-bold text-gray-900 mt-1">
               {completedMentees.length}{" "}
               <span className="text-xs font-normal text-gray-500">Graduates</span>
             </div>
-            <p className="text-[11px] text-[#0a66c2] font-semibold mt-1">
+            <p className="text-[11px] text-neutral-900 font-semibold mt-1">
               Successful alumni transitions
             </p>
           </div>
@@ -422,12 +422,12 @@ export default function MyMenteesPage() {
               className={cn(
                 "pb-3 px-3 font-semibold border-b-2 transition-colors flex items-center gap-2",
                 activeTab === "active"
-                  ? "border-[#0a66c2] text-[#0a66c2]"
+                  ? "border-black text-black"
                   : "border-transparent text-gray-500 hover:text-gray-900"
               )}
             >
               <span>Active Mentees</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-[#057642] border border-[#bfe3c9]">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-neutral-900 text-white">
                 {activeMentees.length}
               </span>
             </button>
@@ -438,13 +438,13 @@ export default function MyMenteesPage() {
               className={cn(
                 "pb-3 px-3 font-semibold border-b-2 transition-colors flex items-center gap-2",
                 activeTab === "sessions"
-                  ? "border-[#0a66c2] text-[#0a66c2]"
+                  ? "border-black text-black"
                   : "border-transparent text-gray-500 hover:text-gray-900"
               )}
             >
               <Calendar size={13} />
               <span>Mentorship Sessions</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#0a66c2] border border-[#b2d5f8]">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-neutral-100 text-neutral-800 border border-neutral-200">
                 {allSessions.length}
               </span>
             </button>
@@ -455,7 +455,7 @@ export default function MyMenteesPage() {
               className={cn(
                 "pb-3 px-3 font-semibold border-b-2 transition-colors flex items-center gap-2",
                 activeTab === "completed"
-                  ? "border-[#0a66c2] text-[#0a66c2]"
+                  ? "border-black text-black"
                   : "border-transparent text-gray-500 hover:text-gray-900"
               )}
             >
@@ -474,7 +474,7 @@ export default function MyMenteesPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Filter by student name, career track, skills..."
-              className="pl-9 pr-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-[#0a66c2] w-64 sm:w-72 transition-colors"
+              className="pl-9 pr-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-black w-64 sm:w-72 transition-colors"
             />
           </div>
         </div>
@@ -498,8 +498,8 @@ export default function MyMenteesPage() {
                   onClick={() => setSessionFilter(f.id)}
                   className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
                     sessionFilter === f.id
-                      ? "bg-[#0a66c2] text-white"
-                      : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                      ? "bg-[#090909] text-white"
+                      : "bg-white text-gray-600 border border-gray-200 hover:bg-neutral-100"
                   }`}
                 >
                   {f.label}
@@ -512,7 +512,7 @@ export default function MyMenteesPage() {
               variant="outline"
               size="sm"
               onClick={() => setSchedulingMentee(activeMentees[0] || null)}
-              className="text-xs text-[#0a66c2] border-[#b2d5f8] hover:bg-blue-50 flex items-center gap-1"
+              className="text-xs text-neutral-900 border-[#E7E7E7] hover:bg-neutral-100 rounded-full flex items-center gap-1"
             >
               <Plus size={12} />
               <span>Book New Session</span>
@@ -530,7 +530,7 @@ export default function MyMenteesPage() {
                 variant="primary"
                 size="sm"
                 onClick={() => setSchedulingMentee(activeMentees[0] || null)}
-                className="mt-4 bg-[#0a66c2] hover:bg-[#004182] text-xs"
+                className="mt-4 bg-[#090909] hover:bg-[#242424] text-white text-xs rounded-full border-0 shadow-none"
               >
                 Schedule Session
               </Button>
@@ -558,8 +558,8 @@ export default function MyMenteesPage() {
                             <span
                               className={cn(
                                 "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
-                                sess.status === "confirmed" && "bg-[#eef8f1] text-[#057642] border-[#bfe3c9]",
-                                sess.status === "scheduled" && "bg-blue-50 text-[#0a66c2] border-[#b2d5f8]",
+                                sess.status === "confirmed" && "bg-neutral-900 text-white border-black",
+                                sess.status === "scheduled" && "bg-neutral-100 text-neutral-800 border-neutral-200",
                                 sess.status === "rescheduled" && "bg-amber-50 text-amber-700 border-amber-200",
                                 sess.status === "completed" && "bg-purple-50 text-purple-700 border-purple-200",
                                 sess.status === "cancelled" && "bg-red-50 text-red-700 border-red-200"
@@ -591,9 +591,9 @@ export default function MyMenteesPage() {
 
                       {/* Right Date/Time Badge & Action */}
                       <div className="flex items-center gap-4 shrink-0 flex-wrap lg:justify-end">
-                        <div className="px-3.5 py-2 bg-gray-50 rounded-lg border border-gray-200/80 text-left sm:text-right">
+                        <div className="px-3.5 py-2 bg-gray-50 rounded-xl border border-gray-200/80 text-left sm:text-right">
                           <div className="flex items-center gap-1.5 font-semibold text-gray-900 text-xs">
-                            <Calendar size={13} className="text-[#0a66c2]" />
+                            <Calendar size={13} className="text-neutral-900" />
                             <span>{formatDisplayDate(sess.date)}</span>
                           </div>
                           <div className="flex items-center gap-1 text-gray-500 text-[11px] mt-0.5">
@@ -608,7 +608,7 @@ export default function MyMenteesPage() {
                             variant="primary"
                             size="sm"
                             asChild
-                            className="bg-[#0a66c2] hover:bg-[#004182] text-xs shrink-0"
+                            className="bg-[#090909] hover:bg-[#242424] text-white text-xs shrink-0 rounded-full border-0 shadow-none"
                           >
                             <a
                               href={sess.meetUrl}
@@ -635,7 +635,7 @@ export default function MyMenteesPage() {
 
                     {/* Notes Snippet if Completed */}
                     {sess.notes && (
-                      <div className="p-3 bg-purple-50/50 border border-purple-100 rounded-lg text-xs text-purple-900 leading-relaxed">
+                      <div className="p-3 bg-neutral-100/70 border border-neutral-200 rounded-lg text-xs text-neutral-800 leading-relaxed">
                         <span className="font-semibold block mb-1">Mentor Notes &amp; Progress:</span>
                         <span>{sess.notes}</span>
                       </div>
@@ -647,7 +647,7 @@ export default function MyMenteesPage() {
                         <button
                           type="button"
                           onClick={() => setSelectedSessionForDetail(sess)}
-                          className="text-xs font-semibold text-[#0a66c2] hover:underline"
+                          className="text-xs font-semibold text-neutral-900 hover:underline"
                         >
                           View Session Details
                         </button>
@@ -729,7 +729,7 @@ export default function MyMenteesPage() {
                 variant="primary"
                 size="sm"
                 asChild
-                className="bg-[#0a66c2] hover:bg-[#004182] text-xs"
+                className="bg-[#090909] hover:bg-[#242424] text-white text-xs rounded-full border-0 shadow-none"
               >
                 <Link href="/alumni-dashboard/students">Discover Students</Link>
               </Button>
@@ -758,7 +758,7 @@ export default function MyMenteesPage() {
             return (
               <div
                 key={m.id}
-                className="bg-white border border-gray-200/90 rounded-xl p-5 sm:p-6 shadow-xs hover:border-[#b2d5f8] transition-all space-y-4"
+                className="bg-white border border-[#E7E7E7] rounded-xl p-5 sm:p-6 shadow-xs hover:border-black transition-all space-y-4"
               >
                 {/* Top Row: Student Identity & Mentorship Key Metrics */}
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -769,20 +769,20 @@ export default function MyMenteesPage() {
                         <button
                           type="button"
                           onClick={() => handleOpenProfile(studentId, m)}
-                          className="text-base font-bold text-gray-900 hover:text-[#0a66c2] hover:underline text-left transition-colors"
+                          className="text-base font-bold text-gray-900 hover:text-black hover:underline text-left transition-colors"
                         >
                           {studentName}
                         </button>
                         <span
                           className={cn(
                             "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
-                            isActive && "bg-[#eef8f1] text-[#057642] border-[#bfe3c9]",
-                            isCompleted && "bg-blue-50 text-[#0a66c2] border-blue-200"
+                            isActive && "bg-neutral-900 text-white border-black",
+                            isCompleted && "bg-neutral-100 text-neutral-800 border-neutral-200"
                           )}
                         >
                           {isActive ? "Active Mentee" : "Completed Track"}
                         </span>
-                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-[#0a66c2] border border-blue-100 flex items-center gap-1">
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-neutral-100 text-neutral-900 border border-neutral-200 flex items-center gap-1">
                           <Target size={12} className="shrink-0" />
                           <span>Track: {m.focus}</span>
                         </span>
@@ -807,8 +807,8 @@ export default function MyMenteesPage() {
                       <span className="text-xs font-bold text-gray-900">{m.sessionCount || 0} completed</span>
                     </div>
                     {m.nextSession ? (
-                      <div className="px-3 py-1.5 bg-blue-50/70 rounded-lg border border-blue-200/70 text-left sm:text-right">
-                        <span className="text-[10px] text-[#0a66c2] font-semibold block uppercase tracking-wider">Next Session</span>
+                      <div className="px-3 py-1.5 bg-neutral-100 rounded-lg border border-neutral-200 text-left sm:text-right">
+                        <span className="text-[10px] text-neutral-900 font-semibold block uppercase tracking-wider">Next Session</span>
                         <span className="text-xs font-bold text-gray-900">{m.nextSession}</span>
                       </div>
                     ) : (
@@ -847,16 +847,16 @@ export default function MyMenteesPage() {
                   <div className="lg:col-span-5 bg-gray-50/80 rounded-xl p-3.5 border border-gray-200/70">
                     <div className="flex items-center justify-between text-xs text-gray-600 mb-1.5">
                       <span className="font-semibold text-gray-900 flex items-center gap-1.5">
-                        <Award size={13} className="text-[#0a66c2]" />
+                        <Award size={13} className="text-neutral-900" />
                         <span>Milestone Progress</span>
                       </span>
-                      <span className="font-bold text-[#0a66c2]">
+                      <span className="font-bold text-neutral-900">
                         {completedMilestonesCount} of {totalMilestonesCount} ({progressPercent}%)
                       </span>
                     </div>
                     <div className="h-2 rounded-full bg-gray-200 overflow-hidden">
                       <div
-                        className="h-full bg-[#0a66c2] rounded-full transition-all duration-300"
+                        className="h-full bg-black rounded-full transition-all duration-300"
                         style={{ width: `${progressPercent}%` }}
                       />
                     </div>
@@ -869,7 +869,7 @@ export default function MyMenteesPage() {
                     <button
                       type="button"
                       onClick={() => handleOpenProfile(studentId, m)}
-                      className="font-semibold text-[#0a66c2] hover:underline flex items-center gap-1"
+                      className="font-semibold text-neutral-900 hover:underline flex items-center gap-1"
                     >
                       <User size={12} />
                       <span>View Profile</span>
@@ -879,7 +879,7 @@ export default function MyMenteesPage() {
 
                     <Link
                       href={`/messages?participantId=${studentId}`}
-                      className="font-semibold text-gray-600 hover:text-[#0a66c2] hover:underline flex items-center gap-1"
+                      className="font-semibold text-gray-600 hover:text-black hover:underline flex items-center gap-1"
                     >
                       <MessageSquare size={12} />
                       <span>Message Mentee</span>
@@ -894,7 +894,7 @@ export default function MyMenteesPage() {
                         setAiAssistantMentee(m);
                         setIsAIAssistantOpen(true);
                       }}
-                      className="font-semibold text-emerald-700 hover:text-emerald-800 hover:underline flex items-center gap-1"
+                      className="font-semibold text-neutral-900 hover:underline flex items-center gap-1"
                     >
                       <Sparkles size={11} />
                       <span>Prepare with AI</span>
@@ -908,7 +908,7 @@ export default function MyMenteesPage() {
                       variant="outline"
                       size="sm"
                       onClick={() => setSelectedDetailsMentee(m)}
-                      className="text-xs text-[#0a66c2] border-[#b2d5f8] hover:bg-blue-50"
+                      className="text-xs text-neutral-900 border-[#E7E7E7] hover:bg-neutral-100 rounded-full"
                     >
                       <BookOpen size={12} className="mr-1" />
                       <span>View Details &amp; Roadmap</span>

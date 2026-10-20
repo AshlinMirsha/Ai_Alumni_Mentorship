@@ -117,21 +117,21 @@ export function MentorshipDetailsModal({
       />
 
       {/* Modal Dialog */}
-      <div className="relative bg-white rounded-lg border border-gray-200 shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto z-10 animate-in fade-in zoom-in-95 flex flex-col">
+      <div className="relative bg-white rounded-2xl border border-[#E7E7E7] shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto z-10 animate-in fade-in zoom-in-95 flex flex-col">
         {/* Header */}
-        <div className="p-5 border-b border-gray-100 flex items-start justify-between bg-gray-50/70">
+        <div className="p-5 border-b border-[#E7E7E7] flex items-start justify-between bg-neutral-50/70">
           <div className="flex items-start gap-3.5 min-w-0">
             <Avatar name={studentName} size="lg" />
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-bold text-gray-900 truncate">{studentName}</h2>
                 {isActive && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#eef8f1] text-[#057642] border border-[#bfe3c9]">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-neutral-100 text-neutral-900 border border-neutral-200">
                     Active Mentee
                   </span>
                 )}
                 {isCompleted && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-[#0a66c2] border border-blue-200">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-neutral-100 text-neutral-800 border border-neutral-200">
                     Completed Track
                   </span>
                 )}
@@ -139,7 +139,7 @@ export function MentorshipDetailsModal({
               <p className="text-xs text-gray-500 mt-0.5 truncate">
                 {mentorship.student?.department || "Computer Science"} · {mentorship.student?.academicYear || "Undergraduate"}
               </p>
-              <div className="mt-1 flex items-center gap-1.5 text-xs text-[#0a66c2] font-semibold">
+              <div className="mt-1 flex items-center gap-1.5 text-xs text-neutral-900 font-semibold">
                 <Target size={13} className="shrink-0" />
                 <span className="truncate">Focus: {mentorship.focus}</span>
               </div>
@@ -153,7 +153,7 @@ export function MentorshipDetailsModal({
                 variant="outline"
                 size="sm"
                 onClick={() => onOpenAIAssistant(mentorship)}
-                className="text-xs text-[#0a66c2] border-[#b2d5f8] hover:bg-blue-50 flex items-center gap-1.5"
+                className="text-xs text-neutral-900 border-neutral-300 hover:bg-neutral-100 flex items-center gap-1.5 rounded-full"
               >
                 <Sparkles size={12} />
                 <span className="hidden sm:inline">AI Assistant</span>
@@ -162,7 +162,7 @@ export function MentorshipDetailsModal({
             <button
               type="button"
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 p-1.5 rounded-md hover:bg-gray-100 transition-colors"
+              className="text-gray-400 hover:text-black p-1.5 rounded-full hover:bg-neutral-100 transition-colors"
             >
               <X size={18} />
             </button>
@@ -170,7 +170,7 @@ export function MentorshipDetailsModal({
         </div>
 
         {/* Action Bar */}
-        <div className="px-5 py-2.5 bg-white border-b border-gray-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div className="px-5 py-2.5 bg-white border-b border-[#E7E7E7] flex flex-wrap items-center justify-between gap-2 text-xs">
           <div className="flex items-center gap-3 text-gray-500">
             <span>Started: <strong className="text-gray-800">{mentorship.startDate || "N/A"}</strong></span>
             <span>Sessions: <strong className="text-gray-800">{mentorship.sessionCount} logged</strong></span>
@@ -181,7 +181,7 @@ export function MentorshipDetailsModal({
               <button
                 type="button"
                 onClick={() => onViewStudentProfile(studentId)}
-                className="font-semibold text-[#0a66c2] hover:underline flex items-center gap-1 py-1 px-2 rounded hover:bg-blue-50 transition-colors"
+                className="font-semibold text-neutral-900 hover:text-black hover:underline flex items-center gap-1 py-1 px-2.5 rounded-full hover:bg-neutral-100 transition-colors"
               >
                 <User size={13} />
                 <span>View Profile</span>
@@ -190,7 +190,7 @@ export function MentorshipDetailsModal({
 
             <Link
               href={`/messages?participantId=${studentId}`}
-              className="font-semibold text-gray-700 hover:text-[#0a66c2] hover:underline flex items-center gap-1 py-1 px-2 rounded hover:bg-gray-100 transition-colors"
+              className="font-semibold text-neutral-900 hover:text-black hover:underline flex items-center gap-1 py-1 px-2.5 rounded-full hover:bg-neutral-100 transition-colors"
             >
               <MessageSquare size={13} />
               <span>Message</span>
@@ -201,7 +201,7 @@ export function MentorshipDetailsModal({
                 variant="primary"
                 size="sm"
                 onClick={() => onScheduleSession(mentorship)}
-                className="text-xs bg-[#0a66c2] hover:bg-[#004182] py-1 px-2.5 h-auto"
+                className="text-xs bg-[#090909] hover:bg-[#242424] text-white py-1 px-3 h-auto rounded-full"
               >
                 <Calendar size={12} className="mr-1" />
                 <span>Schedule Session</span>
@@ -211,19 +211,19 @@ export function MentorshipDetailsModal({
         </div>
 
         {/* Progress Strip */}
-        <div className="px-5 py-3 bg-blue-50/40 border-b border-gray-100">
+        <div className="px-5 py-3 bg-neutral-50 border-b border-[#E7E7E7]">
           <div className="flex items-center justify-between text-xs text-gray-700 mb-1.5">
             <span className="font-semibold flex items-center gap-1.5 text-gray-900">
-              <Award size={14} className="text-[#0a66c2]" />
+              <Award size={14} className="text-neutral-900" />
               <span>Mentorship Milestone Progress</span>
             </span>
-            <span className="font-bold text-[#0a66c2]">
+            <span className="font-bold text-neutral-900">
               {completedCount} of {totalMilestones} Completed ({progressPercent}%)
             </span>
           </div>
-          <div className="h-2 rounded-full bg-gray-200 overflow-hidden">
+          <div className="h-2 rounded-full bg-neutral-200 overflow-hidden">
             <div
-              className="h-full bg-[#0a66c2] rounded-full transition-all duration-300"
+              className="h-full bg-[#090909] rounded-full transition-all duration-300"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -236,12 +236,12 @@ export function MentorshipDetailsModal({
             onClick={() => setActiveTab("milestones")}
             className={`py-2.5 border-b-2 transition-colors flex items-center gap-1.5 ${
               activeTab === "milestones"
-                ? "border-[#0a66c2] text-[#0a66c2]"
+                ? "border-black text-black"
                 : "border-transparent text-gray-500 hover:text-gray-900"
             }`}
           >
             <span>Goals &amp; Milestones</span>
-            <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-gray-100 text-gray-700">
+            <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-neutral-100 text-neutral-800">
               {milestones.length}
             </span>
           </button>
@@ -251,12 +251,12 @@ export function MentorshipDetailsModal({
             onClick={() => setActiveTab("sessions")}
             className={`py-2.5 border-b-2 transition-colors flex items-center gap-1.5 ${
               activeTab === "sessions"
-                ? "border-[#0a66c2] text-[#0a66c2]"
+                ? "border-black text-black"
                 : "border-transparent text-gray-500 hover:text-gray-900"
             }`}
           >
             <span>Sessions</span>
-            <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-gray-100 text-gray-700">
+            <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-neutral-100 text-neutral-800">
               {menteeSessions.length}
             </span>
           </button>
@@ -266,12 +266,12 @@ export function MentorshipDetailsModal({
             onClick={() => setActiveTab("notes")}
             className={`py-2.5 border-b-2 transition-colors flex items-center gap-1.5 ${
               activeTab === "notes"
-                ? "border-[#0a66c2] text-[#0a66c2]"
+                ? "border-black text-black"
                 : "border-transparent text-gray-500 hover:text-gray-900"
             }`}
           >
             <span>Private Notes</span>
-            <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-amber-50 text-amber-700 border border-amber-200">
+            <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-neutral-100 text-neutral-800 border border-neutral-200">
               🔒 Private ({mentorship.privateNotes?.length || 0})
             </span>
           </button>
@@ -281,12 +281,12 @@ export function MentorshipDetailsModal({
             onClick={() => setActiveTab("resources")}
             className={`py-2.5 border-b-2 transition-colors flex items-center gap-1.5 ${
               activeTab === "resources"
-                ? "border-[#0a66c2] text-[#0a66c2]"
+                ? "border-black text-black"
                 : "border-transparent text-gray-500 hover:text-gray-900"
             }`}
           >
             <span>Resources</span>
-            <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-gray-100 text-gray-700">
+            <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-neutral-100 text-neutral-800">
               {mentorship.resources?.length || 0}
             </span>
           </button>
@@ -312,17 +312,17 @@ export function MentorshipDetailsModal({
                   {milestones.map((m) => (
                     <div
                       key={m.id}
-                      className={`p-3 rounded-md border text-xs flex items-start gap-3 transition-colors ${
+                      className={`p-3.5 rounded-xl border text-xs flex items-start gap-3 transition-colors ${
                         m.completed
-                          ? "bg-gray-50 border-gray-200 text-gray-500"
-                          : "bg-white border-gray-200 text-gray-900 hover:border-[#b2d5f8]"
+                          ? "bg-neutral-50 border-neutral-200 text-neutral-400"
+                          : "bg-white border-[#E7E7E7] text-neutral-900 hover:border-black"
                       }`}
                     >
                       <input
                         type="checkbox"
                         checked={m.completed}
                         onChange={() => handleToggleMilestone(m.id)}
-                        className="mt-0.5 rounded text-[#0a66c2] focus:ring-[#0a66c2] cursor-pointer"
+                        className="mt-0.5 rounded text-black focus:ring-black accent-black cursor-pointer"
                       />
                       <div className="flex-1 min-w-0">
                         <span
@@ -339,7 +339,7 @@ export function MentorshipDetailsModal({
                         )}
                       </div>
                       {m.completed && (
-                        <span className="text-[10px] font-bold text-[#057642] bg-emerald-50 px-2 py-0.5 rounded">
+                        <span className="text-[10px] font-bold text-neutral-900 bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200">
                           Achieved
                         </span>
                       )}
@@ -349,7 +349,7 @@ export function MentorshipDetailsModal({
               )}
 
               {/* Add Milestone Form */}
-              <form onSubmit={handleAddMilestone} className="p-3 bg-gray-50 rounded-md border border-gray-200 space-y-2">
+              <form onSubmit={handleAddMilestone} className="p-3.5 bg-neutral-50 rounded-xl border border-neutral-200 space-y-2">
                 <span className="text-xs font-semibold text-gray-800 block">Add New Goal / Milestone</span>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <input
@@ -357,19 +357,19 @@ export function MentorshipDetailsModal({
                     value={newMilestoneTitle}
                     onChange={(e) => setNewMilestoneTitle(e.target.value)}
                     placeholder="e.g. Complete concurrency project & benchmark throughput"
-                    className="flex-1 text-xs bg-white border border-gray-200 rounded px-3 py-1.5 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                    className="flex-1 text-xs bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
                   />
                   <input
                     type="date"
                     value={newMilestoneDueDate}
                     onChange={(e) => setNewMilestoneDueDate(e.target.value)}
-                    className="text-xs bg-white border border-gray-200 rounded px-2 py-1.5 text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                    className="text-xs bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-gray-700 focus:outline-none focus:ring-1 focus:ring-black"
                   />
                   <Button
                     type="submit"
                     variant="primary"
                     size="sm"
-                    className="text-xs bg-[#0a66c2] hover:bg-[#004182] py-1.5 px-3 shrink-0"
+                    className="text-xs bg-[#090909] hover:bg-[#242424] text-white py-1.5 px-4 rounded-full shrink-0"
                   >
                     <Plus size={12} className="mr-1" />
                     <span>Add</span>
@@ -391,7 +391,7 @@ export function MentorshipDetailsModal({
                     variant="outline"
                     size="sm"
                     onClick={() => onScheduleSession(mentorship)}
-                    className="text-xs text-[#0a66c2]"
+                    className="text-xs text-neutral-900 border-neutral-300 rounded-full"
                   >
                     <Plus size={12} className="mr-1" />
                     <span>Schedule Session</span>
@@ -400,7 +400,7 @@ export function MentorshipDetailsModal({
               </div>
 
               {menteeSessions.length === 0 ? (
-                <div className="p-6 text-center border border-dashed border-gray-200 rounded-lg text-gray-400 text-xs">
+                <div className="p-6 text-center border border-dashed border-gray-200 rounded-xl text-gray-400 text-xs">
                   No upcoming sessions currently scheduled for {studentName}.
                 </div>
               ) : (
@@ -408,13 +408,13 @@ export function MentorshipDetailsModal({
                   {menteeSessions.map((sess) => (
                     <div
                       key={sess.id}
-                      className="p-3 bg-white border border-gray-200 rounded-md text-xs hover:border-[#b2d5f8] transition-colors"
+                      className="p-3.5 bg-white border border-[#E7E7E7] rounded-xl text-xs hover:border-black transition-colors"
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-gray-900">{sess.topic}</span>
-                            <span className="px-2 py-0.2 rounded-full text-[10px] font-semibold bg-emerald-50 text-[#057642] border border-emerald-200">
+                            <span className="px-2 py-0.2 rounded-full text-[10px] font-semibold bg-neutral-100 text-neutral-900 border border-neutral-200">
                               {sess.status}
                             </span>
                           </div>
@@ -435,7 +435,7 @@ export function MentorshipDetailsModal({
                             href={sess.meetUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#0a66c2] text-white font-semibold text-xs hover:bg-[#004182] transition-colors shrink-0"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#090909] text-white font-semibold text-xs hover:bg-[#242424] transition-colors shrink-0"
                           >
                             <Video size={13} />
                             <span>Join Meeting</span>
@@ -444,7 +444,7 @@ export function MentorshipDetailsModal({
                       </div>
 
                       {sess.agenda && (
-                        <div className="mt-2.5 pt-2 border-t border-gray-100 text-[11px] text-gray-600 bg-gray-50 p-2 rounded">
+                        <div className="mt-2.5 pt-2 border-t border-gray-100 text-[11px] text-gray-600 bg-neutral-50 p-2.5 rounded-lg">
                           <span className="font-semibold text-gray-700 block mb-0.5">Agenda / Discussion Points:</span>
                           <span>{sess.agenda}</span>
                         </div>
@@ -460,8 +460,8 @@ export function MentorshipDetailsModal({
           {activeTab === "notes" && (
             <div className="space-y-4">
               {/* Privacy Warning Banner */}
-              <div className="p-3 bg-amber-50/80 border border-amber-200 rounded-md text-xs text-amber-900 flex items-start gap-2.5">
-                <Lock size={15} className="text-amber-700 shrink-0 mt-0.5" />
+              <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs text-neutral-800 flex items-start gap-2.5">
+                <Lock size={15} className="text-neutral-900 shrink-0 mt-0.5" />
                 <div className="leading-snug">
                   <strong className="font-bold block">🔒 Strict Mentor-Only Privacy Guarantee</strong>
                   <span>
@@ -480,14 +480,14 @@ export function MentorshipDetailsModal({
                   value={newPrivateNote}
                   onChange={(e) => setNewPrivateNote(e.target.value)}
                   placeholder="e.g. Needs deeper practice on PostgreSQL locking mechanics. Recommend reviewing the Raft paper before next session."
-                  className="w-full text-xs bg-white border border-gray-200 rounded-md p-2.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                  className="w-full text-xs bg-white border border-gray-200 rounded-lg p-2.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-black"
                 />
                 <div className="flex justify-end">
                   <Button
                     type="submit"
                     variant="primary"
                     size="sm"
-                    className="text-xs bg-[#0a66c2] hover:bg-[#004182]"
+                    className="text-xs bg-[#090909] hover:bg-[#242424] text-white rounded-full px-4"
                   >
                     Save Private Note
                   </Button>
@@ -504,7 +504,7 @@ export function MentorshipDetailsModal({
                     {mentorship.privateNotes.map((note) => (
                       <div
                         key={note.id}
-                        className="p-3 bg-gray-50 border border-gray-200 rounded-md text-xs text-gray-800 leading-relaxed"
+                        className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs text-neutral-800 leading-relaxed"
                       >
                         <p>{note.content}</p>
                         <span className="text-[10px] text-gray-400 block mt-1.5 font-medium">
@@ -530,7 +530,7 @@ export function MentorshipDetailsModal({
                     variant="outline"
                     size="sm"
                     onClick={() => setIsAddingResource(true)}
-                    className="text-xs text-[#0a66c2]"
+                    className="text-xs text-neutral-900 border-neutral-300 rounded-full"
                   >
                     <Plus size={12} className="mr-1" />
                     <span>Add Resource</span>
@@ -539,7 +539,7 @@ export function MentorshipDetailsModal({
               </div>
 
               {isAddingResource && (
-                <form onSubmit={handleAddResource} className="p-3 bg-gray-50 border border-gray-200 rounded-md space-y-2 text-xs">
+                <form onSubmit={handleAddResource} className="p-3.5 bg-neutral-50 border border-neutral-200 rounded-xl space-y-2 text-xs">
                   <span className="font-bold text-gray-900 block">Add Recommended Resource</span>
                   <div>
                     <input
@@ -547,7 +547,7 @@ export function MentorshipDetailsModal({
                       value={newResourceTitle}
                       onChange={(e) => setNewResourceTitle(e.target.value)}
                       placeholder="Resource Title (e.g. Designing Data-Intensive Applications Study Guide)"
-                      className="w-full text-xs bg-white border border-gray-200 rounded px-3 py-1.5 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                      className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
                     />
                   </div>
                   <div>
@@ -556,7 +556,7 @@ export function MentorshipDetailsModal({
                       value={newResourceUrl}
                       onChange={(e) => setNewResourceUrl(e.target.value)}
                       placeholder="URL (e.g. https://dataintensive.net or github repo)"
-                      className="w-full text-xs bg-white border border-gray-200 rounded px-3 py-1.5 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#0a66c2]"
+                      className="w-full text-xs bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"
                     />
                   </div>
                   <div className="flex items-center justify-end gap-2 pt-1">
@@ -565,7 +565,7 @@ export function MentorshipDetailsModal({
                       variant="outline"
                       size="sm"
                       onClick={() => setIsAddingResource(false)}
-                      className="text-xs"
+                      className="text-xs rounded-full border-neutral-300"
                     >
                       Cancel
                     </Button>
@@ -573,7 +573,7 @@ export function MentorshipDetailsModal({
                       type="submit"
                       variant="primary"
                       size="sm"
-                      className="text-xs bg-[#0a66c2] hover:bg-[#004182]"
+                      className="text-xs bg-[#090909] hover:bg-[#242424] text-white rounded-full px-4"
                     >
                       Save Resource
                     </Button>
@@ -582,7 +582,7 @@ export function MentorshipDetailsModal({
               )}
 
               {(!mentorship.resources || mentorship.resources.length === 0) ? (
-                <div className="p-6 text-center border border-dashed border-gray-200 rounded-lg text-gray-400 text-xs">
+                <div className="p-6 text-center border border-dashed border-gray-200 rounded-xl text-gray-400 text-xs">
                   No study resources or links shared yet.
                 </div>
               ) : (
@@ -590,10 +590,10 @@ export function MentorshipDetailsModal({
                   {mentorship.resources.map((res) => (
                     <div
                       key={res.id}
-                      className="p-3 bg-white border border-gray-200 rounded-md text-xs flex items-center justify-between gap-3 hover:border-[#b2d5f8] transition-colors"
+                      className="p-3 bg-white border border-[#E7E7E7] rounded-xl text-xs flex items-center justify-between gap-3 hover:border-black transition-colors"
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <BookOpen size={16} className="text-[#0a66c2] shrink-0" />
+                        <BookOpen size={16} className="text-neutral-900 shrink-0" />
                         <div className="min-w-0">
                           <span className="font-semibold text-gray-900 block truncate">{res.title}</span>
                           <span className="text-[10px] text-gray-400 block truncate">
@@ -606,7 +606,7 @@ export function MentorshipDetailsModal({
                         href={res.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs font-semibold text-[#0a66c2] hover:underline flex items-center gap-1 shrink-0"
+                        className="text-xs font-semibold text-neutral-900 hover:underline flex items-center gap-1 shrink-0"
                       >
                         <span>Open Link</span>
                         <ExternalLink size={11} />
@@ -620,13 +620,13 @@ export function MentorshipDetailsModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 border-t border-gray-100 bg-gray-50 flex items-center justify-between text-xs">
+        <div className="p-4 border-t border-[#E7E7E7] bg-neutral-50 flex items-center justify-between text-xs">
           <div>
             {isActive && onEndMentorship && (
               <button
                 type="button"
                 onClick={() => onEndMentorship(mentorship)}
-                className="text-xs text-red-600 hover:text-red-700 hover:underline font-semibold"
+                className="text-xs text-neutral-600 hover:text-black hover:underline font-semibold"
               >
                 Conclude Mentorship Track
               </button>
@@ -639,7 +639,7 @@ export function MentorshipDetailsModal({
               variant="outline"
               size="sm"
               onClick={onClose}
-              className="text-xs"
+              className="text-xs rounded-full border-neutral-300"
             >
               Close
             </Button>

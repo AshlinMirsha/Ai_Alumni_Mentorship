@@ -122,17 +122,17 @@ export default function AlumniOpportunitiesPage() {
   const getBadgeColor = (type: string) => {
     switch (type) {
       case "internship":
-        return "bg-blue-50 text-[#0a66c2] border-blue-200";
+        return "bg-neutral-100 text-neutral-800 border-neutral-200";
       case "full_time":
-        return "bg-emerald-50 text-[#057642] border-emerald-200";
+        return "bg-neutral-900 text-white border-black";
       case "referral":
-        return "bg-purple-50 text-purple-700 border-purple-200";
+        return "bg-neutral-100 text-neutral-800 border-neutral-200";
       case "workshop":
-        return "bg-amber-50 text-amber-800 border-amber-200";
+        return "bg-neutral-100 text-neutral-800 border-neutral-200";
       case "hackathon":
-        return "bg-rose-50 text-rose-700 border-rose-200";
+        return "bg-neutral-100 text-neutral-800 border-neutral-200";
       case "event":
-        return "bg-indigo-50 text-indigo-700 border-indigo-200";
+        return "bg-neutral-100 text-neutral-800 border-neutral-200";
       default:
         return "bg-gray-100 text-gray-700 border-gray-200";
     }
@@ -149,11 +149,11 @@ export default function AlumniOpportunitiesPage() {
       )}
 
       {/* Header Banner */}
-      <div className="bg-white border border-gray-200/90 rounded-xl p-5 sm:p-6 shadow-xs">
+      <div className="bg-white border border-[#E7E7E7] rounded-xl p-5 sm:p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-              <Briefcase size={22} className="text-[#0a66c2]" />
+              <Briefcase size={22} className="text-[#090909]" />
               <span>Career Opportunities, Referrals &amp; Events</span>
             </h1>
             <p className="text-xs text-gray-500 mt-1 max-w-2xl">
@@ -168,7 +168,7 @@ export default function AlumniOpportunitiesPage() {
               setEditingOpportunity(null);
               setIsPostModalOpen(true);
             }}
-            className="bg-[#0a66c2] hover:bg-[#004182] text-xs shrink-0 flex items-center gap-1.5 shadow-xs"
+            className="bg-[#090909] hover:bg-[#242424] text-white text-xs shrink-0 flex items-center gap-1.5 shadow-none rounded-full border-0"
           >
             <Plus size={14} />
             <span>Post Opportunity</span>
@@ -184,15 +184,15 @@ export default function AlumniOpportunitiesPage() {
           </div>
           <div className="p-3 bg-[#F8FAFC] rounded-lg border border-gray-200/80">
             <span className="text-[11px] text-gray-500 font-medium block">Active Openings</span>
-            <div className="text-lg font-bold text-[#057642] mt-0.5">
+            <div className="text-lg font-bold text-gray-900 mt-0.5">
               {opportunities.filter((o) => o.status !== "closed").length}
             </div>
-            <span className="text-[10px] text-[#057642] font-semibold">Accepting applications</span>
+            <span className="text-[10px] text-neutral-800 font-semibold">Accepting applications</span>
           </div>
           <div className="p-3 bg-[#F8FAFC] rounded-lg border border-gray-200/80">
             <span className="text-[11px] text-gray-500 font-medium block">My Listings</span>
-            <div className="text-lg font-bold text-[#0a66c2] mt-0.5">{myPostsCount}</div>
-            <span className="text-[10px] text-[#0a66c2] font-semibold">Managed by you</span>
+            <div className="text-lg font-bold text-neutral-900 mt-0.5">{myPostsCount}</div>
+            <span className="text-[10px] text-neutral-900 font-semibold">Managed by you</span>
           </div>
           <div className="p-3 bg-[#F8FAFC] rounded-lg border border-gray-200/80">
             <span className="text-[11px] text-gray-500 font-medium block">Total Student Applicants</span>
@@ -222,7 +222,7 @@ export default function AlumniOpportunitiesPage() {
                 className={cn(
                   "px-3 py-1.5 rounded-full text-xs font-semibold transition-colors",
                   activeType === tab.id
-                    ? "bg-[#0a66c2] text-white"
+                    ? "bg-[#090909] text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 )}
               >
@@ -237,7 +237,7 @@ export default function AlumniOpportunitiesPage() {
                 type="checkbox"
                 checked={onlyMyPosts}
                 onChange={(e) => setOnlyMyPosts(e.target.checked)}
-                className="h-3.5 w-3.5 rounded text-[#0a66c2] border-gray-300 focus:ring-[#0a66c2]"
+                className="h-3.5 w-3.5 rounded text-neutral-900 border-gray-300 focus:ring-black"
               />
               <span className="font-semibold text-gray-800">
                 Only My Listings ({myPostsCount})
@@ -251,7 +251,7 @@ export default function AlumniOpportunitiesPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search title, company, skills..."
-                className="w-full pl-7 pr-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0a66c2] transition-colors"
+                className="w-full pl-7 pr-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-black transition-colors"
               />
             </div>
           </div>
@@ -260,7 +260,7 @@ export default function AlumniOpportunitiesPage() {
 
       {/* Opportunities List */}
       {filteredOpportunities.length === 0 ? (
-        <div className="bg-white border border-gray-200 rounded-lg p-10 text-center shadow-xs">
+        <div className="bg-white border border-gray-200 rounded-xl p-10 text-center shadow-xs">
           <div className="h-12 w-12 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center mx-auto mb-3">
             <Briefcase size={24} />
           </div>
@@ -277,7 +277,7 @@ export default function AlumniOpportunitiesPage() {
               setEditingOpportunity(null);
               setIsPostModalOpen(true);
             }}
-            className="mt-4 text-xs bg-[#0a66c2]"
+            className="mt-4 text-xs bg-[#090909] hover:bg-[#242424] text-white rounded-full border-0 shadow-none"
           >
             + Post Opportunity
           </Button>
@@ -332,7 +332,7 @@ export default function AlumniOpportunitiesPage() {
                         )}
 
                         {isMine && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#ebf3fb] text-[#0a66c2] border border-[#b2d5f8]">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-neutral-100 text-neutral-900 border border-neutral-200">
                             Posted by You
                           </span>
                         )}
@@ -357,7 +357,7 @@ export default function AlumniOpportunitiesPage() {
                     </div>
 
                     <div className="text-right shrink-0">
-                      <span className="text-xs font-semibold text-[#057642] bg-[#eef8f1] px-2.5 py-1 rounded-full border border-[#bfe3c9] inline-flex items-center gap-1">
+                      <span className="text-xs font-semibold text-neutral-900 bg-neutral-100 px-2.5 py-1 rounded-full border border-neutral-200 inline-flex items-center gap-1">
                         <Users size={12} />
                         {opp.applicantsCount} applicants
                       </span>
@@ -373,7 +373,7 @@ export default function AlumniOpportunitiesPage() {
 
                   {/* Eligibility Tag if available */}
                   {opp.eligibility && (
-                    <p className="mt-2 text-[11px] text-blue-900 bg-blue-50/60 px-2.5 py-1 rounded-md border border-blue-100">
+                    <p className="mt-2 text-[11px] text-neutral-900 bg-neutral-100 px-2.5 py-1 rounded-md border border-neutral-200">
                       <strong>Eligibility:</strong> {opp.eligibility}
                     </p>
                   )}
@@ -404,7 +404,7 @@ export default function AlumniOpportunitiesPage() {
                             setEditingOpportunity(opp);
                             setIsPostModalOpen(true);
                           }}
-                          className="text-xs font-semibold text-[#0a66c2] hover:underline flex items-center gap-1 py-1 px-1.5"
+                          className="text-xs font-semibold text-neutral-900 hover:underline flex items-center gap-1 py-1 px-1.5"
                         >
                           <Edit3 size={11} />
                           <span>Edit</span>
@@ -413,7 +413,7 @@ export default function AlumniOpportunitiesPage() {
                         <button
                           type="button"
                           onClick={() => handleToggleStatus(opp)}
-                          className="text-xs font-semibold text-gray-600 hover:text-gray-900 hover:underline flex items-center gap-1 py-1 px-1.5"
+                          className="text-xs font-semibold text-gray-600 hover:text-black hover:underline flex items-center gap-1 py-1 px-1.5"
                         >
                           <Clock size={11} />
                           <span>{isClosed ? "Reopen" : "Close"}</span>
@@ -437,7 +437,7 @@ export default function AlumniOpportunitiesPage() {
                     variant="outline"
                     size="sm"
                     onClick={() => setDetailOpportunity(opp)}
-                    className="text-xs text-[#0a66c2] border-[#b2d5f8] hover:bg-blue-50"
+                    className="text-xs text-neutral-900 border-[#E7E7E7] hover:bg-neutral-100 rounded-full"
                   >
                     <span>View Details &rarr;</span>
                   </Button>
