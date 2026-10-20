@@ -312,17 +312,11 @@ export default function LandingPage() {
                 <span>Verified Collegiate Network</span>
               </div>
 
-              {/* Kinetic Two-Tone Headline (Varaxis Word Settle) */}
+              {/* Two-Tone Headline */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08] mb-6 text-[#090909]">
-                <span className="vx-word mr-3.5" style={{ "--o": -1 } as React.CSSProperties}>Your</span>
-                <span className="vx-word mr-3.5" style={{ "--o": 0.55 } as React.CSSProperties}>college</span>
-                <span className="vx-word" style={{ "--o": -0.45 } as React.CSSProperties}>network.</span>
+                Your college network.
                 <br />
-                <span className="text-[#737373] font-bold">
-                  <span className="vx-word mr-3.5" style={{ "--o": 0.8 } as React.CSSProperties}>Your</span>
-                  <span className="vx-word mr-3.5" style={{ "--o": -0.65 } as React.CSSProperties}>next</span>
-                  <span className="vx-word" style={{ "--o": 1.15 } as React.CSSProperties}>trajectory.</span>
-                </span>
+                <span className="text-[#737373] font-bold">Your next trajectory.</span>
               </h1>
 
               {/* Supporting Editorial Prose */}
@@ -388,7 +382,7 @@ export default function LandingPage() {
             <p className="text-[11px] font-semibold tracking-widest uppercase text-[#737373] mb-6">
               OUR ALUMNI WORK AT
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 md:gap-16 opacity-75 grayscale hover:grayscale-0 transition-all">
+            <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 md:gap-16 grayscale hover:grayscale-0 transition-all">
               <span className="font-bold text-lg tracking-tight text-[#090909]">datadog</span>
               <span className="font-extrabold text-xl tracking-tight text-[#090909]">stripe</span>
               <span className="font-semibold text-lg tracking-tight text-[#090909]">▲ Vercel</span>
@@ -412,10 +406,7 @@ export default function LandingPage() {
                 01 · THE PROBLEM
               </span>
               <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#090909] leading-tight">
-                <span className="vx-word mr-3" style={{ "--o": -1 } as React.CSSProperties}>Talent</span>
-                <span className="vx-word mr-3" style={{ "--o": 0.55 } as React.CSSProperties}>arrives</span>
-                <span className="vx-word mr-3" style={{ "--o": -0.35 } as React.CSSProperties}>in</span>
-                <span className="vx-word" style={{ "--o": 0.9 } as React.CSSProperties}>isolation.</span>
+                Talent arrives in isolation.
               </h2>
               <p className="text-base sm:text-lg text-[#555555] max-w-2xl leading-relaxed">
                 Graduates disperse into high-growth technology companies while undergraduate students navigate opaque job boards and blind application queues.
@@ -431,10 +422,7 @@ export default function LandingPage() {
                 02 · THE FRICTION
               </span>
               <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#090909] leading-tight">
-                <span className="vx-word mr-3" style={{ "--o": -1 } as React.CSSProperties}>Cold</span>
-                <span className="vx-word mr-3" style={{ "--o": 0.55 } as React.CSSProperties}>outreach</span>
-                <span className="vx-word mr-3" style={{ "--o": -0.35 } as React.CSSProperties}>becomes</span>
-                <span className="vx-word" style={{ "--o": 0.9 } as React.CSSProperties}>noise.</span>
+                Cold outreach becomes noise.
               </h2>
               <p className="text-base sm:text-lg text-[#555555] max-w-2xl leading-relaxed">
                 An 8% response rate on LinkedIn and recruiter algorithms drain student momentum away from engineering portfolio craftsmanship and system design fundamentals.
@@ -450,10 +438,7 @@ export default function LandingPage() {
                 03 · THE RESOLUTION
               </span>
               <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#090909] leading-tight">
-                <span className="vx-word mr-3" style={{ "--o": -1 } as React.CSSProperties}>Collegiate</span>
-                <span className="vx-word mr-3" style={{ "--o": 0.55 } as React.CSSProperties}>trust</span>
-                <span className="vx-word mr-3" style={{ "--o": -0.35 } as React.CSSProperties}>gives</span>
-                <span className="vx-word" style={{ "--o": 0.9 } as React.CSSProperties}>velocity.</span>
+                Collegiate trust gives velocity.
               </h2>
               <p className="text-base sm:text-lg text-[#555555] max-w-2xl leading-relaxed">
                 A shared alma mater creates instant institutional affinity. AlumniPath turns impersonal hiring hurdles into asynchronous, high-trust mentorship loops.
@@ -475,9 +460,7 @@ export default function LandingPage() {
                 OPERATIONAL ARCHITECTURE
               </span>
               <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#090909]">
-                <span className="vx-word mr-3" style={{ "--o": -0.8 } as React.CSSProperties}>How</span>
-                <span className="vx-word mr-3" style={{ "--o": 0.6 } as React.CSSProperties}>AlumniPath</span>
-                <span className="vx-word" style={{ "--o": -0.5 } as React.CSSProperties}>operates.</span>
+                How AlumniPath operates.
               </h2>
               <p className="text-sm sm:text-base text-[#555555] mt-3 leading-relaxed">
                 Five verifiable stations embedded into every mentorship engagement, continuously scrubbed as you advance.
@@ -793,15 +776,7 @@ export default function LandingPage() {
                 THE MENTORSHIP CONTINUUM
               </p>
               <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#090909]">
-                <span className="vx-word mr-3" style={{ "--o": -0.9 } as React.CSSProperties}>A</span>
-                <span className="vx-word mr-3" style={{ "--o": 0.45 } as React.CSSProperties}>deliberate</span>
-                <span className="vx-word mr-3" style={{ "--o": -0.6 } as React.CSSProperties}>bridge</span>
-                <span className="vx-word mr-3" style={{ "--o": 0.8 } as React.CSSProperties}>from</span>
-                <span className="vx-word mr-3" style={{ "--o": -0.3 } as React.CSSProperties}>student</span>
-                <span className="vx-word mr-3" style={{ "--o": 0.65 } as React.CSSProperties}>ambitions</span>
-                <span className="vx-word mr-3" style={{ "--o": -0.5 } as React.CSSProperties}>to</span>
-                <span className="vx-word mr-3" style={{ "--o": 0.95 } as React.CSSProperties}>senior</span>
-                <span className="vx-word" style={{ "--o": -1.1 } as React.CSSProperties}>execution.</span>
+                A deliberate bridge from student ambitions to senior execution.
               </h2>
               <p className="text-sm sm:text-base text-[#555555] mt-3 leading-relaxed">
                 Cold LinkedIn DMs have an 8% response rate. AlumniPath creates verified, high-trust collegiate channels designed for substance.
@@ -1048,11 +1023,7 @@ export default function LandingPage() {
                   VERIFIED DIRECTORY
                 </p>
                 <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#090909]">
-                  <span className="vx-word mr-3" style={{ "--o": -0.85 } as React.CSSProperties}>Explore</span>
-                  <span className="vx-word mr-3" style={{ "--o": 0.5 } as React.CSSProperties}>mentors</span>
-                  <span className="vx-word mr-3" style={{ "--o": -0.4 } as React.CSSProperties}>actively</span>
-                  <span className="vx-word mr-3" style={{ "--o": 0.7 } as React.CSSProperties}>advising</span>
-                  <span className="vx-word" style={{ "--o": 1 } as React.CSSProperties}>students.</span>
+                  Explore mentors actively advising students.
                 </h2>
                 <p className="text-sm text-[#555555] mt-2 max-w-xl">
                   Filter by role, technical domain, or target company. Every mentor is verified through academic records.

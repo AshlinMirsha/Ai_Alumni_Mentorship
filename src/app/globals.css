@@ -206,43 +206,22 @@ html {
    Kinetic Word Settle · Scroll-Scrubbed Progress Rail · Parallax Drift · Rule Draw
    ═══════════════════════════════════════════════════════════════════════════════ */
 
-/* 1. Kinetic Word Settle Typography */
+/* 1. Kinetic Word Typography - Crisp, 100% Sharp with Zero Fading */
 .vx-word {
   display: inline-block;
-  will-change: transform, opacity, filter;
-  transform: translate(calc(var(--o, 0) * 0.28em * (1 - var(--vx-settled, 0))), calc(var(--o, 0) * 0.42em * (1 - var(--vx-settled, 0))));
-  opacity: calc(0.18 + 0.82 * var(--vx-settled, 0));
-  filter: blur(calc((1 - var(--vx-settled, 0)) * 2.5px));
-  transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
-              filter 0.75s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-[data-vx-inview="true"] .vx-word,
-.vx-word[data-settled="true"] {
-  --vx-settled: 1;
-}
-
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .vx-word-auto {
-      animation: vx-settle-word cubic-bezier(0.16, 1, 0.3, 1) both;
-      animation-timeline: view();
-      animation-range: entry 10% cover 45%;
-    }
-  }
+  opacity: 1 !important;
+  filter: none !important;
+  color: inherit;
 }
 
 @keyframes vx-settle-word {
   0% {
-    translate: calc(var(--o, 0) * 0.28em) calc(var(--o, 0) * 0.42em);
-    opacity: 0.15;
-    filter: blur(3px);
+    translate: calc(var(--o, 0) * 0.2em) calc(var(--o, 0) * 0.25em);
+    opacity: 0.85;
   }
   100% {
     translate: 0 0;
     opacity: 1;
-    filter: blur(0);
   }
 }
 
@@ -341,7 +320,9 @@ html {
 }
 
 .vx-station-card[data-step="ahead"] {
-  opacity: 0.65;
+  opacity: 1;
+  border-color: var(--stroke);
+  background-color: #FAFAFA;
 }
 
 /* 3. Parallax Tilted Asset & Constellation Drift */

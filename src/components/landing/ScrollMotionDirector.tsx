@@ -25,22 +25,15 @@ export function ScrollMotionDirector() {
       document.querySelectorAll("[data-vx-observe]").forEach((el) => {
         el.setAttribute("data-vx-inview", "true");
       });
-      document.querySelectorAll(".vx-word").forEach((el) => {
-        el.setAttribute("data-settled", "true");
-      });
       return;
     }
 
-    // ─── 1. Intersection Observer for Kinetic Word Settling & Rules ──────
+    // ─── 1. Intersection Observer for Kinetic Section Reveal & Rules ──────
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.setAttribute("data-vx-inview", "true");
-            // Set word settlement on children
-            entry.target.querySelectorAll(".vx-word").forEach((w) => {
-              w.setAttribute("data-settled", "true");
-            });
           }
         });
       },
