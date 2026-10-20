@@ -174,8 +174,8 @@ export default function AlumniRequestsPage() {
     <div className="space-y-6">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-5 right-5 z-50 bg-[#191919] text-white text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
-          <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
+        <div className="fixed bottom-5 right-5 z-50 bg-[#090909] text-white text-xs px-4 py-2.5 rounded-full shadow-xl flex items-center gap-2 border border-neutral-800 animate-in fade-in slide-in-from-bottom-2">
+          <CheckCircle2 size={16} className="text-white shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -334,7 +334,7 @@ export default function AlumniRequestsPage() {
                             Sent Invitation
                           </span>
                         ) : isPending ? (
-                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A]">
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-neutral-100 text-neutral-900 border border-neutral-300">
                             Pending Review
                           </span>
                         ) : isAccepted ? (

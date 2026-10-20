@@ -142,8 +142,8 @@ export default function AlumniOpportunitiesPage() {
     <div className="space-y-5">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-5 right-5 z-50 bg-gray-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
-          <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
+        <div className="fixed bottom-5 right-5 z-50 bg-[#090909] text-white text-xs px-4 py-2.5 rounded-full shadow-xl flex items-center gap-2 border border-neutral-800 animate-in fade-in slide-in-from-bottom-2">
+          <CheckCircle2 size={15} className="text-white shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}

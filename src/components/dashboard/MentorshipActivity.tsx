@@ -149,7 +149,7 @@ export function MentorshipActivity({
               <div>
                 {activeTab === "all" && acceptedMentorships.length > 0 && (
                   <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                    <CheckCircle2 size={12} className="text-[#057642]" />
+                    <CheckCircle2 size={12} className="text-neutral-900" />
                     Active Mentorships ({acceptedMentorships.length})
                   </h3>
                 )}
@@ -170,7 +170,7 @@ export function MentorshipActivity({
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-2">
                               <h4 className="text-xs font-bold text-gray-900 truncate">{m.alumni.name}</h4>
-                              <Badge variant="green" size="sm">
+                              <Badge variant="neutral" size="sm">
                                 Active Mentorship
                               </Badge>
                             </div>
@@ -182,8 +182,8 @@ export function MentorshipActivity({
                               {m.focus}
                             </p>
                             {m.nextSession && (
-                              <p className="text-[11px] text-[#057642] font-medium mt-1 flex items-center gap-1">
-                                <Calendar size={11} />
+                              <p className="text-[11px] text-neutral-800 font-medium mt-1 flex items-center gap-1">
+                                <Calendar size={11} className="text-neutral-900" />
                                 Next Session: {formatDate(m.nextSession)} ({m.sessionCount} sessions completed)
                               </p>
                             )}
@@ -210,7 +210,7 @@ export function MentorshipActivity({
               <div>
                 {activeTab === "all" && pendingRequests.length > 0 && (
                   <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5 mt-2.5">
-                    <Clock size={12} className="text-[#915907]" />
+                    <Clock size={12} className="text-neutral-900" />
                     Pending Outreach ({pendingRequests.length})
                   </h3>
                 )}

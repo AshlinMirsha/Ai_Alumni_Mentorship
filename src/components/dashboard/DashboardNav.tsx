@@ -309,8 +309,8 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
                   <div className="px-4 py-2.5 border-b border-black/[0.06]">
                     <p className="text-xs font-semibold text-[#1d1d1f]">{effectiveName}</p>
                     <p className="text-[11px] text-[#6e6e73] truncate">{session.email || "user@university.edu"}</p>
-                    <span className="inline-flex items-center gap-1 mt-1.5 text-[10px] text-[#057642] bg-[#057642]/10 px-2 py-0.5 rounded-full font-medium border border-[#057642]/20">
-                      <CheckCircle2 size={10} /> {effectiveRole}
+                    <span className="inline-flex items-center gap-1 mt-1.5 text-[10px] text-neutral-900 bg-neutral-100 px-2 py-0.5 rounded-full font-medium border border-neutral-200">
+                      <CheckCircle2 size={10} className="text-neutral-900" /> {effectiveRole}
                     </span>
                   </div>
                   <button

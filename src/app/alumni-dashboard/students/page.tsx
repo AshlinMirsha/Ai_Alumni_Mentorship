@@ -260,27 +260,27 @@ function DiscoverStudentsContent() {
     <div className="space-y-6">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-5 right-5 z-50 bg-[#191919] text-white text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
-          <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
+        <div className="fixed bottom-5 right-5 z-50 bg-[#090909] text-white text-xs px-4 py-2.5 rounded-full shadow-xl flex items-center gap-2 border border-neutral-800 animate-in fade-in slide-in-from-bottom-2">
+          <CheckCircle2 size={16} className="text-white shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* ─── 1. HEADER SECTION ────────────────────────────────────────── */}
-      <div className="bg-white border border-[#D9D9D9] rounded-lg p-5 sm:p-6 shadow-xs">
+      <div className="bg-white border border-[#E7E7E7] rounded-2xl p-6 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           {/* Left: Heading, Badges & Subtitle */}
           <div className="space-y-1.5">
             <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-bold text-[#191919] tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-bold text-[#090909] tracking-tight">
                 Discover Students
               </h1>
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#057642] bg-[#EEF8F1] px-2.5 py-0.5 rounded-full border border-[#BFE3C9] whitespace-nowrap">
-                  <ShieldCheck size={12} className="shrink-0" />
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-neutral-900 bg-neutral-100 px-2.5 py-0.5 rounded-full border border-neutral-200 whitespace-nowrap">
+                  <ShieldCheck size={12} className="shrink-0 text-neutral-900" />
                   <span>Verified University Directory</span>
                 </span>
-                <span className="text-[10px] font-medium text-[#666666] bg-[#F3F2EF] px-2 py-0.5 rounded-full border border-[#E0E0E0] whitespace-nowrap">
+                <span className="text-[10px] font-medium text-neutral-600 bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200 whitespace-nowrap">
                   Demo Directory Mode
                 </span>
               </div>

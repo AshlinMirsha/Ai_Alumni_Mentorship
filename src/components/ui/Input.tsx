@@ -60,11 +60,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             }
             style={{ backgroundColor: "#FFFFFF", ...(props.style || {}) }}
             className={cn(
-              "w-full rounded-[8px] border bg-white text-sm text-[#191919] placeholder:text-[#6B7280]",
+              "w-full rounded-xl border bg-white text-sm text-[#090909] placeholder:text-[#737373]",
               "px-3.5 py-2.5 h-[44px]",
-              "border-[#D1D5DB] transition-all duration-150",
-              "focus:outline-none focus:border-[#2166A5] focus:ring-2 focus:ring-[#2166A5]/20",
-              "disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed",
+              "border-[#E7E7E7] transition-all duration-150",
+              "focus:outline-none focus:border-[#090909] focus:ring-1 focus:ring-[#090909]",
+              "disabled:bg-neutral-50 disabled:text-neutral-400 disabled:cursor-not-allowed",
               error && "border-red-500 focus:border-red-500 focus:ring-red-400/20",
               leadingIcon && "pl-10",
               trailingElement && "pr-10",

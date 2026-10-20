@@ -287,21 +287,21 @@ export default function MyMenteesPage() {
     <div className="space-y-5">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-5 right-5 z-50 bg-gray-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
-          <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
+        <div className="fixed bottom-5 right-5 z-50 bg-[#090909] text-white text-xs px-4 py-2.5 rounded-full shadow-xl flex items-center gap-2 border border-neutral-800 animate-in fade-in slide-in-from-bottom-2">
+          <CheckCircle2 size={15} className="text-white shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* Header Banner */}
-      <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs">
+      <div className="bg-white border border-[#E7E7E7] rounded-2xl p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-lg font-bold text-gray-900 tracking-tight flex items-center gap-2">
+            <h1 className="text-lg font-bold text-[#090909] tracking-tight flex items-center gap-2">
               <UserCheck size={20} className="text-[#090909]" />
               <span>My Mentees &amp; Career Tracks</span>
             </h1>
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-xs text-[#737373] mt-0.5">
               Guide students with dedicated 1-on-1 milestone tracking, session notes, and scheduled mock interview reviews.
             </p>
           </div>
@@ -345,23 +345,23 @@ export default function MyMenteesPage() {
         </div>
 
         {/* Capacity & Stats Strip */}
-        <div className="mt-5 pt-5 border-t border-gray-100 grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="p-4 bg-[#F8FAFC] rounded-xl border border-gray-200/80 shadow-2xs hover:border-gray-300 transition-colors">
+        <div className="mt-5 pt-5 border-t border-[#E7E7E7] grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="p-4 bg-white rounded-xl border border-[#E7E7E7] shadow-2xs hover:border-black transition-colors">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] text-gray-500 font-medium">Active Roster</span>
-              <UserCheck size={14} className="text-[#057642]" />
+              <span className="text-[11px] text-[#737373] font-medium">Active Roster</span>
+              <UserCheck size={14} className="text-[#090909]" />
             </div>
-            <div className="text-xl font-bold text-gray-900 mt-1">
-              {activeMentees.length} <span className="text-xs font-normal text-gray-500">/ 5 Capacity</span>
+            <div className="text-xl font-bold text-[#090909] mt-1">
+              {activeMentees.length} <span className="text-xs font-normal text-[#737373]">/ 5 Capacity</span>
             </div>
             <div className="mt-1 flex items-center gap-1.5">
               <span className={cn(
                 "h-1.5 w-1.5 rounded-full",
-                5 - activeMentees.length > 0 ? "bg-[#057642]" : "bg-amber-500"
+                5 - activeMentees.length > 0 ? "bg-[#090909]" : "bg-neutral-400"
               )} />
               <span className={cn(
                 "text-[11px] font-semibold",
-                5 - activeMentees.length > 0 ? "text-[#057642]" : "text-amber-700"
+                5 - activeMentees.length > 0 ? "text-neutral-900" : "text-neutral-500"
               )}>
                 {5 - activeMentees.length > 0
                   ? `${5 - activeMentees.length} available slots`
@@ -558,23 +558,23 @@ export default function MyMenteesPage() {
                             <span
                               className={cn(
                                 "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
-                                sess.status === "confirmed" && "bg-neutral-900 text-white border-black",
+                                sess.status === "confirmed" && "bg-[#090909] text-white border-black",
                                 sess.status === "scheduled" && "bg-neutral-100 text-neutral-800 border-neutral-200",
-                                sess.status === "rescheduled" && "bg-amber-50 text-amber-700 border-amber-200",
-                                sess.status === "completed" && "bg-purple-50 text-purple-700 border-purple-200",
-                                sess.status === "cancelled" && "bg-red-50 text-red-700 border-red-200"
+                                sess.status === "rescheduled" && "bg-neutral-100 text-neutral-800 border-neutral-300",
+                                sess.status === "completed" && "bg-neutral-800 text-white border-neutral-800",
+                                sess.status === "cancelled" && "bg-neutral-100 text-neutral-500 border-neutral-200 line-through"
                               )}
                             >
                               {sess.status}
                             </span>
                           </div>
 
-                          <p className="text-xs text-gray-600 mt-1">
-                            With <strong className="text-gray-900">{sess.studentName}</strong> · {sess.studentAcademicYear} ({sess.studentDepartment})
+                          <p className="text-xs text-[#737373] mt-1">
+                            With <strong className="text-[#090909]">{sess.studentName}</strong> · {sess.studentAcademicYear} ({sess.studentDepartment})
                           </p>
 
                           {isSessRescheduled && sess.previousDate && (
-                            <p className="text-[11px] text-amber-700 mt-1.5 flex items-center gap-1 font-medium">
+                            <p className="text-[11px] text-neutral-700 mt-1.5 flex items-center gap-1 font-medium">
                               <RefreshCw size={11} />
                               <span>Rescheduled from {formatDisplayDate(sess.previousDate)} at {sess.previousTime}</span>
                             </p>
@@ -669,7 +669,7 @@ export default function MyMenteesPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => setSessionToReschedule(sess)}
-                              className="text-xs text-amber-700 border-amber-200 hover:bg-amber-50"
+                              className="text-xs text-neutral-800 border-neutral-300 hover:bg-neutral-100 rounded-full"
                             >
                               <RefreshCw size={11} className="mr-1" />
                               <span>Reschedule</span>
@@ -680,7 +680,7 @@ export default function MyMenteesPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => setSessionToCancel(sess)}
-                              className="text-xs text-gray-500 hover:text-red-600 hover:border-red-200"
+                              className="text-xs text-neutral-600 hover:text-black border-neutral-300 hover:border-black rounded-full"
                             >
                               <Ban size={11} className="mr-1" />
                               <span>Cancel</span>
@@ -691,9 +691,9 @@ export default function MyMenteesPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => handleCompleteSession(sess)}
-                              className="text-xs text-[#057642] border-emerald-200 hover:bg-emerald-50"
+                              className="text-xs text-neutral-900 border-neutral-300 hover:bg-neutral-100 rounded-full font-semibold"
                             >
-                              <CheckCircle size={11} className="mr-1" />
+                              <CheckCircle size={11} className="mr-1 text-neutral-900" />
                               <span>Mark Complete</span>
                             </Button>
                           </>

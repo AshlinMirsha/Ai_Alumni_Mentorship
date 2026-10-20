@@ -133,8 +133,8 @@ export function MentorshipCard({
         )}
 
         {isDeclined && mentorship.declinedReason && (
-          <div className="p-2.5 bg-[#fff8ea] rounded-md border border-[#fde5b2] text-[#915907] text-[11px] leading-relaxed flex items-start gap-2">
-            <AlertCircle size={13} className="shrink-0 text-[#915907] mt-0.5" />
+          <div className="p-2.5 bg-neutral-50 rounded-xl border border-neutral-200 text-neutral-800 text-[11px] leading-relaxed flex items-start gap-2">
+            <AlertCircle size={13} className="shrink-0 text-neutral-700 mt-0.5" />
             <div>
               <strong>Reason: </strong>
               <span>{mentorship.declinedReason}</span>
@@ -152,7 +152,7 @@ export function MentorshipCard({
               <strong>{mentorship.sessionCount}</strong> session{mentorship.sessionCount === 1 ? "" : "s"} completed
             </span>
           ) : isPending ? (
-            <span className="text-[#915907] font-medium">Awaiting response from {displayName.split(" ")[0]}</span>
+            <span className="text-neutral-800 font-medium">Awaiting response from {displayName.split(" ")[0]}</span>
           ) : (
             <span>Archived request</span>
           )}
@@ -166,7 +166,7 @@ export function MentorshipCard({
                 variant="outline"
                 size="sm"
                 onClick={() => onDeclineRequest?.(mentorship.id)}
-                className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 inline-flex items-center gap-1"
+                className="text-xs text-neutral-700 hover:text-black border-neutral-300 hover:border-black rounded-full inline-flex items-center gap-1"
               >
                 <X size={12} />
                 Decline
@@ -175,7 +175,7 @@ export function MentorshipCard({
                 variant="primary"
                 size="sm"
                 onClick={() => onAcceptRequest?.(mentorship.id)}
-                className="text-xs bg-[#057642] hover:bg-[#045d34] border-[#057642] inline-flex items-center gap-1"
+                className="text-xs bg-[#090909] hover:bg-[#242424] text-white border-0 rounded-full inline-flex items-center gap-1"
               >
                 <Check size={12} />
                 Accept

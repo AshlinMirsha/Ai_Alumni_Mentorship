@@ -50,26 +50,8 @@ function FloatingHeader() {
             href="#how-it-operates"
             className="text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
           >
-            Operational Rail
+            How It Works
           </a>
-          <a
-            href="#network-hud"
-            className="text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
-          >
-            Network HUD
-          </a>
-          <a
-            href="#continuum"
-            className="text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
-          >
-            The Continuum
-          </a>
-          <Link
-            href="/alumni"
-            className="text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
-          >
-            Directory
-          </Link>
           <a
             href="#metrics"
             className="text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
@@ -111,29 +93,8 @@ function FloatingHeader() {
             className="text-xs font-medium py-2 text-[#090909] border-b border-[#E7E7E7]"
             onClick={() => setMobileOpen(false)}
           >
-            Operational Rail
+            How It Works
           </a>
-          <a
-            href="#network-hud"
-            className="text-xs font-medium py-2 text-[#090909] border-b border-[#E7E7E7]"
-            onClick={() => setMobileOpen(false)}
-          >
-            Network HUD
-          </a>
-          <a
-            href="#continuum"
-            className="text-xs font-medium py-2 text-[#090909] border-b border-[#E7E7E7]"
-            onClick={() => setMobileOpen(false)}
-          >
-            The Continuum
-          </a>
-          <Link
-            href="/alumni"
-            className="text-xs font-medium py-2 text-[#090909] border-b border-[#E7E7E7]"
-            onClick={() => setMobileOpen(false)}
-          >
-            Directory
-          </Link>
           <a
             href="#metrics"
             className="text-xs font-medium py-2 text-[#090909] border-b border-[#E7E7E7]"
