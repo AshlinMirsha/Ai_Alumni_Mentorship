@@ -4,6 +4,7 @@ import { useState, Suspense } from "react";
 import { usePathname } from "next/navigation";
 import { AlumniNav } from "@/components/alumni-dashboard/AlumniNav";
 import { AlumniSidebar } from "@/components/alumni-dashboard/AlumniSidebar";
+import { cn } from "@/lib/utils";
 
 interface AlumniLayoutProps {
   children: React.ReactNode;
@@ -13,6 +14,8 @@ export function AlumniLayout({ children }: AlumniLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const isDashboard = pathname === "/alumni-dashboard";
+  const isStudentsPage = pathname?.startsWith("/alumni-dashboard/students");
+  const hideSidebar = isDashboard || isStudentsPage;
 
   return (
     <div className="min-h-screen bg-[#F3F2EF] flex flex-col antialiased text-[#191919]">
@@ -38,8 +41,13 @@ export function AlumniLayout({ children }: AlumniLayoutProps) {
       )}
 
       {/* Main Content Area */}
-      <div className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
-        {isDashboard ? (
+      <div
+        className={cn(
+          "flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6",
+          hideSidebar ? "max-w-[1400px]" : "max-w-7xl"
+        )}
+      >
+        {hideSidebar ? (
           <main className="w-full">{children}</main>
         ) : (
           <div className="flex flex-col lg:flex-row gap-5 items-start">

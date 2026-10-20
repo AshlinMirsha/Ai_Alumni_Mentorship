@@ -118,30 +118,33 @@ export function AlumniNav({ onMobileToggle, mobileOpen }: AlumniNavProps) {
 
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-[#D9D9D9]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-[54px] gap-4">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14 gap-3 xl:gap-4">
           {/* Left: Brand & Portal Badge */}
-          <div className="flex items-center gap-6 xl:gap-8 h-full shrink-0">
-            <Link href="/alumni-dashboard" className="flex items-center gap-2.5 group">
+          <div className="flex items-center gap-4 lg:gap-6 xl:gap-7 h-full shrink-0">
+            <Link href="/alumni-dashboard" className="flex items-center gap-2.5 group shrink-0">
               <div className="h-7 w-7 rounded bg-[#0A66C2] flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#004182]">
                 <span className="text-white text-xs font-bold tracking-tight">A</span>
               </div>
-              <span className="text-base font-bold tracking-tight text-[#191919] hidden sm:inline-block">
+              <span className="text-base font-bold tracking-tight text-[#191919] hidden sm:inline-block whitespace-nowrap">
                 Alumni<span className="text-[#0A66C2]">Path</span>
               </span>
             </Link>
 
             {/* Desktop Navigation Links */}
-            <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5 h-full">
+            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 h-full">
               {navItems.map((item) => {
-                const isActive = pathname === item.href;
+                const isActive =
+                  item.href === "/alumni-dashboard"
+                    ? pathname === "/alumni-dashboard"
+                    : pathname?.startsWith(item.href);
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "inline-flex items-center gap-1.5 h-[54px] px-2.5 text-xs font-medium border-b-2 transition-colors",
+                      "inline-flex items-center gap-1.5 h-14 px-2 xl:px-2.5 text-xs font-medium border-b-2 transition-colors whitespace-nowrap shrink-0",
                       isActive
                         ? "border-[#0A66C2] text-[#0A66C2] font-semibold"
                         : "border-transparent text-[#666666] hover:text-[#191919] hover:border-gray-300"
@@ -150,7 +153,7 @@ export function AlumniNav({ onMobileToggle, mobileOpen }: AlumniNavProps) {
                     <Icon size={14} className={isActive ? "text-[#0A66C2]" : "text-[#666666]"} />
                     <span>{item.label}</span>
                     {item.badge && (
-                      <span className="text-[10px] font-bold bg-[#EBF3FB] text-[#0A66C2] px-1.5 py-0.2 rounded-full">
+                      <span className="text-[10px] font-bold bg-[#EBF3FB] text-[#0A66C2] px-1.5 py-0.2 rounded-full leading-none">
                         {item.badge}
                       </span>
                     )}
@@ -161,16 +164,16 @@ export function AlumniNav({ onMobileToggle, mobileOpen }: AlumniNavProps) {
           </div>
 
           {/* Right Controls */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
             {/* Search Input */}
-            <form onSubmit={handleSearchSubmit} className="hidden 2xl:flex items-center relative">
+            <form onSubmit={handleSearchSubmit} className="hidden xl:flex items-center relative">
               <Search size={14} className="absolute left-2.5 text-gray-400 pointer-events-none" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search students, skills..."
-                className="w-48 pl-8 pr-3 py-1 text-xs bg-gray-50 border border-gray-200 rounded-full text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0A66C2] focus:border-[#0A66C2] transition-colors"
+                className="w-36 lg:w-44 xl:w-48 pl-8 pr-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-full text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0A66C2] focus:border-[#0A66C2] transition-colors"
               />
             </form>
 
@@ -179,10 +182,10 @@ export function AlumniNav({ onMobileToggle, mobileOpen }: AlumniNavProps) {
               type="button"
               onClick={handleSwitchToStudent}
               title="Click to preview the platform as a student"
-              className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-[#666666] hover:text-[#191919] hover:bg-gray-100 border border-[#D9D9D9] rounded-full transition-colors"
+              className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#191919] hover:text-[#0A66C2] hover:bg-gray-100 border border-[#D9D9D9] rounded-full transition-colors whitespace-nowrap shrink-0"
             >
-              <ArrowRightLeft size={12} className="text-[#666666]" />
-              <span>Switch to Student View</span>
+              <ArrowRightLeft size={12} className="text-[#0A66C2] shrink-0" />
+              <span className="whitespace-nowrap">Switch to Student View</span>
             </button>
 
             {/* Notifications Popover */}
