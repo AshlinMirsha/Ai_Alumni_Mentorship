@@ -45,6 +45,8 @@ export default function ResumeReviewPage() {
   const [targetRole, setTargetRole] = useState(student.careerGoal || "Full-Stack Software Engineer");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [results, setResults] = useState<ResumeReviewResult | null>(null);
+  const [hasAiConsent, setHasAiConsent] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Analysis options checkboxes
   const [options, setOptions] = useState<ResumeAnalysisOptions>({
@@ -63,18 +65,20 @@ export default function ResumeReviewPage() {
   ];
 
   const handleStartReview = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile || !hasAiConsent) return;
 
+    setErrorMessage(null);
     setIsAnalyzing(true);
     try {
       const reviewResults = await resumeReviewService.analyzeResume(
         { name: selectedFile.name, size: selectedFile.size, rawFile: selectedFile.file },
         targetRole,
-        options
+        options,
+        hasAiConsent
       );
       setResults(reviewResults);
     } catch (err) {
-      console.error("Resume analysis failed", err);
+      setErrorMessage(err instanceof Error ? err.message : "Resume analysis failed. Please try again.");
     } finally {
       setIsAnalyzing(false);
     }
@@ -82,6 +86,8 @@ export default function ResumeReviewPage() {
 
   const handleReviewAgain = () => {
     setResults(null);
+    setHasAiConsent(false);
+    setErrorMessage(null);
   };
 
   return (
@@ -159,8 +165,16 @@ export default function ResumeReviewPage() {
 
                 <ResumeUploader
                   selectedFile={selectedFile}
-                  onFileSelect={(file) => setSelectedFile(file)}
-                  onFileRemove={() => setSelectedFile(null)}
+                  onFileSelect={(file) => {
+                    setSelectedFile(file);
+                    setHasAiConsent(false);
+                    setErrorMessage(null);
+                  }}
+                  onFileRemove={() => {
+                    setSelectedFile(null);
+                    setHasAiConsent(false);
+                    setErrorMessage(null);
+                  }}
                   isAnalyzing={isAnalyzing}
                 />
               </div>
@@ -289,21 +303,38 @@ export default function ResumeReviewPage() {
 
               {/* Action Bar */}
               <div className="p-4 sm:p-5 bg-white rounded-2xl border border-[#E7E7E7] shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="text-xs text-[#737373]">
-                  {selectedFile ? (
+                <div className="w-full text-xs text-[#737373] space-y-2">
+                  <div>
+                    {selectedFile ? (
+                      <span>
+                        Ready to audit: <strong className="text-[#090909]">{selectedFile.name}</strong> for{" "}
+                        <strong className="text-[#090909]">{targetRole}</strong>
+                      </span>
+                    ) : (
+                      <span>Please choose a resume file above to enable review.</span>
+                    )}
+                  </div>
+                  <label className="flex items-start gap-2.5 cursor-pointer leading-relaxed">
+                    <input
+                      type="checkbox"
+                      checked={hasAiConsent}
+                      onChange={(event) => setHasAiConsent(event.target.checked)}
+                      disabled={!selectedFile || isAnalyzing}
+                      className="mt-0.5 rounded border-[#E7E7E7] accent-[#090909] focus:ring-[#090909]"
+                    />
                     <span>
-                      Ready to audit: <strong className="text-[#090909]">{selectedFile.name}</strong> for{" "}
-                      <strong className="text-[#090909]">{targetRole}</strong>
+                      I authorize AlumniPath to send this resume to its server for text extraction and share the extracted text with its configured AI provider for this review. The original file will not be stored.
                     </span>
-                  ) : (
-                    <span>Please choose a resume file above to enable review.</span>
+                  </label>
+                  {errorMessage && (
+                    <p role="alert" className="text-[#090909] font-medium">{errorMessage}</p>
                   )}
                 </div>
 
                 <Button
                   variant="primary"
                   size="md"
-                  disabled={!selectedFile || isAnalyzing}
+                  disabled={!selectedFile || !hasAiConsent || isAnalyzing}
                   onClick={handleStartReview}
                   className="w-full sm:w-auto px-6 py-2.5 text-xs font-semibold inline-flex items-center justify-center gap-2 rounded-full shadow-xs"
                 >

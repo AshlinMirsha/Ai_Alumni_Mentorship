@@ -10,6 +10,7 @@ interface GenerateOptions {
   temperature?: number;
   maxTokens?: number;
   timeoutMs?: number;
+  responseFormat?: "json";
 }
 
 export interface AIResponse {
@@ -64,6 +65,7 @@ export async function generateAICareerResponse(options: GenerateOptions & { hist
             generationConfig: {
               temperature,
               maxOutputTokens: 2048,
+              ...(options.responseFormat === "json" ? { responseMimeType: "application/json" } : {}),
             },
           }),
           signal: controller.signal,
@@ -117,6 +119,7 @@ export async function generateAICareerResponse(options: GenerateOptions & { hist
           messages,
           temperature,
           max_tokens: 2048,
+          ...(options.responseFormat === "json" ? { response_format: { type: "json_object" } } : {}),
         }),
         signal: controller.signal,
       });

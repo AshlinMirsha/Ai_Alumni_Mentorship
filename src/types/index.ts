@@ -463,8 +463,8 @@ export interface ResumeReviewResult {
   fileSize: string;
   targetRole: string;
   submittedAt: string;
-  overallScore: number; // 0-100 Illustrative demo score
-  atsScore: number;     // 0-100 Illustrative demo ATS score
+  overallScore: number; // 0-100 AI estimate based on extracted resume text
+  atsScore: number;     // 0-100 AI estimate based on extracted resume text
   summary: string;
   skillsIdentified: {
     technical: string[];
