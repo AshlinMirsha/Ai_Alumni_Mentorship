@@ -14,7 +14,7 @@ interface GenerateOptions {
 
 export interface AIResponse {
   text: string;
-  provider: "gemini" | "openai" | "fallback";
+  provider: "gemini" | "openai";
   model: string;
 }
 

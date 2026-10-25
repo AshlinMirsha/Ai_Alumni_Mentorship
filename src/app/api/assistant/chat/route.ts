@@ -162,9 +162,9 @@ ADVISORY RULES:
 
     // 7. Generate contextual suggestions and suggested actions
     const dynamicSuggestions: string[] = [
-      `What portfolio projects will best demonstrate my skills for ${targetRole}?`,
-      `How can I prepare for technical interviews for ${targetRole}?`,
-      `How should I structure my resume for ${targetRole} positions?`,
+      "What should I learn next based on this answer?",
+      "What project could help me practice this?",
+      "How can I prepare for opportunities in this area?",
     ];
 
     const suggestedActions: AssistantSuggestedAction[] = [
