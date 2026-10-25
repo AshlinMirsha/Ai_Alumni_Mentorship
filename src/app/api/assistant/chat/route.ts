@@ -52,47 +52,48 @@ export async function POST(req: Request) {
       );
     }
 
-    const conversationId = body.conversationId || body.conversation_id;
+    const requestedConversationId = body.conversationId || body.conversation_id;
 
     // 3. Security: If a conversationId was supplied, verify ownership
     const supabase = getAdminClient();
-    const verifiedConversationId = conversationId;
+    let verifiedConversationId: string | undefined;
     let priorMessages: Array<{ role: "user" | "assistant"; content: string }> = [];
 
-    if (conversationId) {
-      try {
-        const { data: conv, error: convErr } = await supabase
-          .from("career_assistant_conversations")
-          .select("id, user_id")
-          .eq("id", conversationId)
-          .maybeSingle();
+    if (requestedConversationId) {
+      const { data: conv, error: convErr } = await supabase
+        .from("career_assistant_conversations")
+        .select("id, user_id")
+        .eq("id", requestedConversationId)
+        .maybeSingle();
 
-        if (!convErr && conv) {
-          if (conv.user_id !== user.id) {
-            return NextResponse.json(
-              {
-                success: false,
-                error: "Unauthorized access: You do not have permission to view or participate in this conversation.",
-                code: "FORBIDDEN_CONVERSATION",
-              },
-              { status: 403 }
-            );
-          }
-          const { data: history } = await supabase
-            .from("career_assistant_messages")
-            .select("role, content")
-            .eq("conversation_id", conversationId)
-            .eq("user_id", user.id)
-            .order("created_at", { ascending: false })
-            .limit(12);
-          priorMessages = (history || [])
-            .reverse()
-            .filter((message: any) => message.role === "user" || message.role === "assistant")
-            .map((message: any) => ({ role: message.role, content: message.content }));
-        }
-      } catch {
-        // Table may not exist yet or connection issue
+      if (convErr || !conv) {
+        return NextResponse.json(
+          { success: false, error: "Conversation not found. Start a new chat and try again.", code: "CONVERSATION_NOT_FOUND" },
+          { status: 404 }
+        );
       }
+      if (conv.user_id !== user.id) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Unauthorized access: You do not have permission to view or participate in this conversation.",
+            code: "FORBIDDEN_CONVERSATION",
+          },
+          { status: 403 }
+        );
+      }
+      verifiedConversationId = conv.id;
+      const { data: history } = await supabase
+        .from("career_assistant_messages")
+        .select("role, content")
+        .eq("conversation_id", verifiedConversationId)
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(12);
+      priorMessages = (history || [])
+        .reverse()
+        .filter((message: any) => message.role === "user" || message.role === "assistant")
+        .map((message: any) => ({ role: message.role, content: message.content }));
     }
 
     // 4. Retrieve student's actual profile context from DB
@@ -246,7 +247,7 @@ ADVISORY RULES:
     return NextResponse.json({
       success: true,
       message: responseMessage,
-      conversationId: finalConversationId || `conv-${user.id}`,
+      conversationId: finalConversationId || null,
       latencyMs,
       provider: aiResult.provider,
     });

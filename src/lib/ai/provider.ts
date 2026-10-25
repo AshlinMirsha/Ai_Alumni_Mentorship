@@ -29,7 +29,7 @@ export class AIProviderError extends Error {
  * Executes an AI generation request using server-side Gemini 3.5 Flash or OpenAI.
  */
 export async function generateAICareerResponse(options: GenerateOptions & { history?: Array<{ role: "user" | "assistant"; content: string }> }): Promise<AIResponse> {
-  const { prompt, systemPrompt, temperature = 0.7, timeoutMs = 25000 } = options;
+  const { prompt, systemPrompt, temperature = 0.7, timeoutMs = 45000 } = options;
 
   const geminiKey = process.env.GEMINI_API_KEY;
   const openaiKey = process.env.OPENAI_API_KEY;
@@ -54,7 +54,7 @@ export async function generateAICareerResponse(options: GenerateOptions & { hist
       ];
 
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${process.env.GEMINI_MODEL || "gemini-2.5-flash"}:generateContent`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${process.env.GEMINI_MODEL || "gemini-3.5-flash"}:generateContent`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-goog-api-key": geminiKey },
@@ -76,7 +76,7 @@ export async function generateAICareerResponse(options: GenerateOptions & { hist
           return {
             text: text.trim(),
             provider: "gemini",
-            model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+            model: process.env.GEMINI_MODEL || "gemini-3.5-flash",
           };
         }
       } else {
