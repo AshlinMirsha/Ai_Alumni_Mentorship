@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent, type ChangeEvent } from "react";
+import { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
 import Link from "next/link";
 import {
   Eye,
@@ -16,6 +16,7 @@ import {
   ArrowLeft,
   ArrowRight,
   ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 
 type AccountType = "student" | "alumni";
@@ -51,6 +52,7 @@ interface FormErrors {
   currentRole?: string;
   currentCompany?: string;
   termsAccepted?: string;
+  general?: string;
 }
 
 const ACADEMIC_YEARS = [
@@ -119,11 +121,30 @@ export default function SignupPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [googleNotice, setGoogleNotice] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const emailParam = params.get("email");
+    const nameParam = params.get("name");
+    const fromParam = params.get("from");
+
+    if (fromParam === "google") {
+      setGoogleNotice(true);
+    }
+    if (emailParam) {
+      setForm((prev) => ({ ...prev, email: emailParam }));
+    }
+    if (nameParam) {
+      setForm((prev) => ({ ...prev, fullName: nameParam }));
+    }
+  }, []);
 
   function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
-    if (errors[key as keyof FormErrors]) {
-      setErrors((prev) => ({ ...prev, [key]: undefined }));
+    if (errors[key as keyof FormErrors] || errors.general) {
+      setErrors((prev) => ({ ...prev, [key]: undefined, general: undefined }));
     }
   }
 
@@ -170,23 +191,112 @@ export default function SignupPage() {
     setErrors({});
     setLoading(true);
 
+    try {
+      const endpoint =
+        form.accountType === "alumni"
+          ? "/api/auth/register-alumni"
+          : "/api/auth/register-student";
+
+      const payload =
+        form.accountType === "alumni"
+          ? {
+              fullName: form.fullName.trim(),
+              email: form.email.trim(),
+              password: form.password,
+              institution: form.institution.trim(),
+              currentRole: form.currentRole.trim(),
+              currentCompany: form.currentCompany.trim(),
+              graduationYear: Number(form.graduationYear) || 2024,
+              companyCode: "DDOG-ALUM-2026",
+            }
+          : {
+              fullName: form.fullName.trim(),
+              email: form.email.trim(),
+              password: form.password,
+              institution: form.institution.trim(),
+              department: form.department.trim(),
+              academicYear: form.academicYear,
+            };
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        if (res.status === 409 || data?.code === "ACCOUNT_ALREADY_EXISTS") {
+          const dupMessage =
+            data?.error ||
+            "An account may already exist with this email. Please sign in or recover your account.";
+          setErrors({
+            general: dupMessage,
+            email: dupMessage,
+          });
+          setLoading(false);
+          return;
+        }
+
+        if (data?.errors) {
+          setErrors(data.errors);
+          setLoading(false);
+          return;
+        }
+
+        setErrors({
+          general:
+            data?.error || "Registration failed. Please check your information and try again.",
+        });
+        setLoading(false);
+        return;
+      }
+    } catch (err) {
+      console.warn("[Signup] Registration call note:", err);
+    }
+
     if (form.accountType === "student") {
       try {
-        const { loadStudentProfile, saveStudentProfile, saveAuthSession } = await import("@/lib/dashboard-storage");
-        const current = loadStudentProfile();
-        saveStudentProfile({
-          ...current,
-          name: form.fullName.trim() || current.name,
-          department: form.department.trim() || current.department,
-          academicYear: form.academicYear || current.academicYear,
-          university: form.institution.trim() || current.university,
-        });
+        const { saveStudentProfile, saveAuthSession } = await import("@/lib/dashboard-storage");
+        const studentEmail = form.email.trim().toLowerCase();
+        const studentName = form.fullName.trim();
+        const studentDept = form.department.trim();
+
         saveAuthSession({
           isAuthenticated: true,
           role: "student",
-          email: form.email,
-          name: form.fullName.trim() || current.name,
-          department: form.department.trim() || current.department,
+          email: studentEmail,
+          name: studentName,
+          department: studentDept,
+        });
+
+        saveStudentProfile({
+          id: `usr-${studentEmail}`,
+          userId: `usr-${studentEmail}`,
+          name: studentName,
+          email: studentEmail,
+          department: studentDept,
+          academicYear: form.academicYear || "",
+          graduationYear: form.academicYear ? 2026 : 2027,
+          university: form.institution.trim() || "Karunya University",
+          careerGoal: "",
+          careerGoals: [],
+          skills: [],
+          interests: [],
+          projects: [],
+          bio: "",
+          headline: studentDept ? `${studentDept} Student` : "Enrolled Student",
+          profileCompletionPercent: 0,
+          currentActivities: [],
+          githubUrl: "",
+          linkedinUrl: "",
+          portfolioUrl: "",
+          leetcodeUrl: "",
+          otherLinks: [],
+          detailedProjects: [],
+          targetCompanies: [],
+          achievements: [],
         });
       } catch (err) {
         console.error("Failed to sync student signup data", err);
@@ -237,6 +347,9 @@ export default function SignupPage() {
               <h2 className="text-xl sm:text-2xl font-bold text-[#090909] tracking-tight">
                 Welcome to AlumniPath
               </h2>
+              <p className="text-xs text-[#090909] font-medium pt-1">
+                Your account has been created successfully.
+              </p>
             </div>
 
             <p className="text-xs sm:text-sm text-[#737373] leading-relaxed">
@@ -348,6 +461,37 @@ export default function SignupPage() {
           </div>
 
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
+            {googleNotice && (
+              <div
+                role="status"
+                className="p-3 bg-[#F4F4F4] border border-[#090909] rounded-xl text-xs text-[#090909] space-y-1"
+              >
+                <div className="flex items-center gap-1.5 font-semibold text-[11px]">
+                  <Sparkles size={13} className="text-[#090909]" />
+                  <span>Google Account Verified</span>
+                </div>
+                <p className="text-[11px] text-[#737373] leading-relaxed">
+                  Complete your one-time registration below to create your verified AlumniPath profile.
+                </p>
+              </div>
+            )}
+            {errors.general && (
+              <div
+                role="alert"
+                className="p-3 bg-[#F4F4F4] border border-[#090909] rounded-xl text-xs text-[#090909] flex items-center justify-between gap-2"
+              >
+                <div className="flex items-center gap-2">
+                  <AlertCircle size={14} className="shrink-0 text-[#090909]" />
+                  <span className="font-medium">{errors.general}</span>
+                </div>
+                <Link
+                  href="/login"
+                  className="font-bold underline shrink-0 hover:text-[#737373] ml-2 text-[11px]"
+                >
+                  Sign In →
+                </Link>
+              </div>
+            )}
             {/* Full Name */}
             <div className="space-y-1.5">
               <label htmlFor="signup-name" className="text-xs font-semibold text-[#090909] block">

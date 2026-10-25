@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Sparkles,
@@ -16,6 +17,23 @@ interface SkillGapListProps {
 }
 
 export function SkillGapList({ student, targetRole }: SkillGapListProps) {
+  const [apiData, setApiData] = useState<any>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/career/skill-gap")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (isMounted && data?.success) {
+          setApiData(data);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, [targetRole]);
+
   const benchmarkSkills = [
     { name: "Python", category: "Backend Language", benchmarkLevel: "Advanced" },
     { name: "JavaScript / TypeScript", category: "Frontend Language", benchmarkLevel: "Advanced" },
@@ -59,6 +77,11 @@ export function SkillGapList({ student, targetRole }: SkillGapListProps) {
       resources: ["Redis University (Free)", "Caching Strategies Overview"],
     },
   ];
+
+  const activeSkillsToDevelop =
+    apiData?.recommendedSkillsToDevelop && apiData.recommendedSkillsToDevelop.length > 0
+      ? apiData.recommendedSkillsToDevelop
+      : skillsToDevelop;
 
   const suggestedAssistantQuery = encodeURIComponent(
     `How can I bridge my skill gaps in TypeScript, Docker, and advanced PostgreSQL for ${targetRole} positions?`
@@ -157,7 +180,7 @@ export function SkillGapList({ student, targetRole }: SkillGapListProps) {
           </div>
 
           <div className="space-y-2">
-            {skillsToDevelop.map((gap, idx) => (
+            {activeSkillsToDevelop.map((gap: any, idx: number) => (
               <div
                 key={idx}
                 className="p-2.5 rounded-lg bg-[#FAFAFA] border border-[#E7E7E7] text-xs space-y-1"
@@ -189,12 +212,12 @@ export function SkillGapList({ student, targetRole }: SkillGapListProps) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          {skillsToDevelop.map((item, idx) => (
+          {activeSkillsToDevelop.map((item: any, idx: number) => (
             <div key={idx} className="p-3 bg-white rounded-xl border border-[#E7E7E7] space-y-1.5 shadow-xs">
               <span className="font-bold text-[#090909]">{item.skill} Action:</span>
               <p className="text-[11px] text-[#555555] leading-relaxed">{item.suggestedNextStep}</p>
               <div className="pt-1 flex flex-wrap gap-2 text-[10px] text-[#090909]">
-                {item.resources.map((res, rIdx) => (
+                {(item.resources || []).map((res: string, rIdx: number) => (
                   <span key={rIdx} className="hover:underline cursor-pointer font-medium">
                     {res}
                   </span>

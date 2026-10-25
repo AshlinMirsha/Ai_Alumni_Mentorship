@@ -68,7 +68,7 @@ export default function ResumeReviewPage() {
     setIsAnalyzing(true);
     try {
       const reviewResults = await resumeReviewService.analyzeResume(
-        { name: selectedFile.name, size: selectedFile.size },
+        { name: selectedFile.name, size: selectedFile.size, rawFile: selectedFile.file },
         targetRole,
         options
       );

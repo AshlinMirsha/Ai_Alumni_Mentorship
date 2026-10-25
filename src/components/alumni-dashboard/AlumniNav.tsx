@@ -96,6 +96,7 @@ export function AlumniNav({ onMobileToggle, mobileOpen }: AlumniNavProps) {
     { label: "Opportunities", href: "/alumni-dashboard/opportunities", icon: Briefcase, badge: null },
     { label: "Community", href: "/alumni-dashboard/community", icon: MessagesSquare, badge: null },
     { label: "Messages", href: "/messages", icon: MessageSquare, badge: null },
+    { label: "Profile", href: "/alumni-dashboard/profile", icon: User, badge: null },
   ];
 
   useEffect(() => {

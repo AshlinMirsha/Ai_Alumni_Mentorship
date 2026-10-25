@@ -48,17 +48,28 @@ const UNIVERSITY_EVENTS_STORAGE_KEY = "alumnipath_demo_university_events_v1";
 
 const listeners = new Set<() => void>();
 
+let isStorageListenerAttached = false;
+function onWindowStorage(event: StorageEvent) {
+  if (
+    event.key &&
+    (event.key.startsWith("alumnipath_") ||
+      event.key === STUDENT_STORAGE_KEY ||
+      event.key === AUTH_SESSION_KEY)
+  ) {
+    cachedStudentRaw = null;
+    cachedBaseAuthRaw = null;
+    notifyDashboardChange();
+  }
+}
+
 export function subscribeToDashboardStorage(listener: () => void): () => void {
   listeners.add(listener);
-  const handleStorageEvent = () => listener();
-  if (typeof window !== "undefined") {
-    window.addEventListener("storage", handleStorageEvent);
+  if (typeof window !== "undefined" && !isStorageListenerAttached) {
+    window.addEventListener("storage", onWindowStorage);
+    isStorageListenerAttached = true;
   }
   return () => {
     listeners.delete(listener);
-    if (typeof window !== "undefined") {
-      window.removeEventListener("storage", handleStorageEvent);
-    }
   };
 }
 
@@ -74,34 +85,129 @@ export function notifyDashboardChange(): void {
 
 // ─── Student Profile Storage ──────────────────────────────────────────────────
 
+function getStudentStorageKey(): string {
+  if (typeof window === "undefined") return STUDENT_STORAGE_KEY;
+  try {
+    const rawAuth = localStorage.getItem(AUTH_SESSION_KEY);
+    if (rawAuth) {
+      const auth = JSON.parse(rawAuth);
+      if (auth && auth.email && auth.role !== "alumni") {
+        return `alumnipath_student_profile_${auth.email.trim().toLowerCase()}`;
+      }
+    }
+  } catch {
+    // fallback
+  }
+  return STUDENT_STORAGE_KEY;
+}
+
+let cachedBaseAuthRaw: string | null = null;
+let cachedBaseStudent: Student = currentStudent;
+
+export function getBaseStudentForSession(): Student {
+  if (typeof window === "undefined") return currentStudent;
+  try {
+    const rawAuth = localStorage.getItem(AUTH_SESSION_KEY);
+    if (!rawAuth) {
+      cachedBaseAuthRaw = null;
+      cachedBaseStudent = currentStudent;
+      return currentStudent;
+    }
+    if (rawAuth === cachedBaseAuthRaw && cachedBaseStudent) {
+      return cachedBaseStudent;
+    }
+    const auth = JSON.parse(rawAuth);
+    if (auth && auth.email && auth.role !== "alumni") {
+      const emailLower = auth.email.trim().toLowerCase();
+      const base: Student = {
+        id: `usr-${emailLower}`,
+        userId: `usr-${emailLower}`,
+        name: auth.name || "",
+        email: emailLower,
+        avatar: auth.avatar,
+        avatarUrl: auth.avatar,
+        headline: auth.headline || (auth.department ? `${auth.department} Student` : "Enrolled Student"),
+        university: "Karunya University",
+        department: auth.department || "",
+        graduationYear: 2027,
+        academicYear: "",
+        careerGoal: "",
+        projects: [],
+        skills: [],
+        interests: [],
+        careerGoals: [],
+        bio: "",
+        profileCompletionPercent: 0,
+        currentActivities: [],
+        githubUrl: "",
+        linkedinUrl: "",
+        portfolioUrl: "",
+        leetcodeUrl: "",
+        otherLinks: [],
+        detailedProjects: [],
+        targetCompanies: [],
+        achievements: [],
+      };
+      cachedBaseAuthRaw = rawAuth;
+      cachedBaseStudent = base;
+      return base;
+    }
+  } catch {
+    // fallback
+  }
+  return currentStudent;
+}
+
+let cachedStudentKey: string | null = null;
 let cachedStudentRaw: string | null = null;
 let cachedStudentObj: Student = currentStudent;
 
 export function loadStudentProfile(): Student {
-  if (typeof window === "undefined") return currentStudent;
+  const base = getBaseStudentForSession();
+  if (typeof window === "undefined") return base;
   try {
-    const raw = localStorage.getItem(STUDENT_STORAGE_KEY);
-    if (!raw) return currentStudent;
-    if (raw === cachedStudentRaw) return cachedStudentObj;
+    const key = getStudentStorageKey();
+    const raw = localStorage.getItem(key);
+
+    if (key === cachedStudentKey && raw === cachedStudentRaw && cachedStudentObj) {
+      return cachedStudentObj;
+    }
+
+    cachedStudentKey = key;
     cachedStudentRaw = raw;
-    cachedStudentObj = { ...currentStudent, ...JSON.parse(raw) };
-    return cachedStudentObj;
+
+    if (!raw) {
+      cachedStudentObj = base;
+      return base;
+    }
+
+    const parsed = JSON.parse(raw);
+    const result: Student = { ...base, ...parsed };
+    cachedStudentObj = result;
+    return result;
   } catch {
-    return currentStudent;
+    return base;
   }
 }
 
 export function saveStudentProfile(student: Student): void {
   if (typeof window === "undefined") return;
   try {
+    const key = getStudentStorageKey();
+    const base = getBaseStudentForSession();
     const safeData: Partial<Student> = {
-      id: student.id,
+      id: student.id || base.id,
+      userId: student.userId || base.userId,
       name: student.name,
+      email: student.email || base.email,
       department: student.department,
+      degree: student.degree,
       academicYear: student.academicYear,
       graduationYear: student.graduationYear,
       careerGoal: student.careerGoal,
       careerGoals: student.careerGoals,
+      preferredLocation: student.preferredLocation,
+      internshipInterest: student.internshipInterest,
       skills: student.skills,
       interests: student.interests,
       projects: student.projects,
@@ -109,11 +215,26 @@ export function saveStudentProfile(student: Student): void {
       headline: student.headline,
       university: student.university,
       avatar: student.avatar,
+      avatarUrl: student.avatarUrl || student.avatar,
+      currentActivities: student.currentActivities,
+      githubUrl: student.githubUrl,
+      linkedinUrl: student.linkedinUrl,
+      portfolioUrl: student.portfolioUrl,
+      leetcodeUrl: student.leetcodeUrl,
+      otherLinks: student.otherLinks,
+      detailedProjects: student.detailedProjects,
+      targetCompanies: student.targetCompanies,
+      achievements: student.achievements,
+      education: student.education,
     };
     const serialized = JSON.stringify(safeData);
-    localStorage.setItem(STUDENT_STORAGE_KEY, serialized);
+    if (key === cachedStudentKey && serialized === cachedStudentRaw) {
+      return;
+    }
+    localStorage.setItem(key, serialized);
+    cachedStudentKey = key;
     cachedStudentRaw = serialized;
-    cachedStudentObj = { ...currentStudent, ...safeData };
+    cachedStudentObj = { ...base, ...safeData };
     notifyDashboardChange();
   } catch (err) {
     console.error("Failed to persist student profile to localStorage", err);
@@ -121,17 +242,20 @@ export function saveStudentProfile(student: Student): void {
 }
 
 export function resetStudentProfile(): Student {
+  const base = getBaseStudentForSession();
   if (typeof window !== "undefined") {
     try {
-      localStorage.removeItem(STUDENT_STORAGE_KEY);
+      const key = getStudentStorageKey();
+      localStorage.removeItem(key);
+      cachedStudentKey = key;
       cachedStudentRaw = null;
-      cachedStudentObj = currentStudent;
+      cachedStudentObj = base;
       notifyDashboardChange();
     } catch {
       // ignore
     }
   }
-  return currentStudent;
+  return base;
 }
 
 // ─── Career Roadmap Stages Storage ───────────────────────────────────────────
@@ -1168,34 +1292,212 @@ export function logoutAuthSession(): void {
 
 // ─── Alumni Profile Storage (Logged In Alumnus) ──────────────────────────────
 
+export function getAlumniStorageKey(): string {
+  if (typeof window === "undefined") return ALUMNI_PROFILE_KEY;
+  try {
+    const rawAuth = localStorage.getItem(AUTH_SESSION_KEY);
+    if (rawAuth) {
+      const auth = JSON.parse(rawAuth);
+      if (auth && auth.email && auth.role === "alumni") {
+        return `alumnipath_alumni_profile_${auth.email.trim().toLowerCase()}`;
+      }
+    }
+  } catch {
+    // fallback
+  }
+  return ALUMNI_PROFILE_KEY;
+}
+
+let cachedBaseAlumniAuthRaw: string | null = null;
+let cachedBaseAlumni: Alumni = defaultAlumniUser;
+
+export function getBaseAlumniForSession(): Alumni {
+  if (typeof window === "undefined") return defaultAlumniUser;
+  try {
+    const rawAuth = localStorage.getItem(AUTH_SESSION_KEY);
+    if (!rawAuth) {
+      cachedBaseAlumniAuthRaw = null;
+      cachedBaseAlumni = defaultAlumniUser;
+      return defaultAlumniUser;
+    }
+    if (rawAuth === cachedBaseAlumniAuthRaw && cachedBaseAlumni) {
+      return cachedBaseAlumni;
+    }
+    const auth = JSON.parse(rawAuth);
+    if (auth && auth.email && auth.role === "alumni") {
+      const emailLower = auth.email.trim().toLowerCase();
+      const base: Alumni = {
+        id: auth.id || `usr-${emailLower}`,
+        userId: auth.id || `usr-${emailLower}`,
+        name: auth.name || "",
+        email: emailLower,
+        avatar: auth.avatar || "",
+        avatarUrl: auth.avatar || "",
+        headline: auth.headline || (auth.currentRole ? `${auth.currentRole} at ${auth.company || "Industry"}` : "Alumni Mentor"),
+        location: auth.location || "",
+        city: auth.location || "",
+        company: auth.company || "",
+        role: auth.currentRole || "",
+        graduationYear: auth.graduationYear || new Date().getFullYear(),
+        department: auth.department || "",
+        degree: auth.degree || "",
+        industry: auth.industry || "",
+        yearsOfExperience: auth.yearsOfExperience || 0,
+        isVerified: true,
+        skills: [],
+        interests: [],
+        workExperience: [],
+        education: [],
+        bio: auth.bio || "",
+        linkedinUrl: auth.linkedinUrl || "",
+        githubUrl: auth.githubUrl || "",
+        portfolioUrl: auth.portfolioUrl || "",
+        specializations: [],
+        currentEmployment: {
+          status: auth.company ? "Employed" : "Seeking opportunities",
+          company: auth.company || "",
+          role: auth.currentRole || "",
+          employmentType: "Full-time",
+          startDate: "",
+          location: auth.location || "",
+          workArrangement: "Hybrid",
+          responsibilities: "",
+        },
+        detailedSkills: [],
+        detailedWorkExperience: [],
+        internships: [],
+        careerJourney: [],
+        mentorshipDetails: {
+          available: true,
+          topics: [],
+          skills: [],
+          domains: [],
+          preferredFormats: ["1-on-1 Mentorship Sessions", "Resume Reviews"],
+          maxMentees: 5,
+        },
+        mentorshipAvailability: "available",
+        mentorshipAreas: [],
+        responseRate: 100,
+        averageResponseTime: "within 24 hours",
+        totalMentees: 0,
+        maxMentees: 5,
+        university: auth.institution || "Karunya University",
+      };
+      cachedBaseAlumniAuthRaw = rawAuth;
+      cachedBaseAlumni = base;
+      return base;
+    }
+  } catch {
+    // fallback
+  }
+  return defaultAlumniUser;
+}
+
+let cachedAlumniKey: string | null = null;
 let cachedAlumniProfileRaw: string | null = null;
 let cachedAlumniProfileObj: Alumni = defaultAlumniUser;
 
 export function loadAlumniProfile(): Alumni {
-  if (typeof window === "undefined") return defaultAlumniUser;
+  const base = getBaseAlumniForSession();
+  if (typeof window === "undefined") return base;
   try {
-    const raw = localStorage.getItem(ALUMNI_PROFILE_KEY);
-    if (!raw) return defaultAlumniUser;
-    if (raw === cachedAlumniProfileRaw) return cachedAlumniProfileObj;
+    const key = getAlumniStorageKey();
+    const raw = localStorage.getItem(key);
+
+    if (key === cachedAlumniKey && raw === cachedAlumniProfileRaw && cachedAlumniProfileObj) {
+      return cachedAlumniProfileObj;
+    }
+
+    cachedAlumniKey = key;
     cachedAlumniProfileRaw = raw;
-    cachedAlumniProfileObj = { ...defaultAlumniUser, ...JSON.parse(raw) };
-    return cachedAlumniProfileObj;
+
+    if (!raw) {
+      cachedAlumniProfileObj = base;
+      return base;
+    }
+
+    const parsed = JSON.parse(raw);
+    const result: Alumni = { ...base, ...parsed };
+    cachedAlumniProfileObj = result;
+    return result;
   } catch {
-    return defaultAlumniUser;
+    return base;
   }
 }
 
 export function saveAlumniProfile(profile: Alumni): void {
   if (typeof window === "undefined") return;
   try {
-    const serialized = JSON.stringify(profile);
-    localStorage.setItem(ALUMNI_PROFILE_KEY, serialized);
+    const key = getAlumniStorageKey();
+    const base = getBaseAlumniForSession();
+    const safeData: Alumni = {
+      ...base,
+      ...profile,
+      id: profile.id || base.id,
+      userId: profile.userId || base.userId,
+      name: profile.name,
+      email: profile.email || base.email,
+      headline: profile.headline,
+      bio: profile.bio,
+      location: profile.location,
+      city: profile.city || profile.location,
+      company: profile.company,
+      role: profile.role,
+      graduationYear: profile.graduationYear,
+      department: profile.department,
+      degree: profile.degree,
+      avatar: profile.avatar || profile.avatarUrl,
+      avatarUrl: profile.avatarUrl || profile.avatar,
+      linkedinUrl: profile.linkedinUrl,
+      githubUrl: profile.githubUrl,
+      portfolioUrl: profile.portfolioUrl,
+      specializations: profile.specializations || [],
+      currentEmployment: profile.currentEmployment || base.currentEmployment,
+      detailedSkills: profile.detailedSkills || [],
+      skills: profile.skills || [],
+      detailedWorkExperience: profile.detailedWorkExperience || [],
+      workExperience: profile.workExperience || [],
+      internships: profile.internships || [],
+      careerJourney: profile.careerJourney || [],
+      mentorshipDetails: profile.mentorshipDetails || base.mentorshipDetails,
+      mentorshipAvailability: profile.mentorshipAvailability || "available",
+      mentorshipAreas: profile.mentorshipAreas || [],
+      university: profile.university || profile.institution || base.university,
+      institution: profile.institution || profile.university || (base as any).institution,
+      detailedEducation: profile.detailedEducation || [],
+      certifications: profile.certifications || [],
+      otherProfessionalLinks: profile.otherProfessionalLinks || [],
+      specializationDetails: profile.specializationDetails || base.specializationDetails,
+    };
+    const serialized = JSON.stringify(safeData);
+    if (key === cachedAlumniKey && serialized === cachedAlumniProfileRaw) {
+      return;
+    }
+    localStorage.setItem(key, serialized);
+    cachedAlumniKey = key;
     cachedAlumniProfileRaw = serialized;
-    cachedAlumniProfileObj = profile;
+    cachedAlumniProfileObj = safeData;
     notifyDashboardChange();
   } catch (err) {
     console.error("Failed to persist alumni profile", err);
   }
+}
+
+export function resetAlumniProfile(): Alumni {
+  const base = getBaseAlumniForSession();
+  if (typeof window !== "undefined") {
+    try {
+      const key = getAlumniStorageKey();
+      localStorage.removeItem(key);
+      cachedAlumniKey = key;
+      cachedAlumniProfileRaw = null;
+      cachedAlumniProfileObj = base;
+      notifyDashboardChange();
+    } catch {
+      // ignore
+    }
+  }
+  return base;
 }
 
 // ─── Opportunities & Referrals Storage ────────────────────────────────────────

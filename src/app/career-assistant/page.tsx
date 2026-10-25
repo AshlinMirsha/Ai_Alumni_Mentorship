@@ -57,7 +57,27 @@ export default function CareerAssistantPage() {
   const [messages, setMessages] = useState<AssistantMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [contextData, setContextData] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    careerAssistantService.fetchContextualTopics().then((res) => {
+      if (isMounted && res?.success) {
+        setContextData(res);
+      }
+    });
+
+    careerAssistantService.fetchConversationHistory().then((history) => {
+      if (isMounted && history.length > 0) {
+        setMessages(history);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Auto-scroll to latest message
   const scrollToBottom = () => {
@@ -138,6 +158,25 @@ export default function CareerAssistantPage() {
     },
   ];
 
+  const activePrompts =
+    contextData?.suggestedPrompts && contextData.suggestedPrompts.length >= 4
+      ? contextData.suggestedPrompts.slice(0, 4).map((p: any, idx: number) => ({
+          title: p.title,
+          description: p.description,
+          prompt: p.prompt,
+          icon:
+            idx === 0 ? (
+              <Map size={16} />
+            ) : idx === 1 ? (
+              <Briefcase size={16} />
+            ) : idx === 2 ? (
+              <FileText size={16} />
+            ) : (
+              <GraduationCap size={16} />
+            ),
+        }))
+      : welcomePrompts;
+
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex antialiased text-[#090909]">
       {/* App Sidebar (Desktop) */}
@@ -196,6 +235,29 @@ export default function CareerAssistantPage() {
             </div>
           </div>
 
+          {/* Profile Completion Guidance Banner (if profile has missing fields) */}
+          {contextData?.profileContext?.missingFields &&
+            contextData.profileContext.missingFields.length > 0 && (
+              <div className="p-3 bg-neutral-100/80 border border-[#E7E7E7] rounded-xl flex flex-col sm:flex-row sm:items-center justify-between text-xs gap-3">
+                <div className="flex items-center gap-2 text-neutral-800">
+                  <AlertCircle size={15} className="text-[#090909] shrink-0" />
+                  <span>
+                    To get the most accurate advice, add your{" "}
+                    <strong className="text-[#090909]">
+                      {contextData.profileContext.missingFields.join(", ")}
+                    </strong>{" "}
+                    to your profile.
+                  </span>
+                </div>
+                <Link
+                  href="/profile"
+                  className="font-bold text-[#090909] underline hover:no-underline shrink-0"
+                >
+                  Complete Profile →
+                </Link>
+              </div>
+            )}
+
           {/* Main Grid: Chat Area + Contextual Sidebar */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-1 items-start">
             {/* Conversation Main Container (3 Cols) */}
@@ -220,7 +282,7 @@ export default function CareerAssistantPage() {
 
                     {/* 4 Required Suggestion Buttons */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-left">
-                      {welcomePrompts.map((item, idx) => (
+                      {activePrompts.map((item: any, idx: number) => (
                         <SuggestionPrompt
                           key={idx}
                           icon={item.icon}

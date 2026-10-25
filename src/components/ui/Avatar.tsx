@@ -32,9 +32,10 @@ function getColor(name: string): string {
   return COLORS[Math.abs(hash) % COLORS.length];
 }
 
-export function Avatar({ name, src, size = "md", className, ...props }: AvatarProps) {
-  const initials = getInitials(name);
-  const colorClass = getColor(name);
+export function Avatar({ name = "", src, size = "md", className, ...props }: AvatarProps) {
+  const safeName = (name && name.trim().length > 0) ? name.trim() : "Student";
+  const initials = getInitials(safeName);
+  const colorClass = getColor(safeName);
 
   if (src) {
     return (
@@ -49,7 +50,7 @@ export function Avatar({ name, src, size = "md", className, ...props }: AvatarPr
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={src}
-          alt={name}
+          alt={safeName}
           className="w-full h-full object-cover grayscale contrast-105"
         />
       </div>
@@ -64,7 +65,7 @@ export function Avatar({ name, src, size = "md", className, ...props }: AvatarPr
         colorClass,
         className
       )}
-      aria-label={name}
+      aria-label={safeName}
       {...props}
     >
       {initials}

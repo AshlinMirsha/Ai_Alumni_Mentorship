@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useSyncExternalStore } from "react";
+import { useState, useMemo, useSyncExternalStore, useEffect } from "react";
 import Link from "next/link";
 import {
   Map,
@@ -54,6 +54,24 @@ export default function CareerRoadmapPage() {
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  const targetRole = student.careerGoal || "Full-Stack Software Engineer";
+
+  // Sync with live Supabase roadmap on mount
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/career/roadmap")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (isMounted && data?.success && Array.isArray(data.stages) && data.stages.length > 0) {
+          saveRoadmapStages(data.stages);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
@@ -63,12 +81,24 @@ export default function CareerRoadmapPage() {
     const updated = stages.map((s) => (s.id === stageId ? { ...s, status: newStatus } : s));
     saveRoadmapStages(updated);
     showToast(`Milestone updated to "${newStatus.replace("_", " ")}".`);
+
+    fetch("/api/career/roadmap", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ stages: updated, targetRole }),
+    }).catch(() => {});
   };
 
   const handleResetProgress = () => {
     resetRoadmapStages();
     setShowResetConfirm(false);
-    showToast("Roadmap progress reset to initial demo track.");
+    showToast("Roadmap progress reset to initial track.");
+
+    fetch("/api/career/roadmap", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ stages: initialRoadmapStages, targetRole }),
+    }).catch(() => {});
   };
 
   const handleSaveRole = (newRole: string) => {
@@ -81,17 +111,34 @@ export default function CareerRoadmapPage() {
     showToast(`Target role updated to "${newRole}".`);
   };
 
-  const handleRegenerateRoadmap = () => {
+  const handleRegenerateRoadmap = async () => {
     setIsRegenerating(true);
-    setTimeout(() => {
-      const reset = initialRoadmapStages.map((s, idx) => ({
-        ...s,
-        status: idx === 0 ? ("completed" as const) : idx === 1 ? ("in_progress" as const) : ("not_started" as const),
-      }));
-      saveRoadmapStages(reset);
-      setIsRegenerating(false);
-      showToast("Roadmap regenerated from tier-1 engineering curriculum.");
-    }, 600);
+    try {
+      const res = await fetch("/api/career/roadmap", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ regenerate: true, targetRole }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && Array.isArray(data.stages)) {
+          saveRoadmapStages(data.stages);
+          showToast("Roadmap regenerated with AI-analyzed curriculum.");
+          setIsRegenerating(false);
+          return;
+        }
+      }
+    } catch {
+      // Fallback
+    }
+
+    const reset = initialRoadmapStages.map((s, idx) => ({
+      ...s,
+      status: idx === 0 ? ("completed" as const) : idx === 1 ? ("in_progress" as const) : ("not_started" as const),
+    }));
+    saveRoadmapStages(reset);
+    setIsRegenerating(false);
+    showToast("Roadmap regenerated from tier-1 engineering curriculum.");
   };
 
   const totalStages = stages.length;
@@ -103,8 +150,6 @@ export default function CareerRoadmapPage() {
     if (statusFilter === "all") return stages;
     return stages.filter((s) => s.status === statusFilter);
   }, [stages, statusFilter]);
-
-  const targetRole = student.careerGoal || "Full-Stack Software Engineer";
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex antialiased text-[#090909]">
