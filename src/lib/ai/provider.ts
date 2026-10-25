@@ -1,7 +1,7 @@
 /**
  * Server-side AI Provider Client for AlumniPath Career Services
  * Strictly server-only: Never imports in browser components.
- * Supports Gemini 3.5 Flash with fallback to OpenAI and deterministic fallback.
+ * Supports Gemini with OpenAI as a configured provider fallback.
  */
 
 interface GenerateOptions {
@@ -18,44 +18,49 @@ export interface AIResponse {
   model: string;
 }
 
+export class AIProviderError extends Error {
+  constructor(message: string, public readonly code: "AI_NOT_CONFIGURED" | "AI_PROVIDER_FAILED") {
+    super(message);
+    this.name = "AIProviderError";
+  }
+}
+
 /**
  * Executes an AI generation request using server-side Gemini 3.5 Flash or OpenAI.
  */
-export async function generateAICareerResponse(options: GenerateOptions): Promise<AIResponse> {
+export async function generateAICareerResponse(options: GenerateOptions & { history?: Array<{ role: "user" | "assistant"; content: string }> }): Promise<AIResponse> {
   const { prompt, systemPrompt, temperature = 0.7, timeoutMs = 25000 } = options;
 
   const geminiKey = process.env.GEMINI_API_KEY;
   const openaiKey = process.env.OPENAI_API_KEY;
 
+  if (!geminiKey && !openaiKey) {
+    throw new AIProviderError("AI service is not configured. Set GEMINI_API_KEY or OPENAI_API_KEY on the server.", "AI_NOT_CONFIGURED");
+  }
+  const failures: string[] = [];
+
   // 1. Try Gemini (Primary active provider)
   if (geminiKey) {
+    let timer: ReturnType<typeof setTimeout> | undefined;
     try {
       const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), timeoutMs);
-
-      const contents = [];
-      if (systemPrompt) {
-        contents.push({
-          role: "user",
-          parts: [{ text: `[System Instruction]\n${systemPrompt}` }],
-        });
-        contents.push({
-          role: "model",
-          parts: [{ text: "Understood. I will act strictly as the AlumniPath career advisor following these instructions." }],
-        });
-      }
-      contents.push({
-        role: "user",
-        parts: [{ text: prompt }],
-      });
+      timer = setTimeout(() => controller.abort(), timeoutMs);
+      const contents = [
+        ...(options.history || []).map((message) => ({
+          role: message.role === "assistant" ? "model" : "user",
+          parts: [{ text: message.content }],
+        })),
+        { role: "user", parts: [{ text: prompt }] },
+      ];
 
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${geminiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${process.env.GEMINI_MODEL || "gemini-2.5-flash"}:generateContent`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-goog-api-key": geminiKey },
           body: JSON.stringify({
             contents,
+            ...(systemPrompt ? { systemInstruction: { parts: [{ text: systemPrompt }] } } : {}),
             generationConfig: {
               temperature,
               maxOutputTokens: 2048,
@@ -64,8 +69,6 @@ export async function generateAICareerResponse(options: GenerateOptions): Promis
           signal: controller.signal,
         }
       );
-      clearTimeout(timer);
-
       if (res.ok) {
         const data = await res.json();
         const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -73,28 +76,34 @@ export async function generateAICareerResponse(options: GenerateOptions): Promis
           return {
             text: text.trim(),
             provider: "gemini",
-            model: "gemini-3.5-flash",
+            model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
           };
         }
       } else {
         const errBody = await res.text().catch(() => "");
         console.warn("[AI Provider] Gemini error:", res.status, errBody.substring(0, 160));
+        failures.push(`Gemini returned HTTP ${res.status}.`);
       }
-    } catch (err: any) {
-      console.warn("[AI Provider] Gemini request failed or timed out:", err?.message);
+    } catch (err: unknown) {
+      console.warn("[AI Provider] Gemini request failed or timed out:", err instanceof Error ? err.message : "Unknown error");
+      failures.push("Gemini request failed or timed out.");
+    } finally {
+      if (timer) clearTimeout(timer);
     }
   }
 
   // 2. Try OpenAI Fallback
   if (openaiKey) {
+    let timer: ReturnType<typeof setTimeout> | undefined;
     try {
       const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      timer = setTimeout(() => controller.abort(), timeoutMs);
 
-      const messages: any[] = [];
+      const messages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [];
       if (systemPrompt) {
         messages.push({ role: "system", content: systemPrompt });
       }
+      for (const message of options.history || []) messages.push({ role: message.role, content: message.content });
       messages.push({ role: "user", content: prompt });
 
       const res = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -111,8 +120,6 @@ export async function generateAICareerResponse(options: GenerateOptions): Promis
         }),
         signal: controller.signal,
       });
-      clearTimeout(timer);
-
       if (res.ok) {
         const data = await res.json();
         const text = data?.choices?.[0]?.message?.content;
@@ -126,18 +133,17 @@ export async function generateAICareerResponse(options: GenerateOptions): Promis
       } else {
         const errBody = await res.text().catch(() => "");
         console.warn("[AI Provider] OpenAI error:", res.status, errBody.substring(0, 160));
+        failures.push(`OpenAI returned HTTP ${res.status}.`);
       }
-    } catch (err: any) {
-      console.warn("[AI Provider] OpenAI request failed or timed out:", err?.message);
+    } catch (err: unknown) {
+      console.warn("[AI Provider] OpenAI request failed or timed out:", err instanceof Error ? err.message : "Unknown error");
+      failures.push("OpenAI request failed or timed out.");
+    } finally {
+      if (timer) clearTimeout(timer);
     }
   }
 
-  // 3. Deterministic Structured Fallback (Guarantees zero downtime)
-  return {
-    text: generateDeterministicFallback(prompt),
-    provider: "fallback",
-    model: "alumnipath-rule-engine-v1",
-  };
+  throw new AIProviderError(`AI providers could not generate a response. ${failures.join(" ")}`.trim(), "AI_PROVIDER_FAILED");
 }
 
 /**
@@ -155,49 +161,4 @@ export function parseStructuredAIResponse<T>(rawText: string, fallback: T): T {
   } catch {
     return fallback;
   }
-}
-
-/**
- * Fallback generator when remote providers are unreachable or rate-limited.
- */
-function generateDeterministicFallback(prompt: string): string {
-  const p = prompt.toLowerCase();
-  if (p.includes("roadmap") || p.includes("plan")) {
-    return `### Personalized Career Roadmap Guidance
-
-To succeed in your target role, focus on these critical career milestones:
-1. **Core Fundamentals**: Master core algorithms, data structures, and asynchronous programming.
-2. **Framework Mastery**: Build end-to-end applications demonstrating clean component lifecycles and state management.
-3. **Database Architecture**: Practice relational normalization, indexing, and transactional boundaries.
-4. **Cloud & DevOps**: Containerize apps with Docker and deploy automated CI/CD pipelines.
-5. **Interview Readiness**: Systematic practice on key design patterns and behavioral STAR stories.
-
-You can inspect, track, and update your active milestone statuses directly on your personalized roadmap page.`;
-  }
-
-  if (p.includes("skill") || p.includes("gap")) {
-    return `### Skill Gap Assessment
-
-Based on typical engineering benchmarks:
-- **High Priority**: TypeScript, Docker containerization, and automated integration testing.
-- **Medium Priority**: Database query optimization (indexing & EXPLAIN plans) and caching architectures.
-- **Recommended Action**: Expand on your project bullet points to showcase production engineering depth and measurable impact.`;
-  }
-
-  if (p.includes("resume") || p.includes("cv")) {
-    return `### Resume Optimization Guidance
-
-Follow Google's **XYZ Formula**: *"Accomplished [X] as measured by [Y], by doing [Z]"*.
-- Standardize all bullet points to lead with strong action verbs (Architected, Spearheaded, Engineered).
-- Ensure core keywords matching your target role appear naturally in your Skills and Experience sections.
-- Submit your resume directly to our automated **Resume Review** page for in-depth ATS scoring and line-by-line feedback.`;
-  }
-
-  return `### Career Advisory Intelligence
-
-I am here to support your career trajectory. Consider these next steps:
-1. Complete your target career role and skill list on your **Student Profile**.
-2. Generate an actionable step-by-step roadmap on the **Career Roadmap** page.
-3. Upload your current resume to the **Resume Review** tool to check your ATS compatibility.
-4. Reach out to verified alumni mentors working in your field of interest.`;
 }

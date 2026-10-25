@@ -1,7 +1,7 @@
 import { NextResponse, connection } from "next/server";
 import { getAuthenticatedUser } from "@/lib/auth/authorize";
 import { getAdminClient } from "@/lib/supabase/admin";
-import { generateAICareerResponse } from "@/lib/ai/provider";
+import { AIProviderError, generateAICareerResponse } from "@/lib/ai/provider";
 import type { AssistantMessage, AssistantSuggestedAction } from "@/types";
 
 // Maximum allowable prompt length in characters
@@ -56,7 +56,8 @@ export async function POST(req: Request) {
 
     // 3. Security: If a conversationId was supplied, verify ownership
     const supabase = getAdminClient();
-    let verifiedConversationId = conversationId;
+    const verifiedConversationId = conversationId;
+    let priorMessages: Array<{ role: "user" | "assistant"; content: string }> = [];
 
     if (conversationId) {
       try {
@@ -77,6 +78,17 @@ export async function POST(req: Request) {
               { status: 403 }
             );
           }
+          const { data: history } = await supabase
+            .from("career_assistant_messages")
+            .select("role, content")
+            .eq("conversation_id", conversationId)
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false })
+            .limit(12);
+          priorMessages = (history || [])
+            .reverse()
+            .filter((message: any) => message.role === "user" || message.role === "assistant")
+            .map((message: any) => ({ role: message.role, content: message.content }));
         }
       } catch {
         // Table may not exist yet or connection issue
@@ -123,7 +135,7 @@ export async function POST(req: Request) {
     // 5. Build personalized AI prompt with verified profile data
     const systemPrompt = `You are AlumniPath's AI Career Assistant, a high-caliber collegiate career mentor and technical advisor.
 You are mentoring ${studentName}, currently a ${academicYear} student pursuing ${degree} in ${department}.
-Their target career aspiration is: "${targetRole}".
+Their saved target career aspiration is: "${targetRole}". Treat this only as optional personalization context. It never overrides or changes the subject or role requested in the user's latest message.
 
 VERIFIED STUDENT PROFILE INFORMATION:
 - Skills Reported: ${technicalSkills.length > 0 ? technicalSkills.join(", ") : "None reported yet (encourage adding them)"}
@@ -132,16 +144,18 @@ VERIFIED STUDENT PROFILE INFORMATION:
 - Target Companies: ${targetCompanies || "Open to top engineering companies"}
 
 ADVISORY RULES:
-1. Personalize all advice to ${studentName}'s actual target role (${targetRole}) and background.
-2. Ground technical recommendations in their actual skill level. Never invent fake qualifications.
-3. If they lack certain fundamental skills for ${targetRole}, guide them on how to bridge the gap with practical projects and study tracks.
-4. Format responses cleanly using GitHub-style Markdown with clear headings and bullet points.
-5. End with constructive encouragement and 2-3 relevant follow-up exploration areas.`;
+1. Answer the question the user actually asked. Determine the subject and any explicitly named career role from the latest user message, and keep that role as the subject of your answer.
+2. Never substitute the saved target role (${targetRole}) for the role named in the latest question. Do not change the saved profile target based on a question.
+3. Use profile details only to tailor useful advice; do not let them redirect the question. If no role is specified, use the conversation context and ask a clarifying question only if needed.
+4. For career questions, give a role-specific roadmap, skills, projects, learning resources, and career preparation as relevant. For comparisons, address both roles. For technical or project questions, answer those directly.
+5. Use prior conversation messages only to resolve follow-ups. When the user asks about a different career path, switch to that path without carrying over assumptions from the previous one.
+6. Ground recommendations in reported skills; do not invent qualifications. Format responses cleanly using Markdown and include a concise next step when helpful.`;
 
     // 6. Call Server-side AI Provider
     const aiResult = await generateAICareerResponse({
       prompt: rawMessage,
       systemPrompt,
+      history: priorMessages,
       temperature: 0.65,
     });
 
@@ -174,9 +188,9 @@ ADVISORY RULES:
     const userMsgId = `user-${Date.now()}`;
 
     // 8. Asynchronously persist conversation and messages to Supabase
+    let finalConversationId = verifiedConversationId;
     try {
-      let finalConvId = verifiedConversationId;
-      if (!finalConvId) {
+      if (!finalConversationId) {
         const { data: newConv } = await supabase
           .from("career_assistant_conversations")
           .insert({
@@ -187,20 +201,25 @@ ADVISORY RULES:
           .maybeSingle();
 
         if (newConv?.id) {
-          finalConvId = newConv.id;
+          finalConversationId = newConv.id;
         }
       }
 
-      if (finalConvId) {
+      if (finalConversationId) {
+        await supabase
+          .from("career_assistant_conversations")
+          .update({ updated_at: new Date().toISOString() })
+          .eq("id", finalConversationId)
+          .eq("user_id", user.id);
         await supabase.from("career_assistant_messages").insert([
           {
-            conversation_id: finalConvId,
+            conversation_id: finalConversationId,
             user_id: user.id,
             role: "user",
             content: rawMessage,
           },
           {
-            conversation_id: finalConvId,
+            conversation_id: finalConversationId,
             user_id: user.id,
             role: "assistant",
             content: aiResult.text,
@@ -227,12 +246,19 @@ ADVISORY RULES:
     return NextResponse.json({
       success: true,
       message: responseMessage,
-      conversationId: verifiedConversationId || `conv-${user.id}`,
+      conversationId: finalConversationId || `conv-${user.id}`,
       latencyMs,
       provider: aiResult.provider,
     });
   } catch (error: any) {
     console.error("[Career Assistant API] Error:", error);
+    if (error instanceof AIProviderError) {
+      const status = error.code === "AI_NOT_CONFIGURED" ? 503 : 502;
+      return NextResponse.json(
+        { success: false, error: error.message, code: error.code },
+        { status }
+      );
+    }
     return NextResponse.json(
       {
         success: false,
@@ -259,12 +285,21 @@ export async function GET(req: Request) {
     }
 
     const supabase = getAdminClient();
-    const { data: messages, error: msgError } = await supabase
+    const { data: latestConversation } = await supabase
+      .from("career_assistant_conversations")
+      .select("id")
+      .eq("user_id", user.id)
+      .order("updated_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    let messagesQuery = supabase
       .from("career_assistant_messages")
       .select("*")
       .eq("user_id", user.id)
-      .order("created_at", { ascending: true })
-      .limit(50);
+      .order("created_at", { ascending: true });
+    if (latestConversation?.id) messagesQuery = messagesQuery.eq("conversation_id", latestConversation.id);
+    const { data: messages, error: msgError } = await messagesQuery.limit(50);
 
     if (msgError) {
       return NextResponse.json({
@@ -284,6 +319,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({
       success: true,
+      conversationId: latestConversation?.id || null,
       messages: formatted,
     });
   } catch (err: any) {

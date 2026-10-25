@@ -115,9 +115,11 @@ export default function CareerAssistantPage() {
         });
 
         setMessages((prev) => [...prev, response.message]);
-      } catch {
+      } catch (error) {
         setErrorMessage(
-          "Unable to generate career guidance at this time. Please try again."
+          error instanceof Error
+            ? error.message
+            : "Unable to generate career guidance at this time. Please try again."
         );
       } finally {
         setIsLoading(false);
