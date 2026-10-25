@@ -123,12 +123,30 @@ function validateAnalysis(value: unknown): Omit<ResumeReviewResult, "id" | "file
   };
 }
 
+function getSafeExtractionCategory(error: unknown): string {
+  if (!(error instanceof Error)) return "NON_ERROR_THROWN";
+
+  // Inspect provider/parser errors only to choose a fixed category. Never log
+  // error messages because library errors can contain untrusted document data.
+  if (/DOMMatrix/i.test(error.message)) return "DOM_MATRIX_UNAVAILABLE";
+  if (/fake worker|pdf\.worker|worker.*(?:failed|cannot|module)/i.test(error.message)) {
+    return "PDF_WORKER_UNAVAILABLE";
+  }
+  if (/password/i.test(error.name) || /password/i.test(error.message)) return "PASSWORD_PROTECTED_PDF";
+  if (error.name === "InvalidPDFException" || error.name === "FormatError") return "INVALID_PDF_CONTENT";
+  return error.name.replace(/[^A-Za-z0-9_-]/g, "").slice(0, 64) || "UNKNOWN_ERROR";
+}
+
 async function extractResumeText(file: File, extension: string): Promise<string> {
-  const bytes = Buffer.from(await file.arrayBuffer());
+  let bytes: Buffer | undefined;
   let text = "";
+  let stage = "read-upload";
+  let pdfPageCount = 0;
 
   try {
+    bytes = Buffer.from(await file.arrayBuffer());
     if (extension === ".pdf") {
+      stage = "validate-pdf-signature";
       if (bytes.subarray(0, 5).toString("ascii") !== "%PDF-") {
         throw new ResumeRequestError("This file does not appear to be a valid PDF.", 400, "INVALID_PDF");
       }
@@ -140,35 +158,73 @@ async function extractResumeText(file: File, extension: string): Promise<string>
         ImageData: globalThis.ImageData ?? ImageData,
         Path2D: globalThis.Path2D ?? Path2D,
       });
+      stage = "load-pdf-parser";
       const { PDFParse } = await import("pdf-parse");
+      stage = "initialize-pdf-parser";
       const parser = new PDFParse({ data: bytes });
       try {
+        stage = "extract-pdf-text";
         const parsed = await parser.getText({ first: 20 });
-        text = parsed.text;
+        pdfPageCount = parsed.total;
+        // The combined `parsed.text` includes page markers even for pages with
+        // no text. Use page text so a scanned PDF cannot appear non-empty.
+        text = parsed.pages.map((page) => page.text).join("\n\n");
       } finally {
-        await parser.destroy();
+        stage = "release-pdf-parser";
+        await parser.destroy().catch(() => {
+          console.warn("[Resume Review] PDF parser cleanup failed.");
+        });
       }
     } else if (extension === ".docx" || extension === ".doc") {
+      stage = "extract-word-text";
       const extractor = new WordExtractor();
       const document = await extractor.extract(bytes);
       text = document.getBody();
     } else if (extension === ".txt") {
+      stage = "decode-text-file";
       text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
     } else if (extension === ".rtf") {
+      stage = "decode-rtf-file";
       const rtf = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
       text = rtf.replace(/\\'[\da-f]{2}/gi, " ").replace(/\\[a-z]+-?\d* ?/gi, " ").replace(/[{}]/g, " ");
     }
   } catch (error) {
     if (error instanceof ResumeRequestError) throw error;
-    if (process.env.NODE_ENV === "development") {
-      console.warn("[Resume Review] Text extraction failed:", error instanceof Error ? error.name : "UnknownError");
+    const category = getSafeExtractionCategory(error);
+    console.error("[Resume Review] Text extraction failed.", {
+      stage,
+      category,
+      byteLength: bytes?.length ?? 0,
+    });
+    if (extension === ".pdf" && category === "PASSWORD_PROTECTED_PDF") {
+      throw new ResumeRequestError("This PDF is password protected. Remove its password and upload it again.", 422, "PASSWORD_PROTECTED_PDF");
+    }
+    if (extension === ".pdf" && category === "INVALID_PDF_CONTENT") {
+      throw new ResumeRequestError("The PDF structure could not be read. Re-export the PDF or upload a DOCX version.", 422, "INVALID_PDF_CONTENT");
+    }
+    if (extension === ".pdf" && ["DOM_MATRIX_UNAVAILABLE", "PDF_WORKER_UNAVAILABLE"].includes(category)) {
+      throw new ResumeRequestError("PDF text extraction is unavailable in this server runtime. Please retry later or upload a DOCX version.", 503, "PDF_PARSER_UNAVAILABLE");
+    }
+    if (extension === ".pdf" && ["load-pdf-parser", "initialize-pdf-parser"].includes(stage)) {
+      throw new ResumeRequestError("The PDF extraction service could not initialize. Please retry later or upload a DOCX version.", 503, "PDF_PARSER_UNAVAILABLE");
+    }
+    if (extension === ".pdf" && stage === "extract-pdf-text") {
+      throw new ResumeRequestError("The PDF could not be parsed. Re-export it as a standard PDF or upload a DOCX version.", 422, "PDF_PARSE_FAILED");
     }
     throw new ResumeRequestError("Could not extract text from this resume. Check that the file is not damaged and try another copy.", 400, "TEXT_EXTRACTION_FAILED");
   }
 
   const normalized = text.replace(/\u0000/g, " ").replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
-  if (normalized.length < 40) {
-    throw new ResumeRequestError("No readable text was found. This may be a scanned image PDF; use a text-based PDF or a Word document.", 422, "NO_READABLE_TEXT");
+  if (!normalized) {
+    if (extension === ".pdf") {
+      console.warn("[Resume Review] PDF contains no selectable text.", {
+        stage: "validate-extracted-text",
+        category: "NO_SELECTABLE_TEXT",
+        byteLength: bytes?.length ?? 0,
+        pageCount: pdfPageCount,
+      });
+    }
+    throw new ResumeRequestError("No selectable text was found. This PDF may be scanned or image-only and may require OCR. Try a text-based PDF or upload a DOCX version.", 422, "NO_READABLE_TEXT");
   }
   return normalized.slice(0, MAX_EXTRACTED_TEXT);
 }
