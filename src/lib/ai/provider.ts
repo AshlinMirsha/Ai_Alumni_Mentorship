@@ -52,6 +52,23 @@ async function fetchGeminiWithRetry(
   throw new Error("Gemini retry completed without a response.");
 }
 
+function describeProviderFailure(provider: string, status: number, body: string): string {
+  const detail = body.toLowerCase();
+  if (/quota|billing|credit|insufficient_quota|exceeded your current/.test(detail)) {
+    return `${provider} has an API quota or billing issue; check the provider account.`;
+  }
+  if (status === 401 || /invalid[_ -]?api[_ -]?key|api key.*invalid|api key (is )?not valid|unauthorized/.test(detail)) {
+    return `${provider} rejected its server API key (HTTP ${status}); verify the key in the deployment environment.`;
+  }
+  if (status === 429) return `${provider} rate-limited the request (HTTP 429); retry shortly.`;
+  if ([500, 502, 503, 504].includes(status)) {
+    return `${provider} is temporarily unavailable (HTTP ${status}).`;
+  }
+  if (status === 400) return `${provider} rejected the model request (HTTP 400); verify the configured model and request settings.`;
+  if (status === 403) return `${provider} denied access to the configured model (HTTP 403); verify project permissions and billing.`;
+  return `${provider} rejected the request (HTTP ${status}).`;
+}
+
 /**
  * Executes an AI generation request using server-side Gemini 3.5 Flash or OpenAI.
  */
@@ -87,7 +104,7 @@ export async function generateAICareerResponse(options: GenerateOptions & { hist
             ...(systemPrompt ? { systemInstruction: { parts: [{ text: systemPrompt }] } } : {}),
             generationConfig: {
               temperature,
-              maxOutputTokens: 2048,
+              maxOutputTokens: options.maxTokens ?? 2048,
               ...(options.responseFormat === "json" ? { responseMimeType: "application/json" } : {}),
             },
           }),
@@ -106,8 +123,8 @@ export async function generateAICareerResponse(options: GenerateOptions & { hist
         }
       } else {
         const errBody = await res.text().catch(() => "");
-        console.warn("[AI Provider] Gemini error:", res.status, errBody.substring(0, 160));
-        failures.push(`Gemini returned HTTP ${res.status}.`);
+        console.warn("[AI Provider] Gemini request failed with HTTP", res.status);
+        failures.push(describeProviderFailure("Gemini", res.status, errBody));
       }
     } catch (err: unknown) {
       console.warn("[AI Provider] Gemini request failed or timed out:", err instanceof Error ? err.message : "Unknown error");
@@ -139,7 +156,7 @@ export async function generateAICareerResponse(options: GenerateOptions & { hist
           model: "gpt-4o-mini",
           messages,
           temperature,
-          max_tokens: 2048,
+          max_tokens: options.maxTokens ?? 2048,
           ...(options.responseFormat === "json" ? { response_format: { type: "json_object" } } : {}),
         }),
         signal: controller.signal,
@@ -156,8 +173,8 @@ export async function generateAICareerResponse(options: GenerateOptions & { hist
         }
       } else {
         const errBody = await res.text().catch(() => "");
-        console.warn("[AI Provider] OpenAI error:", res.status, errBody.substring(0, 160));
-        failures.push(`OpenAI returned HTTP ${res.status}.`);
+        console.warn("[AI Provider] OpenAI request failed with HTTP", res.status);
+        failures.push(describeProviderFailure("OpenAI", res.status, errBody));
       }
     } catch (err: unknown) {
       console.warn("[AI Provider] OpenAI request failed or timed out:", err instanceof Error ? err.message : "Unknown error");

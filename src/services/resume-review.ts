@@ -74,8 +74,22 @@ export class ResumeReviewService implements IResumeReviewService {
     }
 
     const data = await response.json().catch(() => null);
-    if (!response.ok || !data?.success || !data.result) {
-      throw new Error(data?.error || "Resume analysis failed. Please try again.");
+    if (!response.ok) {
+      const serverError = typeof data?.error === "string" ? data.error : null;
+      const statusMessage: Record<number, string> = {
+        401: "Your session has expired. Sign in again, then retry the resume review.",
+        413: "The resume request is too large for the server. Choose a PDF under 5 MB.",
+        502: "The AI provider could not complete the review. Check its API key, quota, and server logs, then retry.",
+        503: "The resume review service is temporarily unavailable. Please retry shortly.",
+        504: "The resume review timed out before the AI response finished. Please retry; if it repeats, check the deployment function duration.",
+      };
+      throw new Error(serverError || statusMessage[response.status] ||
+        `Resume review request failed with HTTP ${response.status}. Check the deployment logs for this request.`);
+    }
+    if (!data?.success || !data.result) {
+      throw new Error(typeof data?.error === "string"
+        ? data.error
+        : "The resume review service returned an incomplete response. Check that the latest deployment is active and review its server logs.");
     }
 
     return data.result as ResumeReviewResult;

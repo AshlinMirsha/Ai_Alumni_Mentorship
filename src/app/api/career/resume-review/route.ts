@@ -6,6 +6,9 @@ import { getAdminClient } from "@/lib/supabase/admin";
 import { AIProviderError, generateAICareerResponse, parseStructuredAIResponse } from "@/lib/ai/provider";
 import type { ResumeAnalysisOptions, ResumeFeedbackItem, ResumeProjectSuggestion, ResumeReviewResult } from "@/types";
 
+// AI calls can take longer than the deployment platform's default function window.
+export const maxDuration = 60;
+
 const MAX_RESUME_SIZE = 5 * 1024 * 1024;
 const MAX_EXTRACTED_TEXT = 35_000;
 const ALLOWED_EXTENSIONS = new Set([".pdf", ".docx", ".doc", ".txt", ".rtf"]);
@@ -50,9 +53,16 @@ function validateAnalysis(value: unknown): Omit<ResumeReviewResult, "id" | "file
   const score = result?.overallScore;
   const atsScore = result?.atsScore;
   const summary = getString(result?.summary);
+  const missingFields = [
+    !result ? "analysis object" : null,
+    result && !skills ? "skillsIdentified" : null,
+    typeof score !== "number" || !Number.isFinite(score) ? "overallScore" : null,
+    typeof atsScore !== "number" || !Number.isFinite(atsScore) ? "atsScore" : null,
+    !summary ? "summary" : null,
+  ].filter((field): field is string => Boolean(field));
   if (!result || !skills || typeof score !== "number" || !Number.isFinite(score) ||
       typeof atsScore !== "number" || !Number.isFinite(atsScore) || !summary) {
-    throw new ResumeRequestError("The AI provider returned an incomplete resume analysis. Please try again.", 502, "INVALID_AI_RESPONSE");
+    throw new ResumeRequestError(`The AI provider returned an incomplete analysis (${missingFields.join(", ")}). Please retry.`, 502, "INVALID_AI_RESPONSE");
   }
 
   const areasToImprove: ResumeFeedbackItem[] = (Array.isArray(result.areasToImprove) ? result.areasToImprove : [])
@@ -141,6 +151,9 @@ async function extractResumeText(file: File, extension: string): Promise<string>
     }
   } catch (error) {
     if (error instanceof ResumeRequestError) throw error;
+    if (process.env.NODE_ENV === "development") {
+      console.warn("[Resume Review] Text extraction failed:", error instanceof Error ? error.name : "UnknownError");
+    }
     throw new ResumeRequestError("Could not extract text from this resume. Check that the file is not damaged and try another copy.", 400, "TEXT_EXTRACTION_FAILED");
   }
 
@@ -226,10 +239,14 @@ ${resumeText}
       temperature: 0.2,
       systemPrompt: "You are AlumniPath's resume reviewer. Follow the analysis instructions exactly, ground every statement in the supplied resume text, do not fabricate or infer personal qualifications, and return only valid JSON.",
       timeoutMs: 45000,
+      maxTokens: 4096,
       responseFormat: "json",
     });
 
     const parsed = parseStructuredAIResponse<unknown>(aiRes.text, null);
+    if (!parsed) {
+      throw new ResumeRequestError("The AI provider returned unreadable JSON. Please retry the review.", 502, "INVALID_AI_RESPONSE");
+    }
     const reviewResult: ResumeReviewResult = {
       ...validateAnalysis(parsed),
       id: `rev-${Date.now()}`,

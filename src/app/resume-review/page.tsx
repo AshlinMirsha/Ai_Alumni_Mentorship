@@ -78,7 +78,7 @@ export default function ResumeReviewPage() {
       );
       setResults(reviewResults);
     } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : "Resume analysis failed. Please try again.");
+      setErrorMessage(err instanceof Error ? err.message : "An unexpected error interrupted the resume review. Please try again.");
     } finally {
       setIsAnalyzing(false);
     }
