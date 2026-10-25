@@ -26,13 +26,19 @@ export default function AuthCallbackPage() {
         const errorDesc = params.get("error_description");
         const code = params.get("code");
 
+        const oauthOrigin =
+          typeof window !== "undefined"
+            ? sessionStorage.getItem("alumnipath_oauth_origin")
+            : null;
+        const fallbackPath = oauthOrigin === "signup" ? "/signup" : "/login";
+
         // 1. Handle OAuth cancellation or provider-level errors
         if (errorParam) {
           console.warn("[OAuth Callback] Provider error:", errorParam, errorDesc);
           if (errorParam === "access_denied") {
-            router.replace("/login?error=oauth_cancelled");
+            router.replace(`${fallbackPath}?error=oauth_cancelled`);
           } else {
-            router.replace("/login?error=oauth_failed");
+            router.replace(`${fallbackPath}?error=oauth_failed`);
           }
           return;
         }
@@ -65,7 +71,7 @@ export default function AuthCallbackPage() {
 
         if (!session?.user || !session.user.email) {
           console.warn("[OAuth Callback] No active session found.");
-          router.replace("/login?error=oauth_failed");
+          router.replace(`${fallbackPath}?error=oauth_failed`);
           return;
         }
 
@@ -127,7 +133,12 @@ export default function AuthCallbackPage() {
         router.replace(verifyData.redirectUrl || (verifiedRole === "alumni" ? "/alumni-dashboard" : "/dashboard"));
       } catch (err) {
         console.error("[OAuth Callback] Unexpected error:", err);
-        router.replace("/login?error=oauth_failed");
+        const oauthOrigin =
+          typeof window !== "undefined"
+            ? sessionStorage.getItem("alumnipath_oauth_origin")
+            : null;
+        const fallbackPath = oauthOrigin === "signup" ? "/signup" : "/login";
+        router.replace(`${fallbackPath}?error=oauth_failed`);
       }
     }
 

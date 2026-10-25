@@ -37,6 +37,7 @@ interface AuthContextType {
   ) => Promise<{ error: Error | null; requiresEmailConfirmation?: boolean }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  signInWithGoogle: (origin?: "login" | "signup") => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -348,6 +349,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Sign in with Google OAuth
+  const signInWithGoogle = async (origin: "login" | "signup" = "login"): Promise<{ error: Error | null }> => {
+    try {
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("alumnipath_oauth_origin", origin);
+      }
+      const redirectUrl =
+        typeof window !== "undefined"
+          ? `${window.location.origin}/auth/callback`
+          : "/auth/callback";
+
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: redirectUrl,
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
+        },
+      });
+
+      return { error: error ? new Error(error.message) : null };
+    } catch (err) {
+      return {
+        error:
+          err instanceof Error
+            ? err
+            : new Error("Failed to initialize Google authentication."),
+      };
+    }
+  };
+
   // Sign Out
   const signOut = async (): Promise<void> => {
     try {
@@ -382,6 +416,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signUp,
         signOut,
         refreshProfile,
+        signInWithGoogle,
       }}
     >
       {children}

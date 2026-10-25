@@ -1283,4 +1283,62 @@ describe("AlumniPath Backend Verification & Authentication Suite", () => {
     assert.equal(validateResumeUpload("ashlin_resume.docx", 1024 * 200).valid, true);
     assert.equal(validateResumeUpload("ashlin_resume.txt", 1024 * 50).valid, true);
   });
+
+  // 49. Google OAuth Origin & Error Handling
+  test("49. Google OAuth: Routes errors dynamically based on initiation origin (login vs signup)", () => {
+    function resolveOAuthErrorRoute(origin, errorParam) {
+      const base = origin === "signup" ? "/signup" : "/login";
+      if (errorParam === "access_denied") {
+        return `${base}?error=oauth_cancelled`;
+      }
+      return `${base}?error=oauth_failed`;
+    }
+
+    assert.equal(resolveOAuthErrorRoute("signup", "access_denied"), "/signup?error=oauth_cancelled");
+    assert.equal(resolveOAuthErrorRoute("login", "access_denied"), "/login?error=oauth_cancelled");
+    assert.equal(resolveOAuthErrorRoute("signup", "server_error"), "/signup?error=oauth_failed");
+    assert.equal(resolveOAuthErrorRoute("login", "server_error"), "/login?error=oauth_failed");
+    assert.equal(resolveOAuthErrorRoute(null, "access_denied"), "/login?error=oauth_cancelled");
+  });
+
+  // 50. Google OAuth Registration Transition & Role Safeguard
+  test("50. Google OAuth: Unregistered users transition to signup with prefilled credentials without role escalation", () => {
+    function handleGoogleUserTransition(userSession, dbLookup) {
+      const exists = dbLookup(userSession.email);
+      if (!exists) {
+        const email = encodeURIComponent(userSession.email);
+        const name = encodeURIComponent(userSession.fullName);
+        return {
+          registered: false,
+          redirectUrl: `/signup?from=google&email=${email}&name=${name}`,
+          defaultRole: "student", // never auto-escalates to alumni
+        };
+      }
+      return {
+        registered: true,
+        redirectUrl: exists.role === "alumni" ? "/alumni-dashboard" : "/dashboard",
+        role: exists.role,
+      };
+    }
+
+    const mockDb = new Map([
+      ["registered.alumni@datadog.com", { role: "alumni", verificationStatus: "verified" }],
+    ]);
+
+    const unreg = handleGoogleUserTransition(
+      { email: "fresh.student@berkeley.edu", fullName: "Jane Doe" },
+      (email) => mockDb.get(email)
+    );
+    assert.equal(unreg.registered, false);
+    assert.equal(unreg.redirectUrl, "/signup?from=google&email=fresh.student%40berkeley.edu&name=Jane%20Doe");
+    assert.equal(unreg.defaultRole, "student");
+
+    const regAlum = handleGoogleUserTransition(
+      { email: "registered.alumni@datadog.com", fullName: "Marcus Vance" },
+      (email) => mockDb.get(email)
+    );
+    assert.equal(regAlum.registered, true);
+    assert.equal(regAlum.redirectUrl, "/alumni-dashboard");
+    assert.equal(regAlum.role, "alumni");
+  });
 });

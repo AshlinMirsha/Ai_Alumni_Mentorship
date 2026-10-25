@@ -165,6 +165,9 @@ export default function LoginPage() {
     setGoogleLoading(true);
 
     try {
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("alumnipath_oauth_origin", "login");
+      }
       const supabase = getSupabaseClient();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
