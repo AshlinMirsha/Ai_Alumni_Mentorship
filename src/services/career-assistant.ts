@@ -43,9 +43,13 @@ export class CareerAssistantService implements ICareerAssistantService {
     try {
       const auth = loadAuthSession();
       if (auth?.email) headers["x-user-email"] = auth.email;
-      if (auth?.id) headers["x-user-id"] = auth.id;
-      if (!headers["Authorization"] && auth?.id) {
-        headers["Authorization"] = `Bearer ${auth.id}`;
+      const authId = (auth as typeof auth & { id?: string }).id;
+      if (authId) headers["x-user-id"] = authId;
+      if (!headers["Authorization"] && auth?.isAuthenticated && (authId || auth?.email)) {
+        // The login API can authenticate registered local accounts without a
+        // Supabase token, even when Supabase is configured but unavailable.
+        const identity = authId || auth.email;
+        headers["Authorization"] = `Bearer ${identity}`;
       }
     } catch {
       // Ignore
