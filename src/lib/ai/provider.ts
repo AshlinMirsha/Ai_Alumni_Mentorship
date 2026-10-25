@@ -26,6 +26,32 @@ export class AIProviderError extends Error {
   }
 }
 
+async function fetchGeminiWithRetry(
+  url: string,
+  init: RequestInit,
+  timeoutMs: number
+): Promise<Response> {
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    let response: Response;
+    try {
+      response = await fetch(url, { ...init, signal: controller.signal });
+    } finally {
+      clearTimeout(timer);
+    }
+
+    const transientServerError = [500, 502, 503, 504].includes(response.status);
+    if (attempt === 0 && transientServerError) {
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      continue;
+    }
+    return response;
+  }
+
+  throw new Error("Gemini retry completed without a response.");
+}
+
 /**
  * Executes an AI generation request using server-side Gemini 3.5 Flash or OpenAI.
  */
@@ -42,10 +68,7 @@ export async function generateAICareerResponse(options: GenerateOptions & { hist
 
   // 1. Try Gemini (Primary active provider)
   if (geminiKey) {
-    let timer: ReturnType<typeof setTimeout> | undefined;
     try {
-      const controller = new AbortController();
-      timer = setTimeout(() => controller.abort(), timeoutMs);
       const contents = [
         ...(options.history || []).map((message) => ({
           role: message.role === "assistant" ? "model" : "user",
@@ -54,7 +77,7 @@ export async function generateAICareerResponse(options: GenerateOptions & { hist
         { role: "user", parts: [{ text: prompt }] },
       ];
 
-      const res = await fetch(
+      const res = await fetchGeminiWithRetry(
         `https://generativelanguage.googleapis.com/v1beta/models/${process.env.GEMINI_MODEL || "gemini-3.5-flash"}:generateContent`,
         {
           method: "POST",
@@ -68,8 +91,8 @@ export async function generateAICareerResponse(options: GenerateOptions & { hist
               ...(options.responseFormat === "json" ? { responseMimeType: "application/json" } : {}),
             },
           }),
-          signal: controller.signal,
-        }
+        },
+        timeoutMs
       );
       if (res.ok) {
         const data = await res.json();
@@ -89,8 +112,6 @@ export async function generateAICareerResponse(options: GenerateOptions & { hist
     } catch (err: unknown) {
       console.warn("[AI Provider] Gemini request failed or timed out:", err instanceof Error ? err.message : "Unknown error");
       failures.push("Gemini request failed or timed out.");
-    } finally {
-      if (timer) clearTimeout(timer);
     }
   }
 

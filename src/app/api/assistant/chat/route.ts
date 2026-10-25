@@ -256,7 +256,14 @@ ADVISORY RULES:
     if (error instanceof AIProviderError) {
       const status = error.code === "AI_NOT_CONFIGURED" ? 503 : 502;
       return NextResponse.json(
-        { success: false, error: error.message, code: error.code },
+        {
+          success: false,
+          error: error.code === "AI_NOT_CONFIGURED"
+            ? error.message
+            : "AI services are temporarily unavailable. Please try again shortly.",
+          code: error.code,
+          details: error.code === "AI_PROVIDER_FAILED" ? error.message : undefined,
+        },
         { status }
       );
     }
