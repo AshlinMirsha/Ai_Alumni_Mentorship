@@ -13,11 +13,13 @@
     "@supabase/supabase-js": "^2.118.0",
     "clsx": "^2.1.1",
     "lucide-react": "^1.59.0",
+    "mammoth": "^1.13.0",
     "next": "16.4.2",
     "pdf-parse": "^1.1.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "tailwind-merge": "^3.7.0"
+    "tailwind-merge": "^3.7.0",
+    "word-extractor": "^1.0.4"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
