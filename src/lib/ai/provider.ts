@@ -34,6 +34,7 @@ export interface AIProviderRuntime {
   env?: Record<string, string | undefined>;
   fetchImpl?: typeof fetch;
   logger?: (message: string, details: Record<string, string | number | undefined>) => void;
+  sleepImpl?: (milliseconds: number) => Promise<void>;
 }
 
 interface ProviderConfig {
@@ -48,7 +49,7 @@ function asRecord(value: unknown): Record<string, unknown> | null {
     : null;
 }
 
-type FailureKind = "network" | "timeout" | "http" | "invalid_response" | "action_required" | "invalid_request";
+type FailureKind = "network" | "timeout" | "http" | "invalid_response" | "authentication" | "quota" | "billing" | "permission" | "rate_limit" | "invalid_request";
 
 class ProviderAttemptError extends Error {
   constructor(
@@ -56,6 +57,8 @@ class ProviderAttemptError extends Error {
     readonly model: string,
     readonly kind: FailureKind,
     readonly status?: number,
+    readonly retryAfterMs?: number,
+    readonly providerCode?: string,
   ) {
     super(kind);
     this.name = "ProviderAttemptError";
@@ -96,32 +99,60 @@ function getProviderConfigs(env: Record<string, string | undefined>): ProviderCo
   return configs;
 }
 
-function getErrorFields(bodyText: string): string {
+function getErrorFields(bodyText: string): { code: string; type: string; message: string } {
   try {
     const body = asRecord(JSON.parse(bodyText));
-    if (!body) return "";
+    if (!body) return { code: "", type: "", message: "" };
     const error = body.error;
-    if (typeof error === "string") return error.toLowerCase();
+    if (typeof error === "string") return { code: "", type: "", message: error.toLowerCase() };
     if (error && typeof error === "object") {
       const fields = error as Record<string, unknown>;
-      return [fields.code, fields.type, fields.status, fields.message]
-        .filter((field): field is string => typeof field === "string")
-        .join(" ")
-        .toLowerCase();
+      return {
+        code: typeof fields.code === "string" ? fields.code.toLowerCase() : "",
+        type: typeof fields.type === "string" ? fields.type.toLowerCase() : "",
+        message: typeof fields.message === "string" ? fields.message.toLowerCase() : "",
+      };
     }
-    return "";
+    return { code: "", type: "", message: "" };
   } catch {
-    return bodyText.toLowerCase();
+    return { code: "", type: "", message: bodyText.toLowerCase() };
   }
 }
 
-function classifyHttpFailure(provider: AIProviderName, model: string, status: number, bodyText: string): ProviderAttemptError {
-  const detail = getErrorFields(bodyText);
-  if (status === 402 || /billing|insufficient[_ -]?quota|quota[_ -]?exceeded|payment required|out of credits/.test(detail)) {
-    return new ProviderAttemptError(provider, model, "action_required", status);
+function getRetryAfterMs(response: Response): number | undefined {
+  const value = response.headers.get("retry-after");
+  if (!value) return undefined;
+  const seconds = Number(value);
+  const milliseconds = Number.isFinite(seconds) ? seconds * 1000 : Date.parse(value) - Date.now();
+  return Number.isFinite(milliseconds) && milliseconds > 0 ? Math.min(milliseconds, 1_000) : undefined;
+}
+
+function classifyHttpFailure(provider: AIProviderName, model: string, status: number, bodyText: string, retryAfterMs?: number): ProviderAttemptError {
+  const { code, type, message } = getErrorFields(bodyText);
+  const detail = `${code} ${type} ${message}`;
+  const knownCodes = [
+    "credit_balance_exhausted",
+    "organization_usage_limit_exceeded",
+    "project_usage_limit_exceeded",
+    "organization_spend_limit_exceeded",
+    "project_spend_limit_exceeded",
+    "insufficient_quota",
+    "billing_hard_limit_reached",
+    "rate_limit_exceeded",
+  ];
+  const providerCode = knownCodes.includes(code) ? code : undefined;
+  if (["credit_balance_exhausted", "organization_usage_limit_exceeded", "project_usage_limit_exceeded", "insufficient_quota"].includes(code) || /insufficient[_ -]?quota|quota[_ -]?exceeded|usage limit exceeded|out of credits|credit balance exhausted/.test(detail)) {
+    return new ProviderAttemptError(provider, model, "quota", status, undefined, providerCode);
   }
-  if (status === 403) return new ProviderAttemptError(provider, model, "action_required", status);
-  if (status === 429) return new ProviderAttemptError(provider, model, "http", status);
+  if (status === 401) return new ProviderAttemptError(provider, model, "authentication", status, undefined, providerCode);
+  if (status === 403) return new ProviderAttemptError(provider, model, "permission", status, undefined, providerCode);
+  if (["organization_spend_limit_exceeded", "project_spend_limit_exceeded", "billing_hard_limit_reached"].includes(code) || status === 402 || /billing|payment required|billing_hard_limit/.test(detail)) {
+    return new ProviderAttemptError(provider, model, "billing", status, undefined, providerCode);
+  }
+  if (status === 429 && (/rate[_ -]?limit|too many requests/.test(detail) || (!code && !type && !message))) {
+    return new ProviderAttemptError(provider, model, "rate_limit", status, retryAfterMs, providerCode);
+  }
+  if (status === 429) return new ProviderAttemptError(provider, model, "rate_limit", status, retryAfterMs, providerCode);
   if (status === 400 && /invalid[_ -]?request|malformed request|invalid argument|invalid_argument/.test(detail)) {
     return new ProviderAttemptError(provider, model, "invalid_request", status);
   }
@@ -182,7 +213,7 @@ function buildMessages(options: GenerateOptions): Array<{ role: "system" | "user
 async function readOpenAICompatibleResponse(response: Response, config: ProviderConfig): Promise<string> {
   if (!response.ok) {
     const bodyText = await response.text().catch(() => "");
-    throw classifyHttpFailure(config.name, config.model, response.status, bodyText);
+    throw classifyHttpFailure(config.name, config.model, response.status, bodyText, getRetryAfterMs(response));
   }
 
   let data: unknown;
@@ -239,7 +270,7 @@ async function requestProvider(
       );
       if (!response.ok) {
         const bodyText = await response.text().catch(() => "");
-        throw classifyHttpFailure(config.name, config.model, response.status, bodyText);
+        throw classifyHttpFailure(config.name, config.model, response.status, bodyText, getRetryAfterMs(response));
       }
 
       let data: unknown;
@@ -287,10 +318,42 @@ async function requestProvider(
   }
 }
 
+async function requestProviderWithRetries(
+  config: ProviderConfig,
+  options: GenerateOptions,
+  timeoutMs: number,
+  fetchImpl: typeof fetch,
+  sleepImpl: (milliseconds: number) => Promise<void>,
+  logger: AIProviderRuntime["logger"],
+  deadline: number,
+): Promise<string> {
+  const maxAttempts = config.name === "openai" ? 2 : 1;
+  for (let attempt = 1; ; attempt += 1) {
+    try {
+      const remainingMs = deadline - Date.now();
+      if (remainingMs < 1_000) throw new ProviderAttemptError(config.name, config.model, "timeout");
+      return await requestProvider(config, options, Math.min(timeoutMs, remainingMs), fetchImpl);
+    } catch (error) {
+      if (!(error instanceof ProviderAttemptError) || error.kind !== "rate_limit" || attempt >= maxAttempts) throw error;
+      const delayMs = error.retryAfterMs ?? 250 * (2 ** (attempt - 1));
+      if (deadline - Date.now() <= delayMs + 1_000) throw error;
+      logger?.("[AI Provider] Retrying after temporary rate limit.", {
+        provider: config.name,
+        model: config.model,
+        category: error.kind,
+        status: error.status,
+        retry: attempt,
+      });
+      await sleepImpl(delayMs);
+    }
+  }
+}
+
 function toSafeFailure(error: ProviderAttemptError): string {
   if (error.kind === "timeout") return `${error.provider} timed out`;
   if (error.kind === "network") return `${error.provider} could not be reached`;
   if (error.kind === "invalid_response") return `${error.provider} returned an invalid response`;
+  if (error.kind === "authentication") return `${error.provider} rejected its server-side API credential (HTTP ${error.status})`;
   if (error.kind === "invalid_request") return `${error.provider} rejected the request as invalid (HTTP ${error.status})`;
   return `${error.provider} failed (HTTP ${error.status ?? "network"})`;
 }
@@ -303,6 +366,7 @@ export async function generateAICareerResponse(
   const env = runtime.env ?? process.env;
   const fetchImpl = runtime.fetchImpl ?? globalThis.fetch;
   const logger = runtime.logger ?? ((message, details) => console.warn(message, details));
+  const sleepImpl = runtime.sleepImpl ?? ((milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)));
   const providers = getProviderConfigs(env);
 
   if (providers.length === 0) {
@@ -326,7 +390,7 @@ export async function generateAICareerResponse(
     const timeoutMs = Math.min(MAX_PROVIDER_TIMEOUT_MS, Math.floor(remainingMs / (providers.length - index)));
 
     try {
-      const rawText = await requestProvider(provider, options, timeoutMs, fetchImpl);
+      const rawText = await requestProviderWithRetries(provider, options, timeoutMs, fetchImpl, sleepImpl, logger, deadline);
       let text: string;
       try {
         text = validateResponse(rawText, options);
@@ -343,11 +407,27 @@ export async function generateAICareerResponse(
         model: provider.model,
         category: failure.kind,
         status: failure.status,
+        providerCode: failure.providerCode,
       });
 
-      if (failure.kind === "action_required") {
+      if (["quota", "billing", "permission"].includes(failure.kind)) {
+        const message = failure.providerCode === "credit_balance_exhausted"
+          ? `${provider.name} API prepaid credit balance is exhausted (HTTP ${failure.status}). Add credits or review API billing.`
+          : failure.providerCode === "organization_usage_limit_exceeded"
+            ? `${provider.name} organization usage limit was reached (HTTP ${failure.status}). Review the approved usage limit.`
+            : failure.providerCode === "project_usage_limit_exceeded"
+              ? `${provider.name} project usage limit was reached (HTTP ${failure.status}). Review the project's usage limit.`
+              : failure.providerCode === "organization_spend_limit_exceeded"
+                ? `${provider.name} organization spending limit was reached (HTTP ${failure.status}). Review organization spending controls.`
+                : failure.providerCode === "project_spend_limit_exceeded"
+                  ? `${provider.name} project spending limit was reached (HTTP ${failure.status}). Review project spending controls.`
+                  : failure.kind === "quota"
+                    ? `${provider.name} reported insufficient API quota (HTTP ${failure.status}). Review usage and billing limits.`
+                    : failure.kind === "billing"
+                      ? `${provider.name} reported a billing restriction (HTTP ${failure.status}). Review API billing settings.`
+                      : `${provider.name} reported an account or project permission restriction (HTTP ${failure.status}). Review the API key's project access.`;
         throw new AIProviderError(
-          `${provider.name} requires an account or permission check (HTTP ${failure.status}). Resolve that provider issue before retrying.`,
+          message,
           "AI_ACTION_REQUIRED",
         );
       }

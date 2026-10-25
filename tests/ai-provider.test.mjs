@@ -20,7 +20,7 @@ const { generateAICareerResponse, AIProviderError } = providerModule.exports;
 const prompt = "How can I become an AI Engineer?";
 const successChat = (text) => new Response(JSON.stringify({ choices: [{ message: { content: text } }] }), { status: 200 });
 const successGemini = (text) => new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text }] } }] }), { status: 200 });
-const failed = (status, body = {}) => new Response(JSON.stringify({ error: body }), { status });
+const failed = (status, body = {}, headers = {}) => new Response(JSON.stringify({ error: body }), { status, headers });
 
 test("NVIDIA success skips Gemini and OpenAI", async () => {
   const calls = [];
@@ -115,7 +115,7 @@ test("missing NVIDIA and Gemini keys tries OpenAI", async () => {
   assert.equal(firstUrl, "https://api.openai.com/v1/chat/completions");
 });
 
-test("quota and permission errors stop without falling through", async () => {
+test("insufficient quota and permission errors stop without falling through", async () => {
   let calls = 0;
   await assert.rejects(
     generateAICareerResponse({ prompt }, {
@@ -126,6 +126,68 @@ test("quota and permission errors stop without falling through", async () => {
     (error) => error instanceof AIProviderError && error.code === "AI_ACTION_REQUIRED",
   );
   assert.equal(calls, 1);
+});
+
+test("OpenAI exhausted-credit 429 is reported as quota, without retrying", async () => {
+  let calls = 0;
+  const logs = [];
+  await assert.rejects(
+    generateAICareerResponse({ prompt }, {
+      env: { OPENAI_API_KEY: "openai-test" },
+      fetchImpl: async () => {
+        calls += 1;
+        return failed(429, { code: "credit_balance_exhausted", type: "insufficient_quota", message: "Sensitive provider detail" });
+      },
+      logger: (message, details) => logs.push({ message, details }),
+      sleepImpl: async () => assert.fail("quota errors must not be retried"),
+    }),
+    (error) => {
+      assert.ok(error instanceof AIProviderError);
+      assert.equal(error.code, "AI_ACTION_REQUIRED");
+      assert.match(error.message, /prepaid credit balance is exhausted/);
+      assert.doesNotMatch(error.message, /Sensitive provider detail/);
+      return true;
+    },
+  );
+  assert.equal(calls, 1);
+  assert.equal(logs[0].details.category, "quota");
+  assert.equal(logs[0].details.providerCode, "credit_balance_exhausted");
+});
+
+test("OpenAI temporary rate limit retries once with bounded backoff", async () => {
+  let calls = 0;
+  const delays = [];
+  const result = await generateAICareerResponse({ prompt }, {
+    env: { OPENAI_API_KEY: "openai-test" },
+    fetchImpl: async () => {
+      calls += 1;
+      return calls === 1
+        ? failed(429, { code: "rate_limit_exceeded", type: "requests" }, { "retry-after": "0.2" })
+        : successChat("OpenAI response after rate limit");
+    },
+    logger: () => {},
+    sleepImpl: async (milliseconds) => delays.push(milliseconds),
+  });
+
+  assert.equal(result.provider, "openai");
+  assert.equal(calls, 2);
+  assert.deepEqual(delays, [200]);
+});
+
+test("OpenAI rate-limit retries stop at the configured attempt limit", async () => {
+  let calls = 0;
+  const delays = [];
+  await assert.rejects(
+    generateAICareerResponse({ prompt }, {
+      env: { OPENAI_API_KEY: "openai-test" },
+      fetchImpl: async () => { calls += 1; return failed(429, { code: "rate_limit_exceeded" }); },
+      logger: () => {},
+      sleepImpl: async (milliseconds) => delays.push(milliseconds),
+    }),
+    (error) => error instanceof AIProviderError && error.code === "AI_PROVIDER_FAILED" && /openai failed \(HTTP 429\)/.test(error.message),
+  );
+  assert.equal(calls, 2);
+  assert.deepEqual(delays, [250]);
 });
 
 test("invalid JSON or domain responses trigger the next provider", async () => {
