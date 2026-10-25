@@ -137,11 +137,16 @@ function getSafeExtractionCategory(error: unknown): string {
   return error.name.replace(/[^A-Za-z0-9_-]/g, "").slice(0, 64) || "UNKNOWN_ERROR";
 }
 
-async function extractResumeText(file: File, extension: string): Promise<string> {
+function normalizeResumeText(text: string): string {
+  return text.replace(/\u0000/g, " ").replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
+}
+
+async function extractResumeText(file: File, extension: string, clientOcrText = ""): Promise<string> {
   let bytes: Buffer | undefined;
   let text = "";
   let stage = "read-upload";
   let pdfPageCount = 0;
+  const normalizedClientOcrText = extension === ".pdf" ? normalizeResumeText(clientOcrText).slice(0, MAX_EXTRACTED_TEXT) : "";
 
   try {
     bytes = Buffer.from(await file.arrayBuffer());
@@ -196,26 +201,47 @@ async function extractResumeText(file: File, extension: string): Promise<string>
       category,
       byteLength: bytes?.length ?? 0,
     });
-    if (extension === ".pdf" && category === "PASSWORD_PROTECTED_PDF") {
-      throw new ResumeRequestError("This PDF is password protected. Remove its password and upload it again.", 422, "PASSWORD_PROTECTED_PDF");
+    if (extension === ".pdf" && normalizedClientOcrText) {
+      console.warn("[Resume Review] Using client-provided PaddleOCR text after server extraction failed.", {
+        stage,
+        category,
+        byteLength: bytes?.length ?? 0,
+        ocrCharacterCount: normalizedClientOcrText.length,
+      });
+      text = normalizedClientOcrText;
+    } else {
+      if (extension === ".pdf" && category === "PASSWORD_PROTECTED_PDF") {
+        throw new ResumeRequestError("This PDF is password protected. Remove its password and upload it again.", 422, "PASSWORD_PROTECTED_PDF");
+      }
+      if (extension === ".pdf" && category === "INVALID_PDF_CONTENT") {
+        throw new ResumeRequestError("The PDF structure could not be read. Re-export the PDF or upload a DOCX version.", 422, "INVALID_PDF_CONTENT");
+      }
+      if (extension === ".pdf" && ["DOM_MATRIX_UNAVAILABLE", "PDF_WORKER_UNAVAILABLE"].includes(category)) {
+        throw new ResumeRequestError("PDF text extraction is unavailable in this server runtime. Please retry later or upload a DOCX version.", 503, "PDF_PARSER_UNAVAILABLE");
+      }
+      if (extension === ".pdf" && ["load-pdf-parser", "initialize-pdf-parser"].includes(stage)) {
+        throw new ResumeRequestError("The PDF extraction service could not initialize. Please retry later or upload a DOCX version.", 503, "PDF_PARSER_UNAVAILABLE");
+      }
+      if (extension === ".pdf" && stage === "extract-pdf-text") {
+        throw new ResumeRequestError("The PDF could not be parsed. Re-export it as a standard PDF or upload a DOCX version.", 422, "PDF_PARSE_FAILED");
+      }
+      throw new ResumeRequestError("Could not extract text from this resume. Check that the file is not damaged and try another copy.", 400, "TEXT_EXTRACTION_FAILED");
     }
-    if (extension === ".pdf" && category === "INVALID_PDF_CONTENT") {
-      throw new ResumeRequestError("The PDF structure could not be read. Re-export the PDF or upload a DOCX version.", 422, "INVALID_PDF_CONTENT");
-    }
-    if (extension === ".pdf" && ["DOM_MATRIX_UNAVAILABLE", "PDF_WORKER_UNAVAILABLE"].includes(category)) {
-      throw new ResumeRequestError("PDF text extraction is unavailable in this server runtime. Please retry later or upload a DOCX version.", 503, "PDF_PARSER_UNAVAILABLE");
-    }
-    if (extension === ".pdf" && ["load-pdf-parser", "initialize-pdf-parser"].includes(stage)) {
-      throw new ResumeRequestError("The PDF extraction service could not initialize. Please retry later or upload a DOCX version.", 503, "PDF_PARSER_UNAVAILABLE");
-    }
-    if (extension === ".pdf" && stage === "extract-pdf-text") {
-      throw new ResumeRequestError("The PDF could not be parsed. Re-export it as a standard PDF or upload a DOCX version.", 422, "PDF_PARSE_FAILED");
-    }
-    throw new ResumeRequestError("Could not extract text from this resume. Check that the file is not damaged and try another copy.", 400, "TEXT_EXTRACTION_FAILED");
   }
 
-  const normalized = text.replace(/\u0000/g, " ").replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
+  let normalized = normalizeResumeText(text);
   if (!normalized) {
+    if (normalizedClientOcrText) {
+      normalized = normalizedClientOcrText;
+      console.info("[Resume Review] Using client-provided PaddleOCR text for a PDF with no selectable text.", {
+        stage: "validate-extracted-text",
+        category: "CLIENT_OCR_FALLBACK",
+        byteLength: bytes?.length ?? 0,
+        pageCount: pdfPageCount,
+        ocrCharacterCount: normalizedClientOcrText.length,
+      });
+      return normalized.slice(0, MAX_EXTRACTED_TEXT);
+    }
     if (extension === ".pdf") {
       console.warn("[Resume Review] PDF contains no selectable text.", {
         stage: "validate-extracted-text",
@@ -282,7 +308,17 @@ export async function POST(req: Request) {
       throw new ResumeRequestError("Enter a target role of 120 characters or fewer.", 400, "INVALID_TARGET_ROLE");
     }
     const options = parseOptions(formData.get("options"));
-    const resumeText = await extractResumeText(file, extension);
+    const ocrTextField = formData.get("ocrText");
+    if (ocrTextField !== null && typeof ocrTextField !== "string") {
+      throw new ResumeRequestError("OCR text must be plain text.", 400, "INVALID_OCR_TEXT");
+    }
+    if (typeof ocrTextField === "string" && ocrTextField.length > MAX_EXTRACTED_TEXT) {
+      throw new ResumeRequestError("OCR text exceeds the supported length.", 413, "OCR_TEXT_TOO_LARGE");
+    }
+    if (ocrTextField && extension !== ".pdf") {
+      throw new ResumeRequestError("OCR text is accepted only with a PDF resume.", 400, "INVALID_OCR_TEXT");
+    }
+    const resumeText = await extractResumeText(file, extension, typeof ocrTextField === "string" ? ocrTextField : "");
     const formattedSize = file.size > 1024 * 1024
       ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
       : `${Math.max(1, Math.round(file.size / 1024))} KB`;

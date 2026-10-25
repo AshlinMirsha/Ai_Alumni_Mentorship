@@ -1,6 +1,7 @@
 import type { ResumeAnalysisOptions, ResumeReviewResult } from "@/types";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { loadAuthSession } from "@/lib/dashboard-storage";
+import { extractPdfTextWithPaddleOcr } from "@/services/paddleocr-pdf";
 
 export interface ResumeFileInput {
   name: string;
@@ -56,24 +57,39 @@ export class ResumeReviewService implements IResumeReviewService {
     const rawFile = file instanceof File ? file : file.rawFile;
     if (!rawFile) throw new Error("The selected resume file is no longer available. Select it again and retry.");
 
-    const formData = new FormData();
-    formData.append("file", rawFile);
-    formData.append("targetRole", targetRole);
-    formData.append("options", JSON.stringify(options));
-    formData.append("consent", "true");
+    const createRequest = (ocrText?: string) => {
+      const formData = new FormData();
+      formData.append("file", rawFile);
+      formData.append("targetRole", targetRole);
+      formData.append("options", JSON.stringify(options));
+      formData.append("consent", "true");
+      if (ocrText) formData.append("ocrText", ocrText);
+      return formData;
+    };
+    const sendRequest = async (ocrText?: string) => {
+      try {
+        return await fetch("/api/career/resume-review", {
+          method: "POST",
+          headers: await this.getAuthHeaders(),
+          body: createRequest(ocrText),
+        });
+      } catch {
+        throw new Error("Could not reach the resume analysis service. Check your connection and try again.");
+      }
+    };
 
-    let response: Response;
-    try {
-      response = await fetch("/api/career/resume-review", {
-        method: "POST",
-        headers: await this.getAuthHeaders(),
-        body: formData,
-      });
-    } catch {
-      throw new Error("Could not reach the resume analysis service. Check your connection and try again.");
+    let response = await sendRequest();
+    let data = await response.json().catch(() => null);
+    const isPdf = rawFile.type === "application/pdf" || rawFile.name.toLowerCase().endsWith(".pdf");
+    const canUseLocalOcr = ["NO_READABLE_TEXT", "PDF_PARSER_UNAVAILABLE", "PDF_PARSE_FAILED", "TEXT_EXTRACTION_FAILED"]
+      .includes(String(data?.code));
+
+    if (!response.ok && isPdf && canUseLocalOcr) {
+      const ocrText = await extractPdfTextWithPaddleOcr(rawFile);
+      response = await sendRequest(ocrText);
+      data = await response.json().catch(() => null);
     }
 
-    const data = await response.json().catch(() => null);
     if (!response.ok) {
       const serverError = typeof data?.error === "string" ? data.error : null;
       const statusMessage: Record<number, string> = {
