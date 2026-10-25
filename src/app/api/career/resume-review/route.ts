@@ -1,5 +1,5 @@
 import { NextResponse, connection } from "next/server";
-import { PDFParse } from "pdf-parse";
+import { DOMMatrix, ImageData, Path2D } from "@napi-rs/canvas";
 import WordExtractor from "word-extractor";
 import { getAuthenticatedUser } from "@/lib/auth/authorize";
 import { getAdminClient } from "@/lib/supabase/admin";
@@ -132,6 +132,15 @@ async function extractResumeText(file: File, extension: string): Promise<string>
       if (bytes.subarray(0, 5).toString("ascii") !== "%PDF-") {
         throw new ResumeRequestError("This file does not appear to be a valid PDF.", 400, "INVALID_PDF");
       }
+      // PDF.js 5 evaluates DOMMatrix at module load time. Supply its Node canvas
+      // globals before loading pdf-parse so serverless runtimes without browser
+      // APIs can initialize the parser.
+      Object.assign(globalThis, {
+        DOMMatrix: globalThis.DOMMatrix ?? DOMMatrix,
+        ImageData: globalThis.ImageData ?? ImageData,
+        Path2D: globalThis.Path2D ?? Path2D,
+      });
+      const { PDFParse } = await import("pdf-parse");
       const parser = new PDFParse({ data: bytes });
       try {
         const parsed = await parser.getText({ first: 20 });
