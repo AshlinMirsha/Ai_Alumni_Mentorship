@@ -342,6 +342,16 @@ ${resumeText}
       timeoutMs: 45000,
       maxTokens: 4096,
       responseFormat: "json",
+      validateResponse: (text) => {
+        const candidate = parseStructuredAIResponse<unknown | null>(text, null);
+        if (!candidate) return false;
+        try {
+          validateAnalysis(candidate);
+          return true;
+        } catch {
+          return false;
+        }
+      },
     });
 
     const parsed = parseStructuredAIResponse<unknown>(aiRes.text, null);
@@ -374,7 +384,8 @@ ${resumeText}
       return NextResponse.json({ success: false, error: error.message, code: error.code }, { status: error.status });
     }
     if (error instanceof AIProviderError) {
-      return NextResponse.json({ success: false, error: error.message, code: error.code }, { status: error.code === "AI_NOT_CONFIGURED" ? 503 : 502 });
+      const status = error.code === "AI_INVALID_REQUEST" ? 400 : ["AI_NOT_CONFIGURED", "AI_ACTION_REQUIRED"].includes(error.code) ? 503 : 502;
+      return NextResponse.json({ success: false, error: error.message, code: error.code }, { status });
     }
     if (error instanceof SyntaxError) {
       return NextResponse.json({ success: false, error: "The AI provider returned an unreadable response. Please try again.", code: "INVALID_AI_RESPONSE" }, { status: 502 });

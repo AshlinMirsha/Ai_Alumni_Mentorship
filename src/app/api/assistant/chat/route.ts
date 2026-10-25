@@ -254,15 +254,12 @@ ADVISORY RULES:
   } catch (error: any) {
     console.error("[Career Assistant API] Error:", error);
     if (error instanceof AIProviderError) {
-      const status = error.code === "AI_NOT_CONFIGURED" ? 503 : 502;
+      const status = error.code === "AI_INVALID_REQUEST" ? 400 : ["AI_NOT_CONFIGURED", "AI_ACTION_REQUIRED"].includes(error.code) ? 503 : 502;
       return NextResponse.json(
         {
           success: false,
-          error: error.code === "AI_NOT_CONFIGURED"
-            ? error.message
-            : "AI services are temporarily unavailable. Please try again shortly.",
+          error: error.message,
           code: error.code,
-          details: error.code === "AI_PROVIDER_FAILED" ? error.message : undefined,
         },
         { status }
       );

@@ -1,8 +1,31 @@
 import { NextResponse, connection } from "next/server";
 import { getAuthenticatedUser } from "@/lib/auth/authorize";
 import { getAdminClient } from "@/lib/supabase/admin";
-import { generateAICareerResponse, parseStructuredAIResponse } from "@/lib/ai/provider";
+import { AIProviderError, generateAICareerResponse } from "@/lib/ai/provider";
 import type { RoadmapStage, RoadmapStageStatus } from "@/types";
+
+function isRoadmapStages(value: unknown): value is RoadmapStage[] {
+  if (!Array.isArray(value) || value.length !== 6) return false;
+  const validStatuses = new Set<RoadmapStageStatus>(["not_started", "in_progress", "completed"]);
+  return value.every((stage, index) => {
+    if (!stage || typeof stage !== "object") return false;
+    const item = stage as Record<string, unknown>;
+    if (typeof item.id !== "string" || !item.id || item.stepNumber !== index + 1 ||
+      typeof item.title !== "string" || !item.title || typeof item.description !== "string" || !item.description ||
+      typeof item.status !== "string" || !validStatuses.has(item.status as RoadmapStageStatus) ||
+      typeof item.estimatedWeeks !== "string" || !item.estimatedWeeks ||
+      !Array.isArray(item.keySkills) || !item.keySkills.every((skill) => typeof skill === "string") ||
+      !Array.isArray(item.suggestedActivities) || !item.suggestedActivities.every((activity) => typeof activity === "string")) {
+      return false;
+    }
+    if (item.project !== undefined) {
+      const project = item.project;
+      if (!project || typeof project !== "object" || typeof (project as Record<string, unknown>).title !== "string" ||
+        typeof (project as Record<string, unknown>).description !== "string") return false;
+    }
+    return true;
+  });
+}
 
 function calculateProgress(stages: RoadmapStage[]): number {
   if (!stages || stages.length === 0) return 0;
@@ -307,12 +330,17 @@ Respond ONLY with a valid JSON array of objects with the structure:
         prompt: aiPrompt,
         temperature: 0.3,
         systemPrompt: "You are an automated career curriculum architect. You output only valid JSON without explanation.",
+        responseFormat: "json",
+        validateResponse: (text) => {
+          try {
+            return isRoadmapStages(JSON.parse(text));
+          } catch {
+            return false;
+          }
+        },
       });
 
-      const parsedStages = parseStructuredAIResponse<RoadmapStage[]>(
-        aiRes.text,
-        getDefaultStagesForRole(targetRole, userSkills)
-      );
+      const parsedStages = JSON.parse(aiRes.text) as RoadmapStage[];
 
       const completionPercentage = calculateProgress(parsedStages);
 
@@ -337,6 +365,8 @@ Respond ONLY with a valid JSON array of objects with the structure:
         stages: parsedStages,
         completionPercentage,
         regenerated: true,
+        provider: aiRes.provider,
+        model: aiRes.model,
       });
     }
 
@@ -370,6 +400,10 @@ Respond ONLY with a valid JSON array of objects with the structure:
 
     return NextResponse.json({ success: false, error: "Missing valid stages array or regenerate flag." }, { status: 400 });
   } catch (err: any) {
+    if (err instanceof AIProviderError) {
+      const status = err.code === "AI_INVALID_REQUEST" ? 400 : ["AI_NOT_CONFIGURED", "AI_ACTION_REQUIRED"].includes(err.code) ? 503 : 502;
+      return NextResponse.json({ success: false, error: err.message, code: err.code }, { status });
+    }
     console.error("[Career Roadmap POST API] Error:", err);
     return NextResponse.json(
       { success: false, error: "Failed to update career roadmap.", details: err?.message },
