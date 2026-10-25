@@ -115,11 +115,25 @@ test("missing NVIDIA and Gemini keys tries OpenAI", async () => {
   assert.equal(firstUrl, "https://api.openai.com/v1/chat/completions");
 });
 
-test("insufficient quota and permission errors stop without falling through", async () => {
+test("quota errors fall through to a later configured provider, but stop when none remain", async () => {
   let calls = 0;
+  const result = await generateAICareerResponse({ prompt }, {
+    env: { NVIDIA_API_KEY: "nvidia-test", GEMINI_API_KEY: "gemini-test", OPENAI_API_KEY: "openai-test" },
+    fetchImpl: async () => {
+      calls += 1;
+      return calls === 1
+        ? failed(429, { message: "insufficient_quota" })
+        : successGemini("Gemini response despite NVIDIA quota issue");
+    },
+    logger: () => {},
+  });
+  assert.equal(result.provider, "gemini");
+  assert.equal(calls, 2);
+
+  calls = 0;
   await assert.rejects(
     generateAICareerResponse({ prompt }, {
-      env: { NVIDIA_API_KEY: "nvidia-test", GEMINI_API_KEY: "gemini-test", OPENAI_API_KEY: "openai-test" },
+      env: { NVIDIA_API_KEY: "nvidia-test" },
       fetchImpl: async () => { calls += 1; return failed(429, { message: "insufficient_quota" }); },
       logger: () => {},
     }),

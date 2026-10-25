@@ -9,14 +9,20 @@ const nativeRequire = createRequire(import.meta.url);
 const routePath = path.resolve(import.meta.dirname, "../src/app/api/career/resume-review/route.ts");
 const routeSource = fs.readFileSync(routePath, "utf8");
 const routeJs = ts.transpile(routeSource, { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 });
+const providerPath = path.resolve(import.meta.dirname, "../src/lib/ai/provider.ts");
+const providerSource = fs.readFileSync(providerPath, "utf8");
+const providerJs = ts.transpile(providerSource, { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 });
+const providerModule = { exports: {} };
+new Function("module", "exports", "require", providerJs)(providerModule, providerModule.exports, nativeRequire);
+const realProviderService = providerModule.exports;
 
 class TestAIProviderError extends Error {
   constructor(message, code) { super(message); this.code = code; }
 }
 
-function createRoute({ authorized = true, generate } = {}) {
+function createRoute({ authorized = true, generate, aiRuntime } = {}) {
   let providerCalls = 0;
-  const module = { exports: {} };
+  const routeModule = { exports: {} };
   const supabase = { from: () => ({ insert: async () => ({ error: null }) }) };
   const stubs = {
     "next/server": { NextResponse: { json: (data, init) => Response.json(data, init) }, connection: async () => {} },
@@ -27,9 +33,10 @@ function createRoute({ authorized = true, generate } = {}) {
     },
     "@/lib/supabase/admin": { getAdminClient: () => supabase },
     "@/lib/ai/provider": {
-      AIProviderError: TestAIProviderError,
+      AIProviderError: aiRuntime ? realProviderService.AIProviderError : TestAIProviderError,
       generateAICareerResponse: async (options) => {
         providerCalls += 1;
+        if (aiRuntime) return realProviderService.generateAICareerResponse(options, aiRuntime);
         return generate ? generate(options) : { text: "{}", provider: "nvidia", model: "test-model" };
       },
       parseStructuredAIResponse: (text, fallback) => {
@@ -38,8 +45,8 @@ function createRoute({ authorized = true, generate } = {}) {
     },
   };
   const localRequire = (specifier) => Object.hasOwn(stubs, specifier) ? stubs[specifier] : nativeRequire(specifier);
-  new Function("module", "exports", "require", routeJs)(module, module.exports, localRequire);
-  return { POST: module.exports.POST, getProviderCalls: () => providerCalls };
+  new Function("module", "exports", "require", routeJs)(routeModule, routeModule.exports, localRequire);
+  return { POST: routeModule.exports.POST, getProviderCalls: () => providerCalls };
 }
 
 function makePdf(text = "") {
@@ -129,4 +136,103 @@ test("valid selectable PDF text reaches the provider only after extraction", asy
   assert.equal(response.status, 200);
   assert.equal(body.provider, "nvidia");
   assert.equal(route.getProviderCalls(), 1);
+});
+
+test("resume route falls back from NVIDIA outage to Gemini analysis and skips OpenAI", async () => {
+  const urls = [];
+  const analysis = {
+    overallScore: 70,
+    atsScore: 72,
+    summary: "Feedback grounded in the submitted resume text.",
+    skillsIdentified: { technical: ["Python"], soft: [], missingForRole: [] },
+    strengths: ["Resume text includes a Python skill."],
+    areasToImprove: [],
+    projectSuggestions: [],
+    missingOrUnclearInfo: [],
+    recommendedNextSteps: [],
+  };
+  const route = createRoute({
+    aiRuntime: {
+      env: { NVIDIA_API_KEY: "nvidia-test", GEMINI_API_KEY: "gemini-test", OPENAI_API_KEY: "openai-test" },
+      logger: () => {},
+      fetchImpl: async (url) => {
+        urls.push(String(url));
+        if (urls.length === 1) return new Response("provider unavailable", { status: 503 });
+        return new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify(analysis) }] } }] }), { status: 200 });
+      },
+    },
+  });
+
+  const response = await route.POST(reviewRequest(makePdf("Resume: Python developer")));
+  const body = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(body.provider, "gemini");
+  assert.equal(body.result.summary, analysis.summary);
+  assert.deepEqual(urls, [
+    "https://integrate.api.nvidia.com/v1/chat/completions",
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+  ]);
+  assert.equal(route.getProviderCalls(), 1);
+});
+
+test("resume route continues after NVIDIA quota error and returns Gemini's real response", async () => {
+  const urls = [];
+  const analysis = {
+    overallScore: 66,
+    atsScore: 69,
+    summary: "Gemini analysis based on the extracted resume.",
+    skillsIdentified: { technical: [], soft: [], missingForRole: [] },
+    strengths: [],
+    areasToImprove: [],
+    projectSuggestions: [],
+    missingOrUnclearInfo: [],
+    recommendedNextSteps: [],
+  };
+  const route = createRoute({
+    aiRuntime: {
+      env: { NVIDIA_API_KEY: "nvidia-test", GEMINI_API_KEY: "gemini-test", OPENAI_API_KEY: "openai-test" },
+      logger: () => {},
+      fetchImpl: async (url) => {
+        urls.push(String(url));
+        if (urls.length === 1) {
+          return new Response(JSON.stringify({ error: { code: "credit_balance_exhausted", type: "insufficient_quota" } }), { status: 429 });
+        }
+        return new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify(analysis) }] } }] }), { status: 200 });
+      },
+    },
+  });
+
+  const response = await route.POST(reviewRequest(makePdf("Resume: data analysis")));
+  const body = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(body.provider, "gemini");
+  assert.equal(body.result.summary, analysis.summary);
+  assert.equal(urls.length, 2);
+  assert.match(urls[1], /generativelanguage\.googleapis\.com/);
+});
+
+test("resume route reports exhausted OpenAI credits only after all configured providers fail", async () => {
+  const urls = [];
+  const route = createRoute({
+    aiRuntime: {
+      env: { NVIDIA_API_KEY: "nvidia-test", GEMINI_API_KEY: "gemini-test", OPENAI_API_KEY: "openai-test" },
+      logger: () => {},
+      fetchImpl: async (url) => {
+        urls.push(String(url));
+        if (urls.length < 3) return new Response("provider unavailable", { status: 503 });
+        return new Response(JSON.stringify({ error: { code: "credit_balance_exhausted", type: "insufficient_quota" } }), { status: 429 });
+      },
+    },
+  });
+
+  const response = await route.POST(reviewRequest(makePdf("Resume: Python developer")));
+  const body = await response.json();
+  assert.equal(response.status, 503);
+  assert.equal(body.code, "AI_ACTION_REQUIRED");
+  assert.match(body.error, /OpenAI API prepaid credit balance is exhausted/);
+  assert.deepEqual(urls, [
+    "https://integrate.api.nvidia.com/v1/chat/completions",
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+    "https://api.openai.com/v1/chat/completions",
+  ]);
 });

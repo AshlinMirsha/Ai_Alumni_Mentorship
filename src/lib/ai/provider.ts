@@ -411,25 +411,30 @@ export async function generateAICareerResponse(
       });
 
       if (["quota", "billing", "permission"].includes(failure.kind)) {
+        const providerLabel = provider.name === "openai" ? "OpenAI" : provider.name === "gemini" ? "Gemini" : "NVIDIA";
         const message = failure.providerCode === "credit_balance_exhausted"
-          ? `${provider.name} API prepaid credit balance is exhausted (HTTP ${failure.status}). Add credits or review API billing.`
+          ? `${providerLabel} API prepaid credit balance is exhausted (HTTP ${failure.status}). Add credits or review API billing.`
           : failure.providerCode === "organization_usage_limit_exceeded"
-            ? `${provider.name} organization usage limit was reached (HTTP ${failure.status}). Review the approved usage limit.`
+            ? `${providerLabel} organization usage limit was reached (HTTP ${failure.status}). Review the approved usage limit.`
             : failure.providerCode === "project_usage_limit_exceeded"
-              ? `${provider.name} project usage limit was reached (HTTP ${failure.status}). Review the project's usage limit.`
+              ? `${providerLabel} project usage limit was reached (HTTP ${failure.status}). Review the project's usage limit.`
               : failure.providerCode === "organization_spend_limit_exceeded"
-                ? `${provider.name} organization spending limit was reached (HTTP ${failure.status}). Review organization spending controls.`
+                ? `${providerLabel} organization spending limit was reached (HTTP ${failure.status}). Review organization spending controls.`
                 : failure.providerCode === "project_spend_limit_exceeded"
-                  ? `${provider.name} project spending limit was reached (HTTP ${failure.status}). Review project spending controls.`
+                  ? `${providerLabel} project spending limit was reached (HTTP ${failure.status}). Review project spending controls.`
                   : failure.kind === "quota"
-                    ? `${provider.name} reported insufficient API quota (HTTP ${failure.status}). Review usage and billing limits.`
+                    ? `${providerLabel} reported insufficient API quota (HTTP ${failure.status}). Review usage and billing limits.`
                     : failure.kind === "billing"
-                      ? `${provider.name} reported a billing restriction (HTTP ${failure.status}). Review API billing settings.`
-                      : `${provider.name} reported an account or project permission restriction (HTTP ${failure.status}). Review the API key's project access.`;
-        throw new AIProviderError(
-          message,
-          "AI_ACTION_REQUIRED",
-        );
+                      ? `${providerLabel} reported a billing restriction (HTTP ${failure.status}). Review API billing settings.`
+                      : `${providerLabel} reported an account or project permission restriction (HTTP ${failure.status}). Review the API key's project access.`;
+        const earlierFailures = failures.length > 0
+          ? ` Earlier provider attempts also failed: ${failures.join("; ")}.`
+          : "";
+        if (index < providers.length - 1) {
+          failures.push(message);
+          continue;
+        }
+        throw new AIProviderError(`${message}${earlierFailures}`, "AI_ACTION_REQUIRED");
       }
       if (failure.kind === "invalid_request") {
         throw new AIProviderError("The AI request was rejected as invalid. Please check the request and try again.", "AI_INVALID_REQUEST");
