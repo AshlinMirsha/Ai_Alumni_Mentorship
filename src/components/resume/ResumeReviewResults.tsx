@@ -74,7 +74,7 @@ export function ResumeReviewResults({
           </div>
         </div>
 
-        {/* Demo Score Cards (Explicitly labeled as Illustrative Demo Scores) */}
+        {/* AI estimate score cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="p-4 rounded-xl bg-[#FAFAFA] border border-[#E7E7E7] flex items-center justify-between">
             <div className="space-y-0.5">
@@ -85,7 +85,7 @@ export function ResumeReviewResults({
               <span className="text-2xl font-bold text-[#090909]">{results.overallScore}</span>
               <span className="text-xs text-[#737373]">/100</span>
               <span className="block text-[9px] font-semibold text-[#737373] uppercase">
-                Demo Score*
+                AI Estimate*
               </span>
             </div>
           </div>
@@ -99,7 +99,7 @@ export function ResumeReviewResults({
               <span className="text-2xl font-bold text-[#090909]">{results.atsScore}</span>
               <span className="text-xs text-[#737373]">/100</span>
               <span className="block text-[9px] font-semibold text-[#737373] uppercase">
-                Demo Score*
+                AI Estimate*
               </span>
             </div>
           </div>
@@ -327,7 +327,7 @@ export function ResumeReviewResults({
       <div className="p-3.5 bg-white border border-[#E7E7E7] rounded-xl flex items-start gap-2 text-xs text-[#737373] shadow-xs">
         <Info size={14} className="shrink-0 text-[#090909] mt-0.5" />
         <span className="text-[11px] leading-relaxed">
-          * Scores and evaluations in demo mode are illustrative simulations modeled on industry hiring patterns. In production, this service connects to a verified enterprise resume evaluation pipeline.
+          * Scores are approximate AI assessments based on extracted resume text. Formatting feedback is limited to text and ATS structure; visual page layout is not evaluated.
         </span>
       </div>
     </div>

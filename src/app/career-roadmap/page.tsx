@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useSyncExternalStore } from "react";
+import { useState, useMemo, useSyncExternalStore, useEffect } from "react";
 import Link from "next/link";
 import {
   Map,
@@ -55,6 +55,22 @@ export default function CareerRoadmapPage() {
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Sync with live Supabase roadmap on mount
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/career/roadmap")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (isMounted && data?.success && Array.isArray(data.stages) && data.stages.length > 0) {
+          saveRoadmapStages(data.stages);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
@@ -64,6 +80,12 @@ export default function CareerRoadmapPage() {
     const updated = stages.map((s) => (s.id === stageId ? { ...s, status: newStatus } : s));
     saveRoadmapStages(updated);
     showToast(`Milestone updated to "${newStatus.replace("_", " ")}".`);
+
+    fetch("/api/career/roadmap", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ stages: updated, targetRole }),
+    }).catch(() => {});
   };
 
   const targetRole = student.careerGoal?.trim() || "";
@@ -74,7 +96,14 @@ export default function CareerRoadmapPage() {
     saveRoadmapStages(freshStages);
     setShowResetConfirm(false);
     showToast(freshStages.length > 0 ? "Roadmap milestones reset to planned state." : "Roadmap cleared.");
+
+    fetch("/api/career/roadmap", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ stages: freshStages, targetRole }),
+    }).catch(() => {});
   };
+
 
   const handleSaveRole = (newRole: string) => {
     const updatedStudent: Student = {
@@ -224,6 +253,7 @@ export default function CareerRoadmapPage() {
     showToast(`Roadmap dynamically created for "${activeRole}"!`);
   };
 
+
   const totalStages = stages.length;
   const completedStages = stages.filter((s) => s.status === "completed").length;
   const inProgressStages = stages.filter((s) => s.status === "in_progress").length;
@@ -353,6 +383,7 @@ export default function CareerRoadmapPage() {
   }, [targetRole]);
 
   return (
+
     <div className="min-h-screen bg-[#FAFAFA] flex antialiased text-[#090909]">
       {/* App Sidebar (Desktop) */}
       <AppSidebar className="hidden lg:flex" />

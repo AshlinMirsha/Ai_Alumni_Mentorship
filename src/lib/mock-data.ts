@@ -57,7 +57,57 @@ export const currentStudent: Student = {
   ],
   bio: "Second-year CS student eager to build scalable web applications. Currently focused on modern full-stack frameworks, REST APIs, and database optimization.",
   resumeUrl: undefined,
-  profileCompletionPercent: 90,
+  profileCompletionPercent: 95,
+  currentActivities: [
+    "Building full-stack cloud applications with Next.js and Supabase",
+    "Practicing dynamic programming & tree algorithms on LeetCode",
+    "Preparing for Summer 2026 software engineering internships",
+  ],
+  githubUrl: "https://github.com/ashlinmirsha",
+  linkedinUrl: "https://linkedin.com/in/ashlinmirsha",
+  portfolioUrl: "https://ashlinmirsha.dev",
+  leetcodeUrl: "https://leetcode.com/u/ashlinmirsha",
+  detailedProjects: [
+    {
+      id: "p-01",
+      title: "AlumniPath Networking Platform",
+      description: "AI-powered alumni networking and career mentorship portal with verified collegiate auth and real-time guidance matching.",
+      techStack: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Supabase"],
+      githubUrl: "https://github.com/ashlinmirsha/alumnipath",
+      demoUrl: "https://alumnipath.vercel.app",
+      role: "Lead Full-Stack Developer",
+    },
+    {
+      id: "p-02",
+      title: "Distributed Task Queue",
+      description: "High-throughput asynchronous task processing worker engine with Redis backplane, dead-letter retries, and metric instrumentation.",
+      techStack: ["Go", "Redis", "Docker", "Prometheus"],
+      githubUrl: "https://github.com/ashlinmirsha/task-queue",
+      role: "Systems Engineer",
+    },
+    {
+      id: "p-03",
+      title: "Real-time Chat Engine",
+      description: "Low-latency WebSocket messaging hub with presence detection, message persistence, and typing status indicators.",
+      techStack: ["Node.js", "WebSockets", "PostgreSQL", "React"],
+      githubUrl: "https://github.com/ashlinmirsha/chat-engine",
+      role: "Backend Developer",
+    },
+  ],
+  targetCompanies: ["Google", "Datadog", "Airbnb", "Stripe", "Microsoft"],
+  achievements: [
+    "1st Place Winner - University Hackathon 2025 (FinTech Category)",
+    "Dean's Honor List for Academic Excellence (Fall 2025 & Spring 2026)",
+    "AWS Certified Cloud Practitioner",
+    "Active Open-Source Contributor to developer tooling",
+  ],
+  education: {
+    degree: "Bachelor of Technology in Computer Science and Engineering",
+    university: "University of Technology",
+    department: "Computer Science",
+    graduationYear: 2027,
+    academicYear: "Second Year",
+  },
 };
 
 // ─── Alumni Data ──────────────────────────────────────────────────────────────

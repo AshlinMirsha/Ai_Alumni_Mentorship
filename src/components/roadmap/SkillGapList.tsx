@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Sparkles,
@@ -9,7 +10,6 @@ import {
   Info,
 } from "lucide-react";
 import type { Student } from "@/types";
-import { getCurriculumTrack } from "@/lib/curriculum-tracks";
 
 interface SkillGapListProps {
   student: Student;
@@ -17,16 +17,74 @@ interface SkillGapListProps {
 }
 
 export function SkillGapList({ student, targetRole }: SkillGapListProps) {
-  const track = getCurriculumTrack(targetRole);
-  const benchmarkSkills = track.benchmarkSkills;
-  const skillsToDevelop = track.skillsToDevelop;
+  const [apiData, setApiData] = useState<any>(null);
 
-  const studentSkillNames = new Set(
-    (student.skills || []).map((s) => (typeof s === "string" ? s : s.name).toLowerCase())
-  );
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/career/skill-gap")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (isMounted && data?.success) {
+          setApiData(data);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, [targetRole]);
+
+  const benchmarkSkills = [
+    { name: "Python", category: "Backend Language", benchmarkLevel: "Advanced" },
+    { name: "JavaScript / TypeScript", category: "Frontend Language", benchmarkLevel: "Advanced" },
+    { name: "React", category: "Frontend Framework", benchmarkLevel: "Intermediate" },
+    { name: "Django / FastAPI", category: "Backend Framework", benchmarkLevel: "Advanced" },
+    { name: "PostgreSQL & SQL", category: "Relational Database", benchmarkLevel: "Advanced" },
+    { name: "Docker & Containers", category: "DevOps & Cloud", benchmarkLevel: "Intermediate" },
+    { name: "Redis Caching", category: "Performance & In-Memory", benchmarkLevel: "Intermediate" },
+    { name: "CI/CD & Testing", category: "Engineering Rigor", benchmarkLevel: "Intermediate" },
+  ];
+
+  const studentSkillNames = new Set(student.skills.map((s) => s.name.toLowerCase()));
+
+  const skillsToDevelop = [
+    {
+      skill: "TypeScript",
+      priority: "high" as const,
+      reason: "Standard industry expectation for type-safe React and full-stack codebases.",
+      suggestedNextStep: "Refactor a core React feature with TypeScript interfaces and strict null checks.",
+      resources: ["TypeScript Handbook (Official)", "Execute Program TypeScript Course"],
+    },
+    {
+      skill: "Docker & Containerization",
+      priority: "high" as const,
+      reason: "Crucial for consistent local dev environments and microservices deployments.",
+      suggestedNextStep: "Write a multi-stage Dockerfile for your Django app and spin up PostgreSQL via Docker Compose.",
+      resources: ["Docker for Developers Guide", "Play with Docker Labs"],
+    },
+    {
+      skill: "PostgreSQL Query Optimization",
+      priority: "medium" as const,
+      reason: "Moving beyond basic ORM queries to database indexing and EXPLAIN analysis.",
+      suggestedNextStep: "Analyze query execution plans on a 10K-row dataset and benchmark B-tree indexes.",
+      resources: ["Use The Index, Luke!", "PostgreSQL Official Documentation"],
+    },
+    {
+      skill: "Redis Caching",
+      priority: "medium" as const,
+      reason: "In-memory caching is required to reduce relational DB pressure in production.",
+      suggestedNextStep: "Implement cache-aside pattern on high-latency API responses in Django.",
+      resources: ["Redis University (Free)", "Caching Strategies Overview"],
+    },
+  ];
+
+  const activeSkillsToDevelop =
+    apiData?.recommendedSkillsToDevelop && apiData.recommendedSkillsToDevelop.length > 0
+      ? apiData.recommendedSkillsToDevelop
+      : skillsToDevelop;
 
   const suggestedAssistantQuery = encodeURIComponent(
-    `How can I bridge my skill gaps for ${targetRole} positions?`
+    `How can I bridge my skill gaps in TypeScript, Docker, and advanced PostgreSQL for ${targetRole} positions?`
   );
 
   return (
@@ -90,31 +148,25 @@ export function SkillGapList({ student, targetRole }: SkillGapListProps) {
           </div>
 
           <div className="space-y-2">
-            {benchmarkSkills.length > 0 ? (
-              benchmarkSkills.map((bench, idx) => {
-                const hasSkill = studentSkillNames.has(bench.name.toLowerCase().split(" ")[0]);
-                return (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between p-2 rounded-lg bg-white border border-[#E7E7E7] text-xs shadow-xs"
-                  >
-                    <div className="flex items-center gap-1.5 truncate">
-                      {hasSkill ? (
-                        <CheckCircle2 size={13} className="text-[#090909] shrink-0" />
-                      ) : (
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#A8A8A8] shrink-0" />
-                      )}
-                      <span className="font-medium text-[#090909] truncate">{bench.name}</span>
-                    </div>
-                    <span className="text-[10px] text-[#737373] shrink-0">{bench.benchmarkLevel}</span>
+            {benchmarkSkills.map((bench, idx) => {
+              const hasSkill = studentSkillNames.has(bench.name.toLowerCase().split(" ")[0]);
+              return (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between p-2 rounded-lg bg-white border border-[#E7E7E7] text-xs shadow-xs"
+                >
+                  <div className="flex items-center gap-1.5 truncate">
+                    {hasSkill ? (
+                      <CheckCircle2 size={13} className="text-[#090909] shrink-0" />
+                    ) : (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#A8A8A8] shrink-0" />
+                    )}
+                    <span className="font-medium text-[#090909] truncate">{bench.name}</span>
                   </div>
-                );
-              })
-            ) : (
-              <div className="p-3 text-center text-xs text-[#737373] bg-white rounded-lg border border-[#E7E7E7]">
-                Benchmark criteria will populate upon roadmap generation or selecting a predefined track.
-              </div>
-            )}
+                  <span className="text-[10px] text-[#737373] shrink-0">{bench.benchmarkLevel}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -128,32 +180,26 @@ export function SkillGapList({ student, targetRole }: SkillGapListProps) {
           </div>
 
           <div className="space-y-2">
-            {skillsToDevelop.length > 0 ? (
-              skillsToDevelop.map((gap, idx) => (
-                <div
-                  key={idx}
-                  className="p-2.5 rounded-lg bg-[#FAFAFA] border border-[#E7E7E7] text-xs space-y-1"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-[#090909]">{gap.skill}</span>
-                    <span
-                      className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
-                        gap.priority === "high"
-                          ? "bg-[#090909] text-white border-[#090909]"
-                          : "bg-white text-[#454545] border-[#E7E7E7]"
-                      }`}
-                    >
-                      {gap.priority}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-[#555555] leading-snug">{gap.reason}</p>
+            {activeSkillsToDevelop.map((gap: any, idx: number) => (
+              <div
+                key={idx}
+                className="p-2.5 rounded-lg bg-[#FAFAFA] border border-[#E7E7E7] text-xs space-y-1"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-[#090909]">{gap.skill}</span>
+                  <span
+                    className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
+                      gap.priority === "high"
+                        ? "bg-[#090909] text-white border-[#090909]"
+                        : "bg-white text-[#454545] border-[#E7E7E7]"
+                    }`}
+                  >
+                    {gap.priority}
+                  </span>
                 </div>
-              ))
-            ) : (
-              <div className="p-3 text-center text-xs text-[#737373] bg-[#FAFAFA] rounded-lg border border-[#E7E7E7]">
-                Skill priorities will appear once your roadmap path is generated.
+                <p className="text-[11px] text-[#555555] leading-snug">{gap.reason}</p>
               </div>
-            )}
+            ))}
           </div>
         </div>
       </div>
@@ -166,25 +212,19 @@ export function SkillGapList({ student, targetRole }: SkillGapListProps) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          {skillsToDevelop.length > 0 ? (
-            skillsToDevelop.map((item, idx) => (
-              <div key={idx} className="p-3 bg-white rounded-xl border border-[#E7E7E7] space-y-1.5 shadow-xs">
-                <span className="font-bold text-[#090909]">{item.skill} Action:</span>
-                <p className="text-[11px] text-[#555555] leading-relaxed">{item.suggestedNextStep}</p>
-                <div className="pt-1 flex flex-wrap gap-2 text-[10px] text-[#090909]">
-                  {item.resources.map((res, rIdx) => (
-                    <span key={rIdx} className="hover:underline cursor-pointer font-medium">
-                      {res}
-                    </span>
-                  ))}
-                </div>
+          {activeSkillsToDevelop.map((item: any, idx: number) => (
+            <div key={idx} className="p-3 bg-white rounded-xl border border-[#E7E7E7] space-y-1.5 shadow-xs">
+              <span className="font-bold text-[#090909]">{item.skill} Action:</span>
+              <p className="text-[11px] text-[#555555] leading-relaxed">{item.suggestedNextStep}</p>
+              <div className="pt-1 flex flex-wrap gap-2 text-[10px] text-[#090909]">
+                {(item.resources || []).map((res: string, rIdx: number) => (
+                  <span key={rIdx} className="hover:underline cursor-pointer font-medium">
+                    {res}
+                  </span>
+                ))}
               </div>
-            ))
-          ) : (
-            <div className="sm:col-span-2 p-3 text-center text-xs text-[#737373] bg-white rounded-xl border border-[#E7E7E7]">
-              Generate your career path or ask AI Career Assistant to receive personalized learning actions.
             </div>
-          )}
+          ))}
         </div>
       </div>
 

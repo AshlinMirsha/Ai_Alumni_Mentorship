@@ -300,6 +300,15 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
                       <CheckCircle2 size={10} className="text-neutral-900" /> {effectiveRole}
                     </span>
                   </div>
+                  {!isAlumni && (
+                    <Link
+                      href="/profile"
+                      onClick={() => setShowUserMenu(false)}
+                      className="block px-3.5 py-2 text-xs text-[#090909] font-semibold hover:bg-gray-50 transition-colors"
+                    >
+                      View Student Profile
+                    </Link>
+                  )}
                   <button
                     type="button"
                     onClick={() => {

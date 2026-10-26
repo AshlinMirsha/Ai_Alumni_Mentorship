@@ -57,13 +57,139 @@ export interface Project {
 
 export type MentorshipAvailability = "available" | "limited" | "unavailable";
 
+// ─── Extended Alumni Profile Types ──────────────────────────────────────────
+
+export type EmploymentStatusOption =
+  | "Employed"
+  | "Seeking opportunities"
+  | "Studying further"
+  | "Working independently"
+  | "Career break"
+  | string;
+
+export interface AlumniCurrentEmployment {
+  isCurrentlyEmployed?: boolean;
+  status: EmploymentStatusOption;
+  company?: string;
+  role?: string;
+  employmentType?: string;
+  startMonthYear?: string;
+  startDate?: string;
+  location?: string;
+  workMode?: "On-site" | "Hybrid" | "Remote" | string;
+  workArrangement?: string;
+  jobDescription?: string;
+  responsibilities?: string;
+}
+
+export interface AlumniDetailedSkill {
+  id: string;
+  name: string;
+  level?: "Beginner" | "Intermediate" | "Advanced" | "Expert" | string;
+  yearsOfExperience?: number | string;
+  description?: string;
+}
+
+export interface AlumniWorkExperienceRecord {
+  id: string;
+  company: string;
+  role: string;
+  employmentType?: string;
+  startDate: string;
+  endDate?: string;
+  isCurrent?: boolean;
+  location?: string;
+  responsibilities?: string;
+  skills?: string[];
+}
+
+export type InternshipStatus = "Completed" | "Ongoing" | "Not Completed";
+
+export interface AlumniInternshipRecord {
+  id: string;
+  company: string;
+  role: string;
+  domain: string;
+  startDate: string;
+  endDate?: string;
+  duration?: string;
+  type?: string; // "On-site" | "Remote" | "Hybrid"
+  skillsLearned?: string[];
+  description?: string;
+  proofUrl?: string;
+  status: InternshipStatus;
+}
+
+export interface AlumniCareerMilestone {
+  id: string;
+  title: string;
+  category: string; // Promotion, Project, Certification, Award, Hackathon, Milestone, Publication, Open-source, Leadership
+  description?: string;
+  date?: string;
+  evidenceUrl?: string;
+}
+
+export interface AlumniCertification {
+  id: string;
+  title: string;
+  issuer: string;
+  issueDate?: string;
+  credentialUrl?: string;
+}
+
+export interface AlumniEducationRecord {
+  id: string;
+  degree: string;
+  institution: string;
+  field?: string;
+  graduationYear?: number;
+  additionalQualifications?: string;
+}
+
+export interface AlumniSpecializationDetails {
+  primarySpecialization?: string;
+  additionalSpecializations?: string[];
+  technicalDomains?: string[];
+  professionalExpertise?: string[];
+  industryExperience?: string;
+  mentoringAreas?: string[];
+  primaryDomain?: string;
+  subfields?: string[];
+  yearsInSpecialization?: number | string;
+  advisingTopics?: string[];
+}
+
+export interface ProfessionalLinkItem {
+  id: string;
+  title?: string;
+  label?: string;
+  url: string;
+  type?: "github" | "linkedin" | "portfolio" | "website" | "other" | string;
+}
+
+export interface AlumniMentorshipDetails {
+  available: boolean;
+  topics?: string[];
+  skills?: string[];
+  domains?: string[];
+  technicalDomains?: string[];
+  targetJobRoles?: string[];
+  careerTopics?: string[];
+  preferredFormats?: string[];
+  maxMentees?: number;
+  notes?: string;
+}
+
 export interface Alumni {
   id: string;
   userId: string;
   name: string;
+  email?: string;
   avatar?: string;
+  avatarUrl?: string;
   headline: string;
   location: string;
+  city?: string;
   company: string;
   role: string;
   graduationYear: number;
@@ -78,6 +204,19 @@ export interface Alumni {
   education: Education[];
   bio: string;
   linkedinUrl?: string;
+  githubUrl?: string;
+  portfolioUrl?: string;
+  specializations?: string[];
+  specializationDetails?: AlumniSpecializationDetails;
+  currentEmployment?: AlumniCurrentEmployment;
+  detailedSkills?: AlumniDetailedSkill[];
+  detailedWorkExperience?: AlumniWorkExperienceRecord[];
+  internships?: AlumniInternshipRecord[];
+  careerJourney?: AlumniCareerMilestone[];
+  mentorshipDetails?: AlumniMentorshipDetails;
+  detailedEducation?: AlumniEducationRecord[];
+  certifications?: AlumniCertification[];
+  otherProfessionalLinks?: ProfessionalLinkItem[];
   mentorshipAvailability: MentorshipAvailability;
   mentorshipAreas: string[];
   mentorshipInterests?: string[];
@@ -88,6 +227,7 @@ export interface Alumni {
   totalMentees: number;
   maxMentees?: number;
   university?: string;
+  institution?: string;
   visibilityPreference?: "public" | "university_only" | "private";
   matchScore?: number; // computed match score 0-100
   matchExplanation?: string;
@@ -100,13 +240,18 @@ export interface Student {
   id: string;
   userId: string;
   name: string;
+  email?: string;
   avatar?: string;
+  avatarUrl?: string;
   headline: string;
   university: string;
   department: string;
   graduationYear: number;
   academicYear?: string;
+  degree?: string;
   careerGoal?: string;
+  preferredLocation?: string;
+  internshipInterest?: string;
   projects?: string[];
   skills: Skill[];
   interests: Interest[];
@@ -114,6 +259,17 @@ export interface Student {
   bio: string;
   resumeUrl?: string;
   profileCompletionPercent: number;
+  // Extended Student Profile Features
+  currentActivities?: string[];
+  githubUrl?: string;
+  linkedinUrl?: string;
+  portfolioUrl?: string;
+  leetcodeUrl?: string;
+  otherLinks?: Array<{ title: string; url: string }>;
+  detailedProjects?: StudentProjectDetail[];
+  targetCompanies?: string[];
+  achievements?: string[];
+  education?: StudentEducation;
 }
 
 // ─── Mentorship ──────────────────────────────────────────────────────────────
@@ -317,8 +473,8 @@ export interface ResumeReviewResult {
   fileSize: string;
   targetRole: string;
   submittedAt: string;
-  overallScore: number; // 0-100 Illustrative demo score
-  atsScore: number;     // 0-100 Illustrative demo ATS score
+  overallScore: number; // 0-100 AI estimate based on extracted resume text
+  atsScore: number;     // 0-100 AI estimate based on extracted resume text
   summary: string;
   skillsIdentified: {
     technical: string[];
@@ -480,6 +636,8 @@ export interface UserSettings {
 // ─── Auth Session ─────────────────────────────────────────────────────────────
 
 export interface AuthSession {
+  id?: string;
+  userId?: string;
   isAuthenticated: boolean;
   role: UserRole;
   email: string;
@@ -583,6 +741,7 @@ export interface StudentProjectDetail {
   githubUrl?: string;
   demoUrl?: string;
   role?: string;
+  status?: string;
 }
 
 export interface StudentEducation {

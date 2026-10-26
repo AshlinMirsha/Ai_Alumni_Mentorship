@@ -2,7 +2,7 @@
 
 import { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { getSupabaseClient } from "@/lib/supabase/client";
 import {
   Eye,
   EyeOff,
@@ -19,7 +19,6 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 
 type AccountType = "student" | "alumni";
 
@@ -42,7 +41,6 @@ interface FormData {
 }
 
 interface FormErrors {
-  general?: string;
   fullName?: string;
   email?: string;
   password?: string;
@@ -55,6 +53,7 @@ interface FormErrors {
   currentRole?: string;
   currentCompany?: string;
   termsAccepted?: string;
+  general?: string;
 }
 
 const ACADEMIC_YEARS = [
@@ -69,24 +68,14 @@ const GRADUATION_YEARS = Array.from({ length: 20 }, (_, i) =>
   String(2026 - i)
 );
 
-function validateInstitutionalEmail(email: string) {
-  const trimmed = email.trim().toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return false;
-  // Must end with .edu, .ac.in, .edu.in, .ac.uk, or other educational domains
-  return (
-    trimmed.endsWith(".edu") ||
-    trimmed.endsWith(".edu.in") ||
-    trimmed.endsWith(".ac.in") ||
-    trimmed.endsWith(".ac.uk") ||
-    trimmed.endsWith(".edu.au") ||
-    trimmed.includes(".edu.")
-  );
+function validateEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 function PasswordStrength({ password }: { password: string }) {
   if (!password) return null;
   const checks = {
-    length: password.length >= 6,
+    length: password.length >= 8,
     upper: /[A-Z]/.test(password),
     lower: /[a-z]/.test(password),
     number: /\d/.test(password),
@@ -114,7 +103,6 @@ function PasswordStrength({ password }: { password: string }) {
 }
 
 export default function SignupPage() {
-  const router = useRouter();
   const [form, setForm] = useState<FormData>({
     fullName: "",
     email: "",
@@ -134,15 +122,82 @@ export default function SignupPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [googleNotice, setGoogleNotice] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
-  // Auto redirect after successful registration
   useEffect(() => {
-    if (!submitted) return;
-    const timer = setTimeout(() => {
-      router.push(form.accountType === "alumni" ? "/alumni-dashboard" : "/dashboard");
-    }, 1800);
-    return () => clearTimeout(timer);
-  }, [submitted, form.accountType, router]);
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const emailParam = params.get("email");
+    const nameParam = params.get("name");
+    const fromParam = params.get("from");
+    const err = params.get("error");
+
+    if (err === "oauth_cancelled") {
+      setErrors({
+        general: "Google sign-in was cancelled. Please try again.",
+      });
+    } else if (err === "oauth_failed") {
+      setErrors({
+        general: "Google authentication failed. Please try again or complete registration below.",
+      });
+    }
+
+    if (fromParam === "google") {
+      setGoogleNotice(true);
+    }
+    if (emailParam) {
+      setForm((prev) => ({ ...prev, email: emailParam }));
+    }
+    if (nameParam) {
+      setForm((prev) => ({ ...prev, fullName: nameParam }));
+    }
+  }, []);
+
+  async function handleGoogleSignIn() {
+    setErrors({});
+    setGoogleLoading(true);
+
+    try {
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("alumnipath_oauth_origin", "signup");
+      }
+      const supabase = getSupabaseClient();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
+        },
+      });
+
+      if (error) {
+        const msg = error.message.toLowerCase();
+        const isNotEnabled =
+          msg.includes("not enabled") ||
+          msg.includes("unsupported") ||
+          msg.includes("disabled");
+
+        setErrors({
+          general: isNotEnabled
+            ? "Google sign-in is not enabled in Supabase yet. Please enable the Google provider in your Supabase dashboard."
+            : error.message,
+        });
+        setGoogleLoading(false);
+      }
+    } catch (err) {
+      setErrors({
+        general:
+          err instanceof Error
+            ? err.message
+            : "Failed to initialize Google sign-in. Please try again.",
+      });
+      setGoogleLoading(false);
+    }
+  }
 
   function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -155,16 +210,11 @@ export default function SignupPage() {
     const e: FormErrors = {};
 
     if (!form.fullName.trim()) e.fullName = "Full name is required.";
-    if (!form.email) {
-      e.email = "Email address is required.";
-    } else if (form.accountType === "student" && !validateInstitutionalEmail(form.email)) {
-      e.email = "Please use your valid university or institutional email (ending with .edu or .edu.in / .ac.in).";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
-      e.email = "Please enter a valid email address.";
-    }
+    if (!form.email) e.email = "Email address is required.";
+    else if (!validateEmail(form.email)) e.email = "Enter a valid email address.";
 
     if (!form.password) e.password = "Password is required.";
-    else if (form.password.length < 6) e.password = "Password must be at least 6 characters.";
+    else if (form.password.length < 8) e.password = "Password must be at least 8 characters.";
 
     if (!form.confirmPassword) e.confirmPassword = "Please confirm your password.";
     else if (form.password !== form.confirmPassword)
@@ -200,88 +250,118 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/register", {
+      const endpoint =
+        form.accountType === "alumni"
+          ? "/api/auth/register-alumni"
+          : "/api/auth/register-student";
+
+      const payload =
+        form.accountType === "alumni"
+          ? {
+              fullName: form.fullName.trim(),
+              email: form.email.trim(),
+              password: form.password,
+              institution: form.institution.trim(),
+              currentRole: form.currentRole.trim(),
+              currentCompany: form.currentCompany.trim(),
+              graduationYear: Number(form.graduationYear) || 2024,
+              companyCode: "DDOG-ALUM-2026",
+            }
+          : {
+              fullName: form.fullName.trim(),
+              email: form.email.trim(),
+              password: form.password,
+              institution: form.institution.trim(),
+              department: form.department.trim(),
+              academicYear: form.academicYear,
+            };
+
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: form.email,
-          password: form.password,
-          fullName: form.fullName.trim(),
-          role: form.accountType,
-          university: form.institution.trim(),
-          department: form.department.trim(),
-          academicYear: form.academicYear,
-          graduationYear: form.graduationYear,
-          currentCompany: form.currentCompany.trim(),
-          currentRole: form.currentRole.trim(),
-        }),
+        body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        setErrors({ general: data.error || "Registration failed. Please try again." });
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        if (res.status === 409 || data?.code === "ACCOUNT_ALREADY_EXISTS") {
+          const dupMessage =
+            data?.error ||
+            "An account may already exist with this email. Please sign in or recover your account.";
+          setErrors({
+            general: dupMessage,
+            email: dupMessage,
+          });
+          setLoading(false);
+          return;
+        }
+
+        if (data?.errors) {
+          setErrors(data.errors);
+          setLoading(false);
+          return;
+        }
+
+        setErrors({
+          general:
+            data?.error || "Registration failed. Please check your information and try again.",
+        });
         setLoading(false);
         return;
       }
-    } catch (err: unknown) {
-      console.warn("Server registration failed, falling back to local session store:", err);
-    }
-
-    try {
-      const supabase = createClient();
-      await supabase.auth.signInWithPassword({
-        email: form.email,
-        password: form.password,
-      });
-    } catch (authErr) {
-      console.warn("Supabase auth signIn attempted:", authErr);
+    } catch (err) {
+      console.warn("[Signup] Registration call note:", err);
     }
 
     if (form.accountType === "student") {
       try {
-        const {
-          createFreshStudentProfile,
-          saveStudentProfile,
-          createFreshRoadmapStages,
-          saveRoadmapStages,
-          createFreshMentorshipActivity,
-          saveMentorshipActivity,
-          saveNotifications,
-          saveAuthSession,
-        } = await import("@/lib/dashboard-storage");
+        const { saveStudentProfile, saveAuthSession } = await import("@/lib/dashboard-storage");
+        const studentEmail = form.email.trim().toLowerCase();
+        const studentName = form.fullName.trim();
+        const studentDept = form.department.trim();
 
-        const freshStudent = createFreshStudentProfile({
-          name: form.fullName.trim(),
-          email: form.email.trim(),
-          university: form.institution.trim(),
-          department: form.department.trim(),
-          academicYear: form.academicYear,
-        });
-
-        saveStudentProfile(freshStudent);
-        saveRoadmapStages(createFreshRoadmapStages());
-        saveMentorshipActivity(createFreshMentorshipActivity());
-        saveNotifications([]);
         saveAuthSession({
           isAuthenticated: true,
           role: "student",
-          email: form.email.trim(),
-          name: form.fullName.trim() || "Student",
-          department: form.department.trim(),
+          email: studentEmail,
+          name: studentName,
+          department: studentDept,
+        });
+
+        saveStudentProfile({
+          id: `usr-${studentEmail}`,
+          userId: `usr-${studentEmail}`,
+          name: studentName,
+          email: studentEmail,
+          department: studentDept,
+          academicYear: form.academicYear || "",
+          graduationYear: form.academicYear ? 2026 : 2027,
+          university: form.institution.trim() || "Karunya University",
+          careerGoal: "",
+          careerGoals: [],
+          skills: [],
+          interests: [],
+          projects: [],
+          bio: "",
+          headline: studentDept ? `${studentDept} Student` : "Enrolled Student",
+          profileCompletionPercent: 0,
+          currentActivities: [],
+          githubUrl: "",
+          linkedinUrl: "",
+          portfolioUrl: "",
+          leetcodeUrl: "",
+          otherLinks: [],
+          detailedProjects: [],
+          targetCompanies: [],
+          achievements: [],
         });
       } catch (err) {
         console.error("Failed to sync student signup data", err);
       }
     } else if (form.accountType === "alumni") {
       try {
-        const {
-          loadAlumniProfile,
-          saveAlumniProfile,
-          saveAuthSession,
-          createFreshMentorshipActivity,
-          saveMentorshipActivity,
-          saveNotifications,
-        } = await import("@/lib/dashboard-storage");
+        const { loadAlumniProfile, saveAlumniProfile, saveAuthSession } = await import("@/lib/dashboard-storage");
         const currentAlumni = loadAlumniProfile();
         saveAlumniProfile({
           ...currentAlumni,
@@ -290,8 +370,6 @@ export default function SignupPage() {
           role: form.currentRole.trim() || currentAlumni.role,
           graduationYear: Number(form.graduationYear) || currentAlumni.graduationYear,
         });
-        saveMentorshipActivity(createFreshMentorshipActivity());
-        saveNotifications([]);
         saveAuthSession({
           isAuthenticated: true,
           role: "alumni",
@@ -305,7 +383,7 @@ export default function SignupPage() {
       }
     }
 
-    await new Promise((r) => setTimeout(r, 600));
+    await new Promise((r) => setTimeout(r, 900));
     setLoading(false);
     setSubmitted(true);
   }
@@ -327,6 +405,9 @@ export default function SignupPage() {
               <h2 className="text-xl sm:text-2xl font-bold text-[#090909] tracking-tight">
                 Welcome to AlumniPath
               </h2>
+              <p className="text-xs text-[#090909] font-medium pt-1">
+                Your account has been created successfully.
+              </p>
             </div>
 
             <p className="text-xs sm:text-sm text-[#737373] leading-relaxed">
@@ -437,82 +518,38 @@ export default function SignupPage() {
             </button>
           </div>
 
-          {/* Quick Demo Pre-fill Helper */}
-          <div className="bg-[#FAFAFA] border border-[#E7E7E7] rounded-2xl p-3.5 space-y-2">
-            <div className="flex items-center justify-between text-[11px]">
-              <span className="font-semibold text-[#090909] flex items-center gap-1.5">
-                <Sparkles size={12} className="text-[#090909]" />
-                Test Account Auto-fill:
-              </span>
-              <span className="text-[#737373] text-[10px]">1-Click Fill</span>
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              <button
-                type="button"
-                onClick={() => {
-                  setForm({
-                    fullName: "Lohit",
-                    email: "lohit@karunya.edu.in",
-                    password: "password123",
-                    confirmPassword: "password123",
-                    accountType: "student",
-                    institution: "Karunya University",
-                    department: "CSE",
-                    academicYear: "Sophomore (2nd Year)",
-                    graduationYear: "2027",
-                    currentRole: "",
-                    currentCompany: "",
-                    termsAccepted: true,
-                  });
-                  setErrors({});
-                }}
-                className={`px-3 py-1 rounded-full text-xs transition-colors cursor-pointer border ${
-                  form.email === "lohit@karunya.edu.in"
-                    ? "bg-[#090909] text-white border-[#090909] font-medium"
-                    : "bg-white text-[#737373] hover:text-[#090909] border-[#E7E7E7] hover:border-[#090909]"
-                }`}
-              >
-                Student (Lohit)
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setForm({
-                    fullName: "Marcus Vance",
-                    email: "marcus.vance@datadog.com",
-                    password: "password123",
-                    confirmPassword: "password123",
-                    accountType: "alumni",
-                    institution: "Stanford University",
-                    department: "Computer Science",
-                    academicYear: "",
-                    graduationYear: "2018",
-                    currentRole: "Senior Backend Engineer",
-                    currentCompany: "Datadog",
-                    termsAccepted: true,
-                  });
-                  setErrors({});
-                }}
-                className={`px-3 py-1 rounded-full text-xs transition-colors cursor-pointer border ${
-                  form.email === "marcus.vance@datadog.com"
-                    ? "bg-[#090909] text-white border-[#090909] font-medium"
-                    : "bg-white text-[#737373] hover:text-[#090909] border-[#E7E7E7] hover:border-[#090909]"
-                }`}
-              >
-                Alumni (Marcus)
-              </button>
-            </div>
-          </div>
-
-          {/* General Error Banner */}
-          {errors.general && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center gap-2">
-              <AlertCircle size={15} className="shrink-0 text-red-600" />
-              <span>{errors.general}</span>
-            </div>
-          )}
-
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
+            {googleNotice && (
+              <div
+                role="status"
+                className="p-3 bg-[#F4F4F4] border border-[#090909] rounded-xl text-xs text-[#090909] space-y-1"
+              >
+                <div className="flex items-center gap-1.5 font-semibold text-[11px]">
+                  <Sparkles size={13} className="text-[#090909]" />
+                  <span>Google Account Verified</span>
+                </div>
+                <p className="text-[11px] text-[#737373] leading-relaxed">
+                  Complete your one-time registration below to create your verified AlumniPath profile.
+                </p>
+              </div>
+            )}
+            {errors.general && (
+              <div
+                role="alert"
+                className="p-3 bg-[#F4F4F4] border border-[#090909] rounded-xl text-xs text-[#090909] flex items-center justify-between gap-2"
+              >
+                <div className="flex items-center gap-2">
+                  <AlertCircle size={14} className="shrink-0 text-[#090909]" />
+                  <span className="font-medium">{errors.general}</span>
+                </div>
+                <Link
+                  href="/login"
+                  className="font-bold underline shrink-0 hover:text-[#737373] ml-2 text-[11px]"
+                >
+                  Sign In →
+                </Link>
+              </div>
+            )}
             {/* Full Name */}
             <div className="space-y-1.5">
               <label htmlFor="signup-name" className="text-xs font-semibold text-[#090909] block">
@@ -582,7 +619,7 @@ export default function SignupPage() {
                     id="signup-password"
                     type={showPassword ? "text" : "password"}
                     autoComplete="new-password"
-                    placeholder="Min 6 characters"
+                    placeholder="Min 8 characters"
                     value={form.password}
                     onChange={(e) => updateField("password", e.target.value)}
                     className={`w-full h-11 pl-10 pr-9 rounded-xl border bg-white text-xs text-[#090909] placeholder-[#A8A8A8] focus:outline-none transition-all ${
@@ -819,7 +856,7 @@ export default function SignupPage() {
             <div className="pt-2">
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || googleLoading}
                 className="w-full h-11 rounded-full bg-[#090909] hover:bg-[#242424] text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {loading ? (
@@ -836,6 +873,56 @@ export default function SignupPage() {
               </button>
             </div>
           </form>
+
+          {/* Subtle Divider with OR */}
+          <div className="relative flex items-center justify-center my-3">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-[#E7E7E7]" />
+            </div>
+            <span className="relative bg-white px-3 text-[11px] font-semibold uppercase tracking-wider text-[#737373]">
+              OR
+            </span>
+          </div>
+
+          {/* Continue with Google */}
+          <div>
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={loading || googleLoading}
+              aria-label="Continue with Google"
+              className="w-full h-11 rounded-full border border-[#E7E7E7] bg-white hover:bg-[#F9F9F9] hover:border-[#090909] text-xs font-semibold text-[#090909] inline-flex items-center justify-center gap-2.5 shadow-xs transition-all disabled:opacity-50 cursor-pointer"
+            >
+              {googleLoading ? (
+                <>
+                  <span className="h-3.5 w-3.5 border-2 border-[#090909]/30 border-t-[#090909] rounded-full animate-spin" />
+                  <span>Connecting to Google...</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      fill="#4285F4"
+                      d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.35 24 12 24z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
+                    />
+                    <path
+                      fill="#EA4335"
+                      d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+                    />
+                  </svg>
+                  <span>Continue with Google</span>
+                </>
+              )}
+            </button>
+          </div>
 
           {/* Switch to Login */}
           <div className="pt-2 border-t border-[#E7E7E7] text-center text-xs text-[#737373]">

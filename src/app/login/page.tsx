@@ -20,7 +20,7 @@ import {
   defaultStudentSession,
   defaultAlumniSession,
 } from "@/lib/dashboard-storage";
-import { createClient } from "@/lib/supabase/client";
+import { getSupabaseClient } from "@/lib/supabase/client";
 
 interface FormErrors {
   email?: string;
@@ -43,38 +43,53 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [forgotNotice, setForgotNotice] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [targetRedirect, setTargetRedirect] = useState("/dashboard");
+
+  // Read URL query parameters for OAuth redirect notifications
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const err = params.get("error");
+    if (err === "not_registered") {
+      setErrors({
+        general: "You haven't registered with AlumniPath yet. Please sign up first.",
+      });
+    } else if (err === "verification_required") {
+      setErrors({
+        general: "Please complete the required verification before continuing.",
+      });
+    } else if (err === "oauth_cancelled") {
+      setErrors({
+        general: "Google sign-in was cancelled. Please try again.",
+      });
+    } else if (err === "oauth_failed") {
+      setErrors({
+        general: "Google authentication failed. Please try again or use email and password.",
+      });
+    } else if (err === "unauthorized_role") {
+      setErrors({
+        general: "Your account role could not be verified. Please contact support.",
+      });
+    }
+  }, []);
 
   // Auto redirect after successful submission
   useEffect(() => {
     if (!submitted) return;
     const timer = setTimeout(() => {
-      router.push(role === "alumni" ? "/alumni-dashboard" : "/dashboard");
-    }, 1500);
+      router.push(targetRedirect);
+    }, 1200);
     return () => clearTimeout(timer);
-  }, [submitted, role, router]);
+  }, [submitted, targetRedirect, router]);
 
   function validate(): FormErrors {
     const errs: FormErrors = {};
-    if (!email) {
-      errs.email = "Institutional or work email is required.";
-    } else if (
-      role === "student" &&
-      !(
-        email.endsWith(".edu") ||
-        email.endsWith(".edu.in") ||
-        email.endsWith(".ac.in") ||
-        email.endsWith(".ac.uk") ||
-        email.endsWith(".edu.au") ||
-        email.includes(".edu.")
-      )
-    ) {
-      errs.email = "Please sign in with your official university email (.edu or institutional domain).";
-    } else if (!validateEmail(email)) {
-      errs.email = "Please enter a valid email address.";
-    }
+    if (!email) errs.email = "Institutional or work email is required.";
+    else if (!validateEmail(email)) errs.email = "Please enter a valid email address.";
     if (!password) errs.password = "Password is required.";
-    else if (password.length < 6)
-      errs.password = "Password must be at least 6 characters.";
+    else if (password.length < 8)
+      errs.password = "Password must be at least 8 characters.";
     return errs;
   }
 
@@ -88,62 +103,106 @@ export default function LoginPage() {
     setErrors({});
     setLoading(true);
 
-    let supabaseUser: { id: string; user_metadata?: Record<string, unknown> } | null = null;
     try {
-      const supabase = createClient();
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), password }),
       });
-      if (error) {
-        console.warn("Supabase auth signIn error:", error.message);
-        const isDemo =
-          email.includes("ashlin@stanford.edu") ||
-          email.includes("lohit@karunya.edu.in") ||
-          email.includes("student@alumnipath.edu") ||
-          email.includes("marcus.vance@datadog.com") ||
-          email.includes("alumni@alumnipath.edu") ||
-          email.includes("elena.rostova@airbnb.com");
 
-        if (!isDemo && error.message.toLowerCase().includes("invalid login")) {
-          setErrors({ general: "Invalid email or password. Please verify your credentials." });
-          setLoading(false);
-          return;
-        }
-      } else if (data?.user) {
-        supabaseUser = data.user;
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok || !data?.success) {
+        const errorMsg =
+          data?.error || "Invalid email or password. Please try again.";
+
+        setErrors({
+          general: errorMsg,
+          email: data?.code === "ACCOUNT_NOT_REGISTERED" ? errorMsg : undefined,
+          password: data?.code === "INVALID_CREDENTIALS" ? errorMsg : undefined,
+        });
+        setLoading(false);
+        setSubmitted(false);
+        return;
       }
-    } catch (authErr) {
-      console.warn("Supabase auth attempted, falling back to instant session mode:", authErr);
+
+      const activeRole: UserRole = data.user?.role === "alumni" ? "alumni" : "student";
+      setRole(activeRole);
+      const destination = data.redirectUrl || (activeRole === "alumni" ? "/alumni-dashboard" : "/dashboard");
+      setTargetRedirect(destination);
+
+      saveAuthSession(
+        activeRole === "alumni"
+          ? {
+              ...defaultAlumniSession,
+              email: data.user.email || email,
+              name: data.user.fullName || (email.toLowerCase().includes("elena") ? "Elena Rostova" : "Marcus Vance"),
+              company: data.user.company || defaultAlumniSession.company,
+              isAuthenticated: true,
+            }
+          : {
+              ...defaultStudentSession,
+              email: data.user.email || email,
+              name: data.user.fullName || (email.toLowerCase().includes("ashlin") ? "Ashlin Mirsha" : "Student"),
+              department: data.user.department || defaultStudentSession.department,
+              isAuthenticated: true,
+            }
+      );
+
+      setLoading(false);
+      setSubmitted(true);
+    } catch {
+      setErrors({
+        general: "An unexpected error occurred. Please try again.",
+      });
+      setLoading(false);
+      setSubmitted(false);
     }
+  }
 
-    const detectedRole = (supabaseUser?.user_metadata?.role as UserRole | undefined);
-    const activeRole: UserRole = detectedRole || role;
-    setRole(activeRole);
+  async function handleGoogleSignIn() {
+    setErrors({});
+    setGoogleLoading(true);
 
-    const emailName = email.split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-    const userName = (supabaseUser?.user_metadata?.full_name as string | undefined) || emailName || "User";
+    try {
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("alumnipath_oauth_origin", "login");
+      }
+      const supabase = getSupabaseClient();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
+        },
+      });
 
-    saveAuthSession(
-      activeRole === "alumni"
-        ? {
-            ...defaultAlumniSession,
-            email,
-            name: userName,
-            isAuthenticated: true,
-          }
-        : {
-            ...defaultStudentSession,
-            email,
-            name: userName,
-            isAuthenticated: true,
-          }
-    );
+      if (error) {
+        const msg = error.message.toLowerCase();
+        const isNotEnabled =
+          msg.includes("not enabled") ||
+          msg.includes("unsupported") ||
+          msg.includes("disabled");
 
-    // Simulate authentication latency
-    await new Promise((r) => setTimeout(r, 600));
-    setLoading(false);
-    setSubmitted(true);
+        setErrors({
+          general: isNotEnabled
+            ? "Google sign-in is not enabled in Supabase yet. Please enable the Google provider in your Supabase dashboard."
+            : error.message,
+        });
+        setGoogleLoading(false);
+      }
+    } catch (err) {
+      setErrors({
+        general:
+          err instanceof Error
+            ? err.message
+            : "Failed to initialize Google sign-in. Please try again.",
+      });
+      setGoogleLoading(false);
+    }
   }
 
   // ─── Post-Login Success Screen ──────────────────────────────────────────────
@@ -174,7 +233,7 @@ export default function LoginPage() {
 
             <div className="pt-2">
               <Link
-                href={role === "alumni" ? "/alumni-dashboard" : "/dashboard"}
+                href={targetRedirect}
                 className="w-full h-11 rounded-full bg-[#090909] hover:bg-[#242424] text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-xs transition-colors"
               >
                 <span>Continue to Workspace</span>
@@ -240,7 +299,12 @@ export default function LoginPage() {
               type="button"
               role="tab"
               aria-selected={role === "student"}
-              onClick={() => setRole("student")}
+              onClick={() => {
+                setRole("student");
+                if (email.includes("datadog") || email.includes("airbnb")) {
+                  setEmail("ashlin@stanford.edu");
+                }
+              }}
               className={`py-2 px-3 text-xs rounded-full transition-all flex items-center justify-center gap-1.5 cursor-pointer font-medium ${
                 role === "student"
                   ? "bg-[#090909] text-white font-semibold shadow-xs"
@@ -254,7 +318,12 @@ export default function LoginPage() {
               type="button"
               role="tab"
               aria-selected={role === "alumni"}
-              onClick={() => setRole("alumni")}
+              onClick={() => {
+                setRole("alumni");
+                if (email.includes("stanford") || email === "") {
+                  setEmail("marcus.vance@datadog.com");
+                }
+              }}
               className={`py-2 px-3 text-xs rounded-full transition-all flex items-center justify-center gap-1.5 cursor-pointer font-medium ${
                 role === "alumni"
                   ? "bg-[#090909] text-white font-semibold shadow-xs"
@@ -265,17 +334,95 @@ export default function LoginPage() {
             </button>
           </div>
 
-
-          {/* General Error Banner */}
-          {errors.general && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center gap-2">
-              <AlertCircle size={15} className="shrink-0 text-red-600" />
-              <span>{errors.general}</span>
+          {/* Quick Demo Accounts Helper */}
+          <div className="bg-[#FAFAFA] border border-[#E7E7E7] rounded-2xl p-3.5 space-y-2.5">
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="font-semibold text-[#090909] flex items-center gap-1.5">
+                <Sparkles size={12} className="text-[#090909]" />
+                Demo Credentials:
+              </span>
+              <span className="text-[#737373] text-[10px]">Instant Fill</span>
             </div>
-          )}
+
+            <div className="flex flex-wrap gap-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setRole("student");
+                  setEmail("ashlin@stanford.edu");
+                  setPassword("password123");
+                  setErrors({});
+                  setForgotNotice(false);
+                }}
+                className={`px-3 py-1 rounded-full text-xs transition-colors cursor-pointer border ${
+                  role === "student" && email === "ashlin@stanford.edu"
+                    ? "bg-[#090909] text-white border-[#090909] font-medium"
+                    : "bg-white text-[#737373] hover:text-[#090909] border-[#E7E7E7] hover:border-[#090909]"
+                }`}
+              >
+                Student (Ashlin)
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setRole("alumni");
+                  setEmail("marcus.vance@datadog.com");
+                  setPassword("password123");
+                  setErrors({});
+                  setForgotNotice(false);
+                }}
+                className={`px-3 py-1 rounded-full text-xs transition-colors cursor-pointer border ${
+                  role === "alumni" && email === "marcus.vance@datadog.com"
+                    ? "bg-[#090909] text-white border-[#090909] font-medium"
+                    : "bg-white text-[#737373] hover:text-[#090909] border-[#E7E7E7] hover:border-[#090909]"
+                }`}
+              >
+                Marcus (Datadog)
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setRole("alumni");
+                  setEmail("elena.rostova@airbnb.com");
+                  setPassword("password123");
+                  setErrors({});
+                  setForgotNotice(false);
+                }}
+                className={`px-3 py-1 rounded-full text-xs transition-colors cursor-pointer border ${
+                  role === "alumni" && email === "elena.rostova@airbnb.com"
+                    ? "bg-[#090909] text-white border-[#090909] font-medium"
+                    : "bg-white text-[#737373] hover:text-[#090909] border-[#E7E7E7] hover:border-[#090909]"
+                }`}
+              >
+                Elena (Airbnb)
+              </button>
+            </div>
+          </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
+            {errors.general && (
+              <div
+                role="alert"
+                className="p-3 bg-[#F4F4F4] border border-[#090909] rounded-xl text-xs text-[#090909] flex items-center justify-between gap-2"
+              >
+                <div className="flex items-center gap-2">
+                  <AlertCircle size={14} className="shrink-0 text-[#090909]" />
+                  <span className="font-medium">{errors.general}</span>
+                </div>
+                {(errors.general.includes("sign up") || errors.general.includes("registered")) && (
+                  <Link
+                    href="/signup"
+                    className="font-bold underline shrink-0 hover:text-[#737373] ml-2 text-[11px]"
+                  >
+                    Sign Up →
+                  </Link>
+                )}
+              </div>
+            )}
+
             {/* Email Field */}
             <div className="space-y-1.5">
               <label htmlFor="login-email" className="text-xs font-semibold text-[#090909] block">
@@ -290,7 +437,9 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => {
                     setEmail(e.target.value);
-                    if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+                    if (errors.email || errors.general) {
+                      setErrors((prev) => ({ ...prev, email: undefined, general: undefined }));
+                    }
                   }}
                   className={`w-full h-11 pl-10 pr-3.5 rounded-xl border bg-white text-xs text-[#090909] placeholder-[#A8A8A8] focus:outline-none transition-all ${
                     errors.email
@@ -331,7 +480,9 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
-                    if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+                    if (errors.password || errors.general) {
+                      setErrors((prev) => ({ ...prev, password: undefined, general: undefined }));
+                    }
                   }}
                   className={`w-full h-11 pl-10 pr-10 rounded-xl border bg-white text-xs text-[#090909] placeholder-[#A8A8A8] focus:outline-none transition-all ${
                     errors.password
@@ -357,6 +508,15 @@ export default function LoginPage() {
               )}
             </div>
 
+            {/* Forgot Password Notice */}
+            {forgotNotice && (
+              <div className="p-3 bg-[#F4F4F4] border border-[#E7E7E7] rounded-xl text-xs text-[#090909] space-y-1">
+                <span className="font-semibold block text-[11px]">Demo Mode Password Reset</span>
+                <p className="text-[11px] text-[#737373]">
+                  Use password <code className="text-[#090909] font-bold">password123</code> with any sample account above to sign in immediately.
+                </p>
+              </div>
+            )}
 
             {/* Remember Me */}
             <div className="flex items-center gap-2 pt-1">
@@ -376,7 +536,7 @@ export default function LoginPage() {
             <div className="pt-2">
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || googleLoading}
                 className="w-full h-11 rounded-full bg-[#090909] hover:bg-[#242424] text-white text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {loading ? (
@@ -393,6 +553,56 @@ export default function LoginPage() {
               </button>
             </div>
           </form>
+
+          {/* Subtle Divider with OR */}
+          <div className="relative flex items-center justify-center my-3">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-[#E7E7E7]" />
+            </div>
+            <span className="relative bg-white px-3 text-[11px] font-semibold uppercase tracking-wider text-[#737373]">
+              OR
+            </span>
+          </div>
+
+          {/* Continue with Google */}
+          <div>
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={loading || googleLoading}
+              aria-label="Continue with Google"
+              className="w-full h-11 rounded-full border border-[#E7E7E7] bg-white hover:bg-[#F9F9F9] hover:border-[#090909] text-xs font-semibold text-[#090909] inline-flex items-center justify-center gap-2.5 shadow-xs transition-all disabled:opacity-50 cursor-pointer"
+            >
+              {googleLoading ? (
+                <>
+                  <span className="h-3.5 w-3.5 border-2 border-[#090909]/30 border-t-[#090909] rounded-full animate-spin" />
+                  <span>Connecting to Google...</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      fill="#4285F4"
+                      d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.35 24 12 24z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
+                    />
+                    <path
+                      fill="#EA4335"
+                      d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+                    />
+                  </svg>
+                  <span>Continue with Google</span>
+                </>
+              )}
+            </button>
+          </div>
 
           {/* Switch to Signup */}
           <div className="pt-2 border-t border-[#E7E7E7] text-center text-xs text-[#737373]">

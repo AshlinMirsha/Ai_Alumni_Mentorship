@@ -225,7 +225,7 @@ export function ResumeUploader({
           <div className="p-3 bg-[#F4F4F4] border border-[#E7E7E7] rounded-xl flex items-start gap-2.5 text-xs text-[#737373]">
             <Info size={15} className="text-[#090909] shrink-0 mt-0.5" />
             <div className="text-[11px] leading-relaxed">
-              <strong className="text-[#090909]">Local Privacy Guarantee:</strong> In demo mode, your file is read locally by your browser. No files are uploaded to external servers or transmitted to third-party AI APIs without authorization.
+              <strong className="text-[#090909]">Privacy:</strong> Selecting a file keeps it on this device. Nothing is sent for analysis until you authorize it below. With your consent, the file is sent to AlumniPath for text extraction; only the extracted text is shared with the configured AI provider, and the original file is not stored.
             </div>
           </div>
         </div>

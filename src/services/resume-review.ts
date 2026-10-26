@@ -1,124 +1,115 @@
-import type {
-  ResumeReviewResult,
-  ResumeAnalysisOptions,
-} from "@/types";
+import type { ResumeAnalysisOptions, ResumeReviewResult } from "@/types";
+import { getSupabaseClient } from "@/lib/supabase/client";
+import { loadAuthSession } from "@/lib/dashboard-storage";
+import { extractPdfTextWithPaddleOcr } from "@/services/paddleocr-pdf";
 
-export interface ResumeFilePayload {
-  file?: File;
+export interface ResumeFileInput {
   name: string;
   size: number;
+  rawFile?: File;
 }
 
 export interface IResumeReviewService {
   analyzeResume(
-    file: ResumeFilePayload,
+    file: ResumeFileInput | File,
     targetRole: string,
-    options: ResumeAnalysisOptions
+    options: ResumeAnalysisOptions,
+    authorized: boolean
   ): Promise<ResumeReviewResult>;
 }
 
-export class MockResumeReviewService implements IResumeReviewService {
-  async analyzeResume(
-    file: ResumeFilePayload,
-    targetRole: string,
-    options: ResumeAnalysisOptions
-  ): Promise<ResumeReviewResult> {
-    const formattedSize =
-      file.size > 1024 * 1024
-        ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
-        : `${Math.round(file.size / 1024)} KB`;
+export class ResumeReviewService implements IResumeReviewService {
+  private async getAuthHeaders(): Promise<Record<string, string>> {
+    const headers: Record<string, string> = {};
+    if (typeof window === "undefined") return headers;
 
     try {
-      let res: Response;
-      if (file.file) {
-        const formData = new FormData();
-        formData.append("file", file.file);
-        formData.append("fileName", file.name);
-        formData.append("fileSize", formattedSize);
-        formData.append("targetRole", targetRole);
-        formData.append("options", JSON.stringify(options));
-
-        res = await fetch("/api/resume/review", {
-          method: "POST",
-          body: formData,
-        });
-      } else {
-        res = await fetch("/api/resume/review", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            fileName: file.name,
-            fileSize: formattedSize,
-            targetRole,
-            options,
-          }),
-        });
-      }
-
-      if (res.ok) {
-        const data = await res.json();
-        return data as ResumeReviewResult;
-      }
-    } catch (e) {
-      console.warn("Backend resume review route error, using local fallback:", e);
+      const supabase = getSupabaseClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) headers.Authorization = `Bearer ${session.access_token}`;
+    } catch {
+      // Fall through to the existing local registered-account session.
     }
 
-    void options;
-    // Simulate processing time
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    try {
+      const auth = loadAuthSession();
+      const authId = (auth as typeof auth & { id?: string }).id;
+      if (auth?.email) headers["x-user-email"] = auth.email;
+      if (authId) headers["x-user-id"] = authId;
+      if (!headers.Authorization && auth?.isAuthenticated && (authId || auth?.email)) {
+        headers.Authorization = `Bearer ${authId || auth.email}`;
+      }
+    } catch {
+      // The API will return a clear authentication error if there is no session.
+    }
 
-    return {
-      id: `rev-${Date.now()}`,
-      fileName: file.name,
-      fileSize: formattedSize,
-      targetRole,
-      submittedAt: new Date().toISOString(),
-      overallScore: 74,
-      atsScore: 78,
-      summary: `Automated critique for ${targetRole}. Resume demonstrates verifiable credentials and professional background. Further aligning quantified leadership outcomes and domain-specific keywords with ${targetRole} will maximize interview conversion.`,
-      skillsIdentified: {
-        technical: ["Professional Domain Expertise", "Curriculum & Policy", "Strategic Administration"],
-        soft: ["Leadership", "Stakeholder Communication", "Institutional Management"],
-        missingForRole: [`Keywords benchmarked for ${targetRole}`, "Quantified operational metrics"],
-      },
-      strengths: [
-        `Documented credentials and qualifications relevant to ${targetRole}.`,
-        "Established career progression with demonstrable leadership tenure.",
-        "Clear professional background and academic credentials.",
-      ],
-      areasToImprove: [
-        {
-          id: "imp-1",
-          category: "impact",
-          severity: "critical",
-          title: "Quantify professional impact with measurable metrics",
-          description: "Add specific operational metrics, budget scopes, or quantifiable outcomes to your role descriptions.",
-          section: "Experience",
-        },
-        {
-          id: "imp-2",
-          category: "keywords",
-          severity: "suggestion",
-          title: `Align keywords directly with ${targetRole}`,
-          description: `Incorporate industry-standard benchmark terminology for ${targetRole} to enhance ATS scoring.`,
-          section: "Skills",
-        },
-      ],
-      projectSuggestions: [],
-      missingOrUnclearInfo: [
-        "Specific scope metrics (budget, headcount, or institutional size) in recent appointments.",
-      ],
-      recommendedNextSteps: [
-        {
-          step: 1,
-          title: `Optimize resume headers and keywords for ${targetRole}`,
-          description: "Update the summary and skill sections to prominently mirror key requirements for this position.",
-          actionLabel: "Consult AI Career Assistant",
-          actionHref: `/career-assistant?q=${encodeURIComponent(`How to optimize my resume for ${targetRole}?`)}`,
-        },
-      ],
+    return headers;
+  }
+
+  async analyzeResume(
+    file: ResumeFileInput | File,
+    targetRole: string,
+    options: ResumeAnalysisOptions,
+    authorized: boolean
+  ): Promise<ResumeReviewResult> {
+    if (!authorized) throw new Error("Authorize AI processing before starting your resume review.");
+
+    const rawFile = file instanceof File ? file : file.rawFile;
+    if (!rawFile) throw new Error("The selected resume file is no longer available. Select it again and retry.");
+
+    const createRequest = (ocrText?: string) => {
+      const formData = new FormData();
+      formData.append("file", rawFile);
+      formData.append("targetRole", targetRole);
+      formData.append("options", JSON.stringify(options));
+      formData.append("consent", "true");
+      if (ocrText) formData.append("ocrText", ocrText);
+      return formData;
     };
+    const sendRequest = async (ocrText?: string) => {
+      try {
+        return await fetch("/api/career/resume-review", {
+          method: "POST",
+          headers: await this.getAuthHeaders(),
+          body: createRequest(ocrText),
+        });
+      } catch {
+        throw new Error("Could not reach the resume analysis service. Check your connection and try again.");
+      }
+    };
+
+    let response = await sendRequest();
+    let data = await response.json().catch(() => null);
+    const isPdf = rawFile.type === "application/pdf" || rawFile.name.toLowerCase().endsWith(".pdf");
+    const canUseLocalOcr = ["NO_READABLE_TEXT", "PDF_PARSER_UNAVAILABLE", "PDF_PARSE_FAILED", "TEXT_EXTRACTION_FAILED"]
+      .includes(String(data?.code));
+
+    if (!response.ok && isPdf && canUseLocalOcr) {
+      const ocrText = await extractPdfTextWithPaddleOcr(rawFile);
+      response = await sendRequest(ocrText);
+      data = await response.json().catch(() => null);
+    }
+
+    if (!response.ok) {
+      const serverError = typeof data?.error === "string" ? data.error : null;
+      const statusMessage: Record<number, string> = {
+        401: "Your session has expired. Sign in again, then retry the resume review.",
+        413: "The resume request is too large for the server. Choose a PDF under 5 MB.",
+        502: "The AI provider could not complete the review. Check its API key, quota, and server logs, then retry.",
+        503: "The resume review service is temporarily unavailable. Please retry shortly.",
+        504: "The resume review timed out before the AI response finished. Please retry; if it repeats, check the deployment function duration.",
+      };
+      throw new Error(serverError || statusMessage[response.status] ||
+        `Resume review request failed with HTTP ${response.status}. Check the deployment logs for this request.`);
+    }
+    if (!data?.success || !data.result) {
+      throw new Error(typeof data?.error === "string"
+        ? data.error
+        : "The resume review service returned an incomplete response. Check that the latest deployment is active and review its server logs.");
+    }
+
+    return data.result as ResumeReviewResult;
   }
 }
 
-export const resumeReviewService = new MockResumeReviewService();
+export const resumeReviewService = new ResumeReviewService();

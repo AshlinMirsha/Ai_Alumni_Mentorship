@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
+  User,
   Users,
   MessageSquare,
   Map,
@@ -68,6 +69,7 @@ export function AppSidebar({ className, onCloseMobile }: AppSidebarProps) {
 
   const studentNavItems: NavItem[] = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { label: "My Profile", href: "/profile", icon: User },
     { label: "Discover Alumni", href: "/alumni", icon: Users },
     {
       label: "Messages",
