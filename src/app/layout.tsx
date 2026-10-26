@@ -38,7 +38,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${plusJakartaSans.variable} ${spaceGrotesk.variable}`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${plusJakartaSans.variable} ${spaceGrotesk.variable}`}
+    >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("alumnipath_theme");if(!t){var s=localStorage.getItem("alumnipath_user_settings");if(s){var p=JSON.parse(s);if(p&&p.appearance&&p.appearance.theme){t=p.appearance.theme;}}}var d=t==="dark"||(t==="system"&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches);if(d){document.documentElement.classList.add("dark");document.documentElement.style.colorScheme="dark";}else{document.documentElement.classList.remove("dark");document.documentElement.style.colorScheme="light";}}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className="min-h-screen bg-[#FAFAFA] text-[#090909] font-sans antialiased selection:bg-[#090909] selection:text-white">
         {children}
       </body>

@@ -33,7 +33,7 @@ export async function extractPdfTextWithPaddleOcr(file: File): Promise<string> {
 
         await page.render({ canvas, canvasContext: context, viewport }).promise;
         const [result] = await ocr.predict(canvas);
-        const pageText = result?.items.map((item) => item.text.trim()).filter(Boolean).join("\n");
+        const pageText = result?.items.map((item: { text: string }) => item.text.trim()).filter(Boolean).join("\n");
         if (pageText) pageTexts.push(pageText);
       } finally {
         page.cleanup();

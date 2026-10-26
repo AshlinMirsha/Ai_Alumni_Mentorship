@@ -7,6 +7,7 @@ export interface AlumniFilterState {
   category: string;
   role: string;
   company: string;
+  department: string;
   industry: string;
   skill: string;
   experienceRange: string;
@@ -20,6 +21,7 @@ export const initialFilterState: AlumniFilterState = {
   category: "All",
   role: "all",
   company: "all",
+  department: "all",
   industry: "all",
   skill: "all",
   experienceRange: "all",
@@ -34,6 +36,7 @@ interface AlumniFiltersProps {
   onResetFilters: () => void;
   roles: string[];
   companies: string[];
+  departments?: string[];
   totalResults: number;
   totalAlumniCount: number;
 }
@@ -130,7 +133,7 @@ export function AlumniFilters({
           <span className="font-semibold text-[#090909]">
             Showing {totalResults} of {totalAlumniCount} verified alumni
           </span>
-          {(filters.searchQuery || filters.category !== "All" || filters.role !== "all" || filters.company !== "all" || filters.graduationYearRange !== "all") && (
+          {(filters.searchQuery || filters.category !== "All" || filters.role !== "all" || filters.company !== "all" || filters.department !== "all" || filters.graduationYearRange !== "all") && (
             <button
               type="button"
               onClick={onResetFilters}

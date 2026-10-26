@@ -265,9 +265,9 @@ export default function AlumniDashboardPage() {
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-5 right-5 z-50 bg-[#191919] text-white text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 border border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-200"
+          className="fixed bottom-5 right-5 z-50 bg-[#090909] text-white text-xs px-4 py-2.5 rounded-full shadow-xl flex items-center gap-2 border border-neutral-800 animate-in fade-in slide-in-from-bottom-2 duration-200"
         >
-          <CheckCircle2 size={15} className="text-[#057642] shrink-0" />
+          <CheckCircle2 size={15} className="text-white shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -284,7 +284,7 @@ export default function AlumniDashboardPage() {
           {/* ─── 1. COMPACT PROFESSIONAL PROFILE SUMMARY (PHASE 3) ─── */}
           <section
             aria-label="Alumni Profile Summary"
-            className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs"
+            className="bg-white border border-[#E7E7E7] rounded-2xl p-6 shadow-xs"
           >
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
               {/* Identity & Credentials */}
@@ -292,41 +292,41 @@ export default function AlumniDashboardPage() {
                 <Avatar
                   name={alumni.name}
                   size="lg"
-                  className="shrink-0 ring-1 ring-gray-100 bg-white"
+                  className="shrink-0 ring-1 ring-neutral-200 bg-white"
                 />
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h1 className="text-lg sm:text-xl font-bold text-[#191919] tracking-tight truncate">
+                    <h1 className="text-lg sm:text-xl font-bold text-[#090909] tracking-tight truncate">
                       {alumni.name}
                     </h1>
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#057642] bg-[#EEF8F1] px-2 py-0.5 rounded-full border border-[#BFE3C9] shrink-0">
-                      <ShieldCheck size={12} />
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-neutral-900 bg-neutral-100 px-2.5 py-0.5 rounded-full border border-neutral-200 shrink-0">
+                      <ShieldCheck size={12} className="text-neutral-900" />
                       <span>Verified Mentor</span>
                     </span>
-                    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-neutral-800 bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200 shrink-0">
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-neutral-800 bg-neutral-100 px-2.5 py-0.5 rounded-full border border-neutral-200 shrink-0">
                       <span className="h-1.5 w-1.5 rounded-full bg-neutral-900 animate-pulse" />
                       <span>Accepting Mentees ({activeMentees.length}/5 slots)</span>
                     </span>
                   </div>
 
                   {/* Professional Position */}
-                  <p className="text-xs sm:text-[13px] font-semibold text-[#191919] mt-1 flex items-center gap-1.5 flex-wrap">
+                  <p className="text-xs sm:text-[13px] font-semibold text-[#090909] mt-1 flex items-center gap-1.5 flex-wrap">
                     <span>{alumni.role}</span>
-                    <span className="text-[#666666] font-normal">at</span>
+                    <span className="text-[#737373] font-normal">at</span>
                     <span className="text-[#090909] font-bold">{alumni.company}</span>
-                    <span className="text-gray-300 hidden sm:inline">·</span>
-                    <span className="text-[#666666] font-normal text-xs">Ex-Google</span>
+                    <span className="text-neutral-300 hidden sm:inline">·</span>
+                    <span className="text-[#737373] font-normal text-xs">Ex-Google</span>
                   </p>
 
                   {/* University & Location Metadata */}
-                  <div className="mt-1.5 flex items-center gap-3 text-xs text-[#666666] flex-wrap">
+                  <div className="mt-1.5 flex items-center gap-3 text-xs text-[#737373] flex-wrap">
                     <span className="flex items-center gap-1">
-                      <GraduationCap size={13} className="text-[#666666] shrink-0" />
+                      <GraduationCap size={13} className="text-[#737373] shrink-0" />
                       <span>{alumni.university || "University of Technology"} · {alumni.department || "Computer Science"} &apos;20</span>
                     </span>
-                    <span className="text-gray-300">·</span>
+                    <span className="text-neutral-300">·</span>
                     <span className="flex items-center gap-1">
-                      <MapPin size={12} className="text-[#666666] shrink-0" />
+                      <MapPin size={12} className="text-[#737373] shrink-0" />
                       <span>{alumni.location || "San Francisco, CA"}</span>
                     </span>
                   </div>
@@ -362,7 +362,7 @@ export default function AlumniDashboardPage() {
                   variant="primary"
                   size="sm"
                   asChild
-                  className="h-8 px-3 text-xs font-semibold bg-[#090909] hover:bg-[#242424] !text-white text-white flex items-center gap-1.5 cursor-pointer border-0 shadow-none rounded-full"
+                  className="h-8 px-3.5 text-xs font-semibold bg-[#090909] hover:bg-[#242424] !text-white text-white flex items-center gap-1.5 cursor-pointer border-0 shadow-none rounded-full"
                 >
                   <Link href="/alumni-dashboard/students">
                     <Users size={13} className="!text-white text-white" />
@@ -373,8 +373,8 @@ export default function AlumniDashboardPage() {
             </div>
 
             {/* Concise Domain Focus Tags */}
-            <div className="mt-3.5 pt-3 border-t border-gray-100 flex items-center gap-2 flex-wrap text-xs">
-              <span className="text-[11px] font-semibold text-[#666666] uppercase tracking-wider mr-1">
+            <div className="mt-4 pt-3.5 border-t border-[#E7E7E7] flex items-center gap-2 flex-wrap text-xs">
+              <span className="text-[11px] font-semibold text-[#737373] uppercase tracking-wider mr-1">
                 Mentoring Focus:
               </span>
               {[
@@ -386,7 +386,7 @@ export default function AlumniDashboardPage() {
               ].map((domain) => (
                 <span
                   key={domain}
-                  className="text-xs font-medium px-2.5 py-0.5 rounded-md bg-[#F3F4F6] text-[#191919]"
+                  className="text-xs font-medium px-3 py-1 rounded-full bg-neutral-100 text-neutral-800 border border-neutral-200"
                 >
                   {domain}
                 </span>
@@ -396,65 +396,65 @@ export default function AlumniDashboardPage() {
 
           {/* ─── 2. MENTORSHIP OVERVIEW METRICS STRIP ─── */}
           <section aria-label="Mentorship Metrics Summary" className="w-full">
-            <div className="bg-white border border-[#D9D9D9] rounded-lg shadow-xs overflow-hidden">
-              <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-gray-200">
+            <div className="bg-white border border-[#E7E7E7] rounded-2xl shadow-xs overflow-hidden">
+              <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[#E7E7E7]">
                 {/* 1. Pending Requests */}
                 <Link
                   href="/alumni-dashboard/requests"
-                  className="p-4 flex flex-col justify-between group hover:bg-gray-50 transition-colors"
+                  className="p-5 flex flex-col justify-between group hover:bg-neutral-50 transition-colors"
                 >
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-medium text-[#666666]">Pending Requests</span>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-[#737373]">Pending Requests</span>
                     <Inbox size={15} className="text-[#090909] group-hover:scale-105 transition-transform" />
                   </div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold tracking-tight text-[#191919]">
+                    <span className="text-2xl font-bold tracking-tight text-[#090909]">
                       {pendingRequests.length}
                     </span>
                     <span className="text-xs text-neutral-900 font-semibold">
                       {pendingRequests.length === 1 ? "Review" : "Reviews"}
                     </span>
                   </div>
-                  <p className="text-[11px] text-[#666666] mt-2 truncate flex items-center justify-between">
+                  <p className="text-[11px] text-[#737373] mt-2.5 truncate flex items-center justify-between">
                     <span>Awaiting your decision</span>
-                    <ChevronRight size={12} className="text-gray-400 group-hover:text-black" />
+                    <ChevronRight size={12} className="text-neutral-400 group-hover:text-black" />
                   </p>
                 </Link>
 
                 {/* 2. Active Mentees */}
                 <Link
                   href="/alumni-dashboard/mentees"
-                  className="p-4 flex flex-col justify-between group hover:bg-gray-50 transition-colors"
+                  className="p-5 flex flex-col justify-between group hover:bg-neutral-50 transition-colors"
                 >
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-medium text-[#666666]">Active Mentees</span>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-[#737373]">Active Mentees</span>
                     <UserCheck size={15} className="text-[#090909] group-hover:scale-105 transition-transform" />
                   </div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold tracking-tight text-[#191919]">
+                    <span className="text-2xl font-bold tracking-tight text-[#090909]">
                       {activeMentees.length}
                     </span>
-                    <span className="text-xs text-[#666666]">of 5 slots filled</span>
+                    <span className="text-xs text-[#737373]">of 5 slots filled</span>
                   </div>
-                  <p className="text-[11px] text-[#666666] mt-2 truncate flex items-center justify-between">
+                  <p className="text-[11px] text-[#737373] mt-2.5 truncate flex items-center justify-between">
                     <span>Manage cohort</span>
-                    <ChevronRight size={12} className="text-gray-400 group-hover:text-[#057642]" />
+                    <ChevronRight size={12} className="text-neutral-400 group-hover:text-black" />
                   </p>
                 </Link>
 
                 {/* 3. Upcoming Sessions */}
-                <div className="p-4 flex flex-col justify-between hover:bg-gray-50 transition-colors">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-medium text-[#666666]">Upcoming Sessions</span>
-                    <Calendar size={15} className="text-[#B45309]" />
+                <div className="p-5 flex flex-col justify-between hover:bg-neutral-50 transition-colors">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-[#737373]">Upcoming Sessions</span>
+                    <Calendar size={15} className="text-[#090909]" />
                   </div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold tracking-tight text-[#191919]">
+                    <span className="text-2xl font-bold tracking-tight text-[#090909]">
                       {activeUpcomingSessions.length}
                     </span>
-                    <span className="text-xs text-[#666666]">scheduled calls</span>
+                    <span className="text-xs text-[#737373]">scheduled calls</span>
                   </div>
-                  <p className="text-[11px] text-[#666666] mt-2 truncate">
+                  <p className="text-[11px] text-[#737373] mt-2.5 truncate">
                     {activeUpcomingSessions[0]
                       ? `Next: ${activeUpcomingSessions[0].date.split(",")[0]}`
                       : "No sessions this week"}
@@ -462,18 +462,18 @@ export default function AlumniDashboardPage() {
                 </div>
 
                 {/* 4. Completed Sessions */}
-                <div className="p-4 flex flex-col justify-between hover:bg-gray-50 transition-colors">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-medium text-[#666666]">Completed Sessions</span>
-                    <Clock size={15} className="text-[#6B21A8]" />
+                <div className="p-5 flex flex-col justify-between hover:bg-neutral-50 transition-colors">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-[#737373]">Completed Sessions</span>
+                    <Clock size={15} className="text-[#090909]" />
                   </div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold tracking-tight text-[#191919]">
+                    <span className="text-2xl font-bold tracking-tight text-[#090909]">
                       {completedSessionsCount}
                     </span>
-                    <span className="text-xs text-[#057642] font-semibold">18 hours total</span>
+                    <span className="text-xs text-neutral-900 font-semibold">18 hours total</span>
                   </div>
-                  <p className="text-[11px] text-[#666666] mt-2 truncate">
+                  <p className="text-[11px] text-[#737373] mt-2.5 truncate">
                     100% attendance rate
                   </p>
                 </div>
@@ -484,17 +484,17 @@ export default function AlumniDashboardPage() {
           {/* ─── 3. UPCOMING MENTORSHIP SESSIONS (PHASE 4 — PRIMARY FEATURE) ─── */}
           <section
             aria-labelledby="upcoming-sessions-title"
-            className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs"
+            className="bg-white border border-[#E7E7E7] rounded-2xl p-6 shadow-xs"
           >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-gray-100 gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-[#E7E7E7] gap-2">
               <div>
                 <h2
                   id="upcoming-sessions-title"
-                  className="text-base sm:text-lg font-bold text-[#191919] tracking-tight"
+                  className="text-base sm:text-lg font-bold text-[#090909] tracking-tight"
                 >
                   Upcoming Mentorship Sessions
                 </h2>
-                <p className="text-xs text-[#666666] mt-0.5">
+                <p className="text-xs text-[#737373] mt-0.5">
                   Confirmed and scheduled 1:1 sessions with student mentees
                 </p>
               </div>
@@ -524,12 +524,12 @@ export default function AlumniDashboardPage() {
             {/* Sessions List */}
             <div className="mt-4 space-y-3">
               {activeUpcomingSessions.length === 0 ? (
-                <div className="py-8 text-center bg-gray-50/50 rounded-lg border border-dashed border-gray-200">
-                  <Calendar size={24} className="text-gray-400 mx-auto mb-2" />
-                  <p className="text-xs font-semibold text-[#191919]">
+                <div className="py-8 text-center bg-neutral-50/50 rounded-2xl border border-dashed border-[#E7E7E7]">
+                  <Calendar size={24} className="text-neutral-400 mx-auto mb-2" />
+                  <p className="text-xs font-semibold text-[#090909]">
                     No upcoming mentorship sessions scheduled
                   </p>
-                  <p className="text-[11px] text-[#666666] mt-1 max-w-sm mx-auto">
+                  <p className="text-[11px] text-[#737373] mt-1 max-w-sm mx-auto">
                     You can schedule a 1:1 call with any of your active mentees or review incoming requests.
                   </p>
                   <Button
@@ -551,19 +551,19 @@ export default function AlumniDashboardPage() {
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       {/* Left: Mentee Avatar, Name, Topic, Date/Time */}
                       <div className="flex items-start gap-3.5 min-w-0">
-                        <Avatar name={session.studentName} size="md" className="shrink-0 ring-1 ring-gray-100" />
+                        <Avatar name={session.studentName} size="md" className="shrink-0 ring-1 ring-neutral-200" />
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="text-sm font-bold text-[#191919] truncate">
+                            <h3 className="text-sm font-bold text-[#090909] truncate">
                               {session.studentName}
                             </h3>
-                            <span className="text-[11px] text-[#666666]">
+                            <span className="text-[11px] text-[#737373]">
                               {session.studentAcademicYear || "Undergraduate"} · {session.studentDepartment || "Computer Science"}
                             </span>
                             <span
-                              className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                              className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                                 session.status === "confirmed"
-                                  ? "bg-neutral-900 text-white"
+                                  ? "bg-[#090909] text-white"
                                   : "bg-neutral-100 text-neutral-800 border border-neutral-200"
                               }`}
                             >
@@ -572,19 +572,19 @@ export default function AlumniDashboardPage() {
                           </div>
 
                           {/* Mentorship Topic (Prominent) */}
-                          <p className="text-xs sm:text-[13px] font-semibold text-[#191919] mt-1 leading-snug">
+                          <p className="text-xs sm:text-[13px] font-semibold text-[#090909] mt-1 leading-snug">
                             {session.topic}
                           </p>
 
                           {/* Date and Time */}
-                          <div className="mt-1.5 flex items-center gap-3 text-xs text-[#666666] flex-wrap">
-                            <span className="flex items-center gap-1 font-medium text-[#191919]">
+                          <div className="mt-1.5 flex items-center gap-3 text-xs text-[#737373] flex-wrap">
+                            <span className="flex items-center gap-1 font-medium text-[#090909]">
                               <Calendar size={13} className="text-neutral-900 shrink-0" />
                               <span>{session.date}</span>
                             </span>
-                            <span className="text-gray-300">·</span>
+                            <span className="text-neutral-300">·</span>
                             <span className="flex items-center gap-1">
-                              <Clock size={13} className="text-gray-400 shrink-0" />
+                              <Clock size={13} className="text-neutral-400 shrink-0" />
                               <span>{session.time}</span>
                             </span>
                           </div>
@@ -598,7 +598,7 @@ export default function AlumniDashboardPage() {
                             variant="primary"
                             size="sm"
                             asChild
-                            className="bg-[#057642] hover:bg-[#045D34] !text-white text-white text-xs h-[34px] px-3 font-semibold flex items-center gap-1.5 border-0 shadow-none cursor-pointer"
+                            className="bg-[#090909] hover:bg-[#242424] !text-white text-white text-xs h-[34px] px-3.5 font-semibold flex items-center gap-1.5 border-0 shadow-none cursor-pointer rounded-full"
                           >
                             <a
                               href={session.meetUrl}
@@ -611,7 +611,7 @@ export default function AlumniDashboardPage() {
                             </a>
                           </Button>
                         ) : (
-                          <span className="text-[11px] text-[#666666] italic bg-gray-50 px-2.5 py-1.5 rounded-md border border-gray-200">
+                          <span className="text-[11px] text-[#737373] italic bg-neutral-100 px-3 py-1.5 rounded-full border border-neutral-200">
                             Link sent 15m prior
                           </span>
                         )}
@@ -621,7 +621,7 @@ export default function AlumniDashboardPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => setSelectedSessionForDetail(session)}
-                          className="h-[34px] px-3 text-xs font-semibold text-[#191919] border-[#D9D9D9] hover:bg-gray-50 cursor-pointer shadow-none"
+                          className="h-[34px] px-3.5 text-xs font-semibold text-[#090909] border-[#E7E7E7] hover:bg-neutral-50 cursor-pointer shadow-none rounded-full"
                         >
                           View Details
                         </Button>
@@ -636,18 +636,18 @@ export default function AlumniDashboardPage() {
           {/* ─── 4. RECENT MENTORSHIP REQUESTS ─── */}
           <section
             aria-labelledby="recent-requests-title"
-            className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs"
+            className="bg-white border border-[#E7E7E7] rounded-2xl p-6 shadow-xs"
           >
-            <div className="flex items-center justify-between pb-3.5 border-b border-gray-100">
+            <div className="flex items-center justify-between pb-3.5 border-b border-[#E7E7E7]">
               <div className="flex items-center gap-2">
                 <h2
                   id="recent-requests-title"
-                  className="text-base sm:text-lg font-bold text-[#191919] tracking-tight"
+                  className="text-base sm:text-lg font-bold text-[#090909] tracking-tight"
                 >
                   Recent Mentorship Requests
                 </h2>
                 {pendingRequests.length > 0 && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-neutral-100 text-neutral-900 border border-neutral-200">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-neutral-100 text-neutral-900 border border-neutral-200">
                     {pendingRequests.length} pending
                   </span>
                 )}
@@ -661,12 +661,12 @@ export default function AlumniDashboardPage() {
               </Link>
             </div>
 
-            <div className="mt-4 divide-y divide-gray-100">
+            <div className="mt-4 divide-y divide-[#E7E7E7]">
               {pendingRequests.length === 0 ? (
-                <div className="py-8 text-center bg-gray-50/50 rounded-lg border border-dashed border-gray-200">
-                  <Inbox size={24} className="text-gray-400 mx-auto mb-2" />
-                  <p className="text-xs font-semibold text-[#191919]">No pending mentorship requests</p>
-                  <p className="text-[11px] text-[#666666] mt-1 max-w-sm mx-auto">
+                <div className="py-8 text-center bg-neutral-50/50 rounded-2xl border border-dashed border-[#E7E7E7]">
+                  <Inbox size={24} className="text-neutral-400 mx-auto mb-2" />
+                  <p className="text-xs font-semibold text-[#090909]">No pending mentorship requests</p>
+                  <p className="text-[11px] text-[#737373] mt-1 max-w-sm mx-auto">
                     You have responded to all incoming student inquiries. You can discover students to offer mentorship.
                   </p>
                   <Button
@@ -689,20 +689,20 @@ export default function AlumniDashboardPage() {
                     <div key={req.id} className="py-4 first:pt-0 last:pb-0">
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex items-start gap-3 min-w-0">
-                          <Avatar name={studentName} size="md" className="shrink-0 ring-1 ring-gray-100" />
+                          <Avatar name={studentName} size="md" className="shrink-0 ring-1 ring-neutral-200" />
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                              <h3 className="text-xs sm:text-sm font-bold text-[#191919] truncate">
+                              <h3 className="text-xs sm:text-sm font-bold text-[#090909] truncate">
                                 {studentName}
                               </h3>
-                              <span className="text-[10px] text-[#666666] bg-gray-100 px-1.5 py-0.2 rounded font-medium">
+                              <span className="text-[10px] text-neutral-800 bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200 font-medium">
                                 {studentYear}
                               </span>
                             </div>
-                            <p className="text-xs text-[#666666] truncate mt-0.5">
+                            <p className="text-xs text-[#737373] truncate mt-0.5">
                               {studentDept} · University of Technology
                             </p>
-                            <div className="mt-1 flex items-center gap-1.5 text-xs text-neutral-700">
+                            <div className="mt-1 flex items-center gap-1.5 text-xs text-neutral-800">
                               <Target size={12} className="shrink-0" />
                               <span className="font-semibold truncate">
                                 Career Goal: {careerInterest}
@@ -711,24 +711,24 @@ export default function AlumniDashboardPage() {
                           </div>
                         </div>
 
-                        <span className="text-[11px] text-gray-400 shrink-0 font-medium">
+                        <span className="text-[11px] text-neutral-400 shrink-0 font-medium">
                           {req.requestDate}
                         </span>
                       </div>
 
                       {/* Request Message Quote */}
                       {req.requestMessage && (
-                        <div className="mt-2.5 bg-gray-50/80 rounded-md p-3 border border-gray-200">
-                          <p className="text-xs text-[#191919] leading-relaxed italic">
+                        <div className="mt-2.5 bg-neutral-50 rounded-xl p-3 border border-[#E7E7E7]">
+                          <p className="text-xs text-[#090909] leading-relaxed italic">
                             &ldquo;{req.requestMessage}&rdquo;
                           </p>
                           {req.student?.skills && req.student.skills.length > 0 && (
                             <div className="mt-2 flex items-center gap-1.5 flex-wrap">
-                              <span className="text-[10px] text-[#666666] font-semibold mr-1">Skills:</span>
+                              <span className="text-[10px] text-[#737373] font-semibold mr-1">Skills:</span>
                               {req.student.skills.slice(0, 4).map((sk) => (
                                 <span
                                   key={sk}
-                                  className="text-[11px] bg-white border border-[#D9D9D9] px-2 py-0.5 rounded text-[#191919] font-medium"
+                                  className="text-[11px] bg-white border border-[#E7E7E7] px-2.5 py-0.5 rounded-full text-[#090909] font-medium"
                                 >
                                   {sk}
                                 </span>
@@ -745,7 +745,7 @@ export default function AlumniDashboardPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => openStudentProfileForRequest(req)}
-                          className="text-xs text-[#555555] hover:text-[#090909] hover:bg-[#F4F4F4] px-3 h-8 font-semibold cursor-pointer rounded-full"
+                          className="text-xs text-neutral-700 hover:text-black hover:bg-neutral-100 px-3 h-8 font-semibold cursor-pointer rounded-full"
                         >
                           <Users size={12} className="mr-1.5" />
                           <span>View Profile</span>
@@ -757,7 +757,7 @@ export default function AlumniDashboardPage() {
                             variant="outline"
                             size="sm"
                             onClick={() => handleDecline(req.id, studentName)}
-                            className="text-xs text-[#555555] hover:text-[#090909] hover:border-[#090909] h-8 px-3 font-medium cursor-pointer rounded-full"
+                            className="text-xs text-neutral-700 hover:text-black border border-neutral-200 hover:border-black h-8 px-3.5 font-medium cursor-pointer rounded-full"
                           >
                             <X size={12} className="mr-1" />
                             <span>Decline</span>
@@ -821,7 +821,7 @@ export default function AlumniDashboardPage() {
                 >
                   <div>
                     <div className="flex items-start justify-between gap-2">
-                      <Avatar name={st.name} size="md" className="ring-1 ring-gray-100" />
+                      <Avatar name={st.name} size="md" className="ring-1 ring-neutral-200" />
                       {st.matchScore && (
                         <span className="text-[10px] font-bold text-neutral-900 bg-neutral-100 border border-neutral-200 px-2 py-0.5 rounded-full shrink-0">
                           {st.matchScore}% Match
@@ -829,14 +829,14 @@ export default function AlumniDashboardPage() {
                       )}
                     </div>
 
-                    <h4 className="text-xs font-bold text-[#191919] mt-2 truncate">
+                    <h4 className="text-xs font-bold text-[#090909] mt-2 truncate">
                       {st.name}
                     </h4>
-                    <p className="text-[11px] text-[#666666] truncate">
+                    <p className="text-[11px] text-[#737373] truncate">
                       {st.academicYear} · {st.department}
                     </p>
 
-                    <p className="text-xs text-[#191919] mt-1.5 line-clamp-2">
+                    <p className="text-xs text-[#090909] mt-1.5 line-clamp-2">
                       Goal: <strong className="font-semibold text-neutral-900">{st.careerGoal}</strong>
                     </p>
 
@@ -846,7 +846,7 @@ export default function AlumniDashboardPage() {
                         return (
                           <span
                             key={skName}
-                            className="text-[10px] bg-[#F3F4F6] px-1.5 py-0.5 rounded text-[#191919] font-medium"
+                            className="text-[10px] bg-neutral-100 px-2 py-0.5 rounded-full text-neutral-800 border border-neutral-200 font-medium"
                           >
                             {skName}
                           </span>
@@ -855,11 +855,11 @@ export default function AlumniDashboardPage() {
                     </div>
                   </div>
 
-                  <div className="mt-3.5 pt-2.5 border-t border-gray-100 flex items-center justify-between gap-2">
+                  <div className="mt-3.5 pt-2.5 border-t border-[#E7E7E7] flex items-center justify-between gap-2">
                     <button
                       type="button"
                       onClick={() => setSelectedStudentForDetail(st)}
-                      className="text-xs font-semibold text-[#555555] hover:text-[#090909] hover:underline cursor-pointer"
+                      className="text-xs font-semibold text-neutral-700 hover:text-black hover:underline cursor-pointer"
                     >
                       View Profile
                     </button>
@@ -868,7 +868,7 @@ export default function AlumniDashboardPage() {
                       size="sm"
                       onClick={() => setSelectedStudentForOffer(st)}
                       disabled={st.hasPendingRequest}
-                      className="text-xs py-1 px-3 h-auto font-semibold text-[#090909] border-[#E7E7E7] hover:bg-[#F4F4F4] cursor-pointer rounded-full"
+                      className="text-xs py-1 px-3 h-auto font-semibold text-neutral-900 border-[#E7E7E7] hover:bg-neutral-100 cursor-pointer rounded-full"
                     >
                       {st.hasPendingRequest ? "Pending" : "Offer Mentorship"}
                     </Button>
@@ -973,20 +973,20 @@ export default function AlumniDashboardPage() {
                     </span>
                   </div>
 
-                  <h4 className="text-xs font-bold text-[#191919] mt-1.5 leading-snug">
+                  <h4 className="text-xs font-bold text-[#090909] mt-1.5 leading-snug">
                     {event.title}
                   </h4>
 
-                  <div className="mt-1 text-xs text-[#666666] space-y-0.5">
+                  <div className="mt-1 text-xs text-[#737373] space-y-0.5">
                     <p>{event.date} · {event.time}</p>
-                    <p className="flex items-center gap-1 text-[#666666]">
+                    <p className="flex items-center gap-1 text-[#737373]">
                       <MapPin size={11} className="shrink-0" />
                       <span>{event.location}</span>
                     </p>
                   </div>
 
                   <div className="mt-2.5 flex items-center justify-between gap-2">
-                    <p className="text-[11px] text-[#666666] line-clamp-1 flex-1">
+                    <p className="text-[11px] text-[#737373] line-clamp-1 flex-1">
                       {event.description}
                     </p>
                     <Button
@@ -1014,11 +1014,11 @@ export default function AlumniDashboardPage() {
           </div>
 
           {/* ─── D. CAREER OPPORTUNITIES ─── */}
-          <div className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs">
-            <div className="flex items-center justify-between pb-2.5 border-b border-gray-100">
+          <div className="bg-white border border-[#E7E7E7] rounded-2xl p-5 shadow-xs">
+            <div className="flex items-center justify-between pb-2.5 border-b border-[#E7E7E7]">
               <div className="flex items-center gap-1.5">
-                <Briefcase size={15} className="text-neutral-900" />
-                <h3 className="text-sm font-bold text-[#191919]">Career Opportunities</h3>
+                <Briefcase size={15} className="text-[#090909]" />
+                <h3 className="text-sm font-bold text-[#090909]">Career Opportunities</h3>
               </div>
               <button
                 type="button"
@@ -1032,28 +1032,28 @@ export default function AlumniDashboardPage() {
 
             <div className="mt-3 space-y-2.5">
               {myOpportunities.length === 0 ? (
-                <p className="text-xs text-[#666666] py-3 text-center">
+                <p className="text-xs text-[#737373] py-3 text-center">
                   No active postings. Publish an internship or role referral to connect with verified students.
                 </p>
               ) : (
                 myOpportunities.slice(0, 3).map((opp) => (
                   <div
                     key={opp.id}
-                    className="p-3 rounded-lg border border-gray-100 bg-gray-50/50 hover:bg-gray-50 transition-colors"
+                    className="p-3.5 rounded-xl border border-[#E7E7E7] bg-white hover:border-black transition-colors"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-bold text-[#191919] truncate">
+                      <span className="text-xs font-bold text-[#090909] truncate">
                         {opp.title}
                       </span>
-                      <span className="text-[10px] uppercase font-bold text-neutral-800 bg-neutral-100 px-1.5 py-0.5 rounded shrink-0">
+                      <span className="text-[10px] uppercase font-bold text-neutral-800 bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200 shrink-0">
                         {opp.type}
                       </span>
                     </div>
-                    <p className="text-xs text-[#666666] mt-0.5">
+                    <p className="text-xs text-[#737373] mt-0.5">
                       {opp.company} · {opp.location}
                     </p>
-                    <div className="mt-2 flex items-center justify-between text-xs pt-1 border-t border-gray-100">
-                      <span className="text-neutral-700 font-semibold">
+                    <div className="mt-2 flex items-center justify-between text-xs pt-2 border-t border-[#E7E7E7]">
+                      <span className="text-neutral-900 font-semibold">
                         {opp.applicantsCount} applicants
                       </span>
                       <Link
@@ -1070,22 +1070,22 @@ export default function AlumniDashboardPage() {
           </div>
 
           {/* ─── E. RELEVANT UPDATES (MENTORSHIP BEST PRACTICES) ─── */}
-          <div className="bg-white border border-[#D9D9D9] rounded-lg p-5 shadow-xs">
-            <div className="flex items-center gap-2 pb-2.5 border-b border-gray-100">
-              <Award size={15} className="text-[#B45309]" />
-              <h3 className="text-sm font-bold text-[#191919]">Mentorship Best Practices</h3>
+          <div className="bg-white border border-[#E7E7E7] rounded-2xl p-5 shadow-xs">
+            <div className="flex items-center gap-2 pb-2.5 border-b border-[#E7E7E7]">
+              <Award size={15} className="text-[#090909]" />
+              <h3 className="text-sm font-bold text-[#090909]">Mentorship Best Practices</h3>
             </div>
 
             <div className="mt-3 space-y-3">
               {mentorshipTipsData.slice(0, 2).map((tip) => (
-                <div key={tip.id} className="text-xs bg-amber-50/50 p-3 rounded-lg border border-amber-100">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800">
+                <div key={tip.id} className="text-xs bg-neutral-50 p-3.5 rounded-xl border border-neutral-200">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-800 bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200 inline-block">
                     {tip.category}
                   </span>
-                  <h5 className="font-bold text-[#191919] text-xs mt-0.5">
+                  <h5 className="font-bold text-[#090909] text-xs mt-1">
                     {tip.title}
                   </h5>
-                  <p className="text-xs text-[#666666] mt-1 leading-relaxed">
+                  <p className="text-xs text-[#737373] mt-1 leading-relaxed">
                     {tip.tip}
                   </p>
                 </div>

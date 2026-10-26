@@ -24,6 +24,43 @@ export function CareerRoadmapPreview({
   onStatusChange,
   onResetRoadmap,
 }: CareerRoadmapPreviewProps) {
+  if (stages.length === 0) {
+    return (
+      <div className="bg-white border border-[#E7E7E7] rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#E7E7E7]">
+          <div>
+            <span className="text-[11px] font-semibold text-[#737373] uppercase tracking-wider block">
+              Career Roadmap
+            </span>
+            <h2 className="text-lg sm:text-xl font-bold text-[#090909] mt-0.5 tracking-tight">
+              {targetCareer}
+            </h2>
+          </div>
+          <Link
+            href="/career-roadmap"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-[#090909] hover:underline"
+          >
+            <span>Roadmap Setup</span>
+            <ArrowRight size={13} />
+          </Link>
+        </div>
+
+        <div className="py-6 text-center space-y-3">
+          <p className="text-xs sm:text-sm text-[#737373]">
+            No path found for <strong className="text-[#090909]">{targetCareer}</strong>. Click Generate to create your customized path.
+          </p>
+          <Link
+            href="/career-roadmap"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#090909] text-white text-xs font-semibold hover:bg-[#242424] transition-colors"
+          >
+            <Sparkles size={13} />
+            <span>Generate Path</span>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const completedStages = stages.filter((s) => s.status === "completed").length;
   const inProgressStage =
     stages.find((s) => s.status === "in_progress") ||

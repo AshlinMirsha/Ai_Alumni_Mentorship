@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { X, Send, MessagesSquare, Sparkles, Check, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { addCommunityPost, loadAlumniProfile } from "@/lib/dashboard-storage";
+import { addCommunityPost, loadAlumniProfile, loadStudentProfile, loadAuthSession } from "@/lib/dashboard-storage";
 import { enhanceCommunityPost } from "@/services/ai-writing-assistant";
 import type { CommunityPost, CommunityCategory } from "@/types";
 
@@ -18,7 +18,10 @@ export function NewDiscussionModal({
   onClose,
   onSuccess,
 }: NewDiscussionModalProps) {
+  const authSession = loadAuthSession();
+  const isAlumni = authSession.role === "alumni";
   const currentAlumni = loadAlumniProfile();
+  const currentStudent = loadStudentProfile();
 
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<CommunityCategory>("career_advice");
@@ -83,14 +86,21 @@ export function NewDiscussionModal({
       .map((t) => t.trim().replace(/^#/, ""))
       .filter(Boolean);
 
+    const authorId = isAlumni ? currentAlumni.id : currentStudent.id;
+    const authorName = isAlumni ? currentAlumni.name : currentStudent.name;
+    const authorRole = isAlumni
+      ? `${currentAlumni.role} at ${currentAlumni.company}`
+      : `${currentStudent.academicYear} · ${currentStudent.department}`;
+    const authorType: "alumni" | "student" = isAlumni ? "alumni" : "student";
+
     const newPost: CommunityPost = {
       id: `post-${Date.now()}`,
       title: title.trim(),
       content: content.trim(),
-      authorId: currentAlumni.id,
-      authorName: currentAlumni.name,
-      authorRole: `${currentAlumni.role} at ${currentAlumni.company}`,
-      authorType: "alumni",
+      authorId,
+      authorName,
+      authorRole,
+      authorType,
       category,
       timestamp: new Date().toISOString(),
       likes: 1,
@@ -99,12 +109,10 @@ export function NewDiscussionModal({
       comments: [],
     };
 
-    setTimeout(() => {
-      addCommunityPost(newPost);
-      setSubmitting(false);
-      onSuccess(newPost.title);
-      onClose();
-    }, 250);
+    addCommunityPost(newPost);
+    setSubmitting(false);
+    onSuccess(newPost.title);
+    onClose();
   };
 
   return (

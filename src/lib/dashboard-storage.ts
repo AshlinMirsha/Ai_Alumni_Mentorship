@@ -22,6 +22,7 @@ import type {
 import {
   currentStudent,
   defaultAlumniUser,
+  alumniData,
   initialRoadmapStages,
   initialMentorshipActivity,
   notificationsData,
@@ -35,6 +36,7 @@ import {
 
 const STUDENT_STORAGE_KEY = "alumnipath_demo_student_profile_v1";
 const ALUMNI_PROFILE_KEY = "alumnipath_demo_alumni_profile_v1";
+const ALUMNI_DIRECTORY_KEY = "alumnipath_demo_alumni_directory_v1";
 const AUTH_SESSION_KEY = "alumnipath_demo_auth_session_v1";
 const ROADMAP_STORAGE_KEY = "alumnipath_demo_roadmap_stages_v1";
 const MENTORSHIP_STORAGE_KEY = "alumnipath_demo_mentorship_activity_v1";
@@ -48,6 +50,26 @@ const UNIVERSITY_EVENTS_STORAGE_KEY = "alumnipath_demo_university_events_v1";
 
 const listeners = new Set<() => void>();
 
+let broadcastSyncChannel: BroadcastChannel | null = null;
+if (typeof window !== "undefined" && typeof BroadcastChannel !== "undefined") {
+  try {
+    broadcastSyncChannel = new BroadcastChannel("alumnipath_live_storage_channel");
+    broadcastSyncChannel.onmessage = () => {
+      invalidateAllCaches();
+      listeners.forEach((listener) => {
+        try {
+          listener();
+        } catch {
+          // ignore
+        }
+      });
+      window.dispatchEvent(new CustomEvent("alumnipath-storage-change"));
+    };
+  } catch {
+    // ignore
+  }
+}
+
 let isStorageListenerAttached = false;
 function onWindowStorage(event: StorageEvent) {
   if (
@@ -56,24 +78,43 @@ function onWindowStorage(event: StorageEvent) {
       event.key === STUDENT_STORAGE_KEY ||
       event.key === AUTH_SESSION_KEY)
   ) {
-    cachedStudentRaw = null;
-    cachedBaseAuthRaw = null;
-    notifyDashboardChange();
+    invalidateAllCaches();
+    listeners.forEach((listener) => {
+      try {
+        listener();
+      } catch {
+        // ignore
+      }
+    });
   }
 }
 
 export function subscribeToDashboardStorage(listener: () => void): () => void {
   listeners.add(listener);
-  if (typeof window !== "undefined" && !isStorageListenerAttached) {
-    window.addEventListener("storage", onWindowStorage);
-    isStorageListenerAttached = true;
+  const handleStorageEvent = () => {
+    invalidateAllCaches();
+    listener();
+  };
+  if (typeof window !== "undefined") {
+    if (!isStorageListenerAttached) {
+      window.addEventListener("storage", onWindowStorage);
+      isStorageListenerAttached = true;
+    }
+    window.addEventListener("storage", handleStorageEvent);
+    window.addEventListener("alumnipath-storage-change", handleStorageEvent);
   }
   return () => {
     listeners.delete(listener);
+    if (typeof window !== "undefined") {
+      window.removeEventListener("storage", handleStorageEvent);
+      window.removeEventListener("alumnipath-storage-change", handleStorageEvent);
+    }
   };
 }
 
+
 export function notifyDashboardChange(): void {
+  invalidateAllCaches();
   listeners.forEach((listener) => {
     try {
       listener();
@@ -81,9 +122,53 @@ export function notifyDashboardChange(): void {
       // ignore
     }
   });
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("alumnipath-storage-change"));
+    if (broadcastSyncChannel) {
+      try {
+        broadcastSyncChannel.postMessage({ timestamp: Date.now() });
+      } catch {
+        // ignore
+      }
+    }
+  }
 }
 
 // ─── Student Profile Storage ──────────────────────────────────────────────────
+
+export function createFreshStudentProfile(params: {
+  name?: string;
+  email?: string;
+  university?: string;
+  department?: string;
+  academicYear?: string;
+}): Student {
+  const name = params.name?.trim() || "Student";
+  const department = params.department?.trim() || "Undeclared Major";
+  const university = params.university?.trim() || "Collegiate Institution";
+  const academicYear = params.academicYear?.trim() || "Freshman (1st Year)";
+
+  return {
+    id: `student-${Date.now()}`,
+    userId: `user-${Date.now()}`,
+    name,
+    avatar: undefined,
+    headline: `${academicYear} · ${department} at ${university}`,
+    university,
+    department,
+    graduationYear: new Date().getFullYear() + 4,
+    academicYear,
+    careerGoal: "",
+    careerGoals: [],
+    skills: [],
+    interests: [],
+    projects: [],
+    bio: "",
+    resumeUrl: undefined,
+    profileCompletionPercent: 20,
+  };
+}
 
 function getStudentStorageKey(): string {
   if (typeof window === "undefined") return STUDENT_STORAGE_KEY;
@@ -100,6 +185,7 @@ function getStudentStorageKey(): string {
   }
   return STUDENT_STORAGE_KEY;
 }
+
 
 let cachedBaseAuthRaw: string | null = null;
 let cachedBaseStudent: Student = currentStudent;
@@ -162,6 +248,12 @@ let cachedStudentKey: string | null = null;
 let cachedStudentRaw: string | null = null;
 let cachedStudentObj: Student = currentStudent;
 
+let cachedSessionsRaw: string | null = null;
+let cachedSessionsObj: MentorshipSession[] = initialUpcomingSessions;
+
+let cachedEventsRaw: string | null = null;
+let cachedEventsObj: UniversityEvent[] = universityEventsData;
+
 export function loadStudentProfile(): Student {
   const base = getBaseStudentForSession();
   if (typeof window === "undefined") return base;
@@ -174,8 +266,6 @@ export function loadStudentProfile(): Student {
     }
 
     cachedStudentKey = key;
-    cachedStudentRaw = raw;
-
     if (!raw) {
       cachedStudentObj = base;
       return base;
@@ -235,6 +325,7 @@ export function saveStudentProfile(student: Student): void {
     cachedStudentKey = key;
     cachedStudentRaw = serialized;
     cachedStudentObj = { ...base, ...safeData };
+
     notifyDashboardChange();
   } catch (err) {
     console.error("Failed to persist student profile to localStorage", err);
@@ -258,6 +349,52 @@ export function resetStudentProfile(): Student {
   return base;
 }
 
+export function invalidateAllCaches(): void {
+  cachedStudentRaw = null;
+  cachedStudentObj = currentStudent;
+  cachedRoadmapRaw = null;
+  cachedRoadmapObj = initialRoadmapStages;
+  cachedMentorshipRaw = null;
+  cachedMentorshipObj = initialMentorshipActivity;
+  cachedNotificationsRaw = null;
+  cachedNotificationsObj = notificationsData;
+  cachedAuthSessionRaw = null;
+  cachedAuthSessionObj = defaultStudentSession;
+  cachedSettingsRaw = null;
+  cachedSettingsObj = initialUserSettings;
+  cachedAlumniProfileRaw = null;
+  cachedAlumniProfileObj = defaultAlumniUser;
+  cachedOpportunitiesRaw = null;
+  cachedOpportunitiesObj = initialOpportunities;
+  cachedCommunityRaw = null;
+  cachedCommunityObj = initialCommunityPosts;
+  cachedStudentsRaw = null;
+  cachedStudentsObj = studentsData;
+  cachedSessionsRaw = null;
+  cachedSessionsObj = initialUpcomingSessions;
+  cachedEventsRaw = null;
+  cachedEventsObj = universityEventsData;
+  cachedAlumniDirectoryRaw = null;
+  cachedAlumniDirectoryObj = alumniData;
+}
+
+export function clearUserSessionData(): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(STUDENT_STORAGE_KEY);
+    localStorage.removeItem(ALUMNI_PROFILE_KEY);
+    localStorage.removeItem(AUTH_SESSION_KEY);
+    localStorage.removeItem(ROADMAP_STORAGE_KEY);
+    localStorage.removeItem(MENTORSHIP_STORAGE_KEY);
+    localStorage.removeItem(NOTIFICATIONS_STORAGE_KEY);
+    localStorage.removeItem(SETTINGS_STORAGE_KEY);
+    invalidateAllCaches();
+    notifyDashboardChange();
+  } catch (e) {
+    console.warn("Error clearing session data", e);
+  }
+}
+
 // ─── Career Roadmap Stages Storage ───────────────────────────────────────────
 
 let cachedRoadmapRaw: string | null = null;
@@ -267,17 +404,39 @@ export function loadRoadmapStages(): RoadmapStage[] {
   if (typeof window === "undefined") return initialRoadmapStages;
   try {
     const raw = localStorage.getItem(ROADMAP_STORAGE_KEY);
-    if (!raw) return initialRoadmapStages;
+    if (!raw) {
+      const studentRaw = localStorage.getItem(STUDENT_STORAGE_KEY);
+      if (studentRaw) {
+        try {
+          const student = JSON.parse(studentRaw);
+          // If the student has a custom role or no role chosen, default to empty stages []
+          const curatedRoles = [
+            "Full-Stack Software Engineer",
+            "Backend Developer",
+            "AI Engineer",
+            "Frontend Platform Engineer",
+            "Cloud Solutions Architect",
+            "Software Engineer Intern",
+          ];
+          if (!student.careerGoal || !curatedRoles.includes(student.careerGoal)) {
+            return [];
+          }
+        } catch {
+          // ignore
+        }
+      }
+      return initialRoadmapStages;
+    }
     if (raw === cachedRoadmapRaw) return cachedRoadmapObj;
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
+    if (Array.isArray(parsed)) {
       cachedRoadmapRaw = raw;
       cachedRoadmapObj = parsed;
       return cachedRoadmapObj;
     }
-    return initialRoadmapStages;
+    return [];
   } catch {
-    return initialRoadmapStages;
+    return [];
   }
 }
 
@@ -299,13 +458,27 @@ export function resetRoadmapStages(): RoadmapStage[] {
     try {
       localStorage.removeItem(ROADMAP_STORAGE_KEY);
       cachedRoadmapRaw = null;
-      cachedRoadmapObj = initialRoadmapStages;
+      cachedRoadmapObj = [];
       notifyDashboardChange();
     } catch {
       // ignore
     }
   }
-  return initialRoadmapStages;
+  return [];
+}
+
+export function createFreshRoadmapStages(): RoadmapStage[] {
+  return [];
+}
+
+export function createFreshMentorshipActivity(): MentorshipActivityData {
+  return {
+    pendingRequests: [],
+    acceptedMentorships: [],
+    declinedRequests: [],
+    completedMentorships: [],
+    recentConversations: [],
+  };
 }
 
 // ─── Mentorship Activity Storage ──────────────────────────────────────────────
@@ -322,11 +495,11 @@ export function loadMentorshipActivity(): MentorshipActivityData {
     const parsed = JSON.parse(raw);
     cachedMentorshipRaw = raw;
     cachedMentorshipObj = {
-      pendingRequests: parsed.pendingRequests ?? initialMentorshipActivity.pendingRequests,
-      acceptedMentorships: parsed.acceptedMentorships ?? initialMentorshipActivity.acceptedMentorships,
-      declinedRequests: parsed.declinedRequests ?? initialMentorshipActivity.declinedRequests ?? [],
-      completedMentorships: parsed.completedMentorships ?? initialMentorshipActivity.completedMentorships ?? [],
-      recentConversations: parsed.recentConversations ?? initialMentorshipActivity.recentConversations,
+      pendingRequests: parsed.pendingRequests ?? [],
+      acceptedMentorships: parsed.acceptedMentorships ?? [],
+      declinedRequests: parsed.declinedRequests ?? [],
+      completedMentorships: parsed.completedMentorships ?? [],
+      recentConversations: parsed.recentConversations ?? [],
     };
     return cachedMentorshipObj;
   } catch {
@@ -964,6 +1137,88 @@ export function loadConversations(): Conversation[] {
   return loadMentorshipActivity().recentConversations;
 }
 
+export function resolveConversationForViewer(
+  conv: Conversation,
+  isAlumni: boolean,
+  currentUserId: string
+): Conversation {
+  if (isAlumni) {
+    // If viewing as alumni:
+    // The other party is the student
+    const studentMessage = conv.messages.find(
+      (m) => m.senderId !== currentUserId && m.senderId !== "system"
+    );
+    const studentName =
+      conv.studentName ||
+      studentMessage?.senderName ||
+      (conv.participantId && conv.participantId.startsWith("s-")
+        ? conv.participantName
+        : "Student Mentee");
+    const studentId =
+      conv.studentId ||
+      (conv.participantId && conv.participantId.startsWith("s-")
+        ? conv.participantId
+        : studentMessage?.senderId || "student-active");
+    const studentRole =
+      conv.studentRole ||
+      (conv.participantId && conv.participantId.startsWith("s-")
+        ? conv.participantRole
+        : "Student Mentee");
+    const studentCompany =
+      conv.studentCompany ||
+      (conv.participantId && conv.participantId.startsWith("s-")
+        ? conv.participantCompany
+        : "Collegiate Mentee");
+
+    return {
+      ...conv,
+      participantId: studentId,
+      participantName: studentName,
+      participantRole: studentRole,
+      participantCompany: studentCompany,
+      participantAvatar: conv.studentAvatar || studentMessage?.senderAvatar,
+    };
+  }
+
+  // If viewing as student:
+  // The other party is the alumni
+  const alumniMessage = conv.messages.find(
+    (m) =>
+      m.senderId !== currentUserId &&
+      m.senderId !== "system" &&
+      !m.senderId.startsWith("s-")
+  );
+  const alumniName =
+    conv.alumniName ||
+    (conv.participantId && !conv.participantId.startsWith("s-")
+      ? conv.participantName
+      : alumniMessage?.senderName || "Alumni Mentor");
+  const alumniId =
+    conv.alumniId ||
+    (conv.participantId && !conv.participantId.startsWith("s-")
+      ? conv.participantId
+      : alumniMessage?.senderId || "rec-001");
+  const alumniRole =
+    conv.alumniRole ||
+    (conv.participantId && !conv.participantId.startsWith("s-")
+      ? conv.participantRole
+      : "Verified Mentor");
+  const alumniCompany =
+    conv.alumniCompany ||
+    (conv.participantId && !conv.participantId.startsWith("s-")
+      ? conv.participantCompany
+      : "Industry Leader");
+
+  return {
+    ...conv,
+    participantId: alumniId,
+    participantName: alumniName,
+    participantRole: alumniRole,
+    participantCompany: alumniCompany,
+    participantAvatar: conv.alumniAvatar,
+  };
+}
+
 export function sendConversationMessage(conversationId: string, content: string): Message | null {
   if (!content.trim()) return null;
   const current = loadMentorshipActivity();
@@ -976,7 +1231,7 @@ export function sendConversationMessage(conversationId: string, content: string)
   const student = loadStudentProfile();
 
   const senderId = isAlumni ? alumni.id : student.id;
-  const senderName = isAlumni ? alumni.name : student.name;
+  const senderName = isAlumni ? (auth.name || alumni.name) : (auth.name || student.name);
   const targetConv = current.recentConversations[convIndex];
   const nowIso = new Date().toISOString();
 
@@ -996,6 +1251,22 @@ export function sendConversationMessage(conversationId: string, content: string)
     lastMessageAt: nowIso,
     messages: [...targetConv.messages, newMessage],
   };
+
+  if (isAlumni) {
+    if (!updatedConv.alumniId) {
+      updatedConv.alumniId = alumni.id;
+      updatedConv.alumniName = alumni.name;
+      updatedConv.alumniRole = alumni.role;
+      updatedConv.alumniCompany = alumni.company;
+    }
+  } else {
+    if (!updatedConv.studentId) {
+      updatedConv.studentId = student.id;
+      updatedConv.studentName = student.name;
+      updatedConv.studentRole = student.department || "Student";
+      updatedConv.studentCompany = student.academicYear || "Collegiate Mentee";
+    }
+  }
 
   const updatedConversations = [...current.recentConversations];
   updatedConversations[convIndex] = updatedConv;
@@ -1040,7 +1311,10 @@ export function getOrCreateConversationForAlumni(alumni: {
   company: string;
 }): Conversation {
   const current = loadMentorshipActivity();
-  const existing = current.recentConversations.find((c) => c.participantId === alumni.id);
+  const student = loadStudentProfile();
+  const existing = current.recentConversations.find(
+    (c) => c.alumniId === alumni.id || c.participantId === alumni.id
+  );
   if (existing) return existing;
 
   const newId = `conv-${Date.now()}`;
@@ -1052,6 +1326,15 @@ export function getOrCreateConversationForAlumni(alumni: {
     participantAvatar: alumni.avatar,
     participantRole: alumni.role,
     participantCompany: alumni.company,
+    alumniId: alumni.id,
+    alumniName: alumni.name,
+    alumniAvatar: alumni.avatar,
+    alumniRole: alumni.role,
+    alumniCompany: alumni.company,
+    studentId: student.id,
+    studentName: student.name,
+    studentRole: student.department || "Student",
+    studentCompany: student.academicYear || "Collegiate Mentee",
     lastMessage: "Conversation initiated.",
     lastMessageAt: nowIso,
     unreadCount: 0,
@@ -1061,7 +1344,7 @@ export function getOrCreateConversationForAlumni(alumni: {
         conversationId: newId,
         senderId: "system",
         senderName: "AlumniPath System",
-        content: `Direct messaging channel opened with ${alumni.name} (${alumni.role} at ${alumni.company}).`,
+        content: `Direct messaging channel opened between ${student.name} and ${alumni.name} (${alumni.role} at ${alumni.company}).`,
         timestamp: nowIso,
         read: true,
       },
@@ -1191,6 +1474,11 @@ export function saveUserSettings(settings: UserSettings): void {
       careerGoal: settings.careerPreferences.targetRole || currentStudent.careerGoal,
     });
 
+    // Synchronize appearance theme
+    if (settings.appearance?.theme) {
+      applyTheme(settings.appearance.theme);
+    }
+
     notifyDashboardChange();
   } catch (err) {
     console.error("Failed to persist user settings", err);
@@ -1201,8 +1489,10 @@ export function resetUserSettings(): UserSettings {
   if (typeof window !== "undefined") {
     try {
       localStorage.removeItem(SETTINGS_STORAGE_KEY);
+      localStorage.removeItem(THEME_STORAGE_KEY);
       cachedSettingsRaw = null;
       cachedSettingsObj = initialUserSettings;
+      applyTheme("light");
       notifyDashboardChange();
     } catch {
       // ignore
@@ -1211,28 +1501,111 @@ export function resetUserSettings(): UserSettings {
   return initialUserSettings;
 }
 
+// ─── Theme Management ─────────────────────────────────────────────────────────
+
+export const THEME_STORAGE_KEY = "alumnipath_theme";
+export type ThemeMode = "light" | "dark" | "system";
+
+export function loadCurrentTheme(): ThemeMode {
+  if (typeof window === "undefined") return "light";
+  try {
+    const directTheme = localStorage.getItem(THEME_STORAGE_KEY) as ThemeMode | null;
+    if (directTheme && (directTheme === "light" || directTheme === "dark" || directTheme === "system")) {
+      return directTheme;
+    }
+    const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed?.appearance?.theme) {
+        return parsed.appearance.theme;
+      }
+    }
+  } catch {
+    // fallback
+  }
+  return "light";
+}
+
+export function applyTheme(theme: ThemeMode): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+
+    let isDark = false;
+    if (theme === "dark") {
+      isDark = true;
+    } else if (theme === "system") {
+      isDark = Boolean(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    } else {
+      isDark = false;
+    }
+
+    const root = document.documentElement;
+    if (isDark) {
+      root.classList.add("dark");
+      root.style.colorScheme = "dark";
+    } else {
+      root.classList.remove("dark");
+      root.style.colorScheme = "light";
+    }
+
+    window.dispatchEvent(
+      new CustomEvent("alumnipath-theme-change", {
+        detail: { theme, isDark },
+      })
+    );
+  } catch (err) {
+    console.error("Failed to apply theme", err);
+  }
+}
+
+if (typeof window !== "undefined") {
+  try {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const systemThemeListener = (e: MediaQueryListEvent) => {
+      const current = localStorage.getItem(THEME_STORAGE_KEY);
+      if (current === "system") {
+        if (e.matches) {
+          document.documentElement.classList.add("dark");
+          document.documentElement.style.colorScheme = "dark";
+        } else {
+          document.documentElement.classList.remove("dark");
+          document.documentElement.style.colorScheme = "light";
+        }
+      }
+    };
+    if (mq.addEventListener) {
+      mq.addEventListener("change", systemThemeListener);
+    } else if ((mq as any).addListener) {
+      (mq as any).addListener(systemThemeListener);
+    }
+  } catch {
+    // ignore
+  }
+}
+
 // ─── Auth Session Storage & Role Management ───────────────────────────────────
 
 export const defaultStudentSession: AuthSession = {
-  isAuthenticated: true,
+  isAuthenticated: false,
   role: "student",
-  email: "mirsha.student@university.edu",
-  name: "Mirsha",
+  email: "",
+  name: "Student",
   avatar: undefined,
-  headline: "Second-year CS Student · Aspiring Full-Stack Software Engineer",
+  headline: "Collegiate Student · AlumniPath Network",
   department: "Computer Science",
 };
 
 export const defaultAlumniSession: AuthSession = {
-  isAuthenticated: true,
+  isAuthenticated: false,
   role: "alumni",
-  email: "marcus.vance@datadog.com",
-  name: "Marcus Vance",
+  email: "",
+  name: "Alumni Mentor",
   avatar: undefined,
-  headline: "Senior Backend Engineer at Datadog · Ex-Google",
-  company: "Datadog",
-  alumniId: "rec-001",
-  department: "Computer Science",
+  headline: "Verified Alumni Mentor",
+  company: "Industry Professional",
+  alumniId: "alumni-user",
+  department: "Engineering",
 };
 
 let cachedAuthSessionRaw: string | null = null;
@@ -1475,8 +1848,8 @@ export function saveAlumniProfile(profile: Alumni): void {
     }
     localStorage.setItem(key, serialized);
     cachedAlumniKey = key;
-    cachedAlumniProfileRaw = serialized;
-    cachedAlumniProfileObj = safeData;
+    cachedAlumniProfileObj = safeData as Alumni;
+    registerOrUpdateAlumniInDirectory(profile);
     notifyDashboardChange();
   } catch (err) {
     console.error("Failed to persist alumni profile", err);
@@ -1499,6 +1872,68 @@ export function resetAlumniProfile(): Alumni {
   }
   return base;
 }
+
+// ─── Dynamic Alumni Directory Storage ─────────────────────────────────────────
+
+let cachedAlumniDirectoryRaw: string | null = null;
+let cachedAlumniDirectoryObj: Alumni[] = alumniData;
+
+export function loadAllAlumni(): Alumni[] {
+  if (typeof window === "undefined") return alumniData;
+  try {
+    const raw = localStorage.getItem(ALUMNI_DIRECTORY_KEY);
+    if (!raw) {
+      // Seed default alumni into directory if none exists
+      return alumniData;
+    }
+    if (raw === cachedAlumniDirectoryRaw) return cachedAlumniDirectoryObj;
+    cachedAlumniDirectoryRaw = raw;
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      cachedAlumniDirectoryObj = parsed;
+      return cachedAlumniDirectoryObj;
+    }
+    return alumniData;
+  } catch {
+    return alumniData;
+  }
+}
+
+export function saveAlumniDirectory(directory: Alumni[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    const serialized = JSON.stringify(directory);
+    localStorage.setItem(ALUMNI_DIRECTORY_KEY, serialized);
+    cachedAlumniDirectoryRaw = serialized;
+    cachedAlumniDirectoryObj = directory;
+    notifyDashboardChange();
+  } catch (err) {
+    console.error("Failed to persist alumni directory", err);
+  }
+}
+
+export function registerOrUpdateAlumniInDirectory(alumni: Alumni): void {
+  if (typeof window === "undefined") return;
+  try {
+    const currentList = loadAllAlumni();
+    const index = currentList.findIndex(
+      (a) => a.id === alumni.id || (a.name && alumni.name && a.name.toLowerCase() === alumni.name.toLowerCase())
+    );
+
+    let updatedList: Alumni[];
+    if (index >= 0) {
+      updatedList = [...currentList];
+      updatedList[index] = { ...updatedList[index], ...alumni };
+    } else {
+      updatedList = [alumni, ...currentList];
+    }
+
+    saveAlumniDirectory(updatedList);
+  } catch (err) {
+    console.error("Failed to update alumni in directory", err);
+  }
+}
+
 
 // ─── Opportunities & Referrals Storage ────────────────────────────────────────
 
@@ -1827,9 +2262,6 @@ export function getStudentById(studentId: string): DiscoverStudent | undefined {
 
 // ─── Upcoming Sessions Storage ────────────────────────────────────────────────
 
-let cachedSessionsRaw: string | null = null;
-let cachedSessionsObj: MentorshipSession[] = initialUpcomingSessions;
-
 export function loadUpcomingSessions(): MentorshipSession[] {
   if (typeof window === "undefined") return initialUpcomingSessions;
   try {
@@ -1857,9 +2289,6 @@ export function saveUpcomingSessions(sessions: MentorshipSession[]): void {
 }
 
 // ─── University Events Storage ────────────────────────────────────────────────
-
-let cachedEventsRaw: string | null = null;
-let cachedEventsObj: UniversityEvent[] = universityEventsData;
 
 export function loadUniversityEvents(): UniversityEvent[] {
   if (typeof window === "undefined") return universityEventsData;

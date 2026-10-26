@@ -90,13 +90,13 @@ export function OfferMentorshipModal({
       />
 
       {/* Modal Dialog */}
-      <div className="relative bg-white rounded-lg border border-gray-200 shadow-xl w-full max-w-lg p-6 overflow-hidden z-10 animate-in fade-in zoom-in-95 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-start justify-between pb-4 border-b border-gray-100">
+      <div className="relative bg-white rounded-2xl border border-[#E7E7E7] shadow-xl w-full max-w-lg p-6 overflow-hidden z-10 animate-in fade-in zoom-in-95 max-h-[90vh] overflow-y-auto">
+        <div className="flex items-start justify-between pb-4 border-b border-[#E7E7E7]">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-bold text-gray-900">Invite Student to Mentorship</h3>
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#057642] bg-[#eef8f1] px-2 py-0.5 rounded-full border border-[#bfe3c9]">
-                <ShieldCheck size={11} /> Verified Mentor
+              <h3 className="text-sm font-bold text-[#090909]">Invite Student to Mentorship</h3>
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-neutral-900 bg-neutral-100 px-2.5 py-0.5 rounded-full border border-neutral-200">
+                <ShieldCheck size={11} className="text-neutral-900" /> Verified Mentor
               </span>
             </div>
             <p className="text-xs text-gray-500 mt-0.5">

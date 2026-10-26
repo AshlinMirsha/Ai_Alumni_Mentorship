@@ -1,7 +1,15 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { createClient as createSupabaseClient, SupabaseClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://jbgyjfauypzbzsnplrws.supabase.co";
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+
+/**
+ * Creates an SSR-safe browser client instance
+ */
+export function createClient() {
+  return createBrowserClient(supabaseUrl, supabaseAnonKey);
+}
 
 /**
  * Sanitizes Supabase URL to ensure it points to the base project domain
@@ -42,7 +50,7 @@ export function getSupabaseClient(): SupabaseClient {
   if (clientInstance) return clientInstance;
 
   const url = isSupabaseConfigured() ? sanitizeSupabaseUrl(supabaseUrl) : DEFAULT_URL;
-  const key = isSupabaseConfigured() ? supabaseAnonKey!.trim() : DEFAULT_KEY;
+  const key = isSupabaseConfigured() ? supabaseAnonKey.trim() : DEFAULT_KEY;
 
   if (typeof window !== "undefined" && !isSupabaseConfigured()) {
     console.warn(
@@ -50,7 +58,7 @@ export function getSupabaseClient(): SupabaseClient {
     );
   }
 
-  clientInstance = createClient(url, key, {
+  clientInstance = createSupabaseClient(url, key, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
@@ -63,3 +71,4 @@ export function getSupabaseClient(): SupabaseClient {
 }
 
 export const supabase = getSupabaseClient();
+

@@ -4,6 +4,7 @@ import { useState, useEffect, type FormEvent } from "react";
 import { X, Send, Sparkles, CheckCircle2, AlertCircle, Info, ShieldAlert } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
+import { loadStudentProfile } from "@/lib/dashboard-storage";
 import type { Alumni, RecommendedAlumni, Mentorship } from "@/types";
 
 export interface MentorshipRequestModalProps {
@@ -61,10 +62,11 @@ function MentorshipRequestForm({
 
     const selectedReason = focus === "Other" ? (customReason.trim() || "General Career Guidance") : focus;
     const nowIso = new Date().toISOString();
+    const activeStudent = loadStudentProfile();
 
     const newRequest: Mentorship = {
       id: `req-${Date.now()}`,
-      studentId: "s-001",
+      studentId: activeStudent.id || "student-active",
       alumniId: alumni.id,
       alumni: {
         id: alumni.id,
@@ -72,6 +74,14 @@ function MentorshipRequestForm({
         avatar: alumni.avatar,
         role: alumni.role,
         company: alumni.company,
+      },
+      student: {
+        id: activeStudent.id || "student-active",
+        name: activeStudent.name || studentName || "Student",
+        avatar: activeStudent.avatar,
+        department: activeStudent.department,
+        academicYear: activeStudent.academicYear,
+        careerGoal: activeStudent.careerGoal || careerGoal,
       },
       status: "pending",
       sessionCount: 0,

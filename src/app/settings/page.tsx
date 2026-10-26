@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore, type FormEvent } from "react";
+import { useState, useEffect, useSyncExternalStore, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -30,8 +30,14 @@ import {
   loadUserSettings,
   saveUserSettings,
   resetUserSettings,
+  applyTheme,
+  loadCurrentTheme,
+  type ThemeMode,
   defaultStudentSession,
+  logoutAuthSession,
+  clearUserSessionData,
 } from "@/lib/dashboard-storage";
+import { createClient } from "@/lib/supabase/client";
 import { currentStudent, defaultAlumniUser, initialUserSettings } from "@/lib/mock-data";
 import type { UserSettings } from "@/types";
 
@@ -77,9 +83,46 @@ export default function SettingsPage() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [skillInput, setSkillInput] = useState("");
 
+  useEffect(() => {
+    setFormData(initialSettings);
+  }, [initialSettings]);
+
+  useEffect(() => {
+    // Keep local form data in sync if theme is switched externally (e.g. from AppHeader)
+    const handleCustomThemeChange = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.theme) {
+        setFormData((prev) => ({
+          ...prev,
+          appearance: { ...prev.appearance, theme: detail.theme },
+        }));
+      }
+    };
+    window.addEventListener("alumnipath-theme-change", handleCustomThemeChange);
+    return () => window.removeEventListener("alumnipath-theme-change", handleCustomThemeChange);
+  }, []);
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  const handleSelectTheme = (theme: ThemeMode) => {
+    const updated: UserSettings = {
+      ...formData,
+      appearance: {
+        ...formData.appearance,
+        theme,
+      },
+    };
+    setFormData(updated);
+    applyTheme(theme);
+    saveUserSettings(updated);
+    showToast(
+      `Theme switched to ${
+        theme === "dark" ? "Dark Mode" : theme === "light" ? "Light Mode" : "System Default"
+      }`
+    );
   };
 
   const handleSave = (e: FormEvent) => {
@@ -739,13 +782,8 @@ export default function SettingsPage() {
                         <button
                           key={item.id}
                           type="button"
-                          onClick={() =>
-                            setFormData({
-                              ...formData,
-                              appearance: { ...formData.appearance, theme: item.id },
-                            })
-                          }
-                          className={`p-3.5 rounded-lg border flex flex-col items-center gap-2 transition-all ${
+                          onClick={() => handleSelectTheme(item.id)}
+                          className={`p-3.5 rounded-lg border flex flex-col items-center gap-2 transition-all cursor-pointer ${
                             isSelected
                               ? "border-[#090909] bg-[#F4F4F4]/40 ring-1 ring-[#090909] font-bold text-[#090909]"
                               : "border-[#E7E7E7] text-[#090909] hover:bg-[#FAFAFA]"
@@ -827,8 +865,16 @@ export default function SettingsPage() {
               <Button
                 variant="primary"
                 size="sm"
-                onClick={() => {
+                onClick={async () => {
                   setShowLogoutConfirm(false);
+                  try {
+                    const supabase = createClient();
+                    await supabase.auth.signOut();
+                  } catch (e) {
+                    console.warn("SignOut error:", e);
+                  }
+                  clearUserSessionData();
+                  logoutAuthSession();
                   router.push("/login");
                 }}
                 className="bg-[#090909] hover:bg-red-800 text-white rounded-full"

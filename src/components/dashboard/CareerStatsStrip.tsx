@@ -23,7 +23,7 @@ export function CareerStatsStrip({
   const roadmapPercent =
     roadmapTotalCount > 0
       ? Math.round((roadmapCompletedCount / roadmapTotalCount) * 100)
-      : 29;
+      : 0;
 
   return (
     <section aria-label="Career Overview Summary" className="w-full">
@@ -47,7 +47,11 @@ export function CareerStatsStrip({
                 {profilePercent}%
               </span>
               <span className="text-xs font-semibold text-[#242424]">
-                All 6 sections verified
+                {profilePercent === 100
+                  ? "All 6 sections verified"
+                  : profilePercent > 50
+                  ? "Profile in progress"
+                  : "Setup required"}
               </span>
             </div>
             <div className="w-full bg-[#EBEBEB] rounded-full h-1.5 mt-3 overflow-hidden">
@@ -72,11 +76,11 @@ export function CareerStatsStrip({
                 {connectionsCount}
               </span>
               <span className="text-xs text-[#737373]">
-                +2 new this month
+                {connectionsCount > 0 ? "Active mentorships" : "0 active"}
               </span>
             </div>
             <p className="text-[11px] text-[#737373] mt-3 truncate flex items-center justify-between">
-              <span>Tier-1 network active</span>
+              <span>{connectionsCount > 0 ? "Tier-1 network active" : "Find an alumni mentor"}</span>
               <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity text-[#090909]" />
             </p>
           </Link>
@@ -120,11 +124,11 @@ export function CareerStatsStrip({
                 {unreadMessagesCount}
               </span>
               <span className="text-xs text-[#737373]">
-                From Marcus Vance · 12m ago
+                {unreadMessagesCount > 0 ? "New messages pending" : "Inbox up to date"}
               </span>
             </div>
             <p className="text-[11px] text-[#737373] mt-3 truncate flex items-center justify-between">
-              <span>Awaiting review notes</span>
+              <span>{unreadMessagesCount > 0 ? "Awaiting review notes" : "No pending direct chats"}</span>
               <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity text-[#090909]" />
             </p>
           </Link>

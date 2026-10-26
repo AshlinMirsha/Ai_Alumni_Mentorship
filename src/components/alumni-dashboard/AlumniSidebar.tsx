@@ -198,25 +198,6 @@ export function AlumniSidebar({ onItemClick, className }: AlumniSidebarProps) {
           })}
         </nav>
       </div>
-
-      {/* Role Switching & Demo Badge */}
-      <div className="bg-[#FAFAFA] border border-[#E7E7E7] rounded-2xl p-4 text-left shadow-2xs">
-        <div className="flex items-center gap-1.5 text-[#090909] mb-1">
-          <Sparkles size={13} className="text-[#090909]" />
-          <span className="text-[11px] font-bold">Interactive Platform Switcher</span>
-        </div>
-        <p className="text-[11px] text-[#555555] leading-relaxed mb-3">
-          Currently previewing as alumnus mentor <strong>{alumni.name}</strong>. Switch to student view anytime to test both roles.
-        </p>
-        <button
-          type="button"
-          onClick={handleSwitchToStudent}
-          className="w-full flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold text-white bg-[#090909] hover:bg-[#242424] rounded-full transition-colors cursor-pointer shadow-xs"
-        >
-          <ArrowRightLeft size={13} />
-          <span>Switch to Student View</span>
-        </button>
-      </div>
     </aside>
   );
 }

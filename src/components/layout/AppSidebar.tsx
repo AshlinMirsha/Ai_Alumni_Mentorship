@@ -21,9 +21,12 @@ import { useSyncExternalStore } from "react";
 import {
   subscribeToDashboardStorage,
   loadAuthSession,
+  loadStudentProfile,
+  loadMentorshipActivity,
   defaultStudentSession,
   setSessionRole,
 } from "@/lib/dashboard-storage";
+import { currentStudent, calculateProfileCompletion } from "@/lib/mock-data";
 
 interface AppSidebarProps {
   className?: string;
@@ -40,8 +43,22 @@ export function AppSidebar({ className, onCloseMobile }: AppSidebarProps) {
     () => defaultStudentSession
   );
 
+  const student = useSyncExternalStore(
+    subscribeToDashboardStorage,
+    loadStudentProfile,
+    () => currentStudent
+  );
+
+  const mentorshipActivity = useSyncExternalStore(
+    subscribeToDashboardStorage,
+    loadMentorshipActivity,
+    () => ({ pendingRequests: [], acceptedMentorships: [], declinedRequests: [], completedMentorships: [], recentConversations: [] })
+  );
+
   const isAlumni = session.role === "alumni";
-  const studentName = session.name || "Mirsha";
+  const studentName = session.name || student.name || "Student";
+  const unreadCount = mentorshipActivity.recentConversations?.reduce((acc, c) => acc + (c.unreadCount || 0), 0) || 0;
+  const profileCompletion = calculateProfileCompletion(student);
 
   interface NavItem {
     label: string;
@@ -54,7 +71,13 @@ export function AppSidebar({ className, onCloseMobile }: AppSidebarProps) {
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { label: "My Profile", href: "/profile", icon: User },
     { label: "Discover Alumni", href: "/alumni", icon: Users },
-    { label: "Messages", href: "/messages", icon: MessageSquare, badge: "1" },
+    {
+      label: "Messages",
+      href: "/messages",
+      icon: MessageSquare,
+      badge: unreadCount > 0 ? String(unreadCount) : undefined,
+    },
+    { label: "Community", href: "/community", icon: Users },
     { label: "Career Roadmap", href: "/career-roadmap", icon: Map },
     { label: "AI Assistant", href: "/career-assistant", icon: Sparkles },
     { label: "Resume Review", href: "/resume-review", icon: FileText },
@@ -66,7 +89,7 @@ export function AppSidebar({ className, onCloseMobile }: AppSidebarProps) {
     { label: "Discover Students", href: "/alumni-dashboard/students", icon: Users },
     { label: "Requests", href: "/alumni-dashboard/requests", icon: MessageSquare },
     { label: "Messages", href: "/messages", icon: MessageSquare },
-    { label: "Community", href: "/alumni-dashboard/community", icon: Map },
+    { label: "Community", href: "/alumni-dashboard/community", icon: Users },
     { label: "Settings", href: "/settings", icon: Settings },
   ];
 
@@ -163,14 +186,19 @@ export function AppSidebar({ className, onCloseMobile }: AppSidebarProps) {
           <div className="bg-white border border-[#E7E7E7] rounded-xl p-3 shadow-xs">
             <div className="flex items-center justify-between text-xs font-semibold text-[#090909] mb-1.5">
               <span>Profile Strength</span>
-              <span className="font-bold">100%</span>
+              <span className="font-bold">{profileCompletion.percent}%</span>
             </div>
             <div className="h-1.5 w-full bg-[#EBEBEB] rounded-full overflow-hidden">
-              <div className="h-full bg-[#090909] rounded-full w-full" />
+              <div
+                className="h-full bg-[#090909] rounded-full transition-all duration-300"
+                style={{ width: `${profileCompletion.percent}%` }}
+              />
             </div>
             <p className="text-[10px] text-[#737373] mt-1.5 flex items-center gap-1 font-medium">
               <CheckCircle2 size={11} className="text-[#090909]" />
-              All essentials completed
+              {profileCompletion.percent === 100
+                ? "All essentials completed"
+                : `${profileCompletion.missingCount} items to complete`}
             </p>
           </div>
         )}
@@ -190,20 +218,6 @@ export function AppSidebar({ className, onCloseMobile }: AppSidebarProps) {
               </p>
             </div>
           </div>
-
-          <button
-            type="button"
-            onClick={() => {
-              const target = isAlumni ? "/dashboard" : "/alumni-dashboard";
-              setSessionRole(isAlumni ? "student" : "alumni");
-              router.push(target);
-              onCloseMobile?.();
-            }}
-            title={isAlumni ? "Switch to Student View" : "Switch to Alumni View"}
-            className="p-1.5 rounded-lg text-[#737373] hover:text-[#090909] hover:bg-[#EBEBEB] transition-colors"
-          >
-            <ArrowRightLeft size={14} />
-          </button>
         </div>
       </div>
     </aside>

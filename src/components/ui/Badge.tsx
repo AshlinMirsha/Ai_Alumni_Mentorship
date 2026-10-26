@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 
 type BadgeVariant =
   | "default"
+  | "neutral"
   | "blue"
   | "green"
   | "amber"
@@ -21,6 +22,7 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 // Strict monochrome palette for badges - no chromatic colors
 const variantClasses: Record<BadgeVariant, string> = {
   default: "bg-[#F4F4F4] text-[#242424] border-[#E7E7E7]",
+  neutral: "bg-[#F4F4F4] text-[#090909] border-[#E7E7E7] font-medium",
   gray: "bg-[#F4F4F4] text-[#454545] border-[#E7E7E7]",
   glass: "bg-white/80 text-[#242424] border-[#E7E7E7] backdrop-blur-xs",
   dark: "bg-[#090909] text-white border-[#090909]",

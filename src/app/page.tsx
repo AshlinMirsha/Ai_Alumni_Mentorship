@@ -50,26 +50,8 @@ function FloatingHeader() {
             href="#how-it-operates"
             className="text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
           >
-            Operational Rail
+            How It Works
           </a>
-          <a
-            href="#network-hud"
-            className="text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
-          >
-            Network HUD
-          </a>
-          <a
-            href="#continuum"
-            className="text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
-          >
-            The Continuum
-          </a>
-          <Link
-            href="/alumni"
-            className="text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
-          >
-            Directory
-          </Link>
           <a
             href="#metrics"
             className="text-xs font-medium text-[#737373] hover:text-[#090909] transition-colors"
@@ -111,29 +93,8 @@ function FloatingHeader() {
             className="text-xs font-medium py-2 text-[#090909] border-b border-[#E7E7E7]"
             onClick={() => setMobileOpen(false)}
           >
-            Operational Rail
+            How It Works
           </a>
-          <a
-            href="#network-hud"
-            className="text-xs font-medium py-2 text-[#090909] border-b border-[#E7E7E7]"
-            onClick={() => setMobileOpen(false)}
-          >
-            Network HUD
-          </a>
-          <a
-            href="#continuum"
-            className="text-xs font-medium py-2 text-[#090909] border-b border-[#E7E7E7]"
-            onClick={() => setMobileOpen(false)}
-          >
-            The Continuum
-          </a>
-          <Link
-            href="/alumni"
-            className="text-xs font-medium py-2 text-[#090909] border-b border-[#E7E7E7]"
-            onClick={() => setMobileOpen(false)}
-          >
-            Directory
-          </Link>
           <a
             href="#metrics"
             className="text-xs font-medium py-2 text-[#090909] border-b border-[#E7E7E7]"
@@ -720,13 +681,13 @@ export default function LandingPage() {
                   <span className="w-2 h-2 rounded-full bg-[#090909]" />
                   Real-Time Network Telemetry
                 </span>
-                <span>45+ Companies Represented</span>
+                <span>Active Industry Leaders</span>
               </div>
               <Link
                 href="/alumni"
                 className="font-semibold text-[#090909] hover:underline flex items-center gap-1"
               >
-                Explore All 540+ Alumni Trajectories <ArrowRight size={13} />
+                Explore All Verified Alumni Trajectories <ArrowRight size={13} />
               </Link>
             </div>
           </div>
@@ -990,16 +951,16 @@ export default function LandingPage() {
                 <span
                   className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#090909] block tabular-nums"
                   data-counter="true"
-                  data-target="540"
-                  data-suffix="+"
+                  data-target="100"
+                  data-suffix="%"
                 >
-                  540+
+                  100%
                 </span>
                 <p className="font-mono text-xs font-semibold uppercase tracking-wider text-[#737373] mt-1.5">
                   Verified Alumni Mentors
                 </p>
                 <p className="text-xs text-[#555555] mt-1 leading-relaxed">
-                  Graduates from top programs active in advising current students.
+                  Every mentor verified with institutional .edu collegiate credentials.
                 </p>
               </div>
 

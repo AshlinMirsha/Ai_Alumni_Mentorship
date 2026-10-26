@@ -29,6 +29,7 @@ import { Card, CardHeader, CardBody } from "@/components/ui/Card";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { SendMessageModal } from "@/components/alumni/SendMessageModal";
+import { MentorshipRequestModal } from "@/components/dashboard/MentorshipRequestModal";
 import {
   currentStudent,
   initialMentorshipActivity,
@@ -40,7 +41,7 @@ import {
   saveMentorshipActivity,
   addNotification,
 } from "@/lib/dashboard-storage";
-import type { Alumni, MentorshipActivityData, Conversation } from "@/types";
+import type { Alumni, MentorshipActivityData, Conversation, Mentorship } from "@/types";
 
 interface AlumniProfileClientProps {
   alumni: Alumni & { experienceYears?: string; coverUrl?: string };
@@ -65,6 +66,7 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
   );
 
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
+  const [isMentorshipRequestOpen, setIsMentorshipRequestOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -103,6 +105,33 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
       actorName: alumni.name,
     });
     showToast(`Guidance inquiry dispatched to ${alumni.name}!`);
+  };
+
+  const isAlreadyRequested =
+    mentorshipData.pendingRequests.some((r) => r.alumniId === alumni.id || r.alumni?.id === alumni.id) ||
+    mentorshipData.acceptedMentorships.some((m) => m.alumniId === alumni.id || m.alumni?.id === alumni.id);
+
+  const isAlreadyConnected = mentorshipData.acceptedMentorships.some(
+    (m) => m.alumniId === alumni.id || m.alumni?.id === alumni.id
+  );
+
+  const handleMentorshipRequest = (request: Mentorship) => {
+    const updated: MentorshipActivityData = {
+      ...mentorshipData,
+      pendingRequests: [request, ...mentorshipData.pendingRequests],
+    };
+    saveMentorshipActivity(updated);
+    addNotification({
+      id: `notif-${Date.now()}`,
+      type: "mentorship_request",
+      title: `Mentorship request submitted to ${alumni.name}`,
+      description: `Focus: ${request.focus}. Waiting for mentor approval.`,
+      timestamp: new Date().toISOString(),
+      read: false,
+      actionUrl: "/dashboard",
+      actorName: alumni.name,
+    });
+    showToast(`Mentorship request sent to ${alumni.name}!`);
   };
 
   return (
@@ -193,11 +222,22 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
                   <Button
                     variant="primary"
                     size="md"
+                    onClick={() => setIsMentorshipRequestOpen(true)}
+                    disabled={isAlreadyRequested}
+                    className="rounded-full px-5 text-xs h-10 font-semibold bg-[#090909] text-white hover:bg-[#242424]"
+                  >
+                    <CheckCircle2 size={14} className="mr-1.5" />
+                    {isAlreadyConnected ? "Connected Mentor" : isAlreadyRequested ? "Request Pending" : "Request Mentorship"}
+                  </Button>
+
+                  <Button
+                    variant="secondary"
+                    size="md"
                     onClick={() => setIsMessageModalOpen(true)}
-                    className="rounded-full px-6 text-xs h-10 font-semibold"
+                    className="rounded-full px-5 text-xs h-10 font-semibold"
                   >
                     <MessageSquare size={14} className="mr-1.5" />
-                    Request Guidance
+                    Direct Message
                   </Button>
 
                   <Button
@@ -210,7 +250,7 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
                     className="rounded-full px-4 text-xs h-10 font-medium"
                   >
                     <Bookmark size={14} className={`mr-1.5 ${isSaved ? "fill-current" : ""}`} />
-                    {isSaved ? "Saved" : "Save Mentor"}
+                    {isSaved ? "Saved" : "Save"}
                   </Button>
 
                   <Button
@@ -511,6 +551,17 @@ export function AlumniProfileClient({ alumni }: AlumniProfileClientProps) {
         alumni={alumni}
         onClose={() => setIsMessageModalOpen(false)}
         onSendMessage={handleSendMessage}
+      />
+
+      {/* Mentorship Request Modal */}
+      <MentorshipRequestModal
+        isOpen={isMentorshipRequestOpen}
+        alumni={alumni}
+        studentName={student.name}
+        studentCareerGoal={student.careerGoal}
+        onClose={() => setIsMentorshipRequestOpen(false)}
+        onSubmitRequest={handleMentorshipRequest}
+        isAlreadyRequested={isAlreadyRequested}
       />
     </div>
   );

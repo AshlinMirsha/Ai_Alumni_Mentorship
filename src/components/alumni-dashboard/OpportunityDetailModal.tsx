@@ -153,7 +153,7 @@ export function OpportunityDetailModal({
             </div>
 
             <div className="text-right shrink-0">
-              <span className="text-xs font-semibold text-[#057642] bg-[#eef8f1] px-2.5 py-1 rounded-full border border-[#bfe3c9] inline-flex items-center gap-1">
+              <span className="text-xs font-semibold text-neutral-900 bg-neutral-100 px-2.5 py-1 rounded-full border border-neutral-200 inline-flex items-center gap-1">
                 <Users size={12} />
                 <span>{opportunity.applicantsCount} applicants</span>
               </span>
@@ -176,7 +176,7 @@ export function OpportunityDetailModal({
               <h3 className="text-xs font-bold text-gray-900 mb-1.5 uppercase tracking-wider text-gray-500">
                 Eligibility Requirements
               </h3>
-              <div className="p-3 bg-blue-50/50 border border-blue-100 rounded-md text-xs text-blue-900">
+              <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs text-neutral-800">
                 {opportunity.eligibility}
               </div>
             </div>

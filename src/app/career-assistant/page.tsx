@@ -12,6 +12,8 @@ import {
   RotateCcw,
   AlertCircle,
   HelpCircle,
+  Brain,
+  Target,
 } from "lucide-react";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { AppHeader } from "@/components/layout/AppHeader";
@@ -57,7 +59,10 @@ export default function CareerAssistantPage() {
   const [messages, setMessages] = useState<AssistantMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [thinkingTimer, setThinkingTimer] = useState(0);
+  const [thinkingPhase, setThinkingPhase] = useState("Analyzing context...");
   const [contextData, setContextData] = useState<any>(null);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -88,29 +93,62 @@ export default function CareerAssistantPage() {
     scrollToBottom();
   }, [messages, isLoading]);
 
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isLoading) {
+      setThinkingTimer(1);
+      const phases = [
+        `Synthesizing profile context for ${student.careerGoal || "target role"}...`,
+        "Cross-referencing verified alumni benchmarks & domain standards...",
+        "Evaluating high-leverage skill gaps & milestone expectations...",
+        "Formulating structured recommendations & action points...",
+      ];
+      let step = 0;
+      setThinkingPhase(phases[0]);
+      interval = setInterval(() => {
+        setThinkingTimer((t) => t + 1);
+        step = (step + 1) % phases.length;
+        setThinkingPhase(phases[step]);
+      }, 1600);
+    } else {
+      setThinkingTimer(0);
+    }
+    return () => clearInterval(interval);
+  }, [isLoading, student.careerGoal]);
+
   const handleSendMessage = useCallback(
-    async (text: string) => {
-      if (!text.trim() || isLoading) return;
+    async (text: string, images?: string[]) => {
+      if ((!text.trim() && (!images || images.length === 0)) || isLoading) return;
 
       setErrorMessage(null);
       const userMessage: AssistantMessage = {
         id: `user-${Date.now()}`,
         role: "user",
         content: text.trim(),
+        images,
         timestamp: "Just now",
       };
 
       setMessages((prev) => [...prev, userMessage]);
       setIsLoading(true);
 
+      // Infer role from query/prompt if specified (e.g., "for X roles?")
+      const roleMatch = text.match(/for\s+([^?]+?)(?:\s+roles?)?(?:\?|$)/i);
+      const activeRole = roleMatch
+        ? roleMatch[1].trim()
+        : student.careerGoal?.trim() || "Professional";
+
       try {
         const response = await careerAssistantService.sendMessage({
           prompt: text.trim(),
+          images,
+          messages: [...messages, userMessage],
           studentContext: {
             studentName: student.name,
-            targetRole: student.careerGoal || "Full-Stack Software Engineer",
+            targetRole: activeRole,
             currentSkills: student.skills.map((s) => s.name),
             academicYear: student.academicYear,
+            academicLevel: student.academicYear,
           },
         });
 
@@ -125,7 +163,7 @@ export default function CareerAssistantPage() {
         setIsLoading(false);
       }
     },
-    [isLoading, student]
+    [isLoading, student, messages]
   );
 
   const handleClearConversation = () => {
@@ -133,29 +171,31 @@ export default function CareerAssistantPage() {
     setErrorMessage(null);
   };
 
+  const currentRoleGoal = student.careerGoal?.trim() || "your target career";
+
   const welcomePrompts = [
     {
       title: "Build my career roadmap",
-      description: `Structured 7-stage plan for ${student.careerGoal || "Full-Stack Software Engineer"}`,
-      prompt: "Build my career roadmap",
+      description: `Structured milestone progression tailored for ${currentRoleGoal}`,
+      prompt: `Build my career roadmap for ${currentRoleGoal}`,
       icon: <Map size={16} />,
     },
     {
       title: "Identify my skill gaps",
-      description: "Analyze current skills against industry hiring requirements",
-      prompt: "Identify my skill gaps",
+      description: `Analyze current capabilities against ${currentRoleGoal} expectations`,
+      prompt: `Identify my skill gaps for ${currentRoleGoal}`,
       icon: <Briefcase size={16} />,
     },
     {
       title: "Improve my resume",
-      description: "Actionable tips using Google's XYZ formula and ATS keywords",
-      prompt: "Improve my resume",
+      description: `Actionable impact formulas and ATS keywords for ${currentRoleGoal}`,
+      prompt: `How can I improve my resume for ${currentRoleGoal}?`,
       icon: <FileText size={16} />,
     },
     {
-      title: "Prepare for a software engineering interview",
-      description: "High-yield LeetCode patterns, system design, and STAR stories",
-      prompt: "Prepare for a software engineering interview",
+      title: `Prepare for a ${currentRoleGoal} interview`,
+      description: "Targeted domain questions, case scenarios, and STAR method stories",
+      prompt: `Prepare for a ${currentRoleGoal} interview`,
       icon: <GraduationCap size={16} />,
     },
   ];
@@ -264,25 +304,63 @@ export default function CareerAssistantPage() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-1 items-start">
             {/* Conversation Main Container (3 Cols) */}
             <div className="lg:col-span-3 flex flex-col bg-white rounded-2xl border border-[#E7E7E7] shadow-xs min-h-[580px] max-h-[780px] overflow-hidden">
+              {/* Context-Based Chatting Header Bar */}
+              <div className="px-4 py-2.5 bg-[#FAFAFA] border-b border-[#E7E7E7] flex flex-wrap items-center justify-between gap-2.5 text-xs">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" title="Active Context Synchronized" />
+                  <span className="text-[10px] font-bold text-[#737373] uppercase tracking-wider">Context:</span>
+                  <span className="font-bold text-[#090909] truncate">{student.name}</span>
+                  <span className="text-[#D4D4D4]">·</span>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white border border-[#E7E7E7] text-[#090909] truncate shadow-2xs">
+                    <Target size={11} className="text-[#090909]" />
+                    {student.careerGoal || "Custom Goal"}
+                  </span>
+                  <span className="text-[#D4D4D4] hidden sm:inline">·</span>
+                  <span className="text-[11px] text-[#737373] hidden sm:inline">
+                    {student.academicYear}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <Link
+                    href="/career-roadmap"
+                    className="text-[11px] font-semibold text-[#090909] hover:bg-[#F4F4F4] bg-white border border-[#E7E7E7] px-3 py-1 rounded-full transition-colors inline-flex items-center gap-1 shadow-2xs"
+                  >
+                    <Map size={11} />
+                    <span>Roadmap</span>
+                  </Link>
+                  {messages.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={handleClearConversation}
+                      className="text-[11px] font-semibold text-[#737373] hover:text-[#090909] hover:bg-[#F4F4F4] bg-white border border-[#E7E7E7] px-3 py-1 rounded-full transition-colors inline-flex items-center gap-1 shadow-2xs"
+                    >
+                      <RotateCcw size={11} />
+                      <span>New Chat</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+
               {/* Messages Scroll Area */}
               <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
                 {messages.length === 0 ? (
-                  /* WELCOME STATE */
+                  /* Mini-ChatGPT WELCOME STATE */
                   <div className="py-8 sm:py-12 max-w-xl mx-auto space-y-6 text-center animate-in fade-in duration-200">
                     <div className="h-12 w-12 rounded-2xl bg-[#090909] text-white flex items-center justify-center mx-auto shadow-sm">
                       <Sparkles size={22} />
                     </div>
 
-                    <div className="space-y-1.5">
-                      <h2 className="text-xl font-bold text-[#090909] tracking-tight">
-                        Where would you like to take your career?
+                    <div className="space-y-2">
+                      <h2 className="text-2xl font-bold text-[#090909] tracking-tight">
+                        How can I accelerate your career today?
                       </h2>
                       <p className="text-xs text-[#737373] max-w-md mx-auto leading-relaxed">
-                        Inquire about high-leverage skills, benchmark projects, alumni hiring standards, or interview strategies.
+                        Omni-modal mentor intelligence powered by NVIDIA Nemotron 30B reasoning. Ask about domain roadmaps, resume audits, or interview scenarios.
                       </p>
                     </div>
 
-                    {/* 4 Required Suggestion Buttons */}
+                    {/* 4 Suggestion Cards in 2x2 grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-left">
                       {activePrompts.map((item: any, idx: number) => (
                         <SuggestionPrompt
@@ -298,9 +376,9 @@ export default function CareerAssistantPage() {
                     <div className="pt-4 border-t border-[#E7E7E7] flex items-center justify-center gap-2 text-[11px] text-[#737373]">
                       <HelpCircle size={13} className="text-[#090909]" />
                       <span>
-                        Guidance is tailored to your target milestone:{" "}
+                        Context locked to:{" "}
                         <strong className="text-[#090909]">
-                          {student.careerGoal || "Full-Stack Software Engineer"}
+                          {student.careerGoal || "Target Role"}
                         </strong>
                       </span>
                     </div>
@@ -317,19 +395,29 @@ export default function CareerAssistantPage() {
                       />
                     ))}
 
-                    {/* Loading Typing Indicator */}
+                    {/* Claude-like Dynamic Thinking Indicator */}
                     {isLoading && (
-                      <div className="flex items-center gap-3 text-xs text-[#737373] pl-2">
-                        <div className="h-7 w-7 rounded-lg bg-[#090909] text-white flex items-center justify-center shrink-0">
-                          <Sparkles size={13} />
+                      <div className="flex items-start gap-3 max-w-3xl mr-auto animate-in fade-in slide-in-from-bottom-2 duration-150">
+                        <div className="h-7 w-7 rounded-lg bg-[#090909] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                          <Sparkles size={13} className="animate-spin text-white [animation-duration:3s]" />
                         </div>
-                        <div className="flex items-center gap-1.5 bg-[#F4F4F4] border border-[#E7E7E7] rounded-full px-3 py-1.5">
-                          <span className="h-1.5 w-1.5 rounded-full bg-[#090909] animate-bounce" />
-                          <span className="h-1.5 w-1.5 rounded-full bg-[#090909] animate-bounce [animation-delay:0.2s]" />
-                          <span className="h-1.5 w-1.5 rounded-full bg-[#090909] animate-bounce [animation-delay:0.4s]" />
-                          <span className="text-[11px] font-medium text-[#737373] ml-1">
-                            Analyzing career trajectory...
-                          </span>
+                        <div className="space-y-2 max-w-[85%] sm:max-w-[75%] w-full">
+                          <div className="border border-[#E7E7E7] bg-white rounded-2xl rounded-tl-sm p-4 shadow-xs space-y-2.5">
+                            <div className="flex items-center justify-between pb-1.5 border-b border-[#E7E7E7] text-[11px]">
+                              <div className="flex items-center gap-1.5 font-semibold text-[#090909]">
+                                <Brain size={13} className="text-[#090909] animate-pulse" />
+                                <span>Thinking</span>
+                                <span className="text-[10px] font-mono text-[#737373] bg-[#F4F4F4] border border-[#E7E7E7] px-2 py-0.5 rounded-full">
+                                  {thinkingTimer}s
+                                </span>
+                              </div>
+                              <span className="text-[10px] text-[#737373]">NVIDIA Nemotron 30B</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-[#737373] font-mono">
+                              <span className="h-2 w-2 rounded-full bg-[#090909] animate-ping shrink-0" />
+                              <span className="truncate">{thinkingPhase}</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     )}

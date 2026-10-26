@@ -15,16 +15,24 @@ import {
   ArrowRight,
   ExternalLink,
   Check,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   subscribeToDashboardStorage,
   loadAuthSession,
   loadNotifications,
+  loadAllAlumni,
   markAllNotificationsAsRead,
   markNotificationAsRead,
   setSessionRole,
   defaultStudentSession,
+  loadCurrentTheme,
+  applyTheme,
+  loadUserSettings,
+  saveUserSettings,
+  type ThemeMode,
 } from "@/lib/dashboard-storage";
 import { notificationsData, alumniData } from "@/lib/mock-data";
 import { Avatar } from "@/components/ui/Avatar";
@@ -52,6 +60,38 @@ export function AppHeader({
   const searchInputRef = useRef<HTMLInputElement>(null);
   const mobileSearchInputRef = useRef<HTMLInputElement>(null);
 
+  const [theme, setTheme] = useState<ThemeMode>("light");
+
+  useEffect(() => {
+    setTheme(loadCurrentTheme());
+    const handleThemeEvent = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.theme) {
+        setTheme(detail.theme);
+      }
+    };
+    window.addEventListener("alumnipath-theme-change", handleThemeEvent);
+    return () => window.removeEventListener("alumnipath-theme-change", handleThemeEvent);
+  }, []);
+
+  const handleToggleTheme = () => {
+    const nextTheme: ThemeMode = theme === "dark" ? "light" : "dark";
+    setTheme(nextTheme);
+    applyTheme(nextTheme);
+    try {
+      const s = loadUserSettings();
+      saveUserSettings({
+        ...s,
+        appearance: {
+          ...s.appearance,
+          theme: nextTheme,
+        },
+      });
+    } catch {
+      // ignore
+    }
+  };
+
   const session = useSyncExternalStore(
     subscribeToDashboardStorage,
     loadAuthSession,
@@ -62,6 +102,12 @@ export function AppHeader({
     subscribeToDashboardStorage,
     loadNotifications,
     () => notificationsData
+  );
+
+  const allAlumni = useSyncExternalStore(
+    subscribeToDashboardStorage,
+    loadAllAlumni,
+    () => alumniData
   );
 
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -76,19 +122,21 @@ export function AppHeader({
   // Filtered search results
   const trimmedQuery = searchQuery.trim().toLowerCase();
   const matchedMentors = trimmedQuery
-    ? alumniData
+    ? allAlumni
         .filter(
           (a) =>
-            a.name.toLowerCase().includes(trimmedQuery) ||
-            a.company.toLowerCase().includes(trimmedQuery) ||
-            a.role.toLowerCase().includes(trimmedQuery) ||
-            a.skills.some((s) => s.name.toLowerCase().includes(trimmedQuery))
+            a.name?.toLowerCase().includes(trimmedQuery) ||
+            a.company?.toLowerCase().includes(trimmedQuery) ||
+            a.role?.toLowerCase().includes(trimmedQuery) ||
+            a.department?.toLowerCase().includes(trimmedQuery) ||
+            a.education?.[0]?.field?.toLowerCase().includes(trimmedQuery) ||
+            a.skills?.some((s) => s.name?.toLowerCase().includes(trimmedQuery))
         )
         .slice(0, 4)
     : [];
 
   const quickNav = [
-    { label: "Discover Alumni", href: "/alumni", desc: "Filter 540+ mentors" },
+    { label: "Discover Alumni", href: "/alumni", desc: "Filter verified mentors" },
     { label: "Career Roadmap", href: "/career-roadmap", desc: "Track execution milestones" },
     { label: "Direct Advisory Messages", href: "/messages", desc: "Chat with mentors" },
     { label: "AI Career Assistant", href: "/career-assistant", desc: "Mock loops & advice" },
@@ -302,20 +350,20 @@ export function AppHeader({
             <Search size={16} />
           </button>
 
-          {/* Interactive Role Switcher Pill (Desktop + Mobile) */}
+
+          {/* Quick Light / Dark Mode Toggle */}
           <button
             type="button"
-            onClick={handleToggleRole}
-            className="inline-flex items-center gap-1.5 h-9 px-3 sm:px-3.5 rounded-full text-xs font-medium border border-[#E7E7E7] bg-white text-[#090909] hover:bg-[#F4F4F4] hover:border-[#090909] transition-all cursor-pointer shadow-2xs"
-            title={isAlumni ? "Switch to Student View" : "Switch to Alumni View"}
+            onClick={handleToggleTheme}
+            className="h-9 w-9 rounded-full border border-[#E7E7E7] bg-white text-[#090909] hover:bg-[#F4F4F4] flex items-center justify-center transition-colors cursor-pointer"
+            aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+            title={theme === "dark" ? "Active: Dark Mode (Click for Light Mode)" : "Active: Light Mode (Click for Dark Mode)"}
           >
-            <ArrowRightLeft size={13} className="text-[#090909]" />
-            <span className="hidden sm:inline">
-              {isAlumni ? "Switch to Student View" : "Switch to Alumni View"}
-            </span>
-            <span className="sm:hidden">
-              {isAlumni ? "Student" : "Alumni"}
-            </span>
+            {theme === "dark" ? (
+              <Sun size={16} className="text-[#090909]" />
+            ) : (
+              <Moon size={16} className="text-[#090909]" />
+            )}
           </button>
 
           {/* Notifications Popover */}

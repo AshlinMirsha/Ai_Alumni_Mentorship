@@ -1,11 +1,9 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { sanitizeSupabaseUrl } from "./client";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://jbgyjfauypzbzsnplrws.supabase.co";
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-let adminClientInstance: SupabaseClient | null = null;
 
 /**
  * Checks whether Supabase Service Role key is configured.
@@ -18,6 +16,20 @@ export function isServiceRoleConfigured(): boolean {
     !serviceRoleKey.includes("your-service-role-key")
   );
 }
+
+export function createAdminClient() {
+  const url = sanitizeSupabaseUrl(supabaseUrl) || "https://jbgyjfauypzbzsnplrws.supabase.co";
+  const key = serviceRoleKey || anonKey || "";
+
+  return createClient(url, key, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
+}
+
+let adminClientInstance: SupabaseClient | null = null;
 
 /**
  * Returns the singleton privileged Supabase Admin client for trusted server-side operations.
@@ -47,3 +59,4 @@ export function getAdminClient(): SupabaseClient {
 }
 
 export const adminSupabase = getAdminClient();
+
