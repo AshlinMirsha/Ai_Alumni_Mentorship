@@ -28,32 +28,34 @@ export function AssistantSidebar({
 }: AssistantSidebarProps) {
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
+  const targetGoal = student.careerGoal?.trim() || "my target career";
+
   const promptCategories = [
     {
       label: "Career Roadmap",
       icon: Map,
       prompts: [
-        "Build my career roadmap",
-        "What are the best backend frameworks to learn next?",
-        "How should I structure my projects for Stage 3?",
+        `Build my career roadmap for ${targetGoal}`,
+        `What core competencies should I master for ${targetGoal}?`,
+        "How should I structure my milestone projects?",
       ],
     },
     {
       label: "Skills & Preparation",
       icon: Briefcase,
       prompts: [
-        "Identify my skill gaps",
-        "Prepare for a software engineering interview",
-        "How can I master Docker and PostgreSQL indexing?",
+        `Identify my skill gaps for ${targetGoal}`,
+        `Prepare for a ${targetGoal} interview`,
+        `How do I demonstrate domain excellence in ${targetGoal}?`,
       ],
     },
     {
       label: "Resume & Applications",
       icon: FileText,
       prompts: [
-        "Improve my resume",
-        "How do I quantify impact using Google's XYZ formula?",
-        "What ATS keywords should I add for Full-Stack roles?",
+        `Improve my resume for ${targetGoal}`,
+        "How do I quantify leadership impact using proven metrics?",
+        `What ATS keywords should I prioritize for ${targetGoal}?`,
       ],
     },
   ];

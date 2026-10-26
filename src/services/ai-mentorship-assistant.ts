@@ -214,6 +214,60 @@ export class MockAIMentorshipAssistantService implements AIMentorshipAssistantSe
     maxMentees?: number;
     availableStudents: DiscoverStudent[];
   }): Promise<StudentMatchingResult> {
+    try {
+      const res = await fetch("/api/matching", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          expertiseAreas: input.expertiseAreas,
+          mentors: input.availableStudents.map((s) => ({
+            id: s.id,
+            name: s.name,
+            role: s.department,
+            company: s.university,
+            skills: (s.skills || []).map((sk) => sk.name),
+          })),
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.matches && data.matches.length > 0) {
+          const matchMap = new Map<string, { matchScore: number; matchTier: string; reasons: string[] }>(
+            data.matches.map((m: { mentorId: string; matchScore: number; matchTier: string; reasons: string[] }) => [m.mentorId, m])
+          );
+
+          const recommendations = input.availableStudents
+            .map((s) => {
+              const match = matchMap.get(s.id);
+              return {
+                studentId: s.id,
+                studentName: s.name,
+                department: s.department,
+                academicYear: s.academicYear,
+                matchScore: match?.matchScore || 75,
+                matchReasons: match?.reasons || [`Direct domain synergy in ${input.expertiseAreas.slice(0, 2).join(", ")}`],
+                suggestedTopics: [
+                  `Production architecture review for ${s.careerGoal || "engineering roles"}`,
+                  `Mock technical coding & system design drills`,
+                  `Resume audit targeted toward engineering hiring bars`,
+                ],
+                careerGoal: s.careerGoal,
+              };
+            })
+            .sort((a, b) => b.matchScore - a.matchScore)
+            .slice(0, input.maxMentees || 3);
+
+          return {
+            recommendations,
+            summary: `Evaluated ${input.availableStudents.length} candidate mentees using neural reasoning. Top ${recommendations.length} students align directly with your expertise in ${input.expertiseAreas.slice(0, 3).join(", ")}.`,
+          };
+        }
+      }
+    } catch (e) {
+      console.warn("Backend matching route error, using local heuristic fallback:", e);
+    }
+
     await new Promise((resolve) => setTimeout(resolve, 500));
 
     const expertiseLower = input.expertiseAreas.map((e) => e.toLowerCase());

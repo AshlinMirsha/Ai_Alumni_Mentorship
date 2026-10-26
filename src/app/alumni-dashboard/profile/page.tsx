@@ -78,8 +78,26 @@ function AlumniProfileInnerForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
+    saveAlumniProfile(formData);
+
+    fetch("/api/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        full_name: formData.name,
+        current_company: formData.company,
+        current_title: formData.role,
+        headline: formData.headline,
+        location: formData.location,
+        bio: formData.bio,
+        skills: formData.skills?.map((s) => s.name) || [],
+        interests: formData.mentorshipAreas || [],
+      }),
+    }).catch((err) => {
+      console.warn("Backend alumni profile sync noticed:", err);
+    });
+
     setTimeout(() => {
-      saveAlumniProfile(formData);
       setIsSaving(false);
       onSaveSuccess();
     }, 250);

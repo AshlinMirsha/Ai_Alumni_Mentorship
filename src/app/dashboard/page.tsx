@@ -70,6 +70,22 @@ export default function DashboardPage() {
   const handleSaveProfile = (updatedStudent: Student) => {
     saveStudentProfile(updatedStudent);
     showToast("Profile updated successfully. Completion score recalculated!");
+
+    fetch("/api/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        full_name: updatedStudent.name,
+        major: updatedStudent.department,
+        university: updatedStudent.university,
+        career_goals: updatedStudent.careerGoal,
+        headline: updatedStudent.careerGoal,
+        skills: updatedStudent.skills?.map((s) => s.name) || [],
+        interests: updatedStudent.interests || [],
+      }),
+    }).catch((err) => {
+      console.warn("Backend profile sync noticed:", err);
+    });
   };
 
   const handleResetProfile = () => {
@@ -93,9 +109,10 @@ export default function DashboardPage() {
   const profileCompletion = calculateProfileCompletion(student);
   const connectionsCount =
     (mentorshipActivity.acceptedMentorships?.length || 0) +
-    (mentorshipActivity.pendingRequests?.length || 0) || 7;
-  const completedStages = roadmapStages.filter((s) => s.status === "completed").length || 2;
-  const unreadMessagesCount = 1;
+    (mentorshipActivity.pendingRequests?.length || 0);
+  const completedStages = roadmapStages.filter((s) => s.status === "completed").length;
+  const unreadMessagesCount =
+    mentorshipActivity.recentConversations?.reduce((acc, conv) => acc + (conv.unreadCount || 0), 0) || 0;
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex antialiased text-[#090909]">
@@ -116,8 +133,8 @@ export default function DashboardPage() {
       <div className="flex-1 flex flex-col min-w-0">
         <AppHeader
           onToggleMobileMenu={() => setMobileMenuOpen(true)}
-          title={`Good morning, ${student.name || "Mirsha"} 👋`}
-          subtitle={`${student.department} · ${student.academicYear || "Second Year"} · Fall 2026 Semester`}
+          title={`Good morning, ${student.name || "Student"} 👋`}
+          subtitle={`${student.department || "Undeclared Major"} · ${student.academicYear || "Freshman"} · Fall 2026 Semester`}
         />
 
         {/* Toast Notification */}
@@ -135,7 +152,7 @@ export default function DashboardPage() {
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 pb-16">
           {/* 4 Stat Cards Row (Matching Reference 2) */}
           <CareerStatsStrip
-            profilePercent={profileCompletion.percent || 100}
+            profilePercent={profileCompletion.percent}
             connectionsCount={connectionsCount}
             roadmapCompletedCount={completedStages}
             roadmapTotalCount={roadmapStages.length || 7}

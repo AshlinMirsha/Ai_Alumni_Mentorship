@@ -16,6 +16,7 @@ import { alumniData, currentStudent } from "@/lib/mock-data";
 import {
   subscribeToDashboardStorage,
   loadStudentProfile,
+  loadAllAlumni,
 } from "@/lib/dashboard-storage";
 
 export default function AlumniDiscoveryPage() {
@@ -24,6 +25,12 @@ export default function AlumniDiscoveryPage() {
     subscribeToDashboardStorage,
     loadStudentProfile,
     () => currentStudent
+  );
+
+  const allAlumni = useSyncExternalStore(
+    subscribeToDashboardStorage,
+    loadAllAlumni,
+    () => alumniData
   );
 
   const [filters, setFilters] = useState<AlumniFilterState>(initialFilterState);
@@ -39,29 +46,48 @@ export default function AlumniDiscoveryPage() {
     setFilters(initialFilterState);
   };
 
-  // Distinct roles and companies
+  // Distinct roles, companies, and departments dynamically derived from all alumni
   const roles = useMemo(
-    () => Array.from(new Set(alumniData.map((a) => a.role))).sort(),
-    []
+    () =>
+      Array.from(new Set(allAlumni.map((a) => a.role?.trim()).filter(Boolean) as string[])).sort(),
+    [allAlumni]
   );
   const companies = useMemo(
-    () => Array.from(new Set(alumniData.map((a) => a.company))).sort(),
-    []
+    () =>
+      Array.from(new Set(allAlumni.map((a) => a.company?.trim()).filter(Boolean) as string[])).sort(),
+    [allAlumni]
+  );
+  const departments = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          allAlumni
+            .map((a) => a.department?.trim() || a.education?.[0]?.field?.trim())
+            .filter(Boolean) as string[]
+        )
+      ).sort(),
+    [allAlumni]
   );
 
   // Filter alumni
   const filteredAlumni = useMemo(() => {
-    return alumniData.filter((alumnus) => {
-      // 1. Search query
+    return allAlumni.filter((alumnus) => {
+      // 1. Search query (matches name, role, company, department, industry, skills)
       if (filters.searchQuery.trim()) {
         const q = filters.searchQuery.toLowerCase().trim();
-        const matchesName = alumnus.name.toLowerCase().includes(q);
-        const matchesRole = alumnus.role.toLowerCase().includes(q);
-        const matchesCompany = alumnus.company.toLowerCase().includes(q);
-        const matchesSkill = alumnus.skills.some((s) =>
-          s.name.toLowerCase().includes(q)
-        );
-        if (!matchesName && !matchesRole && !matchesCompany && !matchesSkill) {
+        const matchesName = alumnus.name?.toLowerCase().includes(q) ?? false;
+        const matchesRole = alumnus.role?.toLowerCase().includes(q) ?? false;
+        const matchesCompany = alumnus.company?.toLowerCase().includes(q) ?? false;
+        const matchesDept =
+          (alumnus.department?.toLowerCase().includes(q) ||
+            alumnus.education?.[0]?.field?.toLowerCase().includes(q)) ??
+          false;
+        const matchesIndustry = alumnus.industry?.toLowerCase().includes(q) ?? false;
+        const matchesSkill = alumnus.skills?.some((s) =>
+          s.name?.toLowerCase().includes(q)
+        ) ?? false;
+
+        if (!matchesName && !matchesRole && !matchesCompany && !matchesDept && !matchesIndustry && !matchesSkill) {
           return false;
         }
       }
@@ -95,7 +121,15 @@ export default function AlumniDiscoveryPage() {
         return false;
       }
 
-      // 5. Graduation year filter
+      // 5. Left sidebar department filter
+      if (filters.department !== "all") {
+        const dept = alumnus.department || alumnus.education?.[0]?.field;
+        if (dept !== filters.department) {
+          return false;
+        }
+      }
+
+      // 6. Graduation year filter
       if (filters.graduationYearRange !== "all") {
         const gy = alumnus.graduationYear;
         if (filters.graduationYearRange === "2021-2024" && (gy < 2021 || gy > 2024)) return false;
@@ -105,7 +139,7 @@ export default function AlumniDiscoveryPage() {
 
       return true;
     });
-  }, [filters]);
+  }, [allAlumni, filters]);
 
   // Sort
   const sortedAlumni = useMemo(() => {
@@ -158,7 +192,7 @@ export default function AlumniDiscoveryPage() {
       <div className="flex-1 flex flex-col min-w-0">
         <AppHeader
           onToggleMobileMenu={() => setMobileMenuOpen(true)}
-          title="Explore 540+ verified alumni"
+          title="Explore verified alumni"
           subtitle="Direct access to university alumni across Tier-1 engineering, product, and design organizations."
         />
 
@@ -170,8 +204,9 @@ export default function AlumniDiscoveryPage() {
             onResetFilters={handleResetFilters}
             roles={roles}
             companies={companies}
+            departments={departments}
             totalResults={sortedAlumni.length}
-            totalAlumniCount={alumniData.length}
+            totalAlumniCount={allAlumni.length}
           />
 
           {/* Directory Body: Left Filter Sidebar + Right 3-Column Card Grid */}
@@ -182,7 +217,7 @@ export default function AlumniDiscoveryPage() {
                 <span className="text-xs font-bold uppercase tracking-wider text-[#090909]">
                   Filters
                 </span>
-                {(filters.role !== "all" || filters.company !== "all" || filters.graduationYearRange !== "all") && (
+                {(filters.role !== "all" || filters.company !== "all" || filters.department !== "all" || filters.graduationYearRange !== "all") && (
                   <button
                     type="button"
                     onClick={handleResetFilters}
@@ -193,10 +228,53 @@ export default function AlumniDiscoveryPage() {
                 )}
               </div>
 
+              {/* Department Section */}
+              {departments.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-semibold text-[#090909]">Department ({departments.length})</p>
+                  </div>
+                  <div className="space-y-1 max-h-48 overflow-y-auto pr-1">
+                    <button
+                      type="button"
+                      onClick={() => handleFilterChange("department", "all")}
+                      className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between transition-colors ${
+                        filters.department === "all"
+                          ? "bg-[#090909] text-white"
+                          : "text-[#555555] hover:bg-[#F4F4F4]"
+                      }`}
+                    >
+                      <span>All Departments</span>
+                      {filters.department === "all" && <Check size={12} />}
+                    </button>
+                    {departments.map((d) => {
+                      const isSelected = filters.department === d;
+                      return (
+                        <button
+                          key={d}
+                          type="button"
+                          onClick={() => handleFilterChange("department", isSelected ? "all" : d)}
+                          className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between transition-colors truncate ${
+                            isSelected
+                              ? "bg-[#090909] text-white"
+                              : "text-[#555555] hover:bg-[#F4F4F4]"
+                          }`}
+                        >
+                          <span className="truncate">{d}</span>
+                          {isSelected && <Check size={12} className="shrink-0" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Roles Section */}
-              <div className="space-y-2">
-                <p className="text-xs font-semibold text-[#090909]">Role</p>
-                <div className="space-y-1">
+              <div className="space-y-2 pt-2 border-t border-[#E7E7E7]">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-semibold text-[#090909]">Role ({roles.length})</p>
+                </div>
+                <div className="space-y-1 max-h-56 overflow-y-auto pr-1">
                   <button
                     type="button"
                     onClick={() => handleFilterChange("role", "all")}
@@ -209,7 +287,7 @@ export default function AlumniDiscoveryPage() {
                     <span>All Roles</span>
                     {filters.role === "all" && <Check size={12} />}
                   </button>
-                  {roles.slice(0, 6).map((r) => {
+                  {roles.map((r) => {
                     const isSelected = filters.role === r;
                     return (
                       <button
@@ -232,8 +310,10 @@ export default function AlumniDiscoveryPage() {
 
               {/* Company Section */}
               <div className="space-y-2 pt-2 border-t border-[#E7E7E7]">
-                <p className="text-xs font-semibold text-[#090909]">Company</p>
-                <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-semibold text-[#090909]">Company ({companies.length})</p>
+                </div>
+                <div className="space-y-1 max-h-56 overflow-y-auto pr-1">
                   <button
                     type="button"
                     onClick={() => handleFilterChange("company", "all")}
@@ -246,7 +326,7 @@ export default function AlumniDiscoveryPage() {
                     <span>All Companies</span>
                     {filters.company === "all" && <Check size={12} />}
                   </button>
-                  {companies.slice(0, 6).map((c) => {
+                  {companies.map((c) => {
                     const isSelected = filters.company === c;
                     return (
                       <button

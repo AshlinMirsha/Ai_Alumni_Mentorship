@@ -196,6 +196,16 @@ export interface Conversation {
   participantAvatar?: string;
   participantRole: string;
   participantCompany: string;
+  studentId?: string;
+  studentName?: string;
+  studentAvatar?: string;
+  studentRole?: string;
+  studentCompany?: string;
+  alumniId?: string;
+  alumniName?: string;
+  alumniAvatar?: string;
+  alumniRole?: string;
+  alumniCompany?: string;
   lastMessage: string;
   lastMessageAt: string;
   unreadCount: number;
@@ -344,18 +354,26 @@ export interface AssistantMessage {
   role: AssistantMessageRole;
   content: string;
   timestamp: string;
+  images?: string[];
+  reasoning?: string;
+  thinkingDurationSeconds?: number;
   suggestions?: string[];
   suggestedActions?: AssistantSuggestedAction[];
 }
 
 export interface CareerAssistantRequest {
   prompt: string;
+  images?: string[];
+  messages?: AssistantMessage[];
   studentContext?: {
     studentName?: string;
     targetRole?: string;
     currentSkills?: string[];
     academicYear?: string;
+    academicLevel?: string;
     activeRoadmapStage?: string;
+    completedMilestonesCount?: number;
+    totalMilestonesCount?: number;
   };
 }
 

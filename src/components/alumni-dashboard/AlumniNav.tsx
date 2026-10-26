@@ -196,17 +196,6 @@ export function AlumniNav({ onMobileToggle, mobileOpen }: AlumniNavProps) {
               />
             </form>
 
-            {/* Quick Role Switcher Pill */}
-            <button
-              type="button"
-              onClick={handleSwitchToStudent}
-              title="Click to switch back to Student platform view"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#090909] hover:bg-[#F4F4F4] border border-[#E7E7E7] rounded-full transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-2xs"
-            >
-              <ArrowRightLeft size={12} className="text-[#090909] shrink-0" />
-              <span className="hidden sm:inline">Switch to Student View</span>
-              <span className="sm:hidden">Student</span>
-            </button>
 
             {/* Notifications Popover */}
             <div className="relative" ref={notifRef}>
@@ -406,26 +395,6 @@ export function AlumniNav({ onMobileToggle, mobileOpen }: AlumniNavProps) {
                     <span>Account Settings</span>
                   </Link>
 
-                  <div className="border-t border-[#E7E7E7] my-1" />
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowUserMenu(false);
-                      handleSwitchToStudent();
-                    }}
-                    className="w-full text-left flex items-center justify-between px-4 py-2.5 text-xs text-[#090909] hover:bg-[#F4F4F4] transition-colors font-semibold cursor-pointer"
-                  >
-                    <span className="flex items-center gap-2">
-                      <ArrowRightLeft size={13} />
-                      <span>Switch to Student View</span>
-                    </span>
-                    <span className="text-[10px] text-[#737373] bg-[#F4F4F4] px-1.5 py-0.5 rounded-full">
-                      Demo
-                    </span>
-                  </button>
-
-                  <div className="border-t border-[#E7E7E7] my-1" />
 
                   <Link
                     href="/"

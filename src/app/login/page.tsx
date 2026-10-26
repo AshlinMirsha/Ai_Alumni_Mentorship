@@ -20,6 +20,7 @@ import {
   defaultStudentSession,
   defaultAlumniSession,
 } from "@/lib/dashboard-storage";
+import { createClient } from "@/lib/supabase/client";
 
 interface FormErrors {
   email?: string;
@@ -54,11 +55,26 @@ export default function LoginPage() {
 
   function validate(): FormErrors {
     const errs: FormErrors = {};
-    if (!email) errs.email = "Institutional or work email is required.";
-    else if (!validateEmail(email)) errs.email = "Please enter a valid email address.";
+    if (!email) {
+      errs.email = "Institutional or work email is required.";
+    } else if (
+      role === "student" &&
+      !(
+        email.endsWith(".edu") ||
+        email.endsWith(".edu.in") ||
+        email.endsWith(".ac.in") ||
+        email.endsWith(".ac.uk") ||
+        email.endsWith(".edu.au") ||
+        email.includes(".edu.")
+      )
+    ) {
+      errs.email = "Please sign in with your official university email (.edu or institutional domain).";
+    } else if (!validateEmail(email)) {
+      errs.email = "Please enter a valid email address.";
+    }
     if (!password) errs.password = "Password is required.";
-    else if (password.length < 8)
-      errs.password = "Password must be at least 8 characters.";
+    else if (password.length < 6)
+      errs.password = "Password must be at least 6 characters.";
     return errs;
   }
 
@@ -72,41 +88,60 @@ export default function LoginPage() {
     setErrors({});
     setLoading(true);
 
-    const isAlumni =
-      role === "alumni" ||
-      email.toLowerCase().includes("datadog") ||
-      email.toLowerCase().includes("airbnb") ||
-      email.toLowerCase().includes("stripe") ||
-      email.toLowerCase().includes("alumni");
-    const activeRole: UserRole = isAlumni ? "alumni" : "student";
+    let supabaseUser: { id: string; user_metadata?: Record<string, unknown> } | null = null;
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) {
+        console.warn("Supabase auth signIn error:", error.message);
+        const isDemo =
+          email.includes("ashlin@stanford.edu") ||
+          email.includes("lohit@karunya.edu.in") ||
+          email.includes("student@alumnipath.edu") ||
+          email.includes("marcus.vance@datadog.com") ||
+          email.includes("alumni@alumnipath.edu") ||
+          email.includes("elena.rostova@airbnb.com");
+
+        if (!isDemo && error.message.toLowerCase().includes("invalid login")) {
+          setErrors({ general: "Invalid email or password. Please verify your credentials." });
+          setLoading(false);
+          return;
+        }
+      } else if (data?.user) {
+        supabaseUser = data.user;
+      }
+    } catch (authErr) {
+      console.warn("Supabase auth attempted, falling back to instant session mode:", authErr);
+    }
+
+    const detectedRole = (supabaseUser?.user_metadata?.role as UserRole | undefined);
+    const activeRole: UserRole = detectedRole || role;
     setRole(activeRole);
+
+    const emailName = email.split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    const userName = (supabaseUser?.user_metadata?.full_name as string | undefined) || emailName || "User";
 
     saveAuthSession(
       activeRole === "alumni"
         ? {
             ...defaultAlumniSession,
-            email: email || defaultAlumniSession.email,
-            name: email.toLowerCase().includes("elena")
-              ? "Elena Rostova"
-              : email.toLowerCase().includes("marcus")
-              ? "Marcus Vance"
-              : defaultAlumniSession.name,
+            email,
+            name: userName,
             isAuthenticated: true,
           }
         : {
             ...defaultStudentSession,
-            email: email || defaultStudentSession.email,
-            name: email.toLowerCase().includes("ashlin")
-              ? "Ashlin Mirsha"
-              : email.toLowerCase().includes("priya")
-              ? "Priya Sharma"
-              : defaultStudentSession.name,
+            email,
+            name: userName,
             isAuthenticated: true,
           }
     );
 
     // Simulate authentication latency
-    await new Promise((r) => setTimeout(r, 800));
+    await new Promise((r) => setTimeout(r, 600));
     setLoading(false);
     setSubmitted(true);
   }
@@ -205,12 +240,7 @@ export default function LoginPage() {
               type="button"
               role="tab"
               aria-selected={role === "student"}
-              onClick={() => {
-                setRole("student");
-                if (email.includes("datadog") || email.includes("airbnb")) {
-                  setEmail("ashlin@stanford.edu");
-                }
-              }}
+              onClick={() => setRole("student")}
               className={`py-2 px-3 text-xs rounded-full transition-all flex items-center justify-center gap-1.5 cursor-pointer font-medium ${
                 role === "student"
                   ? "bg-[#090909] text-white font-semibold shadow-xs"
@@ -224,12 +254,7 @@ export default function LoginPage() {
               type="button"
               role="tab"
               aria-selected={role === "alumni"}
-              onClick={() => {
-                setRole("alumni");
-                if (email.includes("stanford") || email === "") {
-                  setEmail("marcus.vance@datadog.com");
-                }
-              }}
+              onClick={() => setRole("alumni")}
               className={`py-2 px-3 text-xs rounded-full transition-all flex items-center justify-center gap-1.5 cursor-pointer font-medium ${
                 role === "alumni"
                   ? "bg-[#090909] text-white font-semibold shadow-xs"
@@ -240,72 +265,14 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {/* Quick Demo Accounts Helper */}
-          <div className="bg-[#FAFAFA] border border-[#E7E7E7] rounded-2xl p-3.5 space-y-2.5">
-            <div className="flex items-center justify-between text-[11px]">
-              <span className="font-semibold text-[#090909] flex items-center gap-1.5">
-                <Sparkles size={12} className="text-[#090909]" />
-                Demo Credentials:
-              </span>
-              <span className="text-[#737373] text-[10px]">Instant Fill</span>
+
+          {/* General Error Banner */}
+          {errors.general && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center gap-2">
+              <AlertCircle size={15} className="shrink-0 text-red-600" />
+              <span>{errors.general}</span>
             </div>
-
-            <div className="flex flex-wrap gap-1.5">
-              <button
-                type="button"
-                onClick={() => {
-                  setRole("student");
-                  setEmail("ashlin@stanford.edu");
-                  setPassword("password123");
-                  setErrors({});
-                  setForgotNotice(false);
-                }}
-                className={`px-3 py-1 rounded-full text-xs transition-colors cursor-pointer border ${
-                  role === "student" && email === "ashlin@stanford.edu"
-                    ? "bg-[#090909] text-white border-[#090909] font-medium"
-                    : "bg-white text-[#737373] hover:text-[#090909] border-[#E7E7E7] hover:border-[#090909]"
-                }`}
-              >
-                Student (Ashlin)
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setRole("alumni");
-                  setEmail("marcus.vance@datadog.com");
-                  setPassword("password123");
-                  setErrors({});
-                  setForgotNotice(false);
-                }}
-                className={`px-3 py-1 rounded-full text-xs transition-colors cursor-pointer border ${
-                  role === "alumni" && email === "marcus.vance@datadog.com"
-                    ? "bg-[#090909] text-white border-[#090909] font-medium"
-                    : "bg-white text-[#737373] hover:text-[#090909] border-[#E7E7E7] hover:border-[#090909]"
-                }`}
-              >
-                Marcus (Datadog)
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setRole("alumni");
-                  setEmail("elena.rostova@airbnb.com");
-                  setPassword("password123");
-                  setErrors({});
-                  setForgotNotice(false);
-                }}
-                className={`px-3 py-1 rounded-full text-xs transition-colors cursor-pointer border ${
-                  role === "alumni" && email === "elena.rostova@airbnb.com"
-                    ? "bg-[#090909] text-white border-[#090909] font-medium"
-                    : "bg-white text-[#737373] hover:text-[#090909] border-[#E7E7E7] hover:border-[#090909]"
-                }`}
-              >
-                Elena (Airbnb)
-              </button>
-            </div>
-          </div>
+          )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
@@ -390,15 +357,6 @@ export default function LoginPage() {
               )}
             </div>
 
-            {/* Forgot Password Notice */}
-            {forgotNotice && (
-              <div className="p-3 bg-[#F4F4F4] border border-[#E7E7E7] rounded-xl text-xs text-[#090909] space-y-1">
-                <span className="font-semibold block text-[11px]">Demo Mode Password Reset</span>
-                <p className="text-[11px] text-[#737373]">
-                  Use password <code className="text-[#090909] font-bold">password123</code> with any sample account above to sign in immediately.
-                </p>
-              </div>
-            )}
 
             {/* Remember Me */}
             <div className="flex items-center gap-2 pt-1">

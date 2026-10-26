@@ -16,6 +16,7 @@ import {
   loadConversations,
   sendConversationMessage,
   markConversationAsRead,
+  resolveConversationForViewer,
   defaultStudentSession,
 } from "@/lib/dashboard-storage";
 import { currentStudent, defaultAlumniUser, initialMentorshipActivity } from "@/lib/mock-data";
@@ -75,11 +76,28 @@ export default function MessagesPage() {
     () => defaultAlumniUser
   );
 
-  const conversations = useSyncExternalStore(
+  const rawConversations = useSyncExternalStore(
     subscribeToDashboardStorage,
     loadConversations,
     () => initialMentorshipActivity.recentConversations
   );
+
+  const currentUserId = isAlumni ? (alumni.id || "rec-001") : (student.id || "student-active");
+
+  const conversations = useMemo(() => {
+    return rawConversations.map((conv) =>
+      resolveConversationForViewer(conv, isAlumni, currentUserId)
+    );
+  }, [rawConversations, isAlumni, currentUserId]);
+
+  // Live polling heartbeat every 1.5s to ensure instantaneous message updates without manual refresh
+  const [, setHeartbeatTick] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHeartbeatTick((t) => t + 1);
+    }, 1500);
+    return () => clearInterval(interval);
+  }, []);
 
   const [selectedConvId, setSelectedConvId] = useState<string | null>(
     conversations[0]?.id || null
@@ -99,6 +117,15 @@ export default function MessagesPage() {
 
   const handleSendMessage = (conversationId: string, content: string) => {
     sendConversationMessage(conversationId, content);
+
+    // Sync to backend /api/messages
+    fetch("/api/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ conversationId, content }),
+    }).catch((err) => {
+      console.warn("Backend messages sync noticed:", err);
+    });
   };
 
   return (

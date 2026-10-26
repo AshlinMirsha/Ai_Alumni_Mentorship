@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useSyncExternalStore } from "react";
+import { useState, useMemo, useSyncExternalStore, useEffect } from "react";
 import {
   MessagesSquare,
   Plus,
@@ -30,8 +30,11 @@ import {
   deleteCommunityPost,
   toggleLikeCommunityPost,
   loadAlumniProfile,
+  loadStudentProfile,
+  loadAuthSession,
+  defaultStudentSession,
 } from "@/lib/dashboard-storage";
-import { initialCommunityPosts, defaultAlumniUser } from "@/lib/mock-data";
+import { initialCommunityPosts, defaultAlumniUser, currentStudent } from "@/lib/mock-data";
 import { NewDiscussionModal } from "@/components/alumni-dashboard/NewDiscussionModal";
 import { cn } from "@/lib/utils";
 import type { CommunityComment, CommunityCategory } from "@/types";
@@ -43,11 +46,33 @@ export default function AlumniCommunityPage() {
     () => initialCommunityPosts
   );
 
+  const authSession = useSyncExternalStore(
+    subscribeToDashboardStorage,
+    loadAuthSession,
+    () => defaultStudentSession
+  );
+  const isAlumni = authSession.role === "alumni";
+
   const currentAlumni = useSyncExternalStore(
     subscribeToDashboardStorage,
     loadAlumniProfile,
     () => defaultAlumniUser
   );
+
+  const currentStudentProfile = useSyncExternalStore(
+    subscribeToDashboardStorage,
+    loadStudentProfile,
+    () => currentStudent
+  );
+
+  // Real-time polling heartbeat to ensure instant updates without requiring manual refresh
+  const [, setHeartbeatTick] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHeartbeatTick((t) => t + 1);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -133,12 +158,19 @@ export default function AlumniCommunityPage() {
     const text = replyTextMap[postId];
     if (!text || !text.trim()) return;
 
+    const authorId = isAlumni ? currentAlumni.id : currentStudentProfile.id;
+    const authorName = isAlumni ? currentAlumni.name : currentStudentProfile.name;
+    const authorRole = isAlumni
+      ? `${currentAlumni.role} at ${currentAlumni.company}`
+      : `${currentStudentProfile.academicYear} · ${currentStudentProfile.department}`;
+    const authorType: "alumni" | "student" = isAlumni ? "alumni" : "student";
+
     const newComment: CommunityComment = {
       id: `com-${Date.now()}`,
-      authorId: currentAlumni.id,
-      authorName: currentAlumni.name,
-      authorRole: `${currentAlumni.role} at ${currentAlumni.company}`,
-      authorType: "alumni",
+      authorId,
+      authorName,
+      authorRole,
+      authorType,
       content: text.trim(),
       timestamp: new Date().toISOString(),
       likes: 0,

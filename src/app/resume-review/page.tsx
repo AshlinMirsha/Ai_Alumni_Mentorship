@@ -41,10 +41,47 @@ export default function ResumeReviewPage() {
     () => currentStudent
   );
 
+  const targetRoleOptions = [
+    "Full-Stack Developer",
+    "Backend Developer",
+    "Frontend Platform Engineer",
+    "AI Engineer",
+    "Cloud Solutions Architect",
+    "Software Engineer Intern",
+    "Data Analyst",
+  ];
+
+  const initialRole = student.careerGoal?.trim() || "";
+  const isInitialPredefined = targetRoleOptions.some(
+    (opt) => opt.toLowerCase() === initialRole.toLowerCase()
+  );
+
   const [selectedFile, setSelectedFile] = useState<SelectedFileInfo | null>(null);
-  const [targetRole, setTargetRole] = useState(student.careerGoal || "Full-Stack Software Engineer");
+  const [isCustomRole, setIsCustomRole] = useState(!isInitialPredefined && initialRole.length > 0);
+  const [selectedBenchmarkRole, setSelectedBenchmarkRole] = useState(
+    isInitialPredefined ? initialRole : "Full-Stack Developer"
+  );
+  const [customRoleTitle, setCustomRoleTitle] = useState(
+    !isInitialPredefined && initialRole.length > 0 ? initialRole : ""
+  );
+
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [results, setResults] = useState<ResumeReviewResult | null>(null);
+
+  const effectiveTargetRole = isCustomRole
+    ? (customRoleTitle.trim() || "Custom Role")
+    : selectedBenchmarkRole;
+
+  const currentRoleForTips =
+    results?.targetRole ||
+    (isCustomRole && customRoleTitle.trim() ? customRoleTitle.trim() : null) ||
+    (!isCustomRole ? selectedBenchmarkRole : null) ||
+    student.careerGoal?.trim() ||
+    "my target role";
+
+  const formattedRoleForTips = currentRoleForTips.toLowerCase().includes("role")
+    ? currentRoleForTips
+    : `${currentRoleForTips} roles`;
 
   // Analysis options checkboxes
   const [options, setOptions] = useState<ResumeAnalysisOptions>({
@@ -54,22 +91,14 @@ export default function ResumeReviewPage() {
     targetRoleAlignment: true,
   });
 
-  const targetRoleOptions = [
-    "Full-Stack Developer",
-    "Backend Developer",
-    "Software Engineer Intern",
-    "AI Engineer",
-    "Data Analyst",
-  ];
-
   const handleStartReview = async () => {
     if (!selectedFile) return;
 
     setIsAnalyzing(true);
     try {
       const reviewResults = await resumeReviewService.analyzeResume(
-        { name: selectedFile.name, size: selectedFile.size },
-        targetRole,
+        selectedFile,
+        effectiveTargetRole,
         options
       );
       setResults(reviewResults);
@@ -131,7 +160,9 @@ export default function ResumeReviewPage() {
 
             <div className="flex items-center gap-2.5">
               <Link
-                href="/career-assistant?q=How%20can%20I%20improve%20my%20resume%20for%20software%20engineering%20roles%3F"
+                href={`/career-assistant?q=${encodeURIComponent(
+                  `How can I improve my resume for ${formattedRoleForTips}?`
+                )}`}
                 className="text-xs font-medium text-[#090909] hover:bg-[#F4F4F4] bg-white border border-[#E7E7E7] px-4 py-2 rounded-full transition-colors inline-flex items-center gap-1.5 shadow-xs"
               >
                 <Sparkles size={13} />
@@ -180,8 +211,15 @@ export default function ResumeReviewPage() {
                     </label>
                     <select
                       id="target-role-select"
-                      value={targetRole}
-                      onChange={(e) => setTargetRole(e.target.value)}
+                      value={isCustomRole ? "Custom Role" : selectedBenchmarkRole}
+                      onChange={(e) => {
+                        if (e.target.value === "Custom Role") {
+                          setIsCustomRole(true);
+                        } else {
+                          setIsCustomRole(false);
+                          setSelectedBenchmarkRole(e.target.value);
+                        }
+                      }}
                       className="w-full rounded-xl border border-[#E7E7E7] bg-white text-xs text-[#090909] px-3.5 py-2.5 h-10 focus:outline-none focus:border-[#090909] focus:ring-1 focus:ring-[#090909]"
                     >
                       {targetRoleOptions.map((role) => (
@@ -193,7 +231,7 @@ export default function ResumeReviewPage() {
                     </select>
                   </div>
 
-                  {targetRole === "Custom Role" && (
+                  {isCustomRole && (
                     <div className="space-y-1.5 pt-1">
                       <label htmlFor="custom-role-input" className="text-xs font-semibold text-[#090909]">
                         Specify Custom Title
@@ -201,9 +239,11 @@ export default function ResumeReviewPage() {
                       <input
                         id="custom-role-input"
                         type="text"
+                        value={customRoleTitle}
                         placeholder="e.g. Site Reliability Engineer"
-                        onChange={(e) => setTargetRole(e.target.value)}
+                        onChange={(e) => setCustomRoleTitle(e.target.value)}
                         className="w-full rounded-xl border border-[#E7E7E7] bg-white text-xs text-[#090909] px-3.5 py-2.5 h-10 focus:outline-none focus:border-[#090909] focus:ring-1 focus:ring-[#090909]"
+                        autoFocus
                       />
                     </div>
                   )}
@@ -293,7 +333,7 @@ export default function ResumeReviewPage() {
                   {selectedFile ? (
                     <span>
                       Ready to audit: <strong className="text-[#090909]">{selectedFile.name}</strong> for{" "}
-                      <strong className="text-[#090909]">{targetRole}</strong>
+                      <strong className="text-[#090909]">{effectiveTargetRole}</strong>
                     </span>
                   ) : (
                     <span>Please choose a resume file above to enable review.</span>

@@ -16,9 +16,9 @@ export function StudentProfileCard({
 }: StudentProfileCardProps) {
   const completion = calculateProfileCompletion(student);
   const careerGoal =
-    student.careerGoal || student.careerGoals?.[0] || "Full-Stack Software Engineer";
-  const academicYear = student.academicYear || "Second Year";
-  const displayName = student.name && student.name.trim().length > 0 ? student.name : "Mirsha";
+    student.careerGoal || student.careerGoals?.[0] || "Not yet specified";
+  const academicYear = student.academicYear || "Freshman";
+  const displayName = student.name && student.name.trim().length > 0 ? student.name : "Student";
 
   return (
     <div className="bg-white border border-[#E7E7E7] rounded-2xl p-5 shadow-xs">

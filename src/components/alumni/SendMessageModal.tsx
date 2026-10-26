@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
+import { loadStudentProfile } from "@/lib/dashboard-storage";
 import type { Alumni, Conversation } from "@/types";
 
 interface SendMessageModalProps {
@@ -47,6 +48,7 @@ export function SendMessageModal({
     if (!messageText.trim()) return;
 
     if (onSendMessage) {
+      const student = loadStudentProfile();
       const nowIso = new Date().toISOString();
       const convId = `conv-${Date.now()}`;
       const newConv: Conversation = {
@@ -56,6 +58,14 @@ export function SendMessageModal({
         participantAvatar: alumni.avatar,
         participantRole: alumni.role,
         participantCompany: alumni.company,
+        studentId: student.id,
+        studentName: student.name,
+        studentRole: student.department || "Student Mentee",
+        studentCompany: student.university || student.academicYear,
+        alumniId: alumni.id,
+        alumniName: alumni.name,
+        alumniRole: alumni.role,
+        alumniCompany: alumni.company,
         lastMessage: messageText,
         lastMessageAt: nowIso,
         unreadCount: 0,
@@ -63,8 +73,8 @@ export function SendMessageModal({
           {
             id: `msg-${Date.now()}`,
             conversationId: convId,
-            senderId: "s-001",
-            senderName: "Ashlin",
+            senderId: student.id || "student-active",
+            senderName: student.name || "Student",
             content: messageText,
             timestamp: nowIso,
             read: true,

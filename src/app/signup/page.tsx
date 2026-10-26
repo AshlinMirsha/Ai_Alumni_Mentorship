@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, type FormEvent, type ChangeEvent } from "react";
+import { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Eye,
   EyeOff,
@@ -16,7 +17,9 @@ import {
   ArrowLeft,
   ArrowRight,
   ShieldCheck,
+  Sparkles,
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 type AccountType = "student" | "alumni";
 
@@ -39,6 +42,7 @@ interface FormData {
 }
 
 interface FormErrors {
+  general?: string;
   fullName?: string;
   email?: string;
   password?: string;
@@ -65,14 +69,24 @@ const GRADUATION_YEARS = Array.from({ length: 20 }, (_, i) =>
   String(2026 - i)
 );
 
-function validateEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+function validateInstitutionalEmail(email: string) {
+  const trimmed = email.trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return false;
+  // Must end with .edu, .ac.in, .edu.in, .ac.uk, or other educational domains
+  return (
+    trimmed.endsWith(".edu") ||
+    trimmed.endsWith(".edu.in") ||
+    trimmed.endsWith(".ac.in") ||
+    trimmed.endsWith(".ac.uk") ||
+    trimmed.endsWith(".edu.au") ||
+    trimmed.includes(".edu.")
+  );
 }
 
 function PasswordStrength({ password }: { password: string }) {
   if (!password) return null;
   const checks = {
-    length: password.length >= 8,
+    length: password.length >= 6,
     upper: /[A-Z]/.test(password),
     lower: /[a-z]/.test(password),
     number: /\d/.test(password),
@@ -100,6 +114,7 @@ function PasswordStrength({ password }: { password: string }) {
 }
 
 export default function SignupPage() {
+  const router = useRouter();
   const [form, setForm] = useState<FormData>({
     fullName: "",
     email: "",
@@ -120,10 +135,19 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
+  // Auto redirect after successful registration
+  useEffect(() => {
+    if (!submitted) return;
+    const timer = setTimeout(() => {
+      router.push(form.accountType === "alumni" ? "/alumni-dashboard" : "/dashboard");
+    }, 1800);
+    return () => clearTimeout(timer);
+  }, [submitted, form.accountType, router]);
+
   function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
-    if (errors[key as keyof FormErrors]) {
-      setErrors((prev) => ({ ...prev, [key]: undefined }));
+    if (errors[key as keyof FormErrors] || errors.general) {
+      setErrors((prev) => ({ ...prev, [key]: undefined, general: undefined }));
     }
   }
 
@@ -131,11 +155,16 @@ export default function SignupPage() {
     const e: FormErrors = {};
 
     if (!form.fullName.trim()) e.fullName = "Full name is required.";
-    if (!form.email) e.email = "Email address is required.";
-    else if (!validateEmail(form.email)) e.email = "Enter a valid email address.";
+    if (!form.email) {
+      e.email = "Email address is required.";
+    } else if (form.accountType === "student" && !validateInstitutionalEmail(form.email)) {
+      e.email = "Please use your valid university or institutional email (ending with .edu or .edu.in / .ac.in).";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      e.email = "Please enter a valid email address.";
+    }
 
     if (!form.password) e.password = "Password is required.";
-    else if (form.password.length < 8) e.password = "Password must be at least 8 characters.";
+    else if (form.password.length < 6) e.password = "Password must be at least 6 characters.";
 
     if (!form.confirmPassword) e.confirmPassword = "Please confirm your password.";
     else if (form.password !== form.confirmPassword)
@@ -170,30 +199,89 @@ export default function SignupPage() {
     setErrors({});
     setLoading(true);
 
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+          fullName: form.fullName.trim(),
+          role: form.accountType,
+          university: form.institution.trim(),
+          department: form.department.trim(),
+          academicYear: form.academicYear,
+          graduationYear: form.graduationYear,
+          currentCompany: form.currentCompany.trim(),
+          currentRole: form.currentRole.trim(),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        setErrors({ general: data.error || "Registration failed. Please try again." });
+        setLoading(false);
+        return;
+      }
+    } catch (err: unknown) {
+      console.warn("Server registration failed, falling back to local session store:", err);
+    }
+
+    try {
+      const supabase = createClient();
+      await supabase.auth.signInWithPassword({
+        email: form.email,
+        password: form.password,
+      });
+    } catch (authErr) {
+      console.warn("Supabase auth signIn attempted:", authErr);
+    }
+
     if (form.accountType === "student") {
       try {
-        const { loadStudentProfile, saveStudentProfile, saveAuthSession } = await import("@/lib/dashboard-storage");
-        const current = loadStudentProfile();
-        saveStudentProfile({
-          ...current,
-          name: form.fullName.trim() || current.name,
-          department: form.department.trim() || current.department,
-          academicYear: form.academicYear || current.academicYear,
-          university: form.institution.trim() || current.university,
+        const {
+          createFreshStudentProfile,
+          saveStudentProfile,
+          createFreshRoadmapStages,
+          saveRoadmapStages,
+          createFreshMentorshipActivity,
+          saveMentorshipActivity,
+          saveNotifications,
+          saveAuthSession,
+        } = await import("@/lib/dashboard-storage");
+
+        const freshStudent = createFreshStudentProfile({
+          name: form.fullName.trim(),
+          email: form.email.trim(),
+          university: form.institution.trim(),
+          department: form.department.trim(),
+          academicYear: form.academicYear,
         });
+
+        saveStudentProfile(freshStudent);
+        saveRoadmapStages(createFreshRoadmapStages());
+        saveMentorshipActivity(createFreshMentorshipActivity());
+        saveNotifications([]);
         saveAuthSession({
           isAuthenticated: true,
           role: "student",
-          email: form.email,
-          name: form.fullName.trim() || current.name,
-          department: form.department.trim() || current.department,
+          email: form.email.trim(),
+          name: form.fullName.trim() || "Student",
+          department: form.department.trim(),
         });
       } catch (err) {
         console.error("Failed to sync student signup data", err);
       }
     } else if (form.accountType === "alumni") {
       try {
-        const { loadAlumniProfile, saveAlumniProfile, saveAuthSession } = await import("@/lib/dashboard-storage");
+        const {
+          loadAlumniProfile,
+          saveAlumniProfile,
+          saveAuthSession,
+          createFreshMentorshipActivity,
+          saveMentorshipActivity,
+          saveNotifications,
+        } = await import("@/lib/dashboard-storage");
         const currentAlumni = loadAlumniProfile();
         saveAlumniProfile({
           ...currentAlumni,
@@ -202,6 +290,8 @@ export default function SignupPage() {
           role: form.currentRole.trim() || currentAlumni.role,
           graduationYear: Number(form.graduationYear) || currentAlumni.graduationYear,
         });
+        saveMentorshipActivity(createFreshMentorshipActivity());
+        saveNotifications([]);
         saveAuthSession({
           isAuthenticated: true,
           role: "alumni",
@@ -215,7 +305,7 @@ export default function SignupPage() {
       }
     }
 
-    await new Promise((r) => setTimeout(r, 900));
+    await new Promise((r) => setTimeout(r, 600));
     setLoading(false);
     setSubmitted(true);
   }
@@ -347,6 +437,81 @@ export default function SignupPage() {
             </button>
           </div>
 
+          {/* Quick Demo Pre-fill Helper */}
+          <div className="bg-[#FAFAFA] border border-[#E7E7E7] rounded-2xl p-3.5 space-y-2">
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="font-semibold text-[#090909] flex items-center gap-1.5">
+                <Sparkles size={12} className="text-[#090909]" />
+                Test Account Auto-fill:
+              </span>
+              <span className="text-[#737373] text-[10px]">1-Click Fill</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setForm({
+                    fullName: "Lohit",
+                    email: "lohit@karunya.edu.in",
+                    password: "password123",
+                    confirmPassword: "password123",
+                    accountType: "student",
+                    institution: "Karunya University",
+                    department: "CSE",
+                    academicYear: "Sophomore (2nd Year)",
+                    graduationYear: "2027",
+                    currentRole: "",
+                    currentCompany: "",
+                    termsAccepted: true,
+                  });
+                  setErrors({});
+                }}
+                className={`px-3 py-1 rounded-full text-xs transition-colors cursor-pointer border ${
+                  form.email === "lohit@karunya.edu.in"
+                    ? "bg-[#090909] text-white border-[#090909] font-medium"
+                    : "bg-white text-[#737373] hover:text-[#090909] border-[#E7E7E7] hover:border-[#090909]"
+                }`}
+              >
+                Student (Lohit)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setForm({
+                    fullName: "Marcus Vance",
+                    email: "marcus.vance@datadog.com",
+                    password: "password123",
+                    confirmPassword: "password123",
+                    accountType: "alumni",
+                    institution: "Stanford University",
+                    department: "Computer Science",
+                    academicYear: "",
+                    graduationYear: "2018",
+                    currentRole: "Senior Backend Engineer",
+                    currentCompany: "Datadog",
+                    termsAccepted: true,
+                  });
+                  setErrors({});
+                }}
+                className={`px-3 py-1 rounded-full text-xs transition-colors cursor-pointer border ${
+                  form.email === "marcus.vance@datadog.com"
+                    ? "bg-[#090909] text-white border-[#090909] font-medium"
+                    : "bg-white text-[#737373] hover:text-[#090909] border-[#E7E7E7] hover:border-[#090909]"
+                }`}
+              >
+                Alumni (Marcus)
+              </button>
+            </div>
+          </div>
+
+          {/* General Error Banner */}
+          {errors.general && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center gap-2">
+              <AlertCircle size={15} className="shrink-0 text-red-600" />
+              <span>{errors.general}</span>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
             {/* Full Name */}
             <div className="space-y-1.5">
@@ -417,7 +582,7 @@ export default function SignupPage() {
                     id="signup-password"
                     type={showPassword ? "text" : "password"}
                     autoComplete="new-password"
-                    placeholder="Min 8 characters"
+                    placeholder="Min 6 characters"
                     value={form.password}
                     onChange={(e) => updateField("password", e.target.value)}
                     className={`w-full h-11 pl-10 pr-9 rounded-xl border bg-white text-xs text-[#090909] placeholder-[#A8A8A8] focus:outline-none transition-all ${

@@ -13,23 +13,25 @@ export class MockCareerAssistantService implements ICareerAssistantService {
   private readonly defaultStudentName: string;
   private readonly defaultTargetRole: string;
 
-  constructor(defaultStudentName = "Ashlin", defaultTargetRole = "Full-Stack Software Engineer") {
+  constructor(defaultStudentName = "Student", defaultTargetRole = "Professional") {
     this.defaultStudentName = defaultStudentName;
     this.defaultTargetRole = defaultTargetRole;
   }
 
-  getInitialWelcomeMessage(): AssistantMessage {
+  getInitialWelcomeMessage(targetRole?: string, studentName?: string): AssistantMessage {
+    const role = targetRole?.trim() || this.defaultTargetRole;
+    const name = studentName?.trim() || this.defaultStudentName;
     return {
       id: "welcome-msg",
       role: "assistant",
       content:
-        `Hello ${this.defaultStudentName}! I am your AI Career Assistant. I am here to help you navigate your journey toward becoming a **${this.defaultTargetRole}**.\n\nWhether you need help breaking down complex roadmaps, auditing your current skill gaps, refining resume bullet points, or preparing for technical interviews, feel free to ask below!`,
+        `Hello ${name}! I am your AI Career Assistant. I am here to help you navigate your journey toward achieving your goals as a **${role}**.\n\nWhether you need help breaking down roadmap milestones, auditing your current skill gaps, refining resume impact statements, or preparing for interviews, feel free to ask below!`,
       timestamp: "Just now",
       suggestions: [
-        "Build my career roadmap",
-        "Identify my skill gaps",
-        "Improve my resume",
-        "Prepare for a software engineering interview",
+        `Build my career roadmap for ${role}`,
+        `Identify my skill gaps for ${role}`,
+        `How can I improve my resume for ${role}?`,
+        `Prepare for a ${role} interview`,
       ],
       suggestedActions: [
         {
@@ -52,9 +54,67 @@ export class MockCareerAssistantService implements ICareerAssistantService {
   }
 
   async sendMessage(request: CareerAssistantRequest): Promise<CareerAssistantResponse> {
+    const startTime = Date.now();
+    try {
+      const messagesPayload = (request.messages || []).map((m) => ({
+        role: m.role,
+        content: m.content,
+      }));
+
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: request.prompt,
+          images: request.images || [],
+          messages: messagesPayload,
+          model: "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+          studentContext: request.studentContext,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const latencyMs = Date.now() - startTime;
+        const thinkingDurationSeconds = Math.max(1, Math.round(latencyMs / 1000));
+        const role = request.studentContext?.targetRole || this.defaultTargetRole;
+        return {
+          message: {
+            id: `msg-${Date.now()}`,
+            role: "assistant",
+            content: data.content,
+            reasoning: data.reasoning || undefined,
+            thinkingDurationSeconds,
+            timestamp: "Just now",
+            suggestions: [
+              `What core competencies are valued most for ${role}?`,
+              `What interview questions are asked for ${role}?`,
+              `Review my skill readiness for ${role}`,
+            ],
+            suggestedActions: [
+              {
+                label: "View Career Roadmap",
+                href: "/career-roadmap",
+                actionType: "roadmap",
+              },
+              {
+                label: "Audit Resume",
+                href: "/resume-review",
+                actionType: "resume",
+              },
+            ],
+          },
+          latencyMs,
+        };
+      }
+    } catch (e) {
+      console.warn("Backend chat route error, utilizing local intelligence fallback:", e);
+    }
+
     const prompt = request.prompt.toLowerCase().trim();
     const role = request.studentContext?.targetRole || this.defaultTargetRole;
     const name = request.studentContext?.studentName || this.defaultStudentName;
+    const isTech = /software|developer|engineer|full-stack|frontend|backend|cloud|devops|data|ai|machine learning/i.test(role);
 
     // Simulate realistic network & processing latency
     await new Promise((resolve) => setTimeout(resolve, 650));
@@ -64,24 +124,38 @@ export class MockCareerAssistantService implements ICareerAssistantService {
     const suggestedActions = [];
 
     if (prompt.includes("roadmap") || prompt.includes("plan") || prompt.includes("stages")) {
-      content = `### Career Roadmap Recommendation for ${role}
+      content = isTech
+        ? `### Career Roadmap Recommendation for ${role}
 
-Here is a structured 7-stage trajectory tailored to your target position:
+Here is a structured milestone progression tailored to your target position:
 
-1. **Programming Fundamentals**: Solidify Big-O complexity, trees, graphs, and OOP patterns in Python or TypeScript.
-2. **Backend Frameworks**: Build deep familiarity with MVC architecture, request lifecycles, and middleware in Django or Express.
-3. **REST API Development**: Master HTTP standards, JSON schema validation, cursor pagination, and OpenAPI documentation.
-4. **Databases & Data Modeling**: Study 3NF normalization, foreign key constraints, EXPLAIN query planning, and Redis caching.
-5. **Authentication & Security**: Implement JWT refresh token rotation, OAuth 2.0 social logins, and OWASP defenses.
-6. **Testing & Cloud Deployment**: Write automated pytest suites, author multi-stage Dockerfiles, and configure GitHub Actions CI/CD.
-7. **Interview Readiness**: Systematic LeetCode practice and fundamental system design mock sessions.
+1. **Foundations & Architecture**: Solidify domain principles, scalable design patterns, and core development workflows.
+2. **Frameworks & Production Stack**: Build hands-on expertise in industry-standard frameworks and development environments.
+3. **Data Contracts & System Integration**: Master communication protocols, schema design, and API architectures.
+4. **Data Persistence & Optimization**: Implement resilient database modeling, query tuning, and caching strategies.
+5. **Quality Assurance & Verification**: Build automated test suites and continuous validation pipelines.
+6. **Deployment & Reliability**: Deploy containerized services with observability, monitoring, and error tracing.
+7. **Interview Readiness & Capstone**: Practical technical problem-solving and portfolio project defense.
 
-You can inspect, track, and update your active milestone statuses directly on your personalized roadmap page.`;
+You can inspect, track, and update your active milestone statuses directly on your personalized roadmap page.`
+        : `### Career Roadmap Recommendation for ${role}
+
+Here is a structured milestone progression tailored to your career advancement in **${role}**:
+
+1. **Foundations & Governance**: Master core principles, institutional guidelines, and industry standards.
+2. **Operational Leadership & Execution**: Drive day-to-day excellence, resource allocation, and program management.
+3. **Stakeholder & Strategic Communication**: Facilitate cross-functional collaboration and executive relationship management.
+4. **Data-Informed Decision Making**: Leverage operational analytics, performance benchmarks, and measurable KPIs.
+5. **Quality Assurance & Compliance**: Implement continuous assessment, audit readiness, and policy oversight.
+6. **Strategic Vision & Scaled Initiatives**: Lead large-scale institutional or organizational initiatives.
+7. **Executive Portfolio & Interview Readiness**: Articulate documented leadership impact, case achievements, and vision.
+
+You can inspect, track, and customize your milestone progression directly on your roadmap page.`;
 
       suggestions = [
-        "What projects should I build for Stage 3?",
-        "How do I practice databases and Redis?",
-        "Which alumni can mentor me on backend architecture?",
+        `What milestones should I prioritize for ${role}?`,
+        `How do I build an impressive portfolio for ${role}?`,
+        `Which alumni can mentor me in ${role}?`,
       ];
 
       suggestedActions.push({
@@ -90,31 +164,36 @@ You can inspect, track, and update your active milestone statuses directly on yo
         actionType: "roadmap" as const,
       });
       suggestedActions.push({
-        label: "Find Backend Mentors",
+        label: "Find Alumni Mentors",
         href: "/alumni",
         actionType: "alumni" as const,
       });
     } else if (prompt.includes("skill") || prompt.includes("gap") || prompt.includes("learn next")) {
+      const studentSkills = request.studentContext?.currentSkills?.length
+        ? request.studentContext.currentSkills.join(", ")
+        : "documented competencies";
+
       content = `### Skill Gap Analysis for ${name} (${role})
 
-Based on your current self-reported profile skills (**Python, JavaScript, React, Django, SQL**), here is our objective gap assessment:
+Based on your current profile credentials (**${studentSkills}**), here is an objective benchmark assessment for **${role}**:
 
 #### 1. High Priority Gaps
-- **TypeScript**: Crucial for enterprise React frontends and modern Node/Next.js backends to eliminate runtime type bugs.
-- **Docker & Containerization**: Essential for microservices development, local environment reproducibility, and cloud deployments.
-- **PostgreSQL Advanced Features**: Deep dive into indexing strategies, query plan analysis, and connection pooling.
+${isTech
+  ? "- **System Architecture & Cloud Fundamentals**: Essential for production scalability and deployment readiness.\n- **Data Persistence & Indexing**: Advanced query optimization and schema performance.\n- **End-to-End Testing**: Unit and integration test suites required for high-reliability engineering."
+  : "- **Strategic Planning & Governance**: Institutional oversight, compliance policies, and executive leadership.\n- **Data-Driven Metric Tracking**: Establishing and measuring organizational KPIs and operational benchmarks.\n- **Cross-Functional Stakeholder Management**: Leading diverse teams and driving consensus across departments."}
 
 #### 2. Medium Priority Gaps
-- **Redis Caching**: High-throughput session storage and latency optimization.
-- **Automated Testing (pytest / Jest)**: Unit and integration testing suites are required by standard SWE interview hiring bars.
+${isTech
+  ? "- **CI/CD Automation**: Continuous integration pipelines and automated release tooling.\n- **Observability & Monitoring**: Metrics logging, alerting, and error tracing."
+  : "- **Budgeting & Resource Allocation**: Fiscal responsibility and program cost optimization.\n- **Change Management**: Facilitating transitions and modernization initiatives effectively."}
 
 #### Recommended Next Step
-Focus on containerizing your current Django & React application with **Docker Compose**, and rewrite your frontend components with **TypeScript** interfaces.`;
+Align your upcoming milestone goals with the core competencies of **${role}**, and connect with experienced alumni on AlumniPath.`;
 
       suggestions = [
-        "Recommend learning resources for Docker",
-        "How can I practice TypeScript with React?",
-        "Show me alumni who work with PostgreSQL",
+        `Recommend high-yield resources for ${role}`,
+        `How do I demonstrate mastery in ${role}?`,
+        "Show me alumni who excel in these areas",
       ];
 
       suggestedActions.push({
@@ -123,27 +202,37 @@ Focus on containerizing your current Django & React application with **Docker Co
         actionType: "roadmap" as const,
       });
     } else if (prompt.includes("resume") || prompt.includes("cv") || prompt.includes("bullet point")) {
-      content = `### Resume Improvement Recommendations
+      const exampleWeak = isTech
+        ? '"Responsible for writing backend code and maintaining database."'
+        : '"Responsible for administrative oversight and team coordination."';
+      const exampleStrong = isTech
+        ? '"Architected scalable service modules using modern frameworks, decreasing latency by 35% across 20k daily transactions."'
+        : '"Spearheaded institutional operations across a 50+ member organization, boosting program completion rates by 28% year-over-year."';
+      const keywordsExample = isTech
+        ? 'role-benchmarked competencies like system architecture, API design, automated test coverage, and cloud infrastructure'
+        : `core proficiencies, strategic initiatives, stakeholder leadership, and compliance metrics specific to ${role}`;
 
-To make your resume stand out to technical recruiters for **${role}** positions, focus on these critical improvements:
+      content = `### Resume Improvement Recommendations for ${role}
 
-1. **Adopt Google's XYZ Formula**:
-   - *Weak*: "Built a REST API with Django and PostgreSQL."
-   - *Strong*: "Engineered a high-throughput REST API with Django and PostgreSQL, reducing endpoint response latency by 38% for 15,000 daily requests."
+To make your resume stand out to hiring managers and executive evaluators for **${role}** positions, focus on these critical enhancements:
 
-2. **Highlight Technical Stack per Project**:
-   - Explicitly list technologies in brackets: e.g., \`[Python, Django, PostgreSQL, Docker, Redis, Tailwind CSS]\`.
+1. **Adopt the Proven Impact Formula (Accomplished [X], measured by [Y], by doing [Z])**:
+   - *Weak*: ${exampleWeak}
+   - *Strong*: ${exampleStrong}
 
-3. **Incorporate ATS Keywords**:
-   - Ensure terms like *RESTful APIs*, *CI/CD pipelines*, *relational schema design*, and *unit testing* appear naturally in your experience bullets.
+2. **Target High-Leverage Benchmark Keywords**:
+   - Incorporate ${keywordsExample} prominently in your experience bullets and skills taxonomy.
 
-4. **Add Quantifiable Metrics**:
-   - Quantify scale: number of endpoints, test coverage percentage, database query speedups, or active users.`;
+3. **Front-Load Measurable Quantifiable Results**:
+   - Anchor bullet points with concrete metrics: scale, percentages, headcount, cost efficiencies, or institutional milestones.
+
+4. **Optimize Structure & ATS Parsability**:
+   - Use clean, standard chronological section headers (Summary, Core Competencies, Professional Experience, Education & Credentials) without complex multi-column tables.`;
 
       suggestions = [
-        "How do I write a good professional summary?",
-        "Can you review my project descriptions?",
-        "Upload my resume for full ATS scan",
+        `How do I write an executive summary for a ${role}?`,
+        `What keywords should I include for ${role}?`,
+        "Audit my resume with the AI Resume Reviewer",
       ];
 
       suggestedActions.push({
@@ -151,30 +240,28 @@ To make your resume stand out to technical recruiters for **${role}** positions,
         href: "/resume-review",
         actionType: "resume" as const,
       });
-    } else if (prompt.includes("interview") || prompt.includes("leetcode") || prompt.includes("system design") || prompt.includes("behavioral")) {
-      content = `### Software Engineering Interview Preparation Strategy
+    } else if (prompt.includes("interview") || prompt.includes("leetcode") || prompt.includes("case study") || prompt.includes("behavioral")) {
+      content = `### Interview Preparation Strategy for ${role}
 
-Here is a 3-part blueprint for campus recruitment and entry-level SWE interviews:
+Here is a structured blueprint to prepare for **${role}** interviews:
 
-#### 1. Algorithmic Coding (40% Weight)
-- Don't memorize 500 problems; master the **top 14 patterns**: Two Pointers, Sliding Window, Fast & Slow Pointers, BFS/DFS, Top K Elements.
-- Target completing the **Blind 75** or **NeetCode 150** problem sets in Python.
+#### 1. Core Domain Competence & Technical Depth
+- Identify the primary proficiencies, case scenarios, and methodological standards expected for **${role}**.
+- Prepare concrete, detailed examples of past achievements, challenges overcome, and results delivered.
 
-#### 2. Fundamentals & System Design (30% Weight)
-- For entry-level, focus on fundamental distributed building blocks:
-  - Load balancing, horizontal vs vertical scaling.
-  - SQL vs NoSQL trade-offs, database replication vs sharding.
-  - Caching layers (Redis cache-aside pattern).
+#### 2. Strategic Problem Solving & Practical Execution
+- Be prepared to discuss realistic scenarios and workflows encountered in **${role}**.
+- Clarify assumptions, structure your approach methodically, and articulate trade-offs clearly.
 
-#### 3. Behavioral Preparation (STAR Method) (30% Weight)
+#### 3. Behavioral Preparation (STAR Method)
 - Structure your stories with **Situation, Task, Action, Result**.
-- Prepare 4 core stories: a challenging technical bug, a team disagreement, a tight deadline trade-off, and a leadership initiative.
+- Prepare core stories highlighting: complex problem-solving, stakeholder collaboration, tight deadlines, and proactive leadership.
 
-**Pro-Tip**: Book a 30-minute mock technical interview with an alumni engineer on AlumniPath to test your communication under pressure.`;
+**Pro-Tip**: Book a mock interview with an alumni mentor on AlumniPath to test your responses and gain actionable feedback.`;
 
       suggestions = [
-        "What are common behavioral interview questions?",
-        "How do I explain system design trade-offs?",
+        `What are common interview questions for ${role}?`,
+        "How do I structure behavioral answers using the STAR method?",
         "Connect with alumni for a mock interview",
       ];
 
@@ -186,19 +273,19 @@ Here is a 3-part blueprint for campus recruitment and entry-level SWE interviews
     } else {
       content = `Thank you for your question! As your **AI Career Assistant**, I'm analyzing your request regarding "${request.prompt}".
 
-Here are three key insights for your career journey as a student aiming for **${role}**:
+Here are three key insights for your career journey as you target **${role}**:
 
-- **Continuous Portfolio Iteration**: Ship public, deployed projects with clean commit histories and comprehensive README documentation.
-- **Active Alumni Networking**: Technical cold reach-outs work best when you ask specific questions about an engineer's public work or tech stack.
-- **Ramp up on Core Standards**: Deep understanding of API contracts, database query plans, and automated testing separates junior candidates from the pack.
+- **Demonstrate Verifiable Impact**: Highlight documented outcomes, measurable achievements, and structured portfolio/work artifacts.
+- **Active Alumni Networking**: Connect with alumni currently working in **${role}** positions to gain first-hand industry perspectives.
+- **Ramp up on Benchmark Standards**: Continuous mastery of domain-standard tools, frameworks, and methodologies will distinguish your candidacy.
 
 Would you like me to elaborate on building your roadmap, auditing your skills, or reviewing your resume bullets?`;
 
       suggestions = [
-        "Build my career roadmap",
-        "Identify my skill gaps",
-        "Improve my resume",
-        "Prepare for a software engineering interview",
+        `Build my career roadmap for ${role}`,
+        `Identify my skill gaps for ${role}`,
+        `How can I improve my resume for ${role}?`,
+        `Prepare for a ${role} interview`,
       ];
 
       suggestedActions.push({
@@ -217,6 +304,10 @@ Would you like me to elaborate on building your roadmap, auditing your skills, o
       id: `msg-${Date.now()}`,
       role: "assistant",
       content,
+      reasoning: `1. Analyzed candidate career trajectory and goals for "${role}".
+2. Evaluated domain expectations, practical milestones, and key hiring criteria.
+3. Synthesized structured, actionable guidance with recommended next actions.`,
+      thinkingDurationSeconds: 1,
       timestamp: "Just now",
       suggestions,
       suggestedActions,

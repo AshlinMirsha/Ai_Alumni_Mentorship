@@ -147,19 +147,6 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
 
           {/* Right utility items */}
           <div className="flex items-center gap-2">
-            {/* Quick Switch to Alumni Portal */}
-            <button
-              type="button"
-              onClick={() => {
-                setSessionRole("alumni");
-                router.push("/alumni-dashboard");
-              }}
-              title="Click to preview the platform as an Alumni Mentor"
-              className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 border border-gray-200 rounded-full transition-colors"
-            >
-              <ArrowRightLeft size={12} className="text-gray-500" />
-              <span>Switch to Alumni View</span>
-            </button>
 
             {/* Notifications Popover */}
             <div className="relative" ref={notifRef}>
@@ -339,24 +326,6 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
                     <span>Settings &amp; Preferences</span>
                   </Link>
                   <div className="border-t border-neutral-100 my-1" />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowUserMenu(false);
-                      setSessionRole("alumni");
-                      router.push("/alumni-dashboard");
-                    }}
-                    className="w-full text-left flex items-center justify-between px-3.5 py-2 text-xs text-neutral-900 hover:bg-neutral-50 transition-colors font-medium"
-                  >
-                    <span className="flex items-center gap-2">
-                      <ArrowRightLeft size={13} />
-                      <span>Switch to Alumni View</span>
-                    </span>
-                    <span className="text-[10px] text-neutral-700 bg-neutral-100 px-1.5 py-0.5 rounded border border-neutral-200">
-                      Demo
-                    </span>
-                  </button>
-                  <div className="border-t border-neutral-100 my-1" />
                   <Link
                     href="/"
                     onClick={() => setShowUserMenu(false)}
@@ -425,23 +394,6 @@ export function DashboardNav({ studentName = "Ashlin", onOpenEditProfile }: Dash
               <Settings size={15} className="text-neutral-400" />
               <span>Settings &amp; Preferences</span>
             </Link>
-            <button
-              type="button"
-              onClick={() => {
-                setMobileOpen(false);
-                if (isAlumni) {
-                  setSessionRole("student");
-                  router.push("/dashboard");
-                } else {
-                  setSessionRole("alumni");
-                  router.push("/alumni-dashboard");
-                }
-              }}
-              className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs text-neutral-900 font-semibold hover:bg-neutral-50 rounded-md"
-            >
-              <ArrowRightLeft size={14} />
-              <span>{isAlumni ? "Switch to Student Portal \u2192" : "Switch to Alumni Portal \u2192"}</span>
-            </button>
             <button
               type="button"
               onClick={() => {

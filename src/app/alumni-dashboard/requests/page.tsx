@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useSyncExternalStore } from "react";
+import { useState, useMemo, useSyncExternalStore, useEffect } from "react";
 import Link from "next/link";
 import {
   Inbox,
@@ -38,6 +38,15 @@ export default function AlumniRequestsPage() {
     loadMentorshipActivity,
     () => initialMentorshipActivity
   );
+
+  // Live polling heartbeat every 1.5s to ensure instant updates without manual refresh
+  const [, setHeartbeatTick] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHeartbeatTick((t) => t + 1);
+    }, 1500);
+    return () => clearInterval(interval);
+  }, []);
 
   const [activeTab, setActiveTab] = useState<RequestTab>("pending");
   const [searchQuery, setSearchQuery] = useState("");
@@ -116,6 +125,15 @@ export default function AlumniRequestsPage() {
     if (res.success) {
       showToast(`Mentorship request from ${studentName} accepted! Student added to your active mentees.`);
     }
+
+    fetch("/api/mentorship", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ requestId: req.id, status: "accepted" }),
+    }).catch((err) => {
+      console.warn("Backend mentorship accept noticed:", err);
+    });
+
     setProcessingId(null);
   };
 
@@ -124,6 +142,14 @@ export default function AlumniRequestsPage() {
     const studentName = target?.student?.name || "Student";
     declineMentorshipRequest(requestId, reason);
     showToast(`Mentorship request from ${studentName} declined.`);
+
+    fetch("/api/mentorship", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ requestId, status: "declined" }),
+    }).catch((err) => {
+      console.warn("Backend mentorship decline noticed:", err);
+    });
   };
 
   const handleViewProfile = (req: Mentorship) => {
